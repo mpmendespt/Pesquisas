@@ -47,19 +47,16 @@ Este projeto implementa uma aplicação web completa utilizando:
 - [x] Dados protegidos por JWT
 
 ## 📁 Estrutura do Projeto
-Pesquisas_DS/
-├── 📁 worker-ds/ # Backend (já configurado)
-├── 📁 schemas/ # Database schemas
-├── 📁 site/ # Frontend reorganizado
-│ ├── login.html
-│ ├── register.html
-│ ├── index.html
-│ ├── assets/
-│ │ └── css/
-│ │ └── style.css
-│ └── .gitignore # NOVO: gitignore específico
-├── .gitignore # Gitignore global
-└── README.md # NOVO: documentação completa
+Pesquisas/ (repositório raiz)
+├── 📄 index.html              # Dashboard principal (protegido)
+├── 📄 login.html              # Página de login
+├── 📄 register.html           # Página de registro
+├── 📁 assets/
+│   └── 📁 css/
+│       └── style.css         # Estilos CSS
+├── 📁 worker-ds/              # Backend Cloudflare Worker
+├── 📁 schemas/               # Database schemas
+└── 📄 README.md
 
 
 ## ⚙️ Configuração
