@@ -48,26 +48,18 @@ Este projeto implementa uma aplicação web completa utilizando:
 
 ## 📁 Estrutura do Projeto
 Pesquisas_DS/
-├── 📁 worker-ds/ # Backend Cloudflare Worker
-│ ├── src/
-│ │ ├── index.js # Worker principal
-│ │ └── auth.js # Sistema JWT
-│ ├── schemas/
-│ │ └── init.sql # Schema do banco
-│ ├── wrangler.jsonc # Configuração
-│ └── package.json
-├── 📁 site/ # Frontend GitHub Pages
-│ ├── login.html # Página de login
-│ ├── register.html # Página de registro
-│ ├── index.html # Dashboard (protegido)
+├── 📁 worker-ds/ # Backend (já configurado)
+├── 📁 schemas/ # Database schemas
+├── 📁 site/ # Frontend reorganizado
+│ ├── login.html
+│ ├── register.html
+│ ├── index.html
 │ ├── assets/
 │ │ └── css/
-│ │ └── style.css # Estilos
-│ └── .gitignore # Gitignore do site
-├── 📁 schemas/ # Database schemas
-│ └── init.sql # Tabelas do banco
+│ │ └── style.css
+│ └── .gitignore # NOVO: gitignore específico
 ├── .gitignore # Gitignore global
-└── README.md # Esta documentação
+└── README.md # NOVO: documentação completa
 
 
 ## ⚙️ Configuração
