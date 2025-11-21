@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal - Sistema de Pesquisas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="dashboard-page">
+    <div class="container">
+        <header class="header">
+            <h1>🏠 Página Principal</h1>
+            <div class="user-info">
+                <span id="userWelcome">Bem-vindo!</span>
+                <button onclick="logout()" class="btn-secondary">Sair</button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2>Olá, <span id="usernameDisplay"></span>!</h2>
+                <p>Você está logado no sistema de pesquisas.</p>
+            </div>
+            
+            <div class="actions-section">
+                <div class="card">
+                    <h3>📊 Dados Protegidos</h3>
+                    <p>Acesse informações restritas do sistema.</p>
+                    <button onclick="fetchProtectedData()" class="btn-primary">Buscar Dados</button>
+                </div>
+                
+                <div class="card">
+                    <h3>👤 Perfil</h3>
+                    <p>Gerencie suas informações de usuário.</p>
+                    <button onclick="showUserInfo()" class="btn-secondary">Ver Perfil</button>
+                </div>
+            </div>
+            
+            <div id="protectedData" class="data-section"></div>
+        </main>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://worker-ds.seu-account.workers.dev';
+        
+        // Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('jwt');
+            const userData = localStorage.getItem('user');
+            
+            if (!token) {
+                // Se não tem token, redireciona para login
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Exibe informações do usuário
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('usernameDisplay').textContent = user.username;
+                document.getElementById('userWelcome').textContent = `Bem-vindo, ${user.username}!`;
+            }
+        });
+        
+        async function fetchProtectedData() {
+            const token = localStorage.getItem('jwt');
+            const dataDiv = document.getElementById('protectedData');
+            
+            dataDiv.innerHTML = '<div class="loading">🔄 Carregando dados protegidos...</div>';
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/api/protected`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    dataDiv.innerHTML = `
+                        <div class="success-data">
+                            <h3>✅ Dados Protegidos Acessados</h3>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    dataDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                    
+                    // Se o token estiver inválido, faz logout
+                    if (response.status === 401) {
+                        setTimeout(logout, 2000);
+                    }
+                }
+            } catch (error) {
+                dataDiv.innerHTML = '<div class="error">❌ Erro ao carregar dados</div>';
+            }
+        }
+        
+        function showUserInfo() {
+            const userData = localStorage.getItem('user');
+            const dataDiv = document.getElementById('protectedData');
+            
+            if (userData) {
+                const user = JSON.parse(userData);
+                dataDiv.innerHTML = `
+                    <div class="user-data">
+                        <h3>👤 Informações do Usuário</h3>
+                        <div class="user-details">
+                            <p><strong>ID:</strong> ${user.id}</p>
+                            <p><strong>Usuário:</strong> ${user.username}</p>
+                            <p><strong>Token JWT:</strong> ${localStorage.getItem('jwt').substring(0, 20)}...</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function logout() {
+            // Remove os dados de autenticação
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('user');
+            
+            // Redireciona para a página de login
+            window.location.href = 'login.html';
+        }
+        
+        // Proteção adicional: verifica autenticação periodicamente
+        setInterval(() => {
+            if (!localStorage.getItem('jwt')) {
+                logout();
+            }
+        }, 30000); // Verifica a cada 30 segundos
+    </script>
+</body>
+</html>

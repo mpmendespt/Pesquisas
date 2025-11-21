@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Sistema de Pesquisas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="register-page">
+    <div class="container">
+        <div class="register-form">
+            <h1>📝 Registro</h1>
+            <p>Crie sua conta</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username" placeholder="Escolha um usuário" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" placeholder="Crie uma senha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Senha:</label>
+                    <input type="password" id="confirmPassword" placeholder="Repita a senha" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Registrar</button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://worker-ds.seu-account.workers.dev';
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('message');
+            
+            // Validação básica
+            if (password !== confirmPassword) {
+                messageDiv.innerHTML = '<div class="error">❌ As senhas não coincidem</div>';
+                return;
+            }
+            
+            if (password.length < 3) {
+                messageDiv.innerHTML = '<div class="error">❌ A senha deve ter pelo menos 3 caracteres</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Conta criada com sucesso! Redirecionando para login...</div>';
+                    
+                    // Redireciona para login após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Tente novamente.</div>';
+            }
+        });
+        
+        // Se já estiver logado, redireciona para index.html
+        if (localStorage.getItem('jwt')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
