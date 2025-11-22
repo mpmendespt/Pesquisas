@@ -37,22 +37,6 @@
 <script>
     const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
     
-    function redirectAfterLogin() {
-        const primaryUrl = 'https://mpmendespt.github.io/Pesquisas/docs/index.html';
-        const fallbackUrl = '/Pesquisas/docs/index.html';
-        
-        // Tenta a URL absoluta primeiro
-        window.location.href = primaryUrl;
-        
-        // Fallback após 2 segundos se ainda estiver na mesma página
-        setTimeout(() => {
-            if (window.location.href.includes('login.html')) {
-                console.log('Fallback: usando URL relativa');
-                window.location.href = fallbackUrl;
-            }
-        }, 2000);
-    }
-    
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -70,13 +54,16 @@
             const data = await response.json();
             
             if (response.ok) {
+                // Salva o token JWT
                 localStorage.setItem('jwt', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
                 messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                 
+                // ✅ CORREÇÃO: Redirecionamento relativo correto
+                // De docs/app/login.html para docs/index.html
                 setTimeout(() => {
-                    redirectAfterLogin();
+                    window.location.href = '../index.html';
                 }, 1000);
             } else {
                 messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
@@ -86,8 +73,9 @@
         }
     });
     
+    // Se já estiver logado, redireciona para ../index.html
     if (localStorage.getItem('jwt')) {
-        redirectAfterLogin();
+        window.location.href = '../index.html';
     }
 </script>
 </body>
