@@ -60,9 +60,9 @@
                     
                     messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                     
-                    // ⚠️ REDIRECIONAMENTO ALTERADO: para /site/index.html
+                    // ⚠️ REDIRECIONAMENTO ALTERADO: para site/index.html
                     setTimeout(() => {
-                        window.location.href = '/site/index.html';
+                        window.location.href = 'site/index.html';
                     }, 1000);
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
