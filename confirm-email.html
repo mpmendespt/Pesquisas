@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Email - Sistema de Pesquisas</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="login-page">
+    <div class="container">
+        <div class="login-form">
+            <h1>📧 Confirmar Email</h1>
+            <p>Digite o token de confirmação enviado para seu email</p>
+            
+            <form id="confirmForm">
+                <div class="form-group">
+                    <label for="token">Token de Confirmação:</label>
+                    <input type="text" id="token" placeholder="Cole o token aqui" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Confirmar Email</button>
+            </form>
+            
+            <div class="form-footer">
+                <p><a href="login.html">Voltar para o Login</a></p>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://worker-ds.SEU-SUBDOMINIO.workers.dev'; // ATUALIZE
+        
+        document.getElementById('confirmForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const token = document.getElementById('token').value;
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/api/confirm-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Email confirmado com sucesso! Redirecionando para login...</div>';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão</div>';
+            }
+        });
+    </script>
+</body>
+</html>
