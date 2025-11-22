@@ -34,48 +34,50 @@
         </div>
     </div>
 
-    <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE COM SUA URL
+<script>
+    const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+    
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const messageDiv = document.getElementById('message');
+        
+        try {
+            const response = await fetch(`${WORKER_URL}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
+            const data = await response.json();
             
-            try {
-                const response = await fetch(`${WORKER_URL}/api/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
+            if (response.ok) {
+                // Salva o token JWT
+                localStorage.setItem('jwt', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
                 
-                const data = await response.json();
+                messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                 
-                if (response.ok) {
-                    // Salva o token JWT
-                    localStorage.setItem('jwt', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    
-                    messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
-                    
-                    // ⚠️ REDIRECIONAMENTO ALTERADO: para docs/index.html
-                    setTimeout(() => {
-                        window.location.href = '/Pesquisas/docs/index.html';
-                    }, 1000);
-                } else {
-                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
-                }
-            } catch (error) {
-                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Tente novamente.</div>';
+                // ✅ CORREÇÃO: Usar URL absoluta completa
+                setTimeout(() => {
+                    const baseUrl = window.location.origin;
+                    window.location.href = `${baseUrl}/Pesquisas/docs/index.html`;
+                }, 1000);
+            } else {
+                messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
             }
-        });
-        
-        // Se já estiver logado, redireciona para /Pesquisas/docs/index.html
-        if (localStorage.getItem('jwt')) {
-            window.location.href = '/Pesquisas/docs/index.html';
+        } catch (error) {
+            messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Tente novamente.</div>';
         }
-    </script>
+    });
+    
+    // Se já estiver logado, redireciona para docs/index.html
+    if (localStorage.getItem('jwt')) {
+        const baseUrl = window.location.origin;
+        window.location.href = `${baseUrl}/Pesquisas/docs/index.html`;
+    }
+</script>
 </body>
 </html>
