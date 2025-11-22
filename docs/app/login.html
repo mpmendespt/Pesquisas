@@ -35,34 +35,7 @@
     </div>
 
 <script>
-        console.log('=== DEBUG INFO ===');
-    console.log('Current URL:', window.location.href);
-    console.log('Current path:', window.location.pathname);
-    console.log('Origin:', window.location.origin);
-    
-    const testUrl = '/Pesquisas/docs/index.html';
-    console.log('Test redirect URL:', new URL(testUrl, window.location.origin).href);
-    
-    //....................................
     const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
-    
-    // Função para detectar o caminho base correto
-    function getBasePath() {
-        const currentPath = window.location.pathname;
-        // Se estamos em /Pesquisas/app/, o base path é /Pesquisas/
-        if (currentPath.includes('/Pesquisas/app/')) {
-            return '/Pesquisas/';
-        }
-        return '/Pesquisas/'; // Fallback
-    }
-    
-    function redirectToTarget() {
-        const baseUrl = window.location.origin;
-        const basePath = getBasePath();
-        // Remove duplicate "Pesquisas" if any
-        const cleanPath = basePath.replace(/\/Pesquisas\/Pesquisas\//, '/Pesquisas/');
-        window.location.href = `${baseUrl}${cleanPath}docs/index.html`;
-    }
     
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -81,13 +54,16 @@
             const data = await response.json();
             
             if (response.ok) {
+                // Salva o token JWT
                 localStorage.setItem('jwt', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
                 messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                 
+                // ✅ CORREÇÃO: Redirecionamento absoluto garantido
                 setTimeout(() => {
-                    redirectToTarget();
+                    // Vai para a raiz do projeto Pesquisas e depois para docs/index.html
+                    window.location.href = 'https://mpmendespt.github.io/Pesquisas/docs/index.html';
                 }, 1000);
             } else {
                 messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
@@ -97,9 +73,9 @@
         }
     });
     
-    // Se já estiver logado, redireciona
+    // Se já estiver logado, redireciona usando URL absoluta
     if (localStorage.getItem('jwt')) {
-        redirectToTarget();
+        window.location.href = 'https://mpmendespt.github.io/Pesquisas/docs/index.html';
     }
 </script>
 </body>
