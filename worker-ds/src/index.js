@@ -1,6 +1,6 @@
 import { JWT } from './auth.js';
 
-// Rate limiting storage (usando Memory Storage - em produção use KV)
+// Rate limiting storage
 const rateLimitStore = new Map();
 
 export default {
@@ -9,7 +9,7 @@ export default {
     const jwt = new JWT(env.JWT_SECRET);
 
     // Aplicar rate limiting
-    const rateLimitResult = await checkRateLimit(request, env);
+    const rateLimitResult = await checkRateLimit(request);
     if (rateLimitResult) return rateLimitResult;
 
     // CORS headers
@@ -27,11 +27,16 @@ export default {
 
     // Rotas públicas
     if (url.pathname === '/api/health') {
-      return new Response(JSON.stringify({ 
+      return successResponse({ 
         status: 'ok', 
         timestamp: new Date().toISOString(),
-        service: 'Pesquisas DS API'
-      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        service: 'Pesquisas DS API',
+        endpoints: [
+          '/api/register', '/api/login', '/api/confirm-email',
+          '/api/forgot-password', '/api/reset-password', '/api/profile',
+          '/api/admin/users', '/api/admin/users/pending', '/api/admin/users/approve'
+        ]
+      }, 200, corsHeaders);
     }
 
     // Rotas de autenticação
@@ -44,7 +49,7 @@ export default {
     }
 
     if (url.pathname === '/api/confirm-email' && request.method === 'POST') {
-      return await handleConfirmEmail(request, env, jwt, corsHeaders);
+      return await handleConfirmEmail(request, env, corsHeaders);
     }
 
     if (url.pathname === '/api/forgot-password' && request.method === 'POST') {
@@ -55,7 +60,11 @@ export default {
       return await handleResetPassword(request, env, corsHeaders);
     }
 
-    // Rotas protegidas
+    if (url.pathname === '/api/resend-confirmation' && request.method === 'POST') {
+      return await handleResendConfirmation(request, env, jwt, corsHeaders);
+    }
+
+    // Rotas protegidas (usuário logado)
     if (url.pathname === '/api/protected' && request.method === 'GET') {
       return await handleProtected(request, env, jwt, corsHeaders);
     }
@@ -66,6 +75,10 @@ export default {
 
     if (url.pathname === '/api/profile' && request.method === 'PUT') {
       return await handleUpdateProfile(request, env, jwt, corsHeaders);
+    }
+
+    if (url.pathname === '/api/change-password' && request.method === 'POST') {
+      return await handleChangePassword(request, env, jwt, corsHeaders);
     }
 
     // Rotas administrativas
@@ -81,10 +94,12 @@ export default {
       return await handleGetAllUsers(request, env, jwt, corsHeaders);
     }
 
-    return new Response(JSON.stringify({ error: 'Endpoint não encontrado' }), {
-      status: 404,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    if (url.pathname === '/api/admin/users/update' && request.method === 'PUT') {
+      return await handleAdminUpdateUser(request, env, jwt, corsHeaders);
+    }
+
+    // Rota não encontrada
+    return errorResponse('Endpoint não encontrado', 404, corsHeaders);
   }
 };
 
@@ -99,8 +114,12 @@ async function handleRegister(request, env, jwt, corsHeaders) {
       return errorResponse('Todos os campos são obrigatórios', 400, corsHeaders);
     }
 
+    if (username.length < 3) {
+      return errorResponse('Username deve ter pelo menos 3 caracteres', 400, corsHeaders);
+    }
+
     if (password.length < 8) {
-      return errorResponse('A senha deve ter pelo menos 8 caracteres', 400, corsHeaders);
+      return errorResponse('A password deve ter pelo menos 8 caracteres', 400, corsHeaders);
     }
 
     if (!validateEmail(email)) {
@@ -123,17 +142,21 @@ async function handleRegister(request, env, jwt, corsHeaders) {
           'INSERT INTO admin_approvals (user_id, status) VALUES (?, ?)'
         ).bind(result.meta.last_row_id, 'pending').run();
 
-        // Gerar token de confirmação de email (simulado)
+        // Gerar token de confirmação de email
         const emailToken = generateToken();
         await env.DB.prepare(
           `INSERT INTO email_confirmations (user_id, token, expires_at) 
            VALUES (?, ?, datetime('now', '+1 day'))`
         ).bind(result.meta.last_row_id, emailToken).run();
 
+        // Simular envio de email
+        console.log(`📧 Token de confirmação para ${email}: ${emailToken}`);
+
         return successResponse({
-          message: 'Registro realizado! Aguarde aprovação do administrador e verifique seu email.',
+          message: 'Registro realizado! Aguarde aprovação do administrador.',
           requires_approval: true,
-          user_id: result.meta.last_row_id
+          user_id: result.meta.last_row_id,
+          debug_token: emailToken
         }, 201, corsHeaders);
       }
     } catch (dbError) {
@@ -181,17 +204,12 @@ async function handleLogin(request, env, jwt, corsHeaders) {
       return errorResponse('Conta aguardando aprovação do administrador', 403, corsHeaders);
     }
 
-    // Verificar se email está confirmado
-    if (!user.is_email_verified) {
-      return errorResponse('Por favor, confirme seu email antes de fazer login', 403, corsHeaders);
-    }
-
     // Verificar se está ativo
     if (!user.is_active) {
       return errorResponse('Conta desativada. Contacte o administrador.', 403, corsHeaders);
     }
     
-    // Gerar JWT
+    // Gerar JWT (24 horas)
     const expiration = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
     const token = await jwt.sign({
       userId: user.id,
@@ -219,82 +237,161 @@ async function handleLogin(request, env, jwt, corsHeaders) {
   }
 }
 
-// ========== FUNÇÕES ADMINISTRATIVAS ==========
+// ========== FUNÇÕES DE EMAIL E PASSWORD ==========
 
-async function handleGetPendingUsers(request, env, jwt, corsHeaders) {
+async function handleConfirmEmail(request, env, corsHeaders) {
   try {
-    const user = await authenticateAdmin(request, env, jwt);
-    if (!user) return errorResponse('Acesso negado', 403, corsHeaders);
-
-    const users = await env.DB.prepare(
-      `SELECT u.id, u.username, u.email, u.created_at, a.created_at as approval_requested
-       FROM users u 
-       LEFT JOIN admin_approvals a ON u.id = a.user_id 
-       WHERE u.is_approved = FALSE AND a.status = 'pending'`
-    ).all();
-
-    return successResponse({ users: users.results }, 200, corsHeaders);
-
-  } catch (error) {
-    console.error('Get pending users error:', error);
-    return errorResponse('Erro interno no servidor', 500, corsHeaders);
-  }
-}
-
-async function handleApproveUser(request, env, jwt, corsHeaders) {
-  try {
-    const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
-
-    const { userId, approve } = await request.json();
+    const { token } = await request.json();
     
-    if (typeof approve === 'undefined') {
-      return errorResponse('Parâmetro "approve" é obrigatório', 400, corsHeaders);
+    if (!token) {
+      return errorResponse('Token é obrigatório', 400, corsHeaders);
     }
 
-    const status = approve ? 'approved' : 'rejected';
-    
-    // Atualizar aprovação
+    // Verificar token
+    const confirmation = await env.DB.prepare(
+      `SELECT ec.*, u.id as user_id 
+       FROM email_confirmations ec 
+       JOIN users u ON ec.user_id = u.id 
+       WHERE ec.token = ? AND ec.expires_at > datetime('now')`
+    ).bind(token).first();
+
+    if (!confirmation) {
+      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
+    }
+
+    // Marcar email como verificado
     await env.DB.prepare(
-      `UPDATE admin_approvals 
-       SET status = ?, approved_by = ?, updated_at = datetime('now') 
-       WHERE user_id = ?`
-    ).bind(status, admin.userId, userId).run();
+      'UPDATE users SET is_email_verified = TRUE WHERE id = ?'
+    ).bind(confirmation.user_id).run();
 
-    if (approve) {
-      // Ativar usuário se aprovado
-      await env.DB.prepare(
-        `UPDATE users 
-         SET is_approved = TRUE, is_active = TRUE, updated_at = datetime('now') 
-         WHERE id = ?`
-      ).bind(userId).run();
-    }
+    // Remover token usado
+    await env.DB.prepare(
+      'DELETE FROM email_confirmations WHERE token = ?'
+    ).bind(token).run();
 
     return successResponse({ 
-      message: `Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso` 
+      message: 'Email confirmado com sucesso!'
     }, 200, corsHeaders);
 
   } catch (error) {
-    console.error('Approve user error:', error);
+    console.error('Confirm email error:', error);
     return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
-async function handleGetAllUsers(request, env, jwt, corsHeaders) {
+async function handleResendConfirmation(request, env, jwt, corsHeaders) {
   try {
-    const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
+    const user = await authenticateUser(request, env, jwt);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
 
-    const users = await env.DB.prepare(
-      `SELECT id, username, email, role, is_active, is_approved, is_email_verified, created_at 
-       FROM users 
-       ORDER BY created_at DESC`
-    ).all();
+    // Gerar novo token
+    const emailToken = generateToken();
+    
+    // Remover tokens antigos
+    await env.DB.prepare(
+      'DELETE FROM email_confirmations WHERE user_id = ?'
+    ).bind(user.userId).run();
 
-    return successResponse({ users: users.results }, 200, corsHeaders);
+    // Criar nova confirmação
+    await env.DB.prepare(
+      `INSERT INTO email_confirmations (user_id, token, expires_at) 
+       VALUES (?, ?, datetime('now', '+1 day'))`
+    ).bind(user.userId, emailToken).run();
+
+    // Simular envio de email
+    console.log(`📧 Token de confirmação para ${user.email}: ${emailToken}`);
+
+    return successResponse({ 
+      message: 'Email de confirmação reenviado!',
+      debug_token: emailToken
+    }, 200, corsHeaders);
 
   } catch (error) {
-    console.error('Get all users error:', error);
+    console.error('Resend confirmation error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+async function handleForgotPassword(request, env, corsHeaders) {
+  try {
+    const { email } = await request.json();
+    
+    if (!email) {
+      return errorResponse('Email é obrigatório', 400, corsHeaders);
+    }
+
+    // Buscar usuário
+    const user = await env.DB.prepare(
+      'SELECT id, username FROM users WHERE email = ? AND is_active = TRUE'
+    ).bind(email).first();
+
+    if (user) {
+      // Gerar token de reset
+      const resetToken = generateToken();
+      await env.DB.prepare(
+        `INSERT INTO password_resets (user_id, token, expires_at) 
+         VALUES (?, ?, datetime('now', '+1 hour'))`
+      ).bind(user.id, resetToken).run();
+
+      // Simular envio de email
+      console.log(`🔐 Token de reset para ${email}: ${resetToken}`);
+    }
+
+    // Sempre retornar sucesso (segurança)
+    return successResponse({ 
+      message: 'Se o email existir, enviaremos instruções de recuperação.',
+      debug_token: user ? resetToken : undefined
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+async function handleResetPassword(request, env, corsHeaders) {
+  try {
+    const { token, newPassword } = await request.json();
+    
+    if (!token || !newPassword) {
+      return errorResponse('Token e nova password são obrigatórios', 400, corsHeaders);
+    }
+
+    if (newPassword.length < 8) {
+      return errorResponse('A password deve ter pelo menos 8 caracteres', 400, corsHeaders);
+    }
+
+    // Verificar token
+    const resetRequest = await env.DB.prepare(
+      `SELECT pr.*, u.id as user_id 
+       FROM password_resets pr 
+       JOIN users u ON pr.user_id = u.id 
+       WHERE pr.token = ? AND pr.expires_at > datetime('now') AND pr.used = FALSE`
+    ).bind(token).first();
+
+    if (!resetRequest) {
+      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
+    }
+
+    // Hash da nova password
+    const passwordHash = await hashPassword(newPassword);
+
+    // Atualizar password
+    await env.DB.prepare(
+      'UPDATE users SET password_hash = ? WHERE id = ?'
+    ).bind(passwordHash, resetRequest.user_id).run();
+
+    // Marcar token como usado
+    await env.DB.prepare(
+      'UPDATE password_resets SET used = TRUE WHERE token = ?'
+    ).bind(token).run();
+
+    return successResponse({ 
+      message: 'Password alterada com sucesso!'
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Reset password error:', error);
     return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
@@ -341,9 +438,26 @@ async function handleUpdateProfile(request, env, jwt, corsHeaders) {
        WHERE id = ?`
     ).bind(username, email, user.userId).run();
 
+    // Se email mudou, marcar como não verificado
+    if (email !== user.email) {
+      await env.DB.prepare(
+        'UPDATE users SET is_email_verified = FALSE WHERE id = ?'
+      ).bind(user.userId).run();
+      
+      // Gerar nova confirmação de email
+      const emailToken = generateToken();
+      await env.DB.prepare(
+        `INSERT INTO email_confirmations (user_id, token, expires_at) 
+         VALUES (?, ?, datetime('now', '+1 day'))`
+      ).bind(user.userId, emailToken).run();
+
+      console.log(`📧 Novo token de confirmação para ${email}: ${emailToken}`);
+    }
+
     return successResponse({ 
       message: 'Perfil atualizado com sucesso',
-      user: { username, email }
+      user: { username, email },
+      requires_email_verification: email !== user.email
     }, 200, corsHeaders);
 
   } catch (error) {
@@ -355,123 +469,181 @@ async function handleUpdateProfile(request, env, jwt, corsHeaders) {
   }
 }
 
-// ========== FUNÇÕES DE EMAIL E PASSWORD ==========
-
-async function handleConfirmEmail(request, env, jwt, corsHeaders) {
+async function handleChangePassword(request, env, jwt, corsHeaders) {
   try {
-    const { token } = await request.json();
+    const user = await authenticateUser(request, env, jwt);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
+
+    const { currentPassword, newPassword } = await request.json();
     
-    if (!token) {
-      return errorResponse('Token é obrigatório', 400, corsHeaders);
-    }
-
-    // Verificar token
-    const confirmation = await env.DB.prepare(
-      `SELECT ec.*, u.id as user_id 
-       FROM email_confirmations ec 
-       JOIN users u ON ec.user_id = u.id 
-       WHERE ec.token = ? AND ec.expires_at > datetime('now')`
-    ).bind(token).first();
-
-    if (!confirmation) {
-      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
-    }
-
-    // Marcar email como verificado
-    await env.DB.prepare(
-      'UPDATE users SET is_email_verified = TRUE WHERE id = ?'
-    ).bind(confirmation.user_id).run();
-
-    // Remover token usado
-    await env.DB.prepare(
-      'DELETE FROM email_confirmations WHERE token = ?'
-    ).bind(token).run();
-
-    return successResponse({ message: 'Email confirmado com sucesso!' }, 200, corsHeaders);
-
-  } catch (error) {
-    console.error('Confirm email error:', error);
-    return errorResponse('Erro interno no servidor', 500, corsHeaders);
-  }
-}
-
-async function handleForgotPassword(request, env, corsHeaders) {
-  try {
-    const { email } = await request.json();
-    
-    if (!email) {
-      return errorResponse('Email é obrigatório', 400, corsHeaders);
-    }
-
-    // Buscar usuário
-    const user = await env.DB.prepare(
-      'SELECT id FROM users WHERE email = ? AND is_active = TRUE'
-    ).bind(email).first();
-
-    if (user) {
-      // Gerar token de reset (simulado)
-      const resetToken = generateToken();
-      await env.DB.prepare(
-        `INSERT INTO password_resets (user_id, token, expires_at) 
-         VALUES (?, ?, datetime('now', '+1 hour'))`
-      ).bind(user.id, resetToken).run();
-
-      // Em produção, enviar email aqui
-      console.log(`Reset token for ${email}: ${resetToken}`);
-    }
-
-    // Sempre retornar sucesso por segurança
-    return successResponse({ 
-      message: 'Se o email existir, enviaremos instruções de reset' 
-    }, 200, corsHeaders);
-
-  } catch (error) {
-    console.error('Forgot password error:', error);
-    return errorResponse('Erro interno no servidor', 500, corsHeaders);
-  }
-}
-
-async function handleResetPassword(request, env, corsHeaders) {
-  try {
-    const { token, newPassword } = await request.json();
-    
-    if (!token || !newPassword) {
-      return errorResponse('Token e nova senha são obrigatórios', 400, corsHeaders);
+    if (!currentPassword || !newPassword) {
+      return errorResponse('Password atual e nova password são obrigatórias', 400, corsHeaders);
     }
 
     if (newPassword.length < 8) {
-      return errorResponse('A senha deve ter pelo menos 8 caracteres', 400, corsHeaders);
+      return errorResponse('A nova password deve ter pelo menos 8 caracteres', 400, corsHeaders);
     }
 
-    // Verificar token
-    const reset = await env.DB.prepare(
-      `SELECT pr.*, u.id as user_id 
-       FROM password_resets pr 
-       JOIN users u ON pr.user_id = u.id 
-       WHERE pr.token = ? AND pr.expires_at > datetime('now') AND pr.used = FALSE`
-    ).bind(token).first();
-
-    if (!reset) {
-      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
+    // Buscar usuário para verificar password atual
+    const userData = await env.DB.prepare(
+      'SELECT * FROM users WHERE id = ?'
+    ).bind(user.userId).first();
+    
+    if (!userData) {
+      return errorResponse('Utilizador não encontrado', 404, corsHeaders);
     }
 
-    // Hash da nova password
-    const passwordHash = await hashPassword(newPassword);
+    // Verificar password atual
+    const isCurrentValid = await verifyPassword(currentPassword, userData.password_hash);
+    if (!isCurrentValid) {
+      return errorResponse('Password atual incorreta', 401, corsHeaders);
+    }
+
+    // Gerar hash da nova password
+    const newPasswordHash = await hashPassword(newPassword);
 
     // Atualizar password
     await env.DB.prepare(
-      'UPDATE users SET password_hash = ? WHERE id = ?'
-    ).bind(passwordHash, reset.user_id).run();
+      'UPDATE users SET password_hash = ?, updated_at = datetime("now") WHERE id = ?'
+    ).bind(newPasswordHash, user.userId).run();
 
-    // Marcar token como usado
-    await env.DB.prepare(
-      'UPDATE password_resets SET used = TRUE WHERE token = ?'
-    ).bind(token).run();
-
-    return successResponse({ message: 'Password alterada com sucesso!' }, 200, corsHeaders);
+    return successResponse({ 
+      message: 'Password alterada com sucesso!' 
+    }, 200, corsHeaders);
 
   } catch (error) {
-    console.error('Reset password error:', error);
+    console.error('Change password error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+// ========== FUNÇÕES ADMINISTRATIVAS ==========
+
+async function handleGetPendingUsers(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
+
+    const users = await env.DB.prepare(
+      `SELECT u.id, u.username, u.email, u.created_at, a.created_at as approval_requested
+       FROM users u 
+       LEFT JOIN admin_approvals a ON u.id = a.user_id 
+       WHERE u.is_approved = FALSE AND a.status = 'pending'`
+    ).all();
+
+    return successResponse({ users: users.results }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Get pending users error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+async function handleApproveUser(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
+
+    const { userId, approve } = await request.json();
+    
+    if (typeof approve === 'undefined') {
+      return errorResponse('Parâmetro "approve" é obrigatório', 400, corsHeaders);
+    }
+
+    const status = approve ? 'approved' : 'rejected';
+    
+    // Atualizar aprovação
+    await env.DB.prepare(
+      `UPDATE admin_approvals 
+       SET status = ?, approved_by = ?, updated_at = datetime('now') 
+       WHERE user_id = ?`
+    ).bind(status, admin.userId, userId).run();
+
+    if (approve) {
+      // Ativar usuário se aprovado
+      await env.DB.prepare(
+        `UPDATE users 
+         SET is_approved = TRUE, is_active = TRUE, updated_at = datetime('now') 
+         WHERE id = ?`
+      ).bind(userId).run();
+
+      // Gerar token de confirmação de email para o usuário aprovado
+      const user = await env.DB.prepare('SELECT email FROM users WHERE id = ?').bind(userId).first();
+      if (user && !user.is_email_verified) {
+        const emailToken = generateToken();
+        await env.DB.prepare(
+          `INSERT INTO email_confirmations (user_id, token, expires_at) 
+           VALUES (?, ?, datetime('now', '+1 day'))`
+        ).bind(userId, emailToken).run();
+        console.log(`📧 Token de confirmação para ${user.email}: ${emailToken}`);
+      }
+    }
+
+    return successResponse({ 
+      message: `Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso` 
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Approve user error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+async function handleGetAllUsers(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
+
+    const users = await env.DB.prepare(
+      `SELECT id, username, email, role, is_active, is_approved, is_email_verified, created_at 
+       FROM users 
+       ORDER BY created_at DESC`
+    ).all();
+
+    return successResponse({ users: users.results }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Get all users error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+async function handleAdminUpdateUser(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
+
+    const { userId, username, email, role, is_active, is_approved } = await request.json();
+    
+    if (!userId) {
+      return errorResponse('ID do utilizador é obrigatório', 400, corsHeaders);
+    }
+
+    // Verificar se o utilizador existe
+    const userExists = await env.DB.prepare(
+      'SELECT id FROM users WHERE id = ?'
+    ).bind(userId).first();
+
+    if (!userExists) {
+      return errorResponse('Utilizador não encontrado', 404, corsHeaders);
+    }
+
+    // Atualizar utilizador
+    await env.DB.prepare(
+      `UPDATE users 
+       SET username = ?, email = ?, role = ?, is_active = ?, is_approved = ?, updated_at = datetime('now') 
+       WHERE id = ?`
+    ).bind(username, email, role, is_active, is_approved, userId).run();
+
+    return successResponse({ 
+      message: 'Utilizador atualizado com sucesso'
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Admin update user error:', error);
+    if (error.message.includes('UNIQUE constraint failed')) {
+      return errorResponse('Username ou email já existe', 409, corsHeaders);
+    }
     return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
@@ -496,7 +668,7 @@ async function authenticateAdmin(request, env, jwt) {
   return user;
 }
 
-async function checkRateLimit(request, env) {
+async function checkRateLimit(request) {
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
   const key = `${clientIP}:${new Date().getMinutes()}`;
   const limit = 100; // 100 requests por minuto
@@ -515,7 +687,7 @@ async function checkRateLimit(request, env) {
   }
 
   rateLimitStore.set(key, current + 1);
-  // Limpar dados antigos (em produção use KV com TTL)
+  // Limpar dados antigos
   setTimeout(() => rateLimitStore.delete(key), 60000);
   return null;
 }
@@ -559,7 +731,7 @@ function errorResponse(message, status = 400, corsHeaders) {
   });
 }
 
-// Função protegida mantida
+// Função protegida
 async function handleProtected(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);

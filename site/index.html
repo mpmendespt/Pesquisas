@@ -3,162 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistema de Pesquisas</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Pesquisas DS - Sistema de Gestão</title>
+    <link rel="stylesheet" href="../assets/css/site.css">
 </head>
-<body class="dashboard-page">
-    <div class="container">
-        <header class="header">
-            <h1>🏠 Dashboard Principal</h1>
-            <div class="user-info">
-                <span id="userWelcome">Bem-vindo!</span>
-                <button onclick="logout()" class="btn-secondary">Sair</button>
+<body>
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>🔬 Pesquisas DS</h1>
             </div>
-        </header>
-        
-        <main class="main-content">
-            <div class="welcome-section">
-                <h2>Olá, <span id="usernameDisplay"></span>!</h2>
-                <p>Você está logado no sistema de pesquisas.</p>
-                <div class="user-details">
-                    <p><strong>Email:</strong> <span id="userEmail"></span></p>
-                </div>
+            <div class="nav-links">
+                <a href="index.html">Início</a>
+                <a href="about.html">Sobre</a>
+                <a href="contact.html">Contacto</a>
+                <a href="../app/login.html" class="btn-login">Área de Membros</a>
             </div>
-            
-            <div class="actions-section">
-                <div class="card">
-                    <h3>📊 Dados Protegidos</h3>
-                    <p>Acesse informações restritas do sistema.</p>
-                    <button onclick="fetchProtectedData()" class="btn-primary">Buscar Dados</button>
-                </div>
-                
-                <div class="card">
-                    <h3>👤 Perfil</h3>
-                    <p>Gerencie suas informações de usuário.</p>
-                    <button onclick="showUserInfo()" class="btn-secondary">Ver Perfil</button>
-                </div>
-                
-                <div class="card">
-                    <h3>⚙️ Configurações</h3>
-                    <p>Configure suas preferências.</p>
-                    <button onclick="showSettings()" class="btn-secondary">Configurações</button>
-                </div>
-            </div>
-            
-            <div id="protectedData" class="data-section"></div>
-        </main>
-    </div>
+        </nav>
+    </header>
 
-    <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE COM SUA URL
-        
-        // Verificar autenticação ao carregar a página
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('jwt');
-            const userData = localStorage.getItem('user');
-            
-            if (!token) {
-                // Se não tem token, redireciona para login
-                window.location.href = '../login.html';
-                return;
-            }
-            
-            // Exibe informações do usuário
-            if (userData) {
-                const user = JSON.parse(userData);
-                document.getElementById('usernameDisplay').textContent = user.username;
-                document.getElementById('userEmail').textContent = user.email || 'Não informado';
-                document.getElementById('userWelcome').textContent = `Bem-vindo, ${user.username}!`;
-            }
-        });
-        
-        async function fetchProtectedData() {
-            const token = localStorage.getItem('jwt');
-            const dataDiv = document.getElementById('protectedData');
-            
-            dataDiv.innerHTML = '<div class="loading">🔄 Carregando dados protegidos...</div>';
-            
-            try {
-                const response = await fetch(`${WORKER_URL}/api/protected`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    dataDiv.innerHTML = `
-                        <div class="success-data">
-                            <h3>✅ Dados Protegidos Acessados</h3>
-                            <pre>${JSON.stringify(data, null, 2)}</pre>
-                        </div>
-                    `;
-                } else {
-                    dataDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
-                    
-                    // Se o token estiver inválido, faz logout
-                    if (response.status === 401) {
-                        setTimeout(logout, 2000);
-                    }
-                }
-            } catch (error) {
-                dataDiv.innerHTML = '<div class="error">❌ Erro ao carregar dados</div>';
-            }
-        }
-        
-        function showUserInfo() {
-            const userData = localStorage.getItem('user');
-            const dataDiv = document.getElementById('protectedData');
-            
-            if (userData) {
-                const user = JSON.parse(userData);
-                dataDiv.innerHTML = `
-                    <div class="user-data">
-                        <h3>👤 Informações do Usuário</h3>
-                        <div class="user-details">
-                            <p><strong>ID:</strong> ${user.id}</p>
-                            <p><strong>Usuário:</strong> ${user.username}</p>
-                            <p><strong>Email:</strong> ${user.email || 'Não informado'}</p>
-                            <p><strong>Token JWT:</strong> ${localStorage.getItem('jwt').substring(0, 20)}...</p>
-                        </div>
+    <main class="site-main">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Sistema de Gestão de Pesquisas</h2>
+                <p>Plataforma segura para gestão e análise de dados de pesquisa com autenticação avançada.</p>
+                <div class="hero-actions">
+                    <a href="../app/register.html" class="btn-primary">Começar Agora</a>
+                    <a href="../app/login.html" class="btn-secondary">Já tenho conta</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h3>Funcionalidades Principais</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h4>🔐 Autenticação Segura</h4>
+                        <p>Login com JWT, confirmação de email e recuperação de password.</p>
                     </div>
-                `;
-            }
-        }
-        
-        function showSettings() {
-            const dataDiv = document.getElementById('protectedData');
-            dataDiv.innerHTML = `
-                <div class="user-data">
-                    <h3>⚙️ Configurações</h3>
-                    <div class="user-details">
-                        <p>Configurações do sistema em desenvolvimento...</p>
-                        <button onclick="clearAllData()" class="btn-secondary">Limpar Dados Locais</button>
+                    <div class="feature-card">
+                        <h4>👥 Gestão de Utilizadores</h4>
+                        <p>Painel administrativo para aprovação e gestão de utilizadores.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📊 Análise de Dados</h4>
+                        <p>Ferramentas avançadas para análise e visualização de dados.</p>
                     </div>
                 </div>
-            `;
-        }
-        
-        function clearAllData() {
-            localStorage.clear();
-            alert('Dados locais limpos! Redirecionando para login...');
-            window.location.href = '../login.html';
-        }
-        
-        function logout() {
-            // Remove os dados de autenticação
-            localStorage.removeItem('jwt');
-            localStorage.removeItem('user');
-            
-            // Redireciona para a página de login
-            window.location.href = '../login.html';
-        }
-        
-        // Proteção adicional: verifica autenticação periodicamente
-        setInterval(() => {
-            if (!localStorage.getItem('jwt')) {
-                logout();
-            }
-        }, 30000); // Verifica a cada 30 segundos
-    </script>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Pesquisas DS. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
