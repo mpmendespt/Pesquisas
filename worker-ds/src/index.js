@@ -97,11 +97,77 @@ export default {
     if (url.pathname === '/api/admin/users/update' && request.method === 'PUT') {
       return await handleAdminUpdateUser(request, env, jwt, corsHeaders);
     }
+    
+    // Adicione esta nova rota após as rotas existentes
+    if (url.pathname === '/api/login-redirect' && request.method === 'POST') {
+      return await handleLoginRedirect(request, env, jwt, corsHeaders);
+    }
 
     // Rota não encontrada
     return errorResponse('Endpoint não encontrado', 404, corsHeaders);
   }
 };
+
+async function handleLoginRedirect(request, env, jwt, corsHeaders) {
+  try {
+    const { username, password } = await request.json();
+    
+    if (!username || !password) {
+      return errorResponse('Username e password são obrigatórios', 400, corsHeaders);
+    }
+    
+    // Buscar usuário
+    const user = await env.DB.prepare(
+      'SELECT * FROM users WHERE username = ?'
+    ).bind(username).first();
+    
+    if (!user) {
+      return errorResponse('Credenciais inválidas', 401, corsHeaders);
+    }
+    
+    // Verificar password
+    const isValid = await verifyPassword(password, user.password_hash);
+    if (!isValid) {
+      return errorResponse('Credenciais inválidas', 401, corsHeaders);
+    }
+
+    // Verificar se está aprovado
+    if (!user.is_approved) {
+      return errorResponse('Conta aguardando aprovação do administrador', 403, corsHeaders);
+    }
+
+    // Verificar se está ativo
+    if (!user.is_active) {
+      return errorResponse('Conta desativada. Contacte o administrador.', 403, corsHeaders);
+    }
+    
+    // Gerar JWT (24 horas)
+    const expiration = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
+    const token = await jwt.sign({
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      exp: expiration
+    });
+    
+    // ✅ CORREÇÃO: Redirecionamento HTTP real para URL relativa
+    const response = Response.redirect('/docs/index.html', 302);
+    
+    // Adicionar token como cookie
+    response.headers.append('Set-Cookie', 
+      `auth_token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${24 * 60 * 60}`
+    );
+    
+    return response;
+
+  } catch (error) {
+    console.error('Login redirect error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
+}
+
+
 
 // ========== FUNÇÕES DE AUTENTICAÇÃO ==========
 
@@ -219,7 +285,8 @@ async function handleLogin(request, env, jwt, corsHeaders) {
       exp: expiration
     });
     
-    return successResponse({
+    // CORREÇÃO: Redirecionar para URL relativa após login bem-sucedido
+    const response = successResponse({
       token: token,
       user: { 
         id: user.id, 
@@ -228,8 +295,11 @@ async function handleLogin(request, env, jwt, corsHeaders) {
         role: user.role,
         is_email_verified: user.is_email_verified
       },
-      expiresIn: expiration
+      expiresIn: expiration,
+      redirectTo: '/docs/index.html' // ✅ Adicionado campo de redirecionamento
     }, 200, corsHeaders);
+    
+    return response;
 
   } catch (error) {
     console.error('Login error:', error);
