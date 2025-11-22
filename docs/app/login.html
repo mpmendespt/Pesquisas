@@ -35,6 +35,15 @@
     </div>
 
 <script>
+        console.log('=== DEBUG INFO ===');
+    console.log('Current URL:', window.location.href);
+    console.log('Current path:', window.location.pathname);
+    console.log('Origin:', window.location.origin);
+    
+    const testUrl = '/Pesquisas/docs/index.html';
+    console.log('Test redirect URL:', new URL(testUrl, window.location.origin).href);
+    
+    //....................................
     const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
     
     // Função para detectar o caminho base correto
