@@ -60,9 +60,9 @@
                     
                     messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                     
-                    // ⚠️ REDIRECIONAMENTO ALTERADO: para site/index.html
+                    // ⚠️ REDIRECIONAMENTO ALTERADO: para docs/index.html
                     setTimeout(() => {
-                        window.location.href = 'site/index.html';
+                        window.location.href = 'docs/index.html';
                     }, 1000);
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
@@ -72,9 +72,9 @@
             }
         });
         
-        // Se já estiver logado, redireciona para /site/index.html
+        // Se já estiver logado, redireciona para /docs/index.html
         if (localStorage.getItem('jwt')) {
-            window.location.href = '/site/index.html';
+            window.location.href = '/docs/index.html';
         }
     </script>
 </body>

@@ -112,7 +112,7 @@
             <div class="user-info">
                 <span id="userWelcome">Administrador</span>
                 <button onclick="logout()" class="btn-secondary">Sair</button>
-                <button onclick="window.location.href='site/index.html'" class="btn-secondary">Voltar ao Dashboard</button>
+                <button onclick="window.location.href='docs/index.html'" class="btn-secondary">Voltar ao Dashboard</button>
             </div>
         </header>
 
@@ -183,7 +183,7 @@
                 const user = JSON.parse(userData);
                 if (user.role !== 'admin') {
                     alert('Acesso restrito a administradores!');
-                    window.location.href = 'site/index.html';
+                    window.location.href = 'docs/index.html';
                     return;
                 }
                 document.getElementById('userWelcome').textContent = `Admin: ${user.username}`;
