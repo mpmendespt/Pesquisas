@@ -19,13 +19,19 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+                
+                <div class="form-group">
                     <label for="password">Senha:</label>
-                    <input type="password" id="password" placeholder="Crie uma senha" required>
+                    <input type="password" id="password" placeholder="Mínimo 8 caracteres" required minlength="8">
+                    <small class="password-hint">A senha deve ter pelo menos 8 caracteres</small>
                 </div>
                 
                 <div class="form-group">
                     <label for="confirmPassword">Confirmar Senha:</label>
-                    <input type="password" id="confirmPassword" placeholder="Repita a senha" required>
+                    <input type="password" id="confirmPassword" placeholder="Repita a senha" required minlength="8">
                 </div>
                 
                 <button type="submit" class="btn-primary">Registrar</button>
@@ -40,24 +46,31 @@
     </div>
 
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE COM SUA URL
         
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const messageDiv = document.getElementById('message');
             
-            // Validação básica
+            // Validações
             if (password !== confirmPassword) {
                 messageDiv.innerHTML = '<div class="error">❌ As senhas não coincidem</div>';
                 return;
             }
             
-            if (password.length < 3) {
-                messageDiv.innerHTML = '<div class="error">❌ A senha deve ter pelo menos 3 caracteres</div>';
+            if (password.length < 8) {
+                messageDiv.innerHTML = '<div class="error">❌ A senha deve ter pelo menos 8 caracteres</div>';
+                return;
+            }
+            
+            // Validação de email básica
+            if (!email.includes('@') || !email.includes('.')) {
+                messageDiv.innerHTML = '<div class="error">❌ Por favor, insira um e-mail válido</div>';
                 return;
             }
             
@@ -65,7 +78,7 @@
                 const response = await fetch(`${WORKER_URL}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, email, password })
                 });
                 
                 const data = await response.json();

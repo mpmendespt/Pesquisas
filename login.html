@@ -35,7 +35,7 @@
     </div>
 
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE COM SUA URL
         
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -60,9 +60,9 @@
                     
                     messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                     
-                    // Redireciona para a página principal após 1 segundo
+                    // ⚠️ REDIRECIONAMENTO ALTERADO: para /site/index.html
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = '/site/index.html';
                     }, 1000);
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
@@ -72,9 +72,9 @@
             }
         });
         
-        // Se já estiver logado, redireciona para index.html
+        // Se já estiver logado, redireciona para /site/index.html
         if (localStorage.getItem('jwt')) {
-            window.location.href = 'index.html';
+            window.location.href = '/site/index.html';
         }
     </script>
 </body>

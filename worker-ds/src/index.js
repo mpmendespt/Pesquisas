@@ -34,7 +34,7 @@ export default {
       });
     }
 
-    // Rota de registro
+    // Rota de registro (AGORA COM EMAIL)
     if (url.pathname === '/api/register' && request.method === 'POST') {
       return await handleRegister(request, env, jwt, corsHeaders);
     }
@@ -63,7 +63,7 @@ export default {
   }
 };
 
-// Função de registro
+// Função de registro ATUALIZADA com email
 async function handleRegister(request, env, jwt, corsHeaders) {
   try {
     // Verificar Content-Type
@@ -75,11 +75,11 @@ async function handleRegister(request, env, jwt, corsHeaders) {
       });
     }
 
-    const { username, password } = await request.json();
+    const { username, email, password } = await request.json();
     
     // Validações
-    if (!username || !password) {
-      return new Response(JSON.stringify({ error: 'Username e password são obrigatórios' }), {
+    if (!username || !email || !password) {
+      return new Response(JSON.stringify({ error: 'Username, email e password são obrigatórios' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -92,8 +92,17 @@ async function handleRegister(request, env, jwt, corsHeaders) {
       });
     }
 
-    if (password.length < 3) {
-      return new Response(JSON.stringify({ error: 'Password deve ter pelo menos 3 caracteres' }), {
+    // Validar email
+    if (!validateEmail(email)) {
+      return new Response(JSON.stringify({ error: 'Email inválido' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Validar password (8 caracteres mínimo)
+    if (password.length < 8) {
+      return new Response(JSON.stringify({ error: 'Password deve ter pelo menos 8 caracteres' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -105,14 +114,14 @@ async function handleRegister(request, env, jwt, corsHeaders) {
     // Inserir no banco
     try {
       const result = await env.DB.prepare(
-        'INSERT INTO users (username, password_hash) VALUES (?, ?)'
-      ).bind(username, passwordHash).run();
+        'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)'
+      ).bind(username, email, passwordHash).run();
 
       if (result.success) {
         return new Response(JSON.stringify({ 
           success: true, 
           message: 'Usuário registrado com sucesso',
-          user: { username }
+          user: { username, email }
         }), {
           status: 201,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -122,13 +131,20 @@ async function handleRegister(request, env, jwt, corsHeaders) {
       }
       
     } catch (dbError) {
-      // Verificar se é erro de usuário duplicado
-      if (dbError.message.includes('UNIQUE constraint failed') || 
-          dbError.message.includes('already exists')) {
-        return new Response(JSON.stringify({ error: 'Username já existe' }), {
-          status: 409,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
+      // Verificar se é erro de usuário ou email duplicado
+      if (dbError.message.includes('UNIQUE constraint failed')) {
+        // Verificar qual campo duplicado
+        if (dbError.message.includes('users.username')) {
+          return new Response(JSON.stringify({ error: 'Username já existe' }), {
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else if (dbError.message.includes('users.email')) {
+          return new Response(JSON.stringify({ error: 'Email já existe' }), {
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
       }
       
       console.error('Database error:', dbError);
@@ -144,7 +160,7 @@ async function handleRegister(request, env, jwt, corsHeaders) {
   }
 }
 
-// Função de login
+// Função de login (mantida)
 async function handleLogin(request, env, jwt, corsHeaders) {
   try {
     // Verificar Content-Type
@@ -192,6 +208,7 @@ async function handleLogin(request, env, jwt, corsHeaders) {
     const token = await jwt.sign({
       userId: user.id,
       username: user.username,
+      email: user.email,
       exp: expiration
     });
     
@@ -200,7 +217,8 @@ async function handleLogin(request, env, jwt, corsHeaders) {
       token: token,
       user: { 
         id: user.id, 
-        username: user.username 
+        username: user.username,
+        email: user.email
       },
       expiresIn: expiration
     }), {
@@ -241,7 +259,7 @@ async function handleProtected(request, env, jwt, corsHeaders) {
     
     // Buscar dados atualizados do usuário
     const user = await env.DB.prepare(
-      'SELECT id, username, created_at FROM users WHERE id = ?'
+      'SELECT id, username, email, created_at FROM users WHERE id = ?'
     ).bind(payload.userId).first();
     
     if (!user) {
@@ -294,4 +312,10 @@ async function hashPassword(password) {
 async function verifyPassword(password, hash) {
   const newHash = await hashPassword(password);
   return newHash === hash;
+}
+
+// Função para validar email
+function validateEmail(email) {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
 }
