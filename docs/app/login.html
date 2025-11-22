@@ -37,6 +37,24 @@
 <script>
     const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
     
+    // Função para detectar o caminho base correto
+    function getBasePath() {
+        const currentPath = window.location.pathname;
+        // Se estamos em /Pesquisas/app/, o base path é /Pesquisas/
+        if (currentPath.includes('/Pesquisas/app/')) {
+            return '/Pesquisas/';
+        }
+        return '/Pesquisas/'; // Fallback
+    }
+    
+    function redirectToTarget() {
+        const baseUrl = window.location.origin;
+        const basePath = getBasePath();
+        // Remove duplicate "Pesquisas" if any
+        const cleanPath = basePath.replace(/\/Pesquisas\/Pesquisas\//, '/Pesquisas/');
+        window.location.href = `${baseUrl}${cleanPath}docs/index.html`;
+    }
+    
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -54,16 +72,13 @@
             const data = await response.json();
             
             if (response.ok) {
-                // Salva o token JWT
                 localStorage.setItem('jwt', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 
                 messageDiv.innerHTML = '<div class="success">✅ Login realizado! Redirecionando...</div>';
                 
-                // ✅ CORREÇÃO: Usar URL absoluta completa
                 setTimeout(() => {
-                    const baseUrl = window.location.origin;
-                    window.location.href = `${baseUrl}/Pesquisas/docs/index.html`;
+                    redirectToTarget();
                 }, 1000);
             } else {
                 messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
@@ -73,10 +88,9 @@
         }
     });
     
-    // Se já estiver logado, redireciona para docs/index.html
+    // Se já estiver logado, redireciona
     if (localStorage.getItem('jwt')) {
-        const baseUrl = window.location.origin;
-        window.location.href = `${baseUrl}/Pesquisas/docs/index.html`;
+        redirectToTarget();
     }
 </script>
 </body>
