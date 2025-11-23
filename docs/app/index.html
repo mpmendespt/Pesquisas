@@ -4,10 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Pesquisas</title>
-    <!-- ✅ CORREÇÃO: Caminho correto para CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        /* [mesmo CSS com o botão de acesso às pesquisas] */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .profile-info {
+            margin: 15px 0;
+        }
+        .profile-info p {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-verified {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #e67e22;
+            font-weight: bold;
+        }
+        .admin-badge {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 8px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        .data-section {
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .success-data {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            color: #721c24;
+        }
+        .welcome-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .welcome-section h2 {
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        .welcome-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        .access-button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
         .btn-access {
             background: white;
             color: #667eea;
@@ -22,6 +124,14 @@
             margin: 10px auto;
             display: block;
             max-width: 320px;
+        }
+        .btn-access:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #f8f9fa;
+        }
+        .btn-access:active {
+            transform: translateY(1px);
         }
     </style>
 </head>
@@ -38,7 +148,6 @@
             <div class="welcome-section">
                 <h2>Olá, <span id="usernameDisplay"></span><span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>!</h2>
                 <p>Você está logado no sistema de pesquisas.</p>
-                <!-- ✅ BOTÃO CORRIGIDO com caminho correto -->
                 <div class="access-button-container">
                     <button onclick="window.location.href='../Pesquisas_/index.html'" class="btn-access">
                         🔍 Acesso às Pesquisas
@@ -48,19 +157,389 @@
                     </p>
                 </div>
             </div>
-            <!-- [resto do conteúdo] -->
+            <div class="actions-section">
+                <!-- Card de Perfil -->
+                <div class="card">
+                    <h3>👤 Meu Perfil</h3>
+                    <div class="profile-info">
+                        <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+                        <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                        <p><strong>Estado:</strong> <span id="profileStatus"></span></p>
+                        <p><strong>Registro:</strong> <span id="profileCreated"></span></p>
+                    </div>
+                    <div class="profile-actions">
+                        <button onclick="openProfileModal()" class="btn-secondary">Editar Perfil</button>
+                        <button onclick="openPasswordModal()" class="btn-secondary">Alterar Password</button>
+                        <button onclick="resendConfirmation()" class="btn-secondary" id="resendConfirmationBtn" style="display:none;">Reenviar Confirmação</button>
+                    </div>
+                </div>
+                <!-- Card de Dados Protegidos -->
+                <div class="card">
+                    <h3>📊 Dados Protegidos</h3>
+                    <p>Acesse informações restritas do sistema.</p>
+                    <button onclick="fetchProtectedData()" class="btn-primary">Buscar Dados</button>
+                </div>
+                <!-- Card de Configurações -->
+                <div class="card">
+                    <h3>⚙️ Configurações</h3>
+                    <p>Configure suas preferências.</p>
+                    <button onclick="showSettings()" class="btn-secondary">Configurações</button>
+                </div>
+                <!-- Card de Administração (apenas para admins) -->
+                <div id="adminCard" class="card" style="display:none;">
+                    <h3>👑 Administração</h3>
+                    <p>Painel de controle administrativo.</p>
+                    <button onclick="window.location.href='admin.html'" class="btn-primary">Painel Admin</button>
+                </div>
+            </div>
+            <!-- Área para mostrar dados -->
+            <div id="protectedData" class="data-section"></div>
         </main>
     </div>
-    <!-- [modais] -->
+    <!-- Modal de Edição de Perfil -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProfileModal()">&times;</span>
+            <h3>👤 Editar Perfil</h3>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="editUsername">Username:</label>
+                    <input type="text" id="editUsername" required minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <button type="submit" class="btn-primary">Guardar Alterações</button>
+                <button type="button" onclick="closeProfileModal()" class="btn-secondary">Cancelar</button>
+            </form>
+            <div id="profileMessage" class="message"></div>
+        </div>
+    </div>
+    <!-- Modal de Alteração de Password -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePasswordModal()">&times;</span>
+            <h3>🔐 Alterar Password</h3>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Password Atual:</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nova Password:</label>
+                    <input type="password" id="newPassword" minlength="8" required>
+                    <small>Mínimo 8 caracteres</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Nova Password:</label>
+                    <input type="password" id="confirmPassword" minlength="8" required>
+                </div>
+                <button type="submit" class="btn-primary">Alterar Password</button>
+                <button type="button" onclick="closePasswordModal()" class="btn-secondary">Cancelar</button>
+            </form>
+            <div id="passwordMessage" class="message"></div>
+        </div>
+    </div>
     <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        // Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', async function() {
+            await validateSession();
+        });
+        // Função para validar sessão com backend
+        async function validateSession() {
+            const token = localStorage.getItem('jwt');
+            const userData = localStorage.getItem('user');
+            const user = userData ? JSON.parse(userData) : null;
+            if (!token || !user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            try {
+                const response = await fetch(`${WORKER_URL}/api/profile`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) {
+                    // Token inválido ou expirado
+                    localStorage.removeItem('jwt');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const data = await response.json();
+                // Atualizar dados do usuário
+                localStorage.setItem('user', JSON.stringify(data.user));
+                updateUserDisplay(data.user);
+                updateProfileDisplay(data.user);
+                // Mostrar card de admin se aplicável
+                if (data.user.role === 'admin') {
+                    document.getElementById('adminCard').style.display = 'block';
+                    document.getElementById('adminBadge').style.display = 'inline';
+                }
+            } catch (error) {
+                console.error('Session validation error:', error);
+                // Em caso de erro de conexão, mantém a sessão mas alerta
+                if (user) {
+                    updateUserDisplay(user);
+                    updateProfileDisplay(user);
+                } else {
+                    window.location.href = 'login.html';
+                }
+            }
+        }
+        // Atualizar display do usuário
+        function updateUserDisplay(user) {
+            document.getElementById('usernameDisplay').textContent = user.username;
+            document.getElementById('userWelcome').textContent = `Bem-vindo, ${user.username}!`;
+        }
+        // Atualizar informações do perfil na página
+        function updateProfileDisplay(user) {
+            document.getElementById('profileUsername').textContent = user.username || 'Não definido';
+            document.getElementById('profileEmail').textContent = user.email || 'Não definido';
+            const statusElement = document.getElementById('profileStatus');
+            if (user.is_email_verified) {
+                statusElement.textContent = '✓ Email verificado';
+                statusElement.className = 'status-verified';
+            } else {
+                statusElement.textContent = '✗ Email não verificado';
+                statusElement.className = 'status-pending';
+                document.getElementById('resendConfirmationBtn').style.display = 'block';
+            }
+            if (user.created_at) {
+                document.getElementById('profileCreated').textContent = new Date(user.created_at).toLocaleDateString('pt-PT');
+            }
+        }
+        // Funções do perfil
+        function openProfileModal() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            document.getElementById('editUsername').value = user.username || '';
+            document.getElementById('editEmail').value = user.email || '';
+            document.getElementById('profileModal').style.display = 'block';
+        }
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+            document.getElementById('profileMessage').innerHTML = '';
+        }
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordMessage').innerHTML = '';
+            document.getElementById('passwordForm').reset();
+        }
+        // Formulário de edição de perfil
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('editUsername').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const messageDiv = document.getElementById('profileMessage');
+            // Validações
+            if (username.length < 3) {
+                messageDiv.innerHTML = '<div class="error">❌ Username deve ter pelo menos 3 caracteres</div>';
+                return;
+            }
+            if (!email.includes('@')) {
+                messageDiv.innerHTML = '<div class="error">❌ Email inválido</div>';
+                return;
+            }
+            try {
+                messageDiv.innerHTML = '<div class="loading">🔄 Atualizando perfil...</div>';
+                const token = localStorage.getItem('jwt');
+                const response = await fetch(`${WORKER_URL}/api/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ username, email })
+                });
+                const data = await response.json();
+                messageDiv.innerHTML = '';
+                if (response.ok) {
+                    // Atualizar localStorage
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    user.username = username;
+                    user.email = email;
+                    if (data.requires_email_verification) {
+                        user.is_email_verified = false;
+                    }
+                    localStorage.setItem('user', JSON.stringify(user));
+                    // Atualizar display
+                    updateUserDisplay(user);
+                    updateProfileDisplay({...user, ...data.user});
+                    messageDiv.innerHTML = '<div class="success">✅ Perfil atualizado com sucesso!</div>';
+                    if (data.requires_email_verification) {
+                        messageDiv.innerHTML += '<div class="info">📧 Email alterado. Verifique seu novo email.</div>';
+                    }
+                    setTimeout(() => {
+                        closeProfileModal();
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Erro ao atualizar perfil'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão com o servidor</div>';
+                console.error('Profile update error:', error);
+            }
+        });
+        // Formulário de alteração de password
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('passwordMessage');
+            // Validações
+            if (newPassword !== confirmPassword) {
+                messageDiv.innerHTML = '<div class="error">❌ As novas passwords não coincidem</div>';
+                return;
+            }
+            if (newPassword.length < 8) {
+                messageDiv.innerHTML = '<div class="error">❌ A nova password deve ter pelo menos 8 caracteres</div>';
+                return;
+            }
+            try {
+                messageDiv.innerHTML = '<div class="loading">🔄 Alterando password...</div>';
+                const token = localStorage.getItem('jwt');
+                const response = await fetch(`${WORKER_URL}/api/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                const data = await response.json();
+                messageDiv.innerHTML = '';
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Password alterada com sucesso!</div>';
+                    setTimeout(() => {
+                        closePasswordModal();
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Erro ao alterar password'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão com o servidor</div>';
+                console.error('Password change error:', error);
+            }
+        });
+        // Reenviar confirmação de email
+        async function resendConfirmation() {
+            try {
+                const token = localStorage.getItem('jwt');
+                const response = await fetch(`${WORKER_URL}/api/resend-confirmation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('✅ Email de confirmação reenviado! Verifique sua caixa de entrada.');
+                    if (data.debug_token) {
+                        console.log('Debug token:', data.debug_token);
+                    }
+                } else {
+                    alert('❌ Erro ao reenviar confirmação: ' + (data.error || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                alert('❌ Erro de conexão com o servidor');
+                console.error('Resend confirmation error:', error);
+            }
+        }
+        // Buscar dados protegidos
+        async function fetchProtectedData() {
+            const token = localStorage.getItem('jwt');
+            const dataDiv = document.getElementById('protectedData');
+            dataDiv.innerHTML = '<div class="loading">🔄 Carregando dados protegidos...</div>';
+            try {
+                const response = await fetch(`${WORKER_URL}/api/protected`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    dataDiv.innerHTML = `
+                        <div class="success-data">
+                            <h3>✅ Dados Protegidos Acessados</h3>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    dataDiv.innerHTML = `<div class="error">❌ ${data.error || 'Acesso negado'}</div>`;
+                    // Se o token estiver inválido, faz logout
+                    if (response.status === 401) {
+                        setTimeout(() => {
+                            logout();
+                        }, 2000);
+                    }
+                }
+            } catch (error) {
+                dataDiv.innerHTML = '<div class="error">❌ Erro ao carregar dados: ' + error.message + '</div>';
+                console.error('Protected data error:', error);
+            }
+        }
+        function showSettings() {
+            const dataDiv = document.getElementById('protectedData');
+            dataDiv.innerHTML = `
+                <div class="user-data">
+                    <h3>⚙️ Configurações</h3>
+                    <div class="user-details">
+                        <p><strong>Usuário:</strong> ${JSON.parse(localStorage.getItem('user')).username}</p>
+                        <p><strong>Role:</strong> ${JSON.parse(localStorage.getItem('user')).role}</p>
+                        <p><strong>Token JWT:</strong> ${localStorage.getItem('jwt')?.substring(0, 20)}...</p>
+                        <p><strong>Sessão expira em:</strong> <span id="sessionExpires"></span></p>
+                        <button onclick="clearAllData()" class="btn-secondary">Limpar Dados Locais</button>
+                        <button onclick="testConnection()" class="btn-secondary">Testar Conexão</button>
+                    </div>
+                </div>
+            `;
+            // Calcular expiração da sessão
+            const token = localStorage.getItem('jwt');
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const expires = new Date(payload.exp * 1000);
+                    document.getElementById('sessionExpires').textContent = expires.toLocaleString('pt-PT');
+                } catch (e) {
+                    document.getElementById('sessionExpires').textContent = 'Desconhecido';
+                }
+            }
+        }
+        async function testConnection() {
+            try {
+                const response = await fetch(`${WORKER_URL}/api/health`);
+                const data = await response.json();
+                alert(`✅ Conexão OK
+Status: ${data.status}
+Serviço: ${data.service}
+Timestamp: ${new Date(data.timestamp).toLocaleString('pt-PT')}`);
+            } catch (error) {
+                alert('❌ Erro na conexão com o servidor: ' + error.message);
+                console.error('Connection test error:', error);
+            }
+        }
+        function clearAllData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados locais? Será necessário fazer login novamente.')) {
+                localStorage.clear();
+                alert('Dados locais limpos! Redirecionando para login...');
+                window.location.href = 'login.html';
+            }
+        }
         function logout() {
             localStorage.removeItem('jwt');
             localStorage.removeItem('user');
-            // ✅ CORREÇÃO: Caminho correto para login
             window.location.href = 'login.html';
         }
-        
-        // [resto do script]
+        // Verificar autenticação a cada 30 segundos
+        setInterval(() => {
+            if (!localStorage.getItem('jwt')) {
+                logout();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
