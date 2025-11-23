@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisas - Sistema de Gestão</title>
-    <!-- ✅ CORREÇÃO: Caminho correto para CSS -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .research-container {
@@ -12,8 +11,116 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .back-button {
-            margin-bottom: 20px;
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info span {
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .main-content {
+            padding: 20px 0;
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .welcome-section h2 {
+            margin-bottom: 10px;
+        }
+        
+        .research-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
         }
     </style>
 </head>
@@ -22,51 +129,141 @@
         <header class="header">
             <h1>🔬 Área de Pesquisas</h1>
             <div class="user-info">
-                <span id="userWelcome">Bem-vindo!</span>
-                <!-- ✅ CORREÇÃO: Caminho correto para dashboard -->
-                <button onclick="window.location.href='../app/dashboard.html'" class="btn-secondary back-button">← Voltar ao Dashboard</button>
+                <span id="userWelcome">Carregando...</span>
+                <button onclick="window.location.href='../app/index.html'" class="btn-secondary">← Voltar ao Dashboard</button>
+                <button onclick="logout()" class="btn-secondary">Sair</button>
             </div>
         </header>
+        
         <main class="main-content">
-            <div class="research-container">
+            <div class="welcome-section">
                 <h2>📊 Bem-vindo à Área de Pesquisas</h2>
-                <p>Esta é a área onde você pode gerenciar e analisar suas pesquisas.</p>
-                <!-- [conteúdo da página] -->
+                <p>Gerencie e analise suas pesquisas de forma eficiente</p>
+            </div>
+            
+            <div class="research-container">
+                <div class="research-cards">
+                    <div class="card">
+                        <h3>📝 Criar Nova Pesquisa</h3>
+                        <p>Inicie uma nova pesquisa com questionários personalizados e colete dados valiosos.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Criar Pesquisa</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📊 Minhas Pesquisas</h3>
+                        <p>Visualize e gerencie todas as suas pesquisas ativas e concluídas.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Ver Pesquisas</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📈 Relatórios</h3>
+                        <p>Analise os resultados com gráficos e relatórios detalhados.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Ver Relatórios</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>👥 Participantes</h3>
+                        <p>Gerencie os participantes e envie convites para suas pesquisas.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Gerenciar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>⚙️ Configurações</h3>
+                        <p>Configure as opções de privacidade e notificações das suas pesquisas.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Configurar</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>💾 Exportar Dados</h3>
+                        <p>Exporte os resultados das suas pesquisas em diversos formatos.</p>
+                        <button class="btn-primary" onclick="alert('Funcionalidade em desenvolvimento')">Exportar</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
+    
     <script>
-    // Adicionar no início de TODAS as páginas protegidas
-    document.addEventListener('DOMContentLoaded', function() {
-        const token = localStorage.getItem('jwt');
-        if (!token) {
-            window.location.href = APP_CONFIG.PATHS.LOGIN;
-            return;
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        // ✅ PROTEÇÃO: Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('jwt');
+            
+            if (!token) {
+                // Não está logado - redirecionar para login
+                console.log('Nenhum token encontrado - redirecionando para login');
+                window.location.href = '../app/login.html';
+                return;
+            }
+            
+            // Está logado - carregar dados do usuário
+            loadUserData(token);
+        });
+        
+        // Carregar dados do usuário
+        async function loadUserData(token) {
+            try {
+                // Tentar obter do localStorage primeiro
+                const storedUser = localStorage.getItem('user');
+                
+                if (storedUser) {
+                    const user = JSON.parse(storedUser);
+                    document.getElementById('userWelcome').textContent = `Olá, ${user.username}!`;
+                }
+                
+                // Verificar se o token ainda é válido
+                const response = await fetch(`${WORKER_URL}/api/protected`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    // Token inválido ou expirado
+                    console.log('Token inválido ou expirado');
+                    logout();
+                    return;
+                }
+                
+                // Token válido - atualizar dados se necessário
+                const data = await response.json();
+                console.log('Acesso autorizado:', data);
+                
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                
+                // Se houver erro mas tem dados locais, continua funcionando
+                const storedUser = localStorage.getItem('user');
+                if (!storedUser) {
+                    // Sem dados locais e sem conexão - fazer logout
+                    logout();
+                }
+            }
         }
         
-        // Verificar se token é válido
-        verifyToken(token);
-    });
-
-    async function verifyToken(token) {
-        try {
-            const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/protected`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+        // ✅ FUNÇÃO DE LOGOUT
+        function logout() {
+            // Limpar dados de autenticação
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('user');
             
-            if (!response.ok) {
-                // Token inválido ou expirado
-                localStorage.removeItem('jwt');
-                localStorage.removeItem('user');
-                window.location.href = APP_CONFIG.PATHS.LOGIN;
-            }
-        } catch (error) {
-            console.error('Token verification error:', error);
+            console.log('Logout realizado - redirecionando para login');
+            
+            // Redirecionar para página de login
+            window.location.href = '../app/login.html';
         }
-    }
+        
+        // ✅ PROTEÇÃO: Verificar autenticação periodicamente (a cada 5 minutos)
+        setInterval(function() {
+            const token = localStorage.getItem('jwt');
+            if (!token) {
+                console.log('Token não encontrado - fazendo logout');
+                logout();
+            }
+        }, 5 * 60 * 1000); // 5 minutos
     </script>
 </body>
 </html>
