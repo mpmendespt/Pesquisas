@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - Sistema de Pesquisas</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         .admin-container {
             max-width: 1200px;
@@ -103,6 +103,25 @@
         .tab-content.active {
             display: block;
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 5px;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            color: #155724;
+        }
     </style>
 </head>
 <body class="dashboard-page">
@@ -112,10 +131,9 @@
             <div class="user-info">
                 <span id="userWelcome">Administrador</span>
                 <button onclick="logout()" class="btn-secondary">Sair</button>
-                <button onclick="window.location.href='docs/index.html'" class="btn-secondary">Voltar ao Dashboard</button>
+                <button onclick="goToDashboard()" class="btn-secondary">Voltar ao Dashboard</button>
             </div>
         </header>
-
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalUsers">0</div>
@@ -134,28 +152,24 @@
                 <div>Email Verificado</div>
             </div>
         </div>
-
         <div class="tab-container">
             <div class="tab-buttons">
                 <button class="tab-button active" onclick="openTab('pending')">Aprovações Pendentes</button>
                 <button class="tab-button" onclick="openTab('all')">Todos os Usuários</button>
                 <button class="tab-button" onclick="openTab('system')">Sistema</button>
             </div>
-
             <div id="pending" class="tab-content active">
                 <h2>Usuários Aguardando Aprovação</h2>
                 <div class="users-table">
                     <div id="pendingUsersList" class="loading">Carregando usuários pendentes...</div>
                 </div>
             </div>
-
             <div id="all" class="tab-content">
                 <h2>Todos os Usuários</h2>
                 <div class="users-table">
                     <div id="allUsersList" class="loading">Carregando todos os usuários...</div>
                 </div>
             </div>
-
             <div id="system" class="tab-content">
                 <h2>Configurações do Sistema</h2>
                 <div class="card">
@@ -165,9 +179,20 @@
             </div>
         </div>
     </div>
-
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        // Função corrigida para ir ao dashboard
+        function goToDashboard() {
+            window.location.href = 'index.html'; // docs/app/index.html
+        }
+        
+        // Função corrigida para logout
+        function logout() {
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html'; // docs/app/login.html
+        }
 
         // Verificar se é administrador
         document.addEventListener('DOMContentLoaded', function() {
@@ -178,25 +203,27 @@
                 window.location.href = 'login.html';
                 return;
             }
-
+            
             if (userData) {
                 const user = JSON.parse(userData);
                 if (user.role !== 'admin') {
                     alert('Acesso restrito a administradores!');
-                    window.location.href = 'docs/index.html';
+                    window.location.href = 'index.html'; // Redireciona para dashboard normal
                     return;
                 }
                 document.getElementById('userWelcome').textContent = `Admin: ${user.username}`;
             }
-
+            
             loadAdminData();
         });
 
         async function loadAdminData() {
-            await loadStats();
-            await loadPendingUsers();
-            await loadAllUsers();
-            await loadWorkerStats();
+            await Promise.all([
+                loadStats(),
+                loadPendingUsers(),
+                loadAllUsers(),
+                loadWorkerStats()
+            ]);
         }
 
         async function loadStats() {
@@ -205,11 +232,9 @@
                 const response = await fetch(`${WORKER_URL}/api/admin/users`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
                 if (response.ok) {
                     const data = await response.json();
                     const users = data.users;
-                    
                     const total = users.length;
                     const pending = users.filter(u => !u.is_approved).length;
                     const active = users.filter(u => u.is_active).length;
@@ -231,7 +256,6 @@
                 const response = await fetch(`${WORKER_URL}/api/admin/users/pending`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
                 if (response.ok) {
                     const data = await response.json();
                     displayPendingUsers(data.users);
@@ -249,7 +273,6 @@
                 const response = await fetch(`${WORKER_URL}/api/admin/users`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
                 if (response.ok) {
                     const data = await response.json();
                     displayAllUsers(data.users);
@@ -266,7 +289,7 @@
                 document.getElementById('pendingUsersList').innerHTML = '<div class="success">Nenhum usuário pendente</div>';
                 return;
             }
-
+            
             let html = `
                 <table>
                     <thead>
@@ -280,14 +303,13 @@
                     </thead>
                     <tbody>
             `;
-
             users.forEach(user => {
                 html += `
                     <tr>
                         <td>${user.id}</td>
                         <td>${user.username}</td>
                         <td>${user.email}</td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('pt-PT')}</td>
                         <td>
                             <button class="btn-approve" onclick="approveUser(${user.id}, true)">Aprovar</button>
                             <button class="btn-reject" onclick="approveUser(${user.id}, false)">Rejeitar</button>
@@ -295,7 +317,6 @@
                     </tr>
                 `;
             });
-
             html += '</tbody></table>';
             document.getElementById('pendingUsersList').innerHTML = html;
         }
@@ -305,7 +326,7 @@
                 document.getElementById('allUsersList').innerHTML = '<div class="success">Nenhum usuário registrado</div>';
                 return;
             }
-
+            
             let html = `
                 <table>
                     <thead>
@@ -321,16 +342,13 @@
                     </thead>
                     <tbody>
             `;
-
             users.forEach(user => {
                 const status = user.is_approved ? 
                     (user.is_active ? '<span class="status-approved">Ativo</span>' : '<span class="status-rejected">Inativo</span>') : 
                     '<span class="status-pending">Pendente</span>';
-                
                 const emailStatus = user.is_email_verified ? 
                     '<span class="status-approved">✓</span>' : 
                     '<span class="status-pending">✗</span>';
-
                 html += `
                     <tr>
                         <td>${user.id}</td>
@@ -339,11 +357,10 @@
                         <td>${user.role}</td>
                         <td>${status}</td>
                         <td>${emailStatus}</td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('pt-PT')}</td>
                     </tr>
                 `;
             });
-
             html += '</tbody></table>';
             document.getElementById('allUsersList').innerHTML = html;
         }
@@ -352,7 +369,7 @@
             if (!confirm(`Tem certeza que deseja ${approve ? 'aprovar' : 'rejeitar'} este usuário?`)) {
                 return;
             }
-
+            
             try {
                 const token = localStorage.getItem('jwt');
                 const response = await fetch(`${WORKER_URL}/api/admin/users/approve`, {
@@ -363,16 +380,18 @@
                     },
                     body: JSON.stringify({ userId, approve })
                 });
-
+                
                 if (response.ok) {
-                    alert(`Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso!`);
+                    const result = await response.json();
+                    alert(`✅ ${result.message}`);
                     loadAdminData(); // Recarregar dados
                 } else {
                     const error = await response.json();
-                    alert('Erro: ' + error.error);
+                    alert(`❌ Erro: ${error.error || 'Falha na operação'}`);
                 }
             } catch (error) {
-                alert('Erro de conexão');
+                alert('❌ Erro de conexão com o servidor');
+                console.error('Approve user error:', error);
             }
         }
 
@@ -383,12 +402,17 @@
                     const data = await response.json();
                     document.getElementById('workerStats').innerHTML = `
                         <p><strong>Status:</strong> <span class="status-approved">${data.status}</span></p>
-                        <p><strong>Última verificação:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                        <p><strong>Última verificação:</strong> ${new Date(data.timestamp).toLocaleString('pt-PT')}</p>
                         <p><strong>Serviço:</strong> ${data.service}</p>
+                        <p><strong>Endpoints disponíveis:</strong></p>
+                        <ul>
+                            ${data.endpoints.map(endpoint => `<li>${endpoint}</li>`).join('')}
+                        </ul>
                     `;
                 }
             } catch (error) {
                 document.getElementById('workerStats').innerHTML = '<div class="error">Erro ao conectar com o Worker</div>';
+                console.error('Worker stats error:', error);
             }
         }
 
@@ -397,19 +421,17 @@
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
+            
+            // Remover classe active de todos os botões
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
-
+            
             // Mostrar tab selecionada
             document.getElementById(tabName).classList.add('active');
+            
+            // Adicionar classe active ao botão clicado
             event.currentTarget.classList.add('active');
-        }
-
-        function logout() {
-            localStorage.removeItem('jwt');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
         }
     </script>
 </body>
