@@ -788,4 +788,4 @@ Quer que eu te monte um **exemplo completo de `_quarto.yml`** e um **`custom.css
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

@@ -317,4 +317,4 @@ Deseja que eu também prepare uma **versão em inglês** (útil se precisar cons
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

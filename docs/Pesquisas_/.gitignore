@@ -12,6 +12,8 @@ combined_pdfs/
 comb_fragments_system10.3.0_html_export.py
 data/
 export/
+tmp/
+backup/
 
 # Arquivos de desenvolvimento temporários
 *.tmp

@@ -753,4 +753,4 @@ Isso vai gerar um `.ttf` dentro da pasta `build/`.
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

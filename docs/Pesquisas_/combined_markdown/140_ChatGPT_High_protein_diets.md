@@ -99,4 +99,4 @@ Para atletas, pessoas que estão buscando ganhar massa muscular, idosos ou indiv
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

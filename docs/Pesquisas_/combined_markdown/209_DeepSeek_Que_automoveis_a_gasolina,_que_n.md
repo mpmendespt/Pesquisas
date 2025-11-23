@@ -77,4 +77,4 @@ Se precisares de mais ajuda ou quiseres saber sobre um modelo específico, é s�
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

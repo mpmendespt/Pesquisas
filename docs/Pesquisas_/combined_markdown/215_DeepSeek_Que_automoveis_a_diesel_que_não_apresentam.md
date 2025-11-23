@@ -86,4 +86,4 @@ Se estiver à procura de um carro a diesel fiável em Portugal, optar por modelo
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

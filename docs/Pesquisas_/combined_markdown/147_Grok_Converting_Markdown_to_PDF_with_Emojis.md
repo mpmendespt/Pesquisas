@@ -2321,4 +2321,4 @@ If the warnings persist after using the updated `header.tex`, or if you prefer t
 ---
 
 *Conversa exportada do Grok*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

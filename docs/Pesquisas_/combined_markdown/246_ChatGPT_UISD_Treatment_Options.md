@@ -119,4 +119,4 @@ It's important to have a comprehensive evaluation by a healthcare professional t
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*

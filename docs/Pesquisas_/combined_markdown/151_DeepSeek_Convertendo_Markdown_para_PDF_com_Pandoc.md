@@ -697,4 +697,4 @@ pandoc exemplo.md -o exemplo.pdf --pdf-engine=lualatex --include-in-header=heade
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 15/11/2025 22:27*
+*Processado em: 23/11/2025 14:36*
