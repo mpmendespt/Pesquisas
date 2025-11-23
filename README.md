@@ -46,25 +46,6 @@ Este projeto implementa uma aplicação web completa utilizando:
 - [x] Mensagens de feedback
 - [x] Dados protegidos por JWT
 
-## 📁 Estrutura do Projeto
-Pesquisas/
-├── docs/
-│   ├── index.html           # Página inicial pública
-│   ├── about.html           # Sobre (mantido)
-│   ├── contact.html         # Contacto (mantido)
-│   ├── app/
-│   │   ├── index.html       # Dashboard (COM botão acesso pesquisas)
-│   │   ├── login.html       # Login (redirecionamento corrigido)
-│   │   ├── register.html    # Registro (redirecionamento corrigido)
-│   │   └── admin.html       # Admin (redirecionamento corrigido)
-│   ├── Pesquisas_/
-│   │   └── index.html       # Nova página de pesquisas
-│   └── assets/
-│       └── css/
-│           ├── site.css     # CSS para página inicial
-│           └── style.css    # CSS para dashboard e páginas internas
-└── worker-ds/               # Mantido como está
-└── 📄 README.md
 
 ## ⚙️ Configuração
 
