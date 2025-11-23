@@ -36,21 +36,37 @@
         </main>
     </div>
     <script>
-        // Verificar se está logado
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('jwt');
-            if (!token) {
-                // ✅ CORREÇÃO: Caminho correto para login
-                window.location.href = '../app/login.html';
-            }
+    // Adicionar no início de TODAS as páginas protegidas
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            window.location.href = APP_CONFIG.PATHS.LOGIN;
+            return;
+        }
+        
+        // Verificar se token é válido
+        verifyToken(token);
+    });
+
+    async function verifyToken(token) {
+        try {
+            const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/protected`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             
-            // Atualizar nome do usuário
-            const userData = localStorage.getItem('user');
-            if (userData) {
-                const user = JSON.parse(userData);
-                document.getElementById('userWelcome').textContent = `Olá, ${user.username}!`;
+            if (!response.ok) {
+                // Token inválido ou expirado
+                localStorage.removeItem('jwt');
+                localStorage.removeItem('user');
+                window.location.href = APP_CONFIG.PATHS.LOGIN;
             }
-        });
+        } catch (error) {
+            console.error('Token verification error:', error);
+        }
+    }
     </script>
 </body>
 </html>
