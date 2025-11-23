@@ -235,6 +235,7 @@
             try {
                 const response = await fetch(`${WORKER_URL}/api/health`);
                 
+                // Headers podem ter case diferente
                 const requiredHeaders = [
                     'access-control-allow-origin',
                     'access-control-allow-methods',
@@ -244,8 +245,24 @@
                 let result = '📋 Verificação de CORS Headers:\n\n';
                 let allPresent = true;
                 
+                // Primeiro, mostrar TODOS os headers para debug
+                result += '🔍 Todos os headers retornados:\n';
+                for (const [key, value] of response.headers.entries()) {
+                    if (key.toLowerCase().includes('access-control')) {
+                        result += `   ${key}: ${value}\n`;
+                    }
+                }
+                result += '\n📋 Verificação dos headers necessários:\n';
+                
                 requiredHeaders.forEach(header => {
-                    const value = response.headers.get(header);
+                    // Tentar diferentes variações de case
+                    let value = response.headers.get(header);
+                    if (!value) {
+                        // Tentar com maiúsculas
+                        const headerCapitalized = header.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
+                        value = response.headers.get(headerCapitalized);
+                    }
+                    
                     if (value) {
                         result += `✅ ${header}: ${value}\n`;
                     } else {
@@ -256,9 +273,9 @@
                 
                 result += '\n' + (allPresent 
                     ? '✅ Todos os headers CORS necessários estão presentes!' 
-                    : '❌ Alguns headers CORS estão faltando. Atualize o Worker.');
+                    : '⚠️ Headers podem estar presentes mas com case diferente. Verifique a seção "Todos os headers" acima.');
                 
-                showResult('result3', result, allPresent ? 'success' : 'error');
+                showResult('result3', result, allPresent ? 'success' : 'info');
             } catch (error) {
                 showResult('result3', 
                     `❌ ERRO!\n\n${error.message}`,

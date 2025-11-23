@@ -8,33 +8,29 @@ export default {
     const url = new URL(request.url);
     const jwt = new JWT(env.JWT_SECRET);
 
-    // ✅ CRÍTICO: CORS Headers - Definidos aqui para serem usados em TODAS as respostas
+    // Aplicar rate limiting
+    const rateLimitResult = await checkRateLimit(request);
+    if (rateLimitResult) return rateLimitResult;
+
+    // CORS headers
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'https://mpmendespt.github.io',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Max-Age': '86400',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      'Access-Control-Allow-Credentials': 'true'
     };
 
-    // ✅ CRÍTICO: Responder OPTIONS imediatamente (ANTES de qualquer outra lógica)
+    // Handle preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders
-      });
+      return new Response(null, { headers: corsHeaders });
     }
-
-    // Aplicar rate limiting
-    const rateLimitResult = await checkRateLimit(request, corsHeaders);
-    if (rateLimitResult) return rateLimitResult;
 
     // Rotas públicas
     if (url.pathname === '/api/health') {
-      return jsonResponse({ 
+      return successResponse({ 
         status: 'ok', 
         timestamp: new Date().toISOString(),
         service: 'Pesquisas DS API',
-        version: '1.0.0',
         endpoints: [
           '/api/register', '/api/login', '/api/confirm-email',
           '/api/forgot-password', '/api/reset-password', '/api/profile',
@@ -68,7 +64,7 @@ export default {
       return await handleResendConfirmation(request, env, jwt, corsHeaders);
     }
 
-    // Rotas protegidas
+    // Rotas protegidas (usuário logado)
     if (url.pathname === '/api/protected' && request.method === 'GET') {
       return await handleProtected(request, env, jwt, corsHeaders);
     }
@@ -101,22 +97,41 @@ export default {
     if (url.pathname === '/api/admin/users/update' && request.method === 'PUT') {
       return await handleAdminUpdateUser(request, env, jwt, corsHeaders);
     }
+    
+    // Adicione esta nova rota após as rotas existentes
+    if (url.pathname === '/api/login-redirect' && request.method === 'POST') {
+      return await handleLoginRedirect(request, env, jwt, corsHeaders);
+    }
 
     // Rota não encontrada
-    return jsonResponse({ error: 'Endpoint não encontrado' }, 404, corsHeaders);
+    return errorResponse('Endpoint não encontrado', 404, corsHeaders);
   }
 };
 
-// ========== FUNÇÃO AUXILIAR PARA JSON RESPONSES ==========
-function jsonResponse(data, status = 200, corsHeaders = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      ...corsHeaders
-    }
-  });
+async function handleLoginRedirect(request, env, jwt, corsHeaders) {
+  try {
+    const { username, password } = await request.json();
+    
+    // ... (código de autenticação)
+    
+    // ✅ CORREÇÃO: Redirecionamento absoluto correto para o repositório
+    const redirectUrl = 'https://mpmendespt.github.io/Pesquisas/docs/index.html';
+    const response = Response.redirect(redirectUrl, 302);
+    
+    // Adicionar token como cookie
+    response.headers.append('Set-Cookie', 
+      `auth_token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${24 * 60 * 60}`
+    );
+    
+    return response;
+
+  } catch (error) {
+    console.error('Login redirect error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
 }
+
+
 
 // ========== FUNÇÕES DE AUTENTICAÇÃO ==========
 
@@ -124,24 +139,27 @@ async function handleRegister(request, env, jwt, corsHeaders) {
   try {
     const { username, email, password } = await request.json();
     
+    // Validações
     if (!username || !email || !password) {
-      return jsonResponse({ error: 'Todos os campos são obrigatórios' }, 400, corsHeaders);
+      return errorResponse('Todos os campos são obrigatórios', 400, corsHeaders);
     }
 
     if (username.length < 3) {
-      return jsonResponse({ error: 'Username deve ter pelo menos 3 caracteres' }, 400, corsHeaders);
+      return errorResponse('Username deve ter pelo menos 3 caracteres', 400, corsHeaders);
     }
 
     if (password.length < 8) {
-      return jsonResponse({ error: 'A password deve ter pelo menos 8 caracteres' }, 400, corsHeaders);
+      return errorResponse('A password deve ter pelo menos 8 caracteres', 400, corsHeaders);
     }
 
     if (!validateEmail(email)) {
-      return jsonResponse({ error: 'Email inválido' }, 400, corsHeaders);
+      return errorResponse('Email inválido', 400, corsHeaders);
     }
 
+    // Hash da password
     const passwordHash = await hashPassword(password);
     
+    // Inserir usuário (não aprovado por padrão)
     try {
       const result = await env.DB.prepare(
         `INSERT INTO users (username, email, password_hash, is_active, is_approved) 
@@ -149,19 +167,22 @@ async function handleRegister(request, env, jwt, corsHeaders) {
       ).bind(username, email, passwordHash, false, false).run();
 
       if (result.success) {
+        // Criar registro de aprovação pendente
         await env.DB.prepare(
           'INSERT INTO admin_approvals (user_id, status) VALUES (?, ?)'
         ).bind(result.meta.last_row_id, 'pending').run();
 
+        // Gerar token de confirmação de email
         const emailToken = generateToken();
         await env.DB.prepare(
           `INSERT INTO email_confirmations (user_id, token, expires_at) 
            VALUES (?, ?, datetime('now', '+1 day'))`
         ).bind(result.meta.last_row_id, emailToken).run();
 
+        // Simular envio de email
         console.log(`📧 Token de confirmação para ${email}: ${emailToken}`);
 
-        return jsonResponse({
+        return successResponse({
           message: 'Registro realizado! Aguarde aprovação do administrador.',
           requires_approval: true,
           user_id: result.meta.last_row_id,
@@ -171,9 +192,9 @@ async function handleRegister(request, env, jwt, corsHeaders) {
     } catch (dbError) {
       if (dbError.message.includes('UNIQUE constraint failed')) {
         if (dbError.message.includes('username')) {
-          return jsonResponse({ error: 'Nome de usuário já existe' }, 409, corsHeaders);
+          return errorResponse('Nome de usuário já existe', 409, corsHeaders);
         } else if (dbError.message.includes('email')) {
-          return jsonResponse({ error: 'Email já está em uso' }, 409, corsHeaders);
+          return errorResponse('Email já está em uso', 409, corsHeaders);
         }
       }
       throw dbError;
@@ -181,7 +202,7 @@ async function handleRegister(request, env, jwt, corsHeaders) {
 
   } catch (error) {
     console.error('Registration error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -190,30 +211,35 @@ async function handleLogin(request, env, jwt, corsHeaders) {
     const { username, password } = await request.json();
     
     if (!username || !password) {
-      return jsonResponse({ error: 'Username e password são obrigatórios' }, 400, corsHeaders);
+      return errorResponse('Username e password são obrigatórios', 400, corsHeaders);
     }
     
+    // Buscar usuário
     const user = await env.DB.prepare(
       'SELECT * FROM users WHERE username = ?'
     ).bind(username).first();
     
     if (!user) {
-      return jsonResponse({ error: 'Credenciais inválidas' }, 401, corsHeaders);
+      return errorResponse('Credenciais inválidas', 401, corsHeaders);
     }
     
+    // Verificar password
     const isValid = await verifyPassword(password, user.password_hash);
     if (!isValid) {
-      return jsonResponse({ error: 'Credenciais inválidas' }, 401, corsHeaders);
+      return errorResponse('Credenciais inválidas', 401, corsHeaders);
     }
 
+    // Verificar se está aprovado
     if (!user.is_approved) {
-      return jsonResponse({ error: 'Conta aguardando aprovação do administrador' }, 403, corsHeaders);
+      return errorResponse('Conta aguardando aprovação do administrador', 403, corsHeaders);
     }
 
+    // Verificar se está ativo
     if (!user.is_active) {
-      return jsonResponse({ error: 'Conta desativada. Contacte o administrador.' }, 403, corsHeaders);
+      return errorResponse('Conta desativada. Contacte o administrador.', 403, corsHeaders);
     }
     
+    // Gerar JWT (24 horas)
     const expiration = Math.floor(Date.now() / 1000) + (24 * 60 * 60);
     const token = await jwt.sign({
       userId: user.id,
@@ -223,7 +249,8 @@ async function handleLogin(request, env, jwt, corsHeaders) {
       exp: expiration
     });
     
-    return jsonResponse({
+    // ✅ CORREÇÃO: Redirecionamento para o path correto do repositório
+    return successResponse({
       token: token,
       user: { 
         id: user.id, 
@@ -232,23 +259,27 @@ async function handleLogin(request, env, jwt, corsHeaders) {
         role: user.role,
         is_email_verified: user.is_email_verified
       },
-      expiresIn: expiration
+      expiresIn: expiration,
+      redirectTo: 'https://mpmendespt.github.io/Pesquisas/app/dashboard.html'  //'/Pesquisas/docs/index.html' // ✅ Caminho correto para o repositório
     }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Login error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
+
+// ========== FUNÇÕES DE EMAIL E PASSWORD ==========
 
 async function handleConfirmEmail(request, env, corsHeaders) {
   try {
     const { token } = await request.json();
     
     if (!token) {
-      return jsonResponse({ error: 'Token é obrigatório' }, 400, corsHeaders);
+      return errorResponse('Token é obrigatório', 400, corsHeaders);
     }
 
+    // Verificar token
     const confirmation = await env.DB.prepare(
       `SELECT ec.*, u.id as user_id 
        FROM email_confirmations ec 
@@ -257,51 +288,59 @@ async function handleConfirmEmail(request, env, corsHeaders) {
     ).bind(token).first();
 
     if (!confirmation) {
-      return jsonResponse({ error: 'Token inválido ou expirado' }, 400, corsHeaders);
+      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
     }
 
+    // Marcar email como verificado
     await env.DB.prepare(
       'UPDATE users SET is_email_verified = TRUE WHERE id = ?'
     ).bind(confirmation.user_id).run();
 
+    // Remover token usado
     await env.DB.prepare(
       'DELETE FROM email_confirmations WHERE token = ?'
     ).bind(token).run();
 
-    return jsonResponse({ message: 'Email confirmado com sucesso!' }, 200, corsHeaders);
+    return successResponse({ 
+      message: 'Email confirmado com sucesso!'
+    }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Confirm email error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleResendConfirmation(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
-    if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
 
+    // Gerar novo token
     const emailToken = generateToken();
     
+    // Remover tokens antigos
     await env.DB.prepare(
       'DELETE FROM email_confirmations WHERE user_id = ?'
     ).bind(user.userId).run();
 
+    // Criar nova confirmação
     await env.DB.prepare(
       `INSERT INTO email_confirmations (user_id, token, expires_at) 
        VALUES (?, ?, datetime('now', '+1 day'))`
     ).bind(user.userId, emailToken).run();
 
+    // Simular envio de email
     console.log(`📧 Token de confirmação para ${user.email}: ${emailToken}`);
 
-    return jsonResponse({ 
+    return successResponse({ 
       message: 'Email de confirmação reenviado!',
       debug_token: emailToken
     }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Resend confirmation error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -310,32 +349,35 @@ async function handleForgotPassword(request, env, corsHeaders) {
     const { email } = await request.json();
     
     if (!email) {
-      return jsonResponse({ error: 'Email é obrigatório' }, 400, corsHeaders);
+      return errorResponse('Email é obrigatório', 400, corsHeaders);
     }
 
+    // Buscar usuário
     const user = await env.DB.prepare(
       'SELECT id, username FROM users WHERE email = ? AND is_active = TRUE'
     ).bind(email).first();
 
-    let resetToken;
     if (user) {
-      resetToken = generateToken();
+      // Gerar token de reset
+      const resetToken = generateToken();
       await env.DB.prepare(
         `INSERT INTO password_resets (user_id, token, expires_at) 
          VALUES (?, ?, datetime('now', '+1 hour'))`
       ).bind(user.id, resetToken).run();
 
+      // Simular envio de email
       console.log(`🔐 Token de reset para ${email}: ${resetToken}`);
     }
 
-    return jsonResponse({ 
+    // Sempre retornar sucesso (segurança)
+    return successResponse({ 
       message: 'Se o email existir, enviaremos instruções de recuperação.',
-      debug_token: resetToken
+      debug_token: user ? resetToken : undefined
     }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Forgot password error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -344,13 +386,14 @@ async function handleResetPassword(request, env, corsHeaders) {
     const { token, newPassword } = await request.json();
     
     if (!token || !newPassword) {
-      return jsonResponse({ error: 'Token e nova password são obrigatórios' }, 400, corsHeaders);
+      return errorResponse('Token e nova password são obrigatórios', 400, corsHeaders);
     }
 
     if (newPassword.length < 8) {
-      return jsonResponse({ error: 'A password deve ter pelo menos 8 caracteres' }, 400, corsHeaders);
+      return errorResponse('A password deve ter pelo menos 8 caracteres', 400, corsHeaders);
     }
 
+    // Verificar token
     const resetRequest = await env.DB.prepare(
       `SELECT pr.*, u.id as user_id 
        FROM password_resets pr 
@@ -359,24 +402,29 @@ async function handleResetPassword(request, env, corsHeaders) {
     ).bind(token).first();
 
     if (!resetRequest) {
-      return jsonResponse({ error: 'Token inválido ou expirado' }, 400, corsHeaders);
+      return errorResponse('Token inválido ou expirado', 400, corsHeaders);
     }
 
+    // Hash da nova password
     const passwordHash = await hashPassword(newPassword);
 
+    // Atualizar password
     await env.DB.prepare(
       'UPDATE users SET password_hash = ? WHERE id = ?'
     ).bind(passwordHash, resetRequest.user_id).run();
 
+    // Marcar token como usado
     await env.DB.prepare(
       'UPDATE password_resets SET used = TRUE WHERE token = ?'
     ).bind(token).run();
 
-    return jsonResponse({ message: 'Password alterada com sucesso!' }, 200, corsHeaders);
+    return successResponse({ 
+      message: 'Password alterada com sucesso!'
+    }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Reset password error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -385,50 +433,50 @@ async function handleResetPassword(request, env, corsHeaders) {
 async function handleGetProfile(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
-    if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
 
     const userData = await env.DB.prepare(
       'SELECT id, username, email, role, is_email_verified, created_at FROM users WHERE id = ?'
     ).bind(user.userId).first();
 
-    if (!userData) {
-      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
-    }
-
-    return jsonResponse({ user: userData }, 200, corsHeaders);
+    return successResponse({ user: userData }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Get profile error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleUpdateProfile(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
-    if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
 
     const { username, email } = await request.json();
     
+    // Validações
     if (!username || !email) {
-      return jsonResponse({ error: 'Username e email são obrigatórios' }, 400, corsHeaders);
+      return errorResponse('Username e email são obrigatórios', 400, corsHeaders);
     }
 
     if (!validateEmail(email)) {
-      return jsonResponse({ error: 'Email inválido' }, 400, corsHeaders);
+      return errorResponse('Email inválido', 400, corsHeaders);
     }
 
+    // Atualizar perfil
     await env.DB.prepare(
       `UPDATE users 
        SET username = ?, email = ?, updated_at = datetime('now') 
        WHERE id = ?`
     ).bind(username, email, user.userId).run();
 
+    // Se email mudou, marcar como não verificado
     if (email !== user.email) {
       await env.DB.prepare(
         'UPDATE users SET is_email_verified = FALSE WHERE id = ?'
       ).bind(user.userId).run();
       
+      // Gerar nova confirmação de email
       const emailToken = generateToken();
       await env.DB.prepare(
         `INSERT INTO email_confirmations (user_id, token, expires_at) 
@@ -438,7 +486,7 @@ async function handleUpdateProfile(request, env, jwt, corsHeaders) {
       console.log(`📧 Novo token de confirmação para ${email}: ${emailToken}`);
     }
 
-    return jsonResponse({ 
+    return successResponse({ 
       message: 'Perfil atualizado com sucesso',
       user: { username, email },
       requires_email_verification: email !== user.email
@@ -447,51 +495,57 @@ async function handleUpdateProfile(request, env, jwt, corsHeaders) {
   } catch (error) {
     console.error('Update profile error:', error);
     if (error.message.includes('UNIQUE constraint failed')) {
-      return jsonResponse({ error: 'Username ou email já existe' }, 409, corsHeaders);
+      return errorResponse('Username ou email já existe', 409, corsHeaders);
     }
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleChangePassword(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
-    if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
 
     const { currentPassword, newPassword } = await request.json();
     
     if (!currentPassword || !newPassword) {
-      return jsonResponse({ error: 'Password atual e nova password são obrigatórias' }, 400, corsHeaders);
+      return errorResponse('Password atual e nova password são obrigatórias', 400, corsHeaders);
     }
 
     if (newPassword.length < 8) {
-      return jsonResponse({ error: 'A nova password deve ter pelo menos 8 caracteres' }, 400, corsHeaders);
+      return errorResponse('A nova password deve ter pelo menos 8 caracteres', 400, corsHeaders);
     }
 
+    // Buscar usuário para verificar password atual
     const userData = await env.DB.prepare(
       'SELECT * FROM users WHERE id = ?'
     ).bind(user.userId).first();
     
     if (!userData) {
-      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
+      return errorResponse('Utilizador não encontrado', 404, corsHeaders);
     }
 
+    // Verificar password atual
     const isCurrentValid = await verifyPassword(currentPassword, userData.password_hash);
     if (!isCurrentValid) {
-      return jsonResponse({ error: 'Password atual incorreta' }, 401, corsHeaders);
+      return errorResponse('Password atual incorreta', 401, corsHeaders);
     }
 
+    // Gerar hash da nova password
     const newPasswordHash = await hashPassword(newPassword);
 
+    // Atualizar password
     await env.DB.prepare(
       'UPDATE users SET password_hash = ?, updated_at = datetime("now") WHERE id = ?'
     ).bind(newPasswordHash, user.userId).run();
 
-    return jsonResponse({ message: 'Password alterada com sucesso!' }, 200, corsHeaders);
+    return successResponse({ 
+      message: 'Password alterada com sucesso!' 
+    }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Change password error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -500,7 +554,7 @@ async function handleChangePassword(request, env, jwt, corsHeaders) {
 async function handleGetPendingUsers(request, env, jwt, corsHeaders) {
   try {
     const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
 
     const users = await env.DB.prepare(
       `SELECT u.id, u.username, u.email, u.created_at, a.created_at as approval_requested
@@ -509,27 +563,28 @@ async function handleGetPendingUsers(request, env, jwt, corsHeaders) {
        WHERE u.is_approved = FALSE AND a.status = 'pending'`
     ).all();
 
-    return jsonResponse({ users: users.results }, 200, corsHeaders);
+    return successResponse({ users: users.results }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Get pending users error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleApproveUser(request, env, jwt, corsHeaders) {
   try {
     const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
 
     const { userId, approve } = await request.json();
     
     if (typeof approve === 'undefined') {
-      return jsonResponse({ error: 'Parâmetro "approve" é obrigatório' }, 400, corsHeaders);
+      return errorResponse('Parâmetro "approve" é obrigatório', 400, corsHeaders);
     }
 
     const status = approve ? 'approved' : 'rejected';
     
+    // Atualizar aprovação
     await env.DB.prepare(
       `UPDATE admin_approvals 
        SET status = ?, approved_by = ?, updated_at = datetime('now') 
@@ -537,27 +592,39 @@ async function handleApproveUser(request, env, jwt, corsHeaders) {
     ).bind(status, admin.userId, userId).run();
 
     if (approve) {
+      // Ativar usuário se aprovado
       await env.DB.prepare(
         `UPDATE users 
          SET is_approved = TRUE, is_active = TRUE, updated_at = datetime('now') 
          WHERE id = ?`
       ).bind(userId).run();
+
+      // Gerar token de confirmação de email para o usuário aprovado
+      const user = await env.DB.prepare('SELECT email FROM users WHERE id = ?').bind(userId).first();
+      if (user && !user.is_email_verified) {
+        const emailToken = generateToken();
+        await env.DB.prepare(
+          `INSERT INTO email_confirmations (user_id, token, expires_at) 
+           VALUES (?, ?, datetime('now', '+1 day'))`
+        ).bind(userId, emailToken).run();
+        console.log(`📧 Token de confirmação para ${user.email}: ${emailToken}`);
+      }
     }
 
-    return jsonResponse({ 
+    return successResponse({ 
       message: `Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso` 
     }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Approve user error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleGetAllUsers(request, env, jwt, corsHeaders) {
   try {
     const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
 
     const users = await env.DB.prepare(
       `SELECT id, username, email, role, is_active, is_approved, is_email_verified, created_at 
@@ -565,64 +632,51 @@ async function handleGetAllUsers(request, env, jwt, corsHeaders) {
        ORDER BY created_at DESC`
     ).all();
 
-    return jsonResponse({ users: users.results }, 200, corsHeaders);
+    return successResponse({ users: users.results }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Get all users error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
 async function handleAdminUpdateUser(request, env, jwt, corsHeaders) {
   try {
     const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+    if (!admin) return errorResponse('Acesso negado', 403, corsHeaders);
 
     const { userId, username, email, role, is_active, is_approved } = await request.json();
     
     if (!userId) {
-      return jsonResponse({ error: 'ID do utilizador é obrigatório' }, 400, corsHeaders);
+      return errorResponse('ID do utilizador é obrigatório', 400, corsHeaders);
     }
 
+    // Verificar se o utilizador existe
     const userExists = await env.DB.prepare(
       'SELECT id FROM users WHERE id = ?'
     ).bind(userId).first();
 
     if (!userExists) {
-      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
+      return errorResponse('Utilizador não encontrado', 404, corsHeaders);
     }
 
+    // Atualizar utilizador
     await env.DB.prepare(
       `UPDATE users 
        SET username = ?, email = ?, role = ?, is_active = ?, is_approved = ?, updated_at = datetime('now') 
        WHERE id = ?`
     ).bind(username, email, role, is_active, is_approved, userId).run();
 
-    return jsonResponse({ message: 'Utilizador atualizado com sucesso' }, 200, corsHeaders);
+    return successResponse({ 
+      message: 'Utilizador atualizado com sucesso'
+    }, 200, corsHeaders);
 
   } catch (error) {
     console.error('Admin update user error:', error);
     if (error.message.includes('UNIQUE constraint failed')) {
-      return jsonResponse({ error: 'Username ou email já existe' }, 409, corsHeaders);
+      return errorResponse('Username ou email já existe', 409, corsHeaders);
     }
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
-  }
-}
-
-async function handleProtected(request, env, jwt, corsHeaders) {
-  try {
-    const user = await authenticateUser(request, env, jwt);
-    if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
-
-    return jsonResponse({ 
-      message: 'Acesso autorizado a dados protegidos!',
-      user: user,
-      serverTime: new Date().toISOString()
-    }, 200, corsHeaders);
-
-  } catch (error) {
-    console.error('Protected route error:', error);
-    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
   }
 }
 
@@ -646,19 +700,26 @@ async function authenticateAdmin(request, env, jwt) {
   return user;
 }
 
-async function checkRateLimit(request, corsHeaders) {
+async function checkRateLimit(request) {
   const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
   const key = `${clientIP}:${new Date().getMinutes()}`;
-  const limit = 100;
+  const limit = 100; // 100 requests por minuto
 
   const current = rateLimitStore.get(key) || 0;
   if (current >= limit) {
-    return jsonResponse({ 
+    return new Response(JSON.stringify({ 
       error: 'Muitas requisições. Tente novamente em alguns minutos.' 
-    }, 429, corsHeaders);
+    }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://mpmendespt.github.io'
+      }
+    });
   }
 
   rateLimitStore.set(key, current + 1);
+  // Limpar dados antigos
   setTimeout(() => rateLimitStore.delete(key), 60000);
   return null;
 }
@@ -686,4 +747,36 @@ async function hashPassword(password) {
 async function verifyPassword(password, hash) {
   const newHash = await hashPassword(password);
   return newHash === hash;
+}
+
+function successResponse(data, status = 200, corsHeaders) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  });
+}
+
+function errorResponse(message, status = 400, corsHeaders) {
+  return new Response(JSON.stringify({ error: message }), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+  });
+}
+
+// Função protegida
+async function handleProtected(request, env, jwt, corsHeaders) {
+  try {
+    const user = await authenticateUser(request, env, jwt);
+    if (!user) return errorResponse('Não autorizado', 401, corsHeaders);
+
+    return successResponse({ 
+      message: 'Acesso autorizado a dados protegidos!',
+      user: user,
+      serverTime: new Date().toISOString()
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Protected route error:', error);
+    return errorResponse('Erro interno no servidor', 500, corsHeaders);
+  }
 }
