@@ -5,12 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisas - Sistema de Gestão</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        .research-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .research-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .research-card:hover {
+            transform: translateY(-3px);
+        }
+        .research-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .research-title {
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 600;
+        }
+        .research-meta {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .research-content {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+    </style>
 </head>
-<body>
+<body class="dashboard-page">
     <div class="container">
-        <h1>🔍 Pesquisas</h1>
-        <p>Bem-vindo à área de pesquisas!</p>
-        <button onclick="window.history.back()" class="btn-secondary">Voltar ao Dashboard</button>
+        <header class="header">
+            <h1>🔬 Área de Pesquisas</h1>
+            <div class="user-info">
+                <span id="userWelcome">Bem-vindo!</span>
+                <button onclick="window.history.back()" class="btn-secondary">Voltar ao Dashboard</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalResearch">12</div>
+                    <div>Total de Pesquisas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeResearch">8</div>
+                    <div>Em Andamento</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="participants">245</div>
+                    <div>Participantes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completion">78%</div>
+                    <div>Conclusão Média</div>
+                </div>
+            </div>
+            <div class="search-section" id="searchSection">
+                <h2>🔍 Pesquisar Pesquisas</h2>
+                <form class="search-form">
+                    <input type="text" class="search-input" placeholder="Digite palavras-chave..." id="searchInput">
+                    <select class="search-input" id="categoryFilter">
+                        <option value="">Todas as Categorias</option>
+                        <option value="saude">Saúde</option>
+                        <option value="educacao">Educação</option>
+                        <option value="tecnologia">Tecnologia</option>
+                        <option value="sociedade">Sociedade</option>
+                    </select>
+                    <button type="submit" class="btn-primary">Pesquisar</button>
+                </form>
+                <div class="chart-container">
+                    <p>📊 Gráfico de análise de dados será exibido aqui</p>
+                </div>
+            </div>
+            <div class="research-list" id="researchList">
+                <h2>📋 Minhas Pesquisas</h2>
+                <div class="research-card">
+                    <div class="research-header">
+                        <h3 class="research-title">Estudo sobre Saúde Mental em Universitários</h3>
+                        <span class="research-meta">Criada em 15/11/2024</span>
+                    </div>
+                    <div class="research-content">
+                        <p>Análise do impacto da pandemia na saúde mental de estudantes universitários, com foco em estratégias de coping e suporte institucional.</p>
+                        <div class="progress-bar">
+                            <div style="width: 78%; background: #27ae60; height: 10px; border-radius: 5px;"></div>
+                            <span style="margin-top: 5px; display: block; text-align: center;">78% Concluída</span>
+                        </div>
+                    </div>
+                    <div class="research-actions">
+                        <button class="btn-primary">Visualizar</button>
+                        <button class="btn-secondary">Editar</button>
+                        <button class="btn-tertiary">Relatório</button>
+                    </div>
+                </div>
+                <div class="research-card">
+                    <div class="research-header">
+                        <h3 class="research-title">Pesquisa de Satisfação com Serviços Educacionais</h3>
+                        <span class="research-meta">Criada em 10/11/2024</span>
+                    </div>
+                    <div class="research-content">
+                        <p>Avaliação da qualidade dos serviços educacionais oferecidos, com análise de feedback de alunos e sugestões de melhoria.</p>
+                        <div class="progress-bar">
+                            <div style="width: 45%; background: #e67e22; height: 10px; border-radius: 5px;"></div>
+                            <span style="margin-top: 5px; display: block; text-align: center;">45% Concluída</span>
+                        </div>
+                    </div>
+                    <div class="research-actions">
+                        <button class="btn-primary">Visualizar</button>
+                        <button class="btn-secondary">Editar</button>
+                        <button class="btn-tertiary">Relatório</button>
+                    </div>
+                </div>
+                <div class="research-card">
+                    <div class="research-header">
+                        <h3 class="research-title">Análise de Comportamento Digital em Idosos</h3>
+                        <span class="research-meta">Criada em 05/11/2024</span>
+                    </div>
+                    <div class="research-content">
+                        <p>Estudo sobre a adoção de tecnologias digitais por pessoas acima de 60 anos, identificando barreiras e oportunidades de inclusão.</p>
+                        <div class="progress-bar">
+                            <div style="width: 92%; background: #27ae60; height: 10px; border-radius: 5px;"></div>
+                            <span style="margin-top: 5px; display: block; text-align: center;">92% Concluída</span>
+                        </div>
+                    </div>
+                    <div class="research-actions">
+                        <button class="btn-primary">Visualizar</button>
+                        <button class="btn-secondary">Editar</button>
+                        <button class="btn-tertiary">Relatório</button>
+                    </div>
+                </div>
+            </div>
+            <div class="create-section" style="text-align: center; margin: 40px 0;">
+                <h2>✨ Criar Nova Pesquisa</h2>
+                <p style="margin-bottom: 20px; color: #666;">Comece uma nova pesquisa com nosso assistente inteligente</p>
+                <button class="btn-primary" style="padding: 15px 40px; font-size: 1.2rem;">
+                    📝 + Nova Pesquisa
+                </button>
+            </div>
+        </main>
     </div>
+    <script>
+        // Verificar se está logado
+        if (!localStorage.getItem('jwt')) {
+            window.location.href = '../app/login.html';
+        }
+        
+        // Atualizar nome do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userWelcome').textContent = `Olá, ${user.username}!`;
+            }
+        });
+        
+        // Simulação de pesquisa
+        document.querySelector('.search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            
+            alert(`🔍 Pesquisa realizada!\nTermo: ${searchTerm || 'todos'}\nCategoria: ${category || 'todas'}`);
+        });
+    </script>
 </body>
 </html>

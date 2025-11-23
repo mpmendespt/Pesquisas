@@ -63,8 +63,7 @@
                     messageDiv.innerHTML = '<div class="success">✅ Login realizado com sucesso!</div>';
                     // Redireciona para o dashboard
                     setTimeout(() => {
-                        // ✅ CORREÇÃO: Caminho correto para o dashboard
-                        window.location.href = 'index.html'; // docs/app/index.html
+                        window.location.href = 'index.html';
                     }, 1000);
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Credenciais inválidas'}</div>`;
