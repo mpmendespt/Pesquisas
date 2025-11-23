@@ -424,4 +424,4 @@ Se precisar de ajuda para configurar uma fonte específica, testar em um app (ex
 ---
 
 *Conversa exportada do Grok*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

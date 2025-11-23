@@ -832,4 +832,4 @@ Se após o Passo 1 ainda não funcionar, este teste dirá exactamente onde está
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

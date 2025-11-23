@@ -274,4 +274,4 @@ Quer tentar a reinstalação do conda e mamba?
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

@@ -614,4 +614,4 @@ It is important to note that the treatment outcomes for idiopathic sudden onset 
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

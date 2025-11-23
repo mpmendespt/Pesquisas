@@ -3821,4 +3821,4 @@ O **`convert_md_html_pdf5.py` é significativamente superior** para documentos t
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

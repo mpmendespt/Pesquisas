@@ -7947,4 +7947,4 @@ Agora o TOC mostrará apenas os cabeçalhos de nível 1 (`h1`), tornando a naveg
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

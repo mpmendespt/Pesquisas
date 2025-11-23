@@ -8039,4 +8039,4 @@ Agora o TOC incluirá cabeçalhos de nível 1, 2 e 3 (h1, h2, h3), proporcionand
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

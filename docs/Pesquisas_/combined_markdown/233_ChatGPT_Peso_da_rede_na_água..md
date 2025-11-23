@@ -101,4 +101,4 @@ Lembre-se de que a precisão da estimativa dependerá da exatidão das informaç
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

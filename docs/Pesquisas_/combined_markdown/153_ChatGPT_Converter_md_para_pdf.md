@@ -3196,4 +3196,4 @@ Quer que eu monte um **ZIP exemplo** com as três abordagens (LaTeX com fonte, c
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

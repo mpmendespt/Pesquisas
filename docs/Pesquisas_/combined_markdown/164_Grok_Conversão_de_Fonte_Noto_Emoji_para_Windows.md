@@ -3817,4 +3817,4 @@ If the script or FontForge fails, share the full error output, and I’ll provid
 ---
 
 *Conversa exportada do Grok*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

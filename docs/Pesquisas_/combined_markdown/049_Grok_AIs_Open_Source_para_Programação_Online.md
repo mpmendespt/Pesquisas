@@ -962,4 +962,4 @@ Se quiser um exemplo com visão (imagens) ou comparar performance com Perplexity
 ---
 
 *Conversa exportada do Grok*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

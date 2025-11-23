@@ -4956,4 +4956,4 @@ Este script é **completo, robusto e pronto para uso imediato** com seu arquivo 
 ---
 
 *Conversa exportada do Qwen3*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

@@ -46,6 +46,12 @@ FUNCIONALIDADES MANTIDAS v10.2.0:
 • Ícones coloridos por fonte
 • Botão Voltar ao Topo nos HTMLs individuais à direita
 • Timer global de performance
+
+🔐 NOVO: Sistema de Autenticação Integrado
+• Verificação JWT automática em todos os HTMLs
+• Botão "Voltar ao Dashboard" configurado para ../app/dashboard.html
+• Proteção contra acesso não autorizado
+• Verificação periódica de token
 """
 import json
 import zipfile
@@ -1473,18 +1479,135 @@ class CombinedFragmentsSystem:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{title}</title>
+    <style>
+        .auth-loading {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 1.2em;
+            color: #333;
+        }}
+        body.dark-mode .auth-loading {{
+            background: rgba(30,30,30,0.95);
+            color: #e0e0e0;
+        }}
+        .auth-spinner {{
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }}
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+        .back-button {{
+            margin-bottom: 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-family: inherit;
+        }}
+        .back-button:hover {{
+            background: #5a6268;
+        }}
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="main-content">
-            {content}
+    <!-- Tela de autenticação -->
+    <div id="authLoading" class="auth-loading">
+        <div class="auth-spinner"></div>
+        <p>Verificando autenticação...</p>
+    </div>
+
+    <div id="mainContent" style="display: none;">
+        <!-- Botão Voltar ao Dashboard -->
+        <button onclick="window.location.href='../app/dashboard.html'" class="back-button">← Voltar ao Dashboard</button>
+        
+        <div class="container">
+            <div class="main-content">
+                {content}
+            </div>
         </div>
     </div>
+
+    <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        // ✅ PROTEÇÃO: Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {{
+            const token = localStorage.getItem('jwt');
+            
+            if (!token) {{
+                // Não está logado - redirecionar para login
+                console.log('Nenhum token encontrado - redirecionando para login');
+                window.location.href = '../app/login.html';
+                return;
+            }}
+            
+            // Está logado - verificar token
+            verifyToken(token);
+        }});
+
+        async function verifyToken(token) {{
+            try {{
+                const response = await fetch(`${{WORKER_URL}}/api/protected`, {{
+                    headers: {{
+                        'Authorization': `Bearer ${{token}}`,
+                        'Content-Type': 'application/json'
+                    }}
+                }});
+                
+                if (!response.ok) {{
+                    // Token inválido ou expirado
+                    localStorage.removeItem('jwt');
+                    localStorage.removeItem('user');
+                    window.location.href = '../app/login.html';
+                    return;
+                }}
+                
+                // Token válido - mostrar conteúdo
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                
+            }} catch (error) {{
+                console.error('Token verification error:', error);
+                // Em caso de erro de rede, mostrar conteúdo com aviso
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }}
+        }}
+
+        // ✅ PROTEÇÃO: Verificar autenticação periodicamente
+        setInterval(function() {{
+            const token = localStorage.getItem('jwt');
+            if (!token) {{
+                window.location.href = '../app/login.html';
+            }}
+        }}, 5 * 60 * 1000); // 5 minutos
+    </script>
+    
     <script>
         window.MathJax = {{
             tex: {{
-                inlineMath: [[', '], ['\\(', '\\)']],
-                displayMath: [['$', '$'], ['\\[', '\\]']],
+                inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+                displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
                 processEscapes: true
             }}
         }};
@@ -1532,22 +1655,112 @@ class CombinedFragmentsSystem:
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }}
+        .auth-loading {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 1.2em;
+            color: #333;
+        }}
+        .auth-spinner {{
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }}
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+        .back-button {{
+            margin-bottom: 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }}
+        .back-button:hover {{
+            background: #5a6268;
+        }}
     </style>
+</head>
+<body>
+    <!-- Tela de autenticação -->
+    <div id="authLoading" class="auth-loading">
+        <div class="auth-spinner"></div>
+        <p>Verificando autenticação...</p>
+    </div>
+
+    <div id="mainContent" style="display: none;">
+        <!-- Botão Voltar ao Dashboard -->
+        <button onclick="window.location.href='../app/dashboard.html'" class="back-button">← Voltar ao Dashboard</button>
+        
+        <div class="container">
+            <pre>{content}</pre>
+        </div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        document.addEventListener('DOMContentLoaded', function() {{
+            const token = localStorage.getItem('jwt');
+            if (!token) {{
+                window.location.href = '../app/login.html';
+                return;
+            }}
+            verifyToken(token);
+        }});
+
+        async function verifyToken(token) {{
+            try {{
+                const response = await fetch(`${{WORKER_URL}}/api/protected`, {{
+                    headers: {{
+                        'Authorization': `Bearer ${{token}}`,
+                        'Content-Type': 'application/json'
+                    }}
+                }});
+                
+                if (!response.ok) {{
+                    localStorage.removeItem('jwt');
+                    localStorage.removeItem('user');
+                    window.location.href = '../app/login.html';
+                }} else {{
+                    document.getElementById('authLoading').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                }}
+            }} catch (error) {{
+                console.error('Token verification error:', error);
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }}
+        }}
+    </script>
+    
     <script>
         window.MathJax = {{
             tex: {{
-                inlineMath: [[', '], ['\\(', '\\)']],
-                displayMath: [['$', '$'], ['\\[', '\\]']],
+                inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+                displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
                 processEscapes: true
             }}
         }};
     </script>
     <script src="{mathjax_src}" async></script>
-</head>
-<body>
-    <div class="container">
-        <pre>{content}</pre>
-    </div>
 </body>
 </html>"""
     
@@ -2411,12 +2624,12 @@ class CombinedFragmentsSystem:
         return "\n".join(lines)
     
     def create_searchable_index_enhanced(self):
-        """NOVO v10.3.0: Criação otimizada do índice com estatísticas de cache"""
+        """NOVO v10.3.0: Criação otimizada do índice com sistema de autenticação"""
         if self.dry_run:
             self.logger.info(f"🔮 [DRY-RUN] Índice HTML seria criado: {self.index_file}")
             return
         
-        self.logger.info("🎯 Criando índice HTML combinado...")
+        self.logger.info("🎯 Criando índice HTML combinado com sistema de autenticação...")
         
         index_start = time.perf_counter()
         
@@ -2460,7 +2673,7 @@ class CombinedFragmentsSystem:
         cache_stats = self.conversion_cache.get_stats()
         preservation_report = self.content_preserver.get_transformation_report()
         
-        # Gerar HTML do índice (reutilizar código existente da v10.2.0)
+        # Gerar HTML do índice COM SISTEMA DE AUTENTICAÇÃO
         html_content = f"""<!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -2560,12 +2773,53 @@ class CombinedFragmentsSystem:
         body.dark-mode .dashboard-btn:hover {{
             background: #555;
         }}
+
+        /* NOVO: Estilo para mensagem de carregamento/auth */
+        .auth-loading {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 1.2em;
+            color: #333;
+        }}
+        body.dark-mode .auth-loading {{
+            background: rgba(30,30,30,0.95);
+            color: #e0e0e0;
+        }}
+        .auth-spinner {{
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }}
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Tela de carregamento/autenticação -->
+    <div id="authLoading" class="auth-loading">
+        <div class="auth-spinner"></div>
+        <p>Verificando autenticação...</p>
+    </div>
+
+    <div class="container" id="mainContainer" style="display: none;">
         <div class="header">
-            <a href="../app/index.html" class="dashboard-btn">Voltar ao Dashboard</a>
+            <!-- BOTÃO VOLTAR AO DASHBOARD CORRIGIDO -->
+            <a href="../app/dashboard.html" class="dashboard-btn">Voltar ao Dashboard</a>
             <button id="theme-toggle" class="theme-toggle-btn">🌙</button>
             <h1>📚 Índice Combinado v{SCRIPT_VERSION}</h1>
             <p>Qwen3 • ChatGPT • DeepSeek • Grok • Claude • PRESERVAÇÃO ESTRITA</p>
@@ -2658,7 +2912,110 @@ class CombinedFragmentsSystem:
         </div>
     </div>
     <button class="back-to-top-index" id="backToTopIndex" title="Voltar ao Topo">↑</button>
+
+    <!-- SISTEMA DE AUTENTICAÇÃO INTEGRADO -->
     <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        const APP_CONFIG = {{
+            PATHS: {{
+                LOGIN: '../app/login.html',
+                DASHBOARD: '../app/dashboard.html'
+            }},
+            WORKER_URL: WORKER_URL
+        }};
+
+        // ✅ PROTEÇÃO: Verificar autenticação ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {{
+            const token = localStorage.getItem('jwt');
+            
+            if (!token) {{
+                // Não está logado - redirecionar para login
+                console.log('Nenhum token encontrado - redirecionando para login');
+                window.location.href = APP_CONFIG.PATHS.LOGIN;
+                return;
+            }}
+            
+            // Está logado - carregar dados do usuário
+            loadUserData(token);
+        }});
+
+        // Carregar dados do usuário
+        async function loadUserData(token) {{
+            try {{
+                // Tentar obter do localStorage primeiro
+                const storedUser = localStorage.getItem('user');
+                
+                if (storedUser) {{
+                    const user = JSON.parse(storedUser);
+                    // Atualizar interface se houver elemento userWelcome
+                    const userWelcome = document.getElementById('userWelcome');
+                    if (userWelcome) {{
+                        userWelcome.textContent = `Olá, ${{user.username}}!`;
+                    }}
+                }}
+                
+                // Verificar se o token ainda é válido
+                const response = await fetch(`${{WORKER_URL}}/api/protected`, {{
+                    method: 'GET',
+                    headers: {{
+                        'Authorization': `Bearer ${{token}}`,
+                        'Content-Type': 'application/json'
+                    }}
+                }});
+                
+                if (!response.ok) {{
+                    // Token inválido ou expirado
+                    console.log('Token inválido ou expirado');
+                    logout();
+                    return;
+                }}
+                
+                // Token válido - atualizar dados se necessário
+                const data = await response.json();
+                console.log('Acesso autorizado:', data);
+                
+                // Mostrar conteúdo principal
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainContainer').style.display = 'block';
+                
+            }} catch (error) {{
+                console.error('Erro ao verificar autenticação:', error);
+                
+                // Se houver erro mas tem dados locais, continua funcionando
+                const storedUser = localStorage.getItem('user');
+                if (!storedUser) {{
+                    // Sem dados locais e sem conexão - fazer logout
+                    logout();
+                }} else {{
+                    // Tem dados locais - mostrar conteúdo mesmo sem verificação
+                    document.getElementById('authLoading').style.display = 'none';
+                    document.getElementById('mainContainer').style.display = 'block';
+                }}
+            }}
+        }}
+
+        // ✅ FUNÇÃO DE LOGOUT
+        function logout() {{
+            // Limpar dados de autenticação
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('user');
+            
+            console.log('Logout realizado - redirecionando para login');
+            
+            // Redirecionar para página de login
+            window.location.href = APP_CONFIG.PATHS.LOGIN;
+        }}
+
+        // ✅ PROTEÇÃO: Verificar autenticação periodicamente (a cada 5 minutos)
+        setInterval(function() {{
+            const token = localStorage.getItem('jwt');
+            if (!token) {{
+                console.log('Token não encontrado - fazendo logout');
+                logout();
+            }}
+        }}, 5 * 60 * 1000); // 5 minutos
+
+        // Código existente para filtros, tema, etc.
         let currentFilters = {{ source: 'todas', category: 'todas' }};
         
         document.querySelectorAll('[data-filter-type]').forEach(btn => {{

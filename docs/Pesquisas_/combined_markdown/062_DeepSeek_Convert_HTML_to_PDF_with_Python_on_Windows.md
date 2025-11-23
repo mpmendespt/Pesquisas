@@ -3051,4 +3051,4 @@ Guarde o script `html_to_pdf_selenium_enhanced.py` como sua **ferramenta padrão
 ---
 
 *Conversa exportada do DeepSeek*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

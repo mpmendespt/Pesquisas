@@ -329,4 +329,4 @@ Em resumo, os números estão **correto no contexto de estimativas atuais e cons
 ---
 
 *Conversa exportada do Grok*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

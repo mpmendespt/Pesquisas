@@ -241,4 +241,4 @@ Quer que eu também gere essa tabela em **PDF** para você guardar junto com o c
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*

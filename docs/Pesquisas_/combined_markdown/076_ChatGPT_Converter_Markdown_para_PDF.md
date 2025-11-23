@@ -1041,4 +1041,4 @@ Quer que eu gere o script completo (Markdown → PDF com CSS, via WeasyPrint no 
 ---
 
 *Conversa exportada do ChatGPT*
-*Processado em: 23/11/2025 14:36*
+*Processado em: 23/11/2025 23:05*
