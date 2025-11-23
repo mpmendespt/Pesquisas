@@ -13,21 +13,16 @@ export default {
     if (rateLimitResult) return rateLimitResult;
 
     // CORS headers
-    // ✅ AGORA (CORRETO):
-    const CORS_HEADERS = {
-      'Access-Control-Allow-Origin': '*', // Aceita de qualquer origem
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, HEAD',
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': 'https://mpmendespt.github.io',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
       'Access-Control-Allow-Credentials': 'true'
     };
 
-    // Handle preflight NO INÍCIO do código (ANTES de tudo)
+    // Handle preflight
     if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        status: 204,
-        headers: CORS_HEADERS
-      });
+      return new Response(null, { headers: corsHeaders });
     }
 
     // Rotas públicas
