@@ -53,9 +53,9 @@ Pesquisas/
 │   ├── about.html           # Sobre (mantido)
 │   ├── contact.html         # Contacto (mantido)
 │   ├── app/
-│   │   ├── index.html   # Dashboard (COM botão acesso pesquisas)
+│   │   ├── index.html       # Dashboard (COM botão acesso pesquisas)
 │   │   ├── login.html       # Login (redirecionamento corrigido)
-│   │   ├── register.html # Registro (redirecionamento corrigido)
+│   │   ├── register.html    # Registro (redirecionamento corrigido)
 │   │   └── admin.html       # Admin (redirecionamento corrigido)
 │   ├── Pesquisas_/
 │   │   └── index.html       # Nova página de pesquisas
@@ -65,7 +65,6 @@ Pesquisas/
 │           └── style.css    # CSS para dashboard e páginas internas
 └── worker-ds/               # Mantido como está
 └── 📄 README.md
-
 
 ## ⚙️ Configuração
 
