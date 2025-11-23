@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste CORS - Worker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #495057;
+            font-size: 1.2rem;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+        .worker-url {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de CORS - Cloudflare Worker</h1>
+        
+        <div class="worker-url">
+            <strong>Worker URL:</strong> https://worker-ds.mpmendespt.workers.dev
+        </div>
+        
+        <div class="test-section">
+            <h2>1️⃣ Teste Básico de Conectividade</h2>
+            <p>Verifica se o Worker está online e respondendo</p>
+            <button onclick="testBasicConnectivity()">🔍 Testar Conectividade</button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>2️⃣ Teste de Preflight (OPTIONS)</h2>
+            <p>Verifica se o Worker responde corretamente às requisições OPTIONS</p>
+            <button onclick="testPreflight()">🔍 Testar Preflight</button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>3️⃣ Teste de CORS Headers</h2>
+            <p>Verifica se os headers CORS estão presentes e corretos</p>
+            <button onclick="testCORSHeaders()">🔍 Testar CORS Headers</button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>4️⃣ Teste de Login Simulado</h2>
+            <p>Simula uma requisição de login completa</p>
+            <button onclick="testLogin()">🔍 Testar Login</button>
+            <div id="result4" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>5️⃣ Executar Todos os Testes</h2>
+            <div class="btn-group">
+                <button onclick="runAllTests()">🚀 Executar Todos os Testes</button>
+                <button onclick="clearResults()" style="background: #6c757d;">🧹 Limpar Resultados</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+        
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.className = 'result loading';
+            element.textContent = '🔄 Testando...';
+            element.style.display = 'block';
+        }
+        
+        async function testBasicConnectivity() {
+            showLoading('result1');
+            try {
+                const response = await fetch(`${WORKER_URL}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('result1', 
+                        `✅ SUCESSO!\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Service: ${data.service}\n` +
+                        `Timestamp: ${data.timestamp}\n` +
+                        `Version: ${data.version || 'N/A'}\n\n` +
+                        `O Worker está online e respondendo corretamente!`,
+                        'success'
+                    );
+                } else {
+                    showResult('result1', 
+                        `❌ ERRO!\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('result1', 
+                    `❌ ERRO DE REDE!\n\n` +
+                    `Erro: ${error.message}\n` +
+                    `Tipo: ${error.name}\n\n` +
+                    `Possíveis causas:\n` +
+                    `- Worker offline\n` +
+                    `- CORS não configurado\n` +
+                    `- Firewall/Ad-blocker bloqueando\n` +
+                    `- Problema de rede`,
+                    'error'
+                );
+            }
+        }
+        
+        async function testPreflight() {
+            showLoading('result2');
+            try {
+                const response = await fetch(`${WORKER_URL}/api/health`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type, Authorization'
+                    }
+                });
+                
+                if (response.status === 204 || response.status === 200) {
+                    showResult('result2', 
+                        `✅ PREFLIGHT OK!\n\n` +
+                        `Status: ${response.status}\n\n` +
+                        `Headers recebidos:\n` +
+                        `${[...response.headers.entries()]
+                            .filter(([key]) => key.includes('access-control'))
+                            .map(([key, value]) => `  ${key}: ${value}`)
+                            .join('\n') || '  Nenhum header CORS encontrado'}`,
+                        'success'
+                    );
+                } else {
+                    showResult('result2', 
+                        `⚠️ STATUS INESPERADO!\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Esperado: 204 ou 200`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('result2', 
+                    `❌ ERRO!\n\n` +
+                    `${error.message}\n\n` +
+                    `O Worker não está respondendo corretamente a requisições OPTIONS.`,
+                    'error'
+                );
+            }
+        }
+        
+        async function testCORSHeaders() {
+            showLoading('result3');
+            try {
+                const response = await fetch(`${WORKER_URL}/api/health`);
+                
+                const requiredHeaders = [
+                    'access-control-allow-origin',
+                    'access-control-allow-methods',
+                    'access-control-allow-headers'
+                ];
+                
+                let result = '📋 Verificação de CORS Headers:\n\n';
+                let allPresent = true;
+                
+                requiredHeaders.forEach(header => {
+                    const value = response.headers.get(header);
+                    if (value) {
+                        result += `✅ ${header}: ${value}\n`;
+                    } else {
+                        result += `❌ ${header}: NÃO ENCONTRADO\n`;
+                        allPresent = false;
+                    }
+                });
+                
+                result += '\n' + (allPresent 
+                    ? '✅ Todos os headers CORS necessários estão presentes!' 
+                    : '❌ Alguns headers CORS estão faltando. Atualize o Worker.');
+                
+                showResult('result3', result, allPresent ? 'success' : 'error');
+            } catch (error) {
+                showResult('result3', 
+                    `❌ ERRO!\n\n${error.message}`,
+                    'error'
+                );
+            }
+        }
+        
+        async function testLogin() {
+            showLoading('result4');
+            try {
+                const response = await fetch(`${WORKER_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'teste',
+                        password: 'teste123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                let result = `📊 Resultado do Login Simulado:\n\n`;
+                result += `Status: ${response.status}\n`;
+                result += `Response: ${JSON.stringify(data, null, 2)}\n\n`;
+                
+                if (response.status === 401) {
+                    result += `ℹ️ Status 401 é esperado (credenciais inválidas).\n`;
+                    result += `✅ O endpoint está funcionando corretamente!`;
+                    showResult('result4', result, 'success');
+                } else if (response.ok) {
+                    result += `✅ Login bem-sucedido (inesperado com credenciais de teste)!`;
+                    showResult('result4', result, 'success');
+                } else {
+                    result += `⚠️ Status inesperado: ${response.status}`;
+                    showResult('result4', result, 'info');
+                }
+            } catch (error) {
+                showResult('result4', 
+                    `❌ ERRO DE CONEXÃO!\n\n` +
+                    `${error.message}\n\n` +
+                    `🚨 Este é o mesmo erro que aparece no login.\n` +
+                    `Causa provável: CORS não configurado corretamente.`,
+                    'error'
+                );
+            }
+        }
+        
+        async function runAllTests() {
+            showResult('result1', '⏳ Aguarde...', 'info');
+            showResult('result2', '⏳ Aguarde...', 'info');
+            showResult('result3', '⏳ Aguarde...', 'info');
+            showResult('result4', '⏳ Aguarde...', 'info');
+            
+            await testBasicConnectivity();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testPreflight();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCORSHeaders();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testLogin();
+        }
+        
+        function clearResults() {
+            ['result1', 'result2', 'result3', 'result4'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
