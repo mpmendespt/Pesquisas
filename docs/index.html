@@ -57,48 +57,48 @@
         </div>
     </footer>
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
-        // Verificar autenticação e redirecionar se necessário
-        async function checkAuthAndRedirect() {
-            const token = localStorage.getItem('jwt');
-            if (!token) {
-                updateMemberLink(false);
-                return;
-            }
-            try {
-                const res = await fetch(`${WORKER_URL}/api/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    // Está logado → vai para o dashboard
-                    window.location.href = 'app/index.html';
-                } else {
-                    localStorage.removeItem('jwt');
-                    localStorage.removeItem('user');
-                    updateMemberLink(false);
-                }
-            } catch (e) {
-                // Ignorar erros de rede
-                updateMemberLink(false);
-            }
-        }
-        function updateMemberLink(isLoggedIn) {
-            const link = document.getElementById('memberAreaLink');
-            if (isLoggedIn) {
-                link.textContent = 'Meu Dashboard';
-                link.href = 'app/index.html';
+    const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+    // Verificar autenticação e redirecionar se necessário
+    async function checkAuthAndRedirect() {
+        const token = localStorage.getItem('jwt');
+        if (!token) return;
+        
+        try {
+            const res = await fetch(`${WORKER_URL}/api/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                // ✅ CORREÇÃO CRÍTICA: Caminho correto para o dashboard
+                window.location.href = 'app/index.html'; // docs/app/index.html
             } else {
-                link.textContent = 'Área de Membros';
-                link.href = 'app/login.html';
+                localStorage.removeItem('jwt');
+                localStorage.removeItem('user');
             }
+        } catch (e) {
+            console.error('Erro na verificação de autenticação:', e);
         }
-        // Executar verificações
+    }
+    
+    function updateMemberLink() {
+        const link = document.getElementById('memberAreaLink');
+        const token = localStorage.getItem('jwt');
+        if (token) {
+            link.textContent = 'Meu Dashboard';
+            link.href = 'app/index.html'; // ✅ Caminho correto
+        } else {
+            link.textContent = 'Área de Membros';
+            link.href = 'app/login.html'; // ✅ Caminho correto
+        }
+    }
+    
+    // Executar verificações após o carregamento
+    document.addEventListener('DOMContentLoaded', () => {
         checkAuthAndRedirect();
-        // Atualizar link após pequeno delay para garantir carregamento
-        setTimeout(() => {
-            const token = localStorage.getItem('jwt');
-            updateMemberLink(!!token);
-        }, 100);
-    </script>
+        updateMemberLink();
+    });
+    
+    // Verificar autenticação periodicamente
+    setInterval(checkAuthAndRedirect, 30000);
+</script>
 </body>
 </html>
