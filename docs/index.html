@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisas DS - Sistema de Gestão</title>
+    <!-- ✅ CORREÇÃO: Caminho correto para CSS -->
     <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
@@ -16,7 +17,7 @@
                 <a href="index.html">Início</a>
                 <a href="about.html">Sobre</a>
                 <a href="contact.html">Contacto</a>
-                <a href="#" id="memberAreaLink" class="btn-login">Área de Membros</a>
+                <a href="app/login.html" class="btn-login">Área de Membros</a>
             </div>
         </nav>
     </header>
@@ -58,49 +59,14 @@
     </footer>
     <script>
         const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
-        // Verificar autenticação e redirecionar se necessário
-        async function checkAuthAndRedirect() {
+        // Verificar se usuário está logado
+        document.addEventListener('DOMContentLoaded', function() {
             const token = localStorage.getItem('jwt');
-            if (!token) {
-                updateMemberLink(false);
-                return;
+            if (token) {
+                // ✅ CORREÇÃO: Redirecionamento correto para dashboard
+                window.location.href = 'app/index.html';
             }
-            try {
-                const res = await fetch(`${WORKER_URL}/api/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    // Está logado → vai para o dashboard
-                    window.location.href = 'app/index.html';
-                } else {
-                    localStorage.removeItem('jwt');
-                    localStorage.removeItem('user');
-                    updateMemberLink(false);
-                }
-            } catch (e) {
-                // Ignorar erros de rede
-                updateMemberLink(false);
-            }
-        }
-        function updateMemberLink(isLoggedIn) {
-            const link = document.getElementById('memberAreaLink');
-            if (isLoggedIn) {
-                link.textContent = 'Meu Dashboard';
-                link.href = 'app/index.html';
-            } else {
-                link.textContent = 'Área de Membros';
-                link.href = 'app/login.html';
-            }
-        }
-        // Executar verificações
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuthAndRedirect();
         });
-        // Atualizar link após pequeno delay para garantir carregamento
-        setTimeout(() => {
-            const token = localStorage.getItem('jwt');
-            updateMemberLink(!!token);
-        }, 100);
     </script>
 </body>
 </html>
