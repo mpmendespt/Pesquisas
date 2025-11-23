@@ -10,83 +10,92 @@
     <div class="container">
         <div class="register-form">
             <h1>📝 Registro</h1>
-            <p>Crie sua conta</p>
-            
+            <p>Crie sua conta para acessar o sistema</p>
             <form id="registerForm">
                 <div class="form-group">
                     <label for="username">Usuário:</label>
-                    <input type="text" id="username" placeholder="Escolha um usuário" required>
+                    <input type="text" id="username" placeholder="Escolha um usuário (mín. 3 caracteres)" required minlength="3">
+                    <small class="hint">Somente letras, números e underscores</small>
                 </div>
-                
                 <div class="form-group">
                     <label for="email">E-mail:</label>
                     <input type="email" id="email" placeholder="seu@email.com" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Senha:</label>
                     <input type="password" id="password" placeholder="Mínimo 8 caracteres" required minlength="8">
-                    <small class="password-hint">A senha deve ter pelo menos 8 caracteres</small>
+                    <small class="password-hint">A senha deve ter pelo menos 8 caracteres, incluindo letras e números</small>
                 </div>
-                
                 <div class="form-group">
                     <label for="confirmPassword">Confirmar Senha:</label>
                     <input type="password" id="confirmPassword" placeholder="Repita a senha" required minlength="8">
                 </div>
-                
                 <button type="submit" class="btn-primary">Registrar</button>
             </form>
-            
             <div class="form-footer">
                 <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
             </div>
-            
             <div id="message" class="message"></div>
         </div>
     </div>
-
- <script>
-    const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
-    
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const messageDiv = document.getElementById('message');
-        
-        // ... (código de validação existente)
-        
-        try {
-            const response = await fetch(`${WORKER_URL}/api/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                messageDiv.innerHTML = '<div class="success">✅ Conta criada com sucesso! Redirecionando para login...</div>';
-                
-                // ✅ CORREÇÃO: Redirecionamento relativo
-                setTimeout(() => {
-                    window.location.href = 'login.html'; // Está na mesma pasta
-                }, 2000);
-            } else {
-                messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
-            }
-        } catch (error) {
-            messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Tente novamente.</div>';
+    <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        // Verificar se já está logado
+        if (localStorage.getItem('jwt')) {
+            window.location.href = 'index.html';
         }
-    });
-    
-    // ✅ CORREÇÃO: Se já estiver logado, redireciona para ../index.html
-    if (localStorage.getItem('jwt')) {
-        window.location.href = '../index.html';
-    }
-</script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('message');
+            // Limpar mensagens anteriores
+            messageDiv.innerHTML = '';
+            // Validações
+            if (password !== confirmPassword) {
+                messageDiv.innerHTML = '<div class="error">❌ As senhas não coincidem</div>';
+                return;
+            }
+            if (password.length < 8) {
+                messageDiv.innerHTML = '<div class="error">❌ A senha deve ter pelo menos 8 caracteres</div>';
+                return;
+            }
+            if (username.length < 3) {
+                messageDiv.innerHTML = '<div class="error">❌ O usuário deve ter pelo menos 3 caracteres</div>';
+                return;
+            }
+            try {
+                messageDiv.innerHTML = '<div class="loading">🔄 Criando conta...</div>';
+                const response = await fetch(`${WORKER_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                messageDiv.innerHTML = '';
+                if (response.ok) {
+                    messageDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Conta criada com sucesso!<br>
+                            Aguarde aprovação do administrador.<br>
+                            Verifique seu email para confirmação.<br>
+                            Redirecionando para login...
+                        </div>
+                    `;
+                    // Redireciona para login após 3 segundos
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Erro ao criar conta'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão com o servidor</div>';
+                console.error('Register error:', error);
+            }
+        });
+    </script>
 </body>
 </html>
