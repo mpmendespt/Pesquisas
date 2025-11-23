@@ -260,7 +260,7 @@ async function handleLogin(request, env, jwt, corsHeaders) {
         is_email_verified: user.is_email_verified
       },
       expiresIn: expiration,
-      redirectTo: '/Pesquisas/docs/index.html' // ✅ Caminho correto para o repositório
+      redirectTo: 'https://mpmendespt.github.io/Pesquisas/app/dashboard.html'  //'/Pesquisas/docs/index.html' // ✅ Caminho correto para o repositório
     }, 200, corsHeaders);
 
   } catch (error) {

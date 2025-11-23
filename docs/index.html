@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisas DS - Sistema de Gestão</title>
-    <!-- ✅ CORREÇÃO: Caminho correto para CSS -->
     <link rel="stylesheet" href="assets/css/site.css">
+    <script src="assets/js/config.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -21,6 +21,7 @@
             </div>
         </nav>
     </header>
+    
     <main class="site-main">
         <section class="hero">
             <div class="hero-content">
@@ -32,6 +33,7 @@
                 </div>
             </div>
         </section>
+        
         <section class="features">
             <div class="container">
                 <h3>Funcionalidades Principais</h3>
@@ -52,19 +54,20 @@
             </div>
         </section>
     </main>
+    
     <footer class="site-footer">
         <div class="container">
             <p>&copy; 2024 Pesquisas DS. Todos os direitos reservados.</p>
         </div>
     </footer>
+    
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
         // Verificar se usuário está logado
         document.addEventListener('DOMContentLoaded', function() {
             const token = localStorage.getItem('jwt');
             if (token) {
-                // ✅ CORREÇÃO: Redirecionamento correto para dashboard
-                window.location.href = 'app/index.html';
+                // Redirecionar para dashboard se já estiver logado
+                window.location.href = APP_CONFIG.PATHS.DASHBOARD;
             }
         });
     </script>

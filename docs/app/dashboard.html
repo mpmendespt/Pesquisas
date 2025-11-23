@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Pesquisas</title>
+    <link rel="stylesheet" href="../assets/css/app.css">
+    <script src="../assets/js/config.js"></script>
+    <style>
+        .btn-access {
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 10px auto;
+            display: block;
+            max-width: 320px;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn-access:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .admin-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <div class="container">
+        <header class="header">
+            <h1>🏠 Dashboard Principal</h1>
+            <div class="user-info">
+                <span id="userWelcome">Bem-vindo!</span>
+                <button onclick="logout()" class="btn-secondary">Sair</button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2>Olá, <span id="usernameDisplay"></span><span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>!</h2>
+                <p>Você está logado no sistema de pesquisas.</p>
+                
+                <div class="access-button-container">
+                    <a href="../Pesquisas_/index.html" class="btn-access">
+                        🔍 Acesso às Pesquisas
+                    </a>
+                    <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 12px;">
+                        Clique aqui para acessar todas as funcionalidades de pesquisa
+                    </p>
+                </div>
+            </div>
+            
+            <div class="actions-section">
+                <div class="card">
+                    <h3>👤 Meu Perfil</h3>
+                    <p><strong>Usuário:</strong> <span id="profileUsername"></span></p>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Role:</strong> <span id="profileRole"></span></p>
+                    <button onclick="openModal('profileModal')" class="btn-primary">Editar Perfil</button>
+                </div>
+                
+                <div class="card" id="adminCard" style="display:none;">
+                    <h3>⚙️ Painel Administrativo</h3>
+                    <p>Gerir utilizadores e aprovações</p>
+                    <a href="admin.html" class="btn-primary">Aceder ao Painel</a>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modais -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('profileModal')">&times;</span>
+            <h2>Editar Perfil</h2>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="editUsername">Usuário:</label>
+                    <input type="text" id="editUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+            <div id="profileMessage" class="message"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Verificar autenticação
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            window.location.href = APP_CONFIG.PATHS.LOGIN;
+        }
+        
+        // Carregar dados do usuário
+        let currentUser = null;
+        
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    
+                    document.getElementById('userWelcome').textContent = `Olá, ${currentUser.username}!`;
+                    document.getElementById('usernameDisplay').textContent = currentUser.username;
+                    document.getElementById('profileUsername').textContent = currentUser.username;
+                    document.getElementById('profileEmail').textContent = currentUser.email;
+                    document.getElementById('profileRole').textContent = currentUser.role;
+                    
+                    // Mostrar badge e painel admin se for admin
+                    if (currentUser.role === 'admin') {
+                        document.getElementById('adminBadge').style.display = 'inline-block';
+                        document.getElementById('adminCard').style.display = 'block';
+                    }
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                logout();
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('user');
+            window.location.href = APP_CONFIG.PATHS.LOGIN;
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            if (modalId === 'profileModal' && currentUser) {
+                document.getElementById('editUsername').value = currentUser.username;
+                document.getElementById('editEmail').value = currentUser.email;
+            }
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+        
+        // Form de edição de perfil
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('profileMessage');
+            
+            try {
+                const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('editUsername').value,
+                        email: document.getElementById('editEmail').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Perfil atualizado com sucesso!</div>';
+                    setTimeout(() => {
+                        closeModal('profileModal');
+                        loadUserProfile();
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro ao atualizar perfil</div>';
+            }
+        });
+        
+        // Carregar perfil ao iniciar
+        loadUserProfile();
+    </script>
+</body>
+</html>
