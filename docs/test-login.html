@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Login Direto</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Login Direto</h1>
+        
+        <p><strong>Worker URL:</strong> https://worker-ds.mpmendespt.workers.dev</p>
+        
+        <div class="form-group">
+            <label for="username">Usuário:</label>
+            <input type="text" id="username" placeholder="Digite seu usuário">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Digite sua password">
+        </div>
+        
+        <button onclick="testLogin()">🚀 Testar Login</button>
+        
+        <div id="result" style="display: none;"></div>
+    </div>
+    
+    <script>
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!username || !password) {
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = '❌ Preencha usuário e password!';
+                return;
+            }
+            
+            resultDiv.className = 'result loading';
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '🔄 Testando login...';
+            
+            try {
+                console.log('Enviando requisição de login...');
+                
+                const response = await fetch(`${WORKER_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                console.log('Resposta recebida:', response.status);
+                
+                // Mostrar headers CORS
+                let corsInfo = '\n📋 CORS Headers recebidos:\n';
+                for (const [key, value] of response.headers.entries()) {
+                    if (key.toLowerCase().includes('access-control')) {
+                        corsInfo += `  ${key}: ${value}\n`;
+                    }
+                }
+                console.log(corsInfo);
+                
+                const data = await response.json();
+                console.log('Dados recebidos:', data);
+                
+                let result = `Status: ${response.status}\n`;
+                result += corsInfo + '\n';
+                result += '📦 Resposta:\n';
+                result += JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    // Login bem-sucedido
+                    resultDiv.className = 'result success';
+                    result = '✅ LOGIN BEM-SUCEDIDO!\n\n' + result;
+                    result += '\n\n🎉 O Worker está funcionando perfeitamente!';
+                    result += '\n✅ CORS está configurado corretamente!';
+                    result += '\n✅ Pode usar o sistema normalmente!';
+                    
+                    // Salvar no localStorage para teste
+                    localStorage.setItem('jwt', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    result += '\n\n💾 Token salvo no localStorage!';
+                    result += '\n\n🔗 Agora você pode acessar:';
+                    result += '\n   https://mpmendespt.github.io/Pesquisas/app/index.html';
+                    
+                } else if (response.status === 401) {
+                    resultDiv.className = 'result error';
+                    result = '❌ CREDENCIAIS INVÁLIDAS\n\n' + result;
+                    result += '\n\nMas a boa notícia é:';
+                    result += '\n✅ O Worker está funcionando!';
+                    result += '\n✅ CORS está configurado!';
+                    result += '\n\nVerifique seu usuário e senha e tente novamente.';
+                    
+                } else if (response.status === 403) {
+                    resultDiv.className = 'result info';
+                    result = '⚠️ CONTA AGUARDANDO APROVAÇÃO\n\n' + result;
+                    result += '\n\nO Worker está funcionando corretamente.';
+                    result += '\n✅ CORS está configurado!';
+                    result += '\n\nEntre em contato com o administrador para aprovar sua conta.';
+                    
+                } else {
+                    resultDiv.className = 'result error';
+                    result = '❌ ERRO NO LOGIN\n\n' + result;
+                }
+                
+                resultDiv.textContent = result;
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERRO DE CONEXÃO!\n\n${error.message}\n\nTipo: ${error.name}`;
+                
+                if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                    resultDiv.textContent += '\n\n🚨 Este erro indica problema de CORS ou conectividade.';
+                    resultDiv.textContent += '\n\nMas segundo o teste cURL, o Worker está funcionando...';
+                    resultDiv.textContent += '\n\nPossíveis causas:';
+                    resultDiv.textContent += '\n- Firewall ou Ad-blocker bloqueando';
+                    resultDiv.textContent += '\n- Problema específico do navegador';
+                    resultDiv.textContent += '\n- Cache do navegador';
+                    resultDiv.textContent += '\n\nTente:';
+                    resultDiv.textContent += '\n1. Desativar extensões do navegador';
+                    resultDiv.textContent += '\n2. Testar em modo anônimo';
+                    resultDiv.textContent += '\n3. Limpar cache (Ctrl+Shift+Delete)';
+                }
+            }
+        }
+        
+        // Permitir Enter para submeter
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') testLogin();
+        });
+    </script>
+</body>
+</html>
