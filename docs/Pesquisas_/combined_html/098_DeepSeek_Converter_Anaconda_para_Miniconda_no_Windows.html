@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>098_DeepSeek_Converter_Anaconda_para_Miniconda_no_Windows</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-anaconda-para-miniconda-no-windows" id="toc-converter-anaconda-para-miniconda-no-windows"><span class="toc-section-number">1</span> Converter Anaconda para Miniconda no
+Windows</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#passo-a-passo-para-corrigir-e-converter-para-miniconda" id="toc-passo-a-passo-para-corrigir-e-converter-para-miniconda"><span class="toc-section-number">1.3</span> Passo a Passo para Corrigir e
+Converter para Miniconda</a></li>
+<li><a href="#se-os-problemas-persistirem" id="toc-se-os-problemas-persistirem"><span class="toc-section-number">1.4</span> Se os problemas
+persistirem:</a></li>
+<li><a href="#corrigir-as-referências-remanescentes-do-anaconda" id="toc-corrigir-as-referências-remanescentes-do-anaconda"><span class="toc-section-number">1.5</span> <strong>Corrigir as Referências
+Remanescentes do Anaconda</strong></a></li>
+<li><a href="#verificação-final" id="toc-verificação-final"><span class="toc-section-number">1.6</span> <strong>Verificação
+Final</strong></a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-anaconda-para-miniconda-no-windows"><span class="header-section-number">1</span> Converter Anaconda para Miniconda
+no Windows</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #98</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Sistemas</li>
+<li><strong>ID:</strong> 4d02db09-842a-401d-b3e2-e8b9ca82221e</li>
+<li><strong>Criada em:</strong> 2025-10-22 03:14:39</li>
+<li><strong>Atualizada em:</strong> 2025-10-22 03:23:09</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Como converter instalação do Anaconda numa
+versão Miniconda (versão leve) tutorial. No windows. A m…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-22-031442-deepseek-chat"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-22
+03:14:42)</em> <em>[deepseek-chat]</em></h3>
+<p>Como converter instalação do Anaconda numa versão Miniconda (versão
+leve) tutorial. No windows. A minha linguagem é Portugues de Portugal.
+Já iniciei o processo tendo anaconda: (base)
+D:_DOCS__DOCS__Anaconda_para_Miniconda&gt;conda info</p>
+<pre><code> active environment : base
+active env location : C:\Anaconda3
+        shell level : 1
+   user config file : C:\Users\mpmen\.condarc</code></pre>
+<p>populated config files : C:.condarc conda version : 25.9.1
+conda-build version : 25.5.0 python version : 3.13.2.final.0 solver :
+libmamba (default) virtual packages : __archspec=1=haswell
+__conda=25.9.1=0 __win=10.0.19045=0 base environment : C: (writable)
+conda av data dir : C: conda av metadata url : None channel URLs : <a href="https://conda.anaconda.org/conda-forge/win-64" class="uri">https://conda.anaconda.org/conda-forge/win-64</a> <a href="https://conda.anaconda.org/conda-forge/noarch" class="uri">https://conda.anaconda.org/conda-forge/noarch</a> <a href="https://repo.anaconda.com/pkgs/main/win-64" class="uri">https://repo.anaconda.com/pkgs/main/win-64</a> <a href="https://repo.anaconda.com/pkgs/main/noarch" class="uri">https://repo.anaconda.com/pkgs/main/noarch</a> <a href="https://repo.anaconda.com/pkgs/r/win-64" class="uri">https://repo.anaconda.com/pkgs/r/win-64</a> <a href="https://repo.anaconda.com/pkgs/r/noarch" class="uri">https://repo.anaconda.com/pkgs/r/noarch</a> <a href="https://repo.anaconda.com/pkgs/msys2/win-64" class="uri">https://repo.anaconda.com/pkgs/msys2/win-64</a> <a href="https://repo.anaconda.com/pkgs/msys2/noarch" class="uri">https://repo.anaconda.com/pkgs/msys2/noarch</a> package
+cache : C: envs directories : C: C:.conda C: platform : win-64
+user-agent : conda/25.9.1 requests/2.32.5 CPython/3.13.2 Windows/10
+Windows/10.0.19045 solver/libmamba conda-libmamba-solver/25.4.0
+libmambapy/2.3.2 aau/0.7.3 c/. s/. e/. administrator : True netrc file :
+None offline mode : False</p>
+<p>miniconda: (base) D:&gt;conda info</p>
+<pre><code> active environment : base
+active env location : C:\miniconda3
+        shell level : 1
+   user config file : C:\Users\mpmen\.condarc</code></pre>
+<p>populated config files : C:.condarc C:.condarc conda version : 25.7.0
+conda-build version : not installed python version : 3.13.5.final.0
+solver : libmamba (default) virtual packages : __archspec=1=haswell
+__conda=25.7.0=0 __win=10.0.19045=0 base environment : C: (writable)
+conda av data dir : C: conda av metadata url : None channel URLs : <a href="https://conda.anaconda.org/conda-forge/win-64" class="uri">https://conda.anaconda.org/conda-forge/win-64</a> <a href="https://conda.anaconda.org/conda-forge/noarch" class="uri">https://conda.anaconda.org/conda-forge/noarch</a> <a href="https://repo.anaconda.com/pkgs/main/win-64" class="uri">https://repo.anaconda.com/pkgs/main/win-64</a> <a href="https://repo.anaconda.com/pkgs/main/noarch" class="uri">https://repo.anaconda.com/pkgs/main/noarch</a> <a href="https://repo.anaconda.com/pkgs/r/win-64" class="uri">https://repo.anaconda.com/pkgs/r/win-64</a> <a href="https://repo.anaconda.com/pkgs/r/noarch" class="uri">https://repo.anaconda.com/pkgs/r/noarch</a> <a href="https://repo.anaconda.com/pkgs/msys2/win-64" class="uri">https://repo.anaconda.com/pkgs/msys2/win-64</a> <a href="https://repo.anaconda.com/pkgs/msys2/noarch" class="uri">https://repo.anaconda.com/pkgs/msys2/noarch</a> package
+cache : C: envs directories : C: C: C:.conda C: platform : win-64
+user-agent : conda/25.7.0 requests/2.32.4 CPython/3.13.5 Windows/10
+Windows/10.0.19045 solver/libmamba conda-libmamba-solver/25.4.0
+libmambapy/2.0.5 aau/0.7.2 c/. s/. e/. administrator : True netrc file :
+None offline mode : False como corrigir/remover ackage cache : C:nvs
+directories : C:</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-10-22-031442-deepseek-chat"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-10-22
+03:14:42)</em> <em>[deepseek-chat]</em></h3>
+<p>Olá! Vejo que tem tanto o Anaconda como o Miniconda instalados e que
+há uma mistura nas configurações. Vou ajudá-lo a limpar essa situação e
+converter para Miniconda.</p>
+<h2 data-number="1.3" id="passo-a-passo-para-corrigir-e-converter-para-miniconda"><span class="header-section-number">1.3</span> Passo a Passo para Corrigir e
+Converter para Miniconda</h2>
+<h3 data-number="1.3.1" id="fazer-backup-dos-seus-ambientes-opcional-mas-recomendado"><span class="header-section-number">1.3.1</span> 1. <strong>Fazer backup dos
+seus ambientes (opcional mas recomendado)</strong></h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Listar todos os ambientes</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Exportar cada ambiente que quiser manter</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nome_do_ambiente</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env export <span class="op">&gt;</span> nome_do_ambiente.yml</span></code></pre></div>
+<h3 data-number="1.3.2" id="desinstalar-completamente-o-anaconda"><span class="header-section-number">1.3.2</span> 2. <strong>Desinstalar
+completamente o Anaconda</strong></h3>
+<ul>
+<li>Vá ao “Painel de Controlo” → “Programas e Funcionalidades”</li>
+<li>Encontre “Anaconda” e desinstale</li>
+<li><strong>OU</strong> execute o desinstalador do Anaconda se
+existir</li>
+</ul>
+<h3 data-number="1.3.3" id="limpar-variáveis-de-ambiente-e-registo"><span class="header-section-number">1.3.3</span> 3. <strong>Limpar variáveis
+de ambiente e registo</strong></h3>
+<ul>
+<li>Elimine estas variáveis de ambiente do sistema:
+<ul>
+<li><code>ANACONDA_HOME</code></li>
+<li><code>CONDA_HOME</code></li>
+</ul></li>
+<li>No PATH, remova todas as referências a
+<code>C:\Anaconda3\</code></li>
+<li>Elimine a pasta <code>C:\Anaconda3\</code> se ainda existir</li>
+</ul>
+<h3 data-number="1.3.4" id="corrigir-a-configuração-do-miniconda"><span class="header-section-number">1.3.4</span> 4. <strong>Corrigir a
+configuração do Miniconda</strong></h3>
+<p>Abra o <strong>Anaconda Prompt como Administrador</strong> e
+execute:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar o estado atual</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpar o cache do conda</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> clean <span class="at">--all</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Atualizar o conda</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update conda</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar e corrigir as configurações</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--show-sources</span></span></code></pre></div>
+<h3 data-number="1.3.5" id="remover-as-referências-ao-anaconda-do-ficheiro-de-configuração"><span class="header-section-number">1.3.5</span> 5. <strong>Remover as
+referências ao Anaconda do ficheiro de configuração</strong></h3>
+<p>Edite ou crie o ficheiro <code>C:\Users\mpmen\.condarc</code> e
+certifique-se que não contém referências a <code>C:\Anaconda3\</code>.
+Deve ficar assim:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">channels</span><span class="kw">:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> conda-forge</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> defaults</span></span></code></pre></div>
+<h3 data-number="1.3.6" id="reinicializar-o-conda"><span class="header-section-number">1.3.6</span> 6. <strong>Reinicializar o
+conda</strong></h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reinicializar a configuração</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> init <span class="at">--reverse</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> init</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fechar e reabrir o terminal</span></span></code></pre></div>
+<h3 data-number="1.3.7" id="verificar-a-correção"><span class="header-section-number">1.3.7</span> 7. <strong>Verificar a
+correção</strong></h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span></code></pre></div>
+<p>Agora deve mostrar apenas: -
+<code>active env location : C:\miniconda3</code> -
+<code>package cache : C:\miniconda3\pkgs</code> -
+<code>envs directories : C:\miniconda3\envs</code></p>
+<h3 data-number="1.3.8" id="instalar-apenas-os-pacotes-necessários"><span class="header-section-number">1.3.8</span> 8. <strong>Instalar apenas os
+pacotes necessários</strong></h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemplo: instalar pacotes básicos</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install numpy pandas matplotlib jupyter</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ou criar um novo ambiente</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> meu_ambiente python=3.11 numpy pandas</span></code></pre></div>
+<h2 data-number="1.4" id="se-os-problemas-persistirem"><span class="header-section-number">1.4</span> Se os problemas
+persistirem:</h2>
+<h3 data-number="1.4.1" id="solução-alternativa-mais-radical"><span class="header-section-number">1.4.1</span> Solução alternativa mais
+radical:</h3>
+<ol type="1">
+<li>Desinstale <strong>tanto Anaconda como Miniconda</strong></li>
+<li>Elimine manualmente as pastas:
+<ul>
+<li><code>C:\Anaconda3\</code></li>
+<li><code>C:\miniconda3\</code></li>
+<li><code>C:\Users\mpmen\.conda\</code></li>
+<li><code>C:\Users\mpmen\AppData\Local\conda\</code></li>
+</ul></li>
+<li>Limpe o registo do Windows (opcional)</li>
+<li>Reinicie o computador</li>
+<li>Instale o Miniconda fresco do site oficial</li>
+</ol>
+<h3 data-number="1.4.2" id="verificar-após-correção"><span class="header-section-number">1.4.2</span> Verificar após correção:</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span></code></pre></div>
+<p>Isto deve resolver a mistura entre Anaconda e Miniconda. O objetivo é
+ter apenas o Miniconda com os pacotes que realmente precisa, tornando a
+instalação mais leve e limpa.</p>
+<p>Precisa de ajuda com algum passo específico?</p>
+<hr />
+<h3 data-number="1.4.3" id="utilizador-2025-10-22-032240-deepseek-chat"><span class="header-section-number">1.4.3</span> 👤 Utilizador <em>(2025-10-22
+03:22:40)</em> <em>[deepseek-chat]</em></h3>
+<p>Criei backup dir ambiente: files yml e no miniconta tenho (base)
+D:_DOCS__DOCS__Anaconda_para_Miniconda&gt;conda info</p>
+<pre><code> active environment : base
+active env location : C:\miniconda3
+        shell level : 1
+   user config file : C:\Users\mpmen\.condarc</code></pre>
+<p>populated config files : C:.condarc C:.condarc conda version : 25.7.0
+conda-build version : not installed python version : 3.13.2.final.0
+solver : libmamba (default) virtual packages : __archspec=1=haswell
+__conda=25.7.0=0 __win=10.0.19045=0 base environment : C: (writable)
+conda av data dir : C: conda av metadata url : None channel URLs : <a href="https://conda.anaconda.org/conda-forge/win-64" class="uri">https://conda.anaconda.org/conda-forge/win-64</a> <a href="https://conda.anaconda.org/conda-forge/noarch" class="uri">https://conda.anaconda.org/conda-forge/noarch</a> <a href="https://repo.anaconda.com/pkgs/main/win-64" class="uri">https://repo.anaconda.com/pkgs/main/win-64</a> <a href="https://repo.anaconda.com/pkgs/main/noarch" class="uri">https://repo.anaconda.com/pkgs/main/noarch</a> <a href="https://repo.anaconda.com/pkgs/r/win-64" class="uri">https://repo.anaconda.com/pkgs/r/win-64</a> <a href="https://repo.anaconda.com/pkgs/r/noarch" class="uri">https://repo.anaconda.com/pkgs/r/noarch</a> <a href="https://repo.anaconda.com/pkgs/msys2/win-64" class="uri">https://repo.anaconda.com/pkgs/msys2/win-64</a> <a href="https://repo.anaconda.com/pkgs/msys2/noarch" class="uri">https://repo.anaconda.com/pkgs/msys2/noarch</a> package
+cache : C: C: envs directories : C: C: C:.conda C: platform : win-64
+user-agent : conda/25.7.0 requests/2.32.4 CPython/3.13.2 Windows/10
+Windows/10.0.19045 solver/libmamba conda-libmamba-solver/25.4.0
+libmambapy/2.3.3 aau/0.7.2 c/. s/. e/. administrator : True netrc file :
+None offline mode : False</p>
+<hr />
+<h3 data-number="1.4.4" id="deepseek-2025-10-22-032240-deepseek-chat"><span class="header-section-number">1.4.4</span> 🤖 DeepSeek <em>(2025-10-22
+03:22:40)</em> <em>[deepseek-chat]</em></h3>
+<p>Perfeito! Já tem o backup feito e o Miniconda está quase configurado.
+Vejo que ainda há referências ao Anaconda no <code>package cache</code>
+e <code>envs directories</code>. Vamos limpar isso:</p>
+<h2 data-number="1.5" id="corrigir-as-referências-remanescentes-do-anaconda"><span class="header-section-number">1.5</span> <strong>Corrigir as Referências
+Remanescentes do Anaconda</strong></h2>
+<h3 data-number="1.5.1" id="limpar-as-configurações-do-conda"><span class="header-section-number">1.5.1</span> 1. <strong>Limpar as
+configurações do conda</strong></h3>
+<p>Execute estes comandos no <strong>Anaconda Prompt como
+Administrador</strong>:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver configurações atuais</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--show-sources</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Remover as referências antigas do Anaconda</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--remove</span> pkgs_dirs C:<span class="dt">\A</span>naconda3<span class="dt">\p</span>kgs</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--remove</span> envs_dirs C:<span class="dt">\A</span>naconda3<span class="dt">\e</span>nvs</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar apenas as localizações do Miniconda (se necessário)</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--prepend</span> pkgs_dirs C:<span class="dt">\m</span>iniconda3<span class="dt">\p</span>kgs</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--prepend</span> envs_dirs C:<span class="dt">\m</span>iniconda3<span class="dt">\e</span>nvs</span></code></pre></div>
+<h3 data-number="1.5.2" id="verificar-o-ficheiro-.condarc"><span class="header-section-number">1.5.2</span> 2. <strong>Verificar o
+ficheiro .condarc</strong></h3>
+<p>Edite o ficheiro <code>C:\Users\mpmen\.condarc</code> e remova
+manualmente qualquer linha que referencie <code>C:\Anaconda3\</code>.
+Deve ficar assim:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">channels</span><span class="kw">:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> conda-forge</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> defaults</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pkgs_dirs</span><span class="kw">:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> C:\miniconda3\pkgs</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">envs_dirs</span><span class="kw">:</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> C:\miniconda3\envs</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> C:\Users\mpmen\.conda\envs</span></span></code></pre></div>
+<h3 data-number="1.5.3" id="limpar-cache-e-verificar"><span class="header-section-number">1.5.3</span> 3. <strong>Limpar cache e
+verificar</strong></h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpar todo o cache</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> clean <span class="at">--all</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Forçar atualização do índice</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update <span class="at">--all</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar se está corrigido</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span></code></pre></div>
+<h3 data-number="1.5.4" id="se-ainda-persistirem-referências-ao-anaconda"><span class="header-section-number">1.5.4</span> 4. <strong>Se ainda
+persistirem referências ao Anaconda</strong></h3>
+<p>Execute este comando para redefinir completamente:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Redefinir configuração</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--remove-key</span> pkgs_dirs</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--remove-key</span> envs_dirs</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar as localizações corretas</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--add</span> pkgs_dirs C:<span class="dt">\m</span>iniconda3<span class="dt">\p</span>kgs</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--add</span> envs_dirs C:<span class="dt">\m</span>iniconda3<span class="dt">\e</span>nvs</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> config <span class="at">--add</span> envs_dirs C:<span class="dt">\U</span>sers<span class="dt">\m</span>pmen<span class="dt">\.</span>conda<span class="dt">\e</span>nvs</span></code></pre></div>
+<h3 data-number="1.5.5" id="reiniciar-o-terminal"><span class="header-section-number">1.5.5</span> 5. <strong>Reiniciar o
+terminal</strong></h3>
+<p>Feche e reabra o <strong>Anaconda Prompt</strong> e verifique:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span></code></pre></div>
+<p>Agora deve mostrar apenas: -
+<code>package cache : C:\miniconda3\pkgs</code> -
+<code>envs directories : C:\miniconda3\envs</code> (e talvez a do
+user)</p>
+<h3 data-number="1.5.6" id="restaurar-ambientes-do-backup-opcional"><span class="header-section-number">1.5.6</span> 6. <strong>Restaurar
+ambientes do backup (opcional)</strong></h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar ambientes a partir dos ficheiros YAML</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> nome_do_ambiente.yml</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Ou para um ambiente específico</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate base</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env update <span class="at">-f</span> nome_do_ambiente.yml</span></code></pre></div>
+<h3 data-number="1.5.7" id="eliminar-pastas-antigas-do-anaconda-quando-tiver-a-certeza"><span class="header-section-number">1.5.7</span> 7. <strong>Eliminar pastas
+antigas do Anaconda (quando tiver a certeza)</strong></h3>
+<p>Depois de confirmar que tudo funciona no Miniconda, pode eliminar
+manualmente: - <code>C:\Anaconda3\</code> (toda a pasta) - Verifique se
+não há mais referências no PATH do sistema</p>
+<h2 data-number="1.6" id="verificação-final"><span class="header-section-number">1.6</span> <strong>Verificação
+Final</strong></h2>
+<p>Após estes passos, execute:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env list</span></code></pre></div>
+<p>O output deve mostrar apenas localizações dentro de
+<code>C:\miniconda3\</code> sem qualquer referência a
+<code>C:\Anaconda3\</code>.</p>
+<p><strong>Dica:</strong> Se ainda aparecerem referências ao Anaconda,
+reinicie o computador para garantir que todas as variáveis de ambiente
+são atualizadas.</p>
+<p>Precisa de ajuda com algum destes passos específicos?</p>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

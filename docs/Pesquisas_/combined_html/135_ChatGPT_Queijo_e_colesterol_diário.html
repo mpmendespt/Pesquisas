@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>135_ChatGPT_Queijo_e_colesterol_diário</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#queijo-e-colesterol-diário" id="toc-queijo-e-colesterol-diário"><span class="toc-section-number">1</span> Queijo e colesterol diário</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#prós" id="toc-prós"><span class="toc-section-number">1.3</span> ✅ <strong>Prós</strong></a></li>
+<li><a href="#contras" id="toc-contras"><span class="toc-section-number">1.4</span> ⚠️
+<strong>Contras</strong></a></li>
+<li><a href="#resumo-prático" id="toc-resumo-prático"><span class="toc-section-number">1.5</span> 📊 <strong>Resumo
+prático</strong></a></li>
+<li><a href="#comparação-nutricional-média" id="toc-comparação-nutricional-média"><span class="toc-section-number">1.6</span> 📊 <strong>Comparação nutricional
+média</strong></a></li>
+<li><a href="#o-que-isso-significa" id="toc-o-que-isso-significa"><span class="toc-section-number">1.7</span> ✅ <strong>O que isso
+significa</strong></a></li>
+<li><a href="#recomendação-prática" id="toc-recomendação-prática"><span class="toc-section-number">1.8</span> 🎯 <strong>Recomendação
+prática</strong></a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="queijo-e-colesterol-diário"><span class="header-section-number">1</span> Queijo e colesterol diário</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #135</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> 68d1cce1-5838-8327-9d50-f77d4aaaf5c6</li>
+<li><strong>Criada em:</strong> 2025-09-22 23:25:40</li>
+<li><strong>Atualizada em:</strong> 2025-09-29 18:50:06</li>
+<li><strong>Total de mensagens:</strong> 12</li>
+<li><strong>Resumo:</strong> Em relação ao colestrol qual é a influencia
+de comer alguma quantidade de queijo diariamente…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-22-232538-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-22
+23:25:38)</em> <em>[ChatGPT]</em></h3>
+<p>Em relação ao colestrol qual é a influencia de comer alguma
+quantidade de queijo diariamente</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-22-232540-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-22
+23:25:40)</em> <em>[ChatGPT]</em></h3>
+<p>Boa pergunta! Vou te explicar de forma clara e baseada em
+evidências:</p>
+<h3 data-number="1.2.3" id="queijo-e-colesterol"><span class="header-section-number">1.2.3</span> 1. <strong>Queijo e
+colesterol</strong></h3>
+<ul>
+<li>O queijo é um alimento rico em <strong>gordura saturada</strong> e
+também contém <strong>colesterol dietético</strong>.<br />
+</li>
+<li>Em teoria, o consumo excessivo de gordura saturada pode aumentar o
+colesterol LDL (“ruim”), que está ligado a maior risco
+cardiovascular.</li>
+</ul>
+<h3 data-number="1.2.4" id="o-que-a-ciência-mostra"><span class="header-section-number">1.2.4</span> 2. <strong>O que a ciência
+mostra</strong></h3>
+<ul>
+<li>Estudos recentes indicam que <strong>nem toda gordura saturada tem o
+mesmo efeito</strong> no organismo.<br />
+</li>
+<li>No caso do queijo e de outros laticínios, o impacto no colesterol
+<strong>parece ser menor do que o esperado</strong> quando comparado a
+outras fontes de gordura saturada (como carnes processadas).<br />
+</li>
+<li>Isso acontece porque o queijo contém <strong>cálcio, proteínas,
+fosfatos e a matriz do alimento</strong> (como é processado pelo corpo),
+o que pode atenuar a absorção de gorduras.</li>
+</ul>
+<h3 data-number="1.2.5" id="possíveis-benefícios"><span class="header-section-number">1.2.5</span> 3. <strong>Possíveis
+benefícios</strong></h3>
+<ul>
+<li>Consumido em <strong>quantidades moderadas</strong> (ex.: 1–2
+porções pequenas/dia, cerca de 30–40g), o queijo pode fazer parte de uma
+dieta equilibrada.<br />
+</li>
+<li>Algumas pesquisas até sugerem que o consumo regular de laticínios
+fermentados (como queijo e iogurte) pode estar associado a <strong>menor
+risco de síndrome metabólica e doenças cardiovasculares</strong>.</li>
+</ul>
+<h3 data-number="1.2.6" id="cuidados-importantes"><span class="header-section-number">1.2.6</span> 4. <strong>Cuidados
+importantes</strong></h3>
+<ul>
+<li>O efeito varia de pessoa para pessoa: quem já tem <strong>colesterol
+alto</strong>, <strong>histórico de doença cardiovascular</strong> ou
+<strong>hipercolesterolemia familiar</strong> deve ser mais
+cauteloso.<br />
+</li>
+<li>Queijos mais amarelos, curados e gordurosos (parmesão, cheddar,
+gouda) têm mais gordura saturada e sal → devem ser consumidos com
+moderação.<br />
+</li>
+<li>Queijos brancos (ricota, cottage, minas frescal) são mais leves em
+gordura e sal → melhor opção para consumo frequente.</li>
+</ul>
+<p>✅ <strong>Resumo prático:</strong> Comer queijo diariamente em
+pequenas quantidades geralmente <strong>não aumenta de forma
+significativa o colesterol</strong> em pessoas saudáveis, mas a escolha
+do tipo de queijo e a quantidade fazem diferença.</p>
+<hr />
+<p>Quer que eu prepare uma <strong>tabela com diferentes tipos de
+queijo</strong> mostrando os teores de gordura, colesterol e sal, para
+facilitar a comparação?</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-09-22-232554-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-09-22
+23:25:54)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-09-22-232557-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-09-22
+23:25:57)</em> <em>[ChatGPT]</em></h3>
+<p>It seems like I can’t do more advanced data analysis right now.
+Please try again later.</p>
+<p>Mas posso montar a <strong>tabela manualmente</strong> com valores
+médios (por porção de 30 g de queijo):</p>
+<table>
+<thead>
+<tr>
+<th>Queijo</th>
+<th>Gordura (g)</th>
+<th>Colesterol (mg)</th>
+<th>Sódio (mg)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mussarela</td>
+<td>~7,5</td>
+<td>~22</td>
+<td>~180</td>
+</tr>
+<tr>
+<td>Parmesão</td>
+<td>~8,1</td>
+<td>~26</td>
+<td>~450</td>
+</tr>
+<tr>
+<td>Cheddar</td>
+<td>~9,5</td>
+<td>~28</td>
+<td>~230</td>
+</tr>
+<tr>
+<td>Gouda</td>
+<td>~8,0</td>
+<td>~24</td>
+<td>~200</td>
+</tr>
+<tr>
+<td>Brie</td>
+<td>~7,8</td>
+<td>~22</td>
+<td>~170</td>
+</tr>
+<tr>
+<td>Minas Frescal</td>
+<td>~6,0</td>
+<td>~15</td>
+<td>~140</td>
+</tr>
+<tr>
+<td>Ricota</td>
+<td>~4,5</td>
+<td>~12</td>
+<td>~50</td>
+</tr>
+<tr>
+<td>Cottage</td>
+<td>~1,2</td>
+<td>~5</td>
+<td>~100</td>
+</tr>
+</tbody>
+</table>
+<p>📌 <strong>Interpretação rápida:</strong><br />
+- <strong>Mais leves:</strong> ricota, cottage e minas frescal → menores
+teores de gordura, colesterol e sódio.<br />
+- <strong>Mais intensos:</strong> parmesão, cheddar e gouda → mais
+gordura e sal, devem ser consumidos em menor quantidade.</p>
+<p>Quer que eu monte também uma <strong>recomendação prática de consumo
+semanal</strong> desses queijos para alguém que está cuidando do
+colesterol?</p>
+<hr />
+<h3 data-number="1.2.9" id="utilizador-2025-09-22-232711-chatgpt"><span class="header-section-number">1.2.9</span> 👤 Utilizador <em>(2025-09-22
+23:27:11)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.2.10" id="chatgpt-2025-09-22-232712-chatgpt"><span class="header-section-number">1.2.10</span> 🤖 ChatGPT <em>(2025-09-22
+23:27:12)</em> <em>[ChatGPT]</em></h3>
+<p>Ótimo, aqui vai uma sugestão prática de <strong>consumo semanal de
+queijos para quem está cuidando do colesterol</strong> (baseado em
+recomendações de nutrição preventiva):</p>
+<hr />
+<h3 data-number="1.2.11" id="recomendações-semanais"><span class="header-section-number">1.2.11</span> 🧀 <strong>Recomendações
+semanais</strong></h3>
+<ul>
+<li><strong>Queijos leves (melhor opção para uso diário):</strong>
+<ul>
+<li><strong>Ricota, cottage, minas frescal</strong> → até <strong>1
+porção/dia (30–40 g)</strong><br />
+</li>
+<li>Podem ser usados no café da manhã, lanches ou em preparações.</li>
+</ul></li>
+<li><strong>Queijos moderados (2–3 vezes por semana):</strong>
+<ul>
+<li><strong>Mussarela, brie</strong> → até <strong>1 porção (30
+g)</strong> por ocasião.<br />
+</li>
+<li>Preferir em receitas ou sanduíches ocasionais.</li>
+</ul></li>
+<li><strong>Queijos mais gordurosos/salgados (consumo ocasional, 1
+vez/semana):</strong>
+<ul>
+<li><strong>Parmesão, cheddar, gouda</strong> → até <strong>1 porção
+pequena (20–30 g)</strong><br />
+</li>
+<li>Melhor usar como tempero (ralado, em lascas) do que como fatia
+principal.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.12" id="resumo"><span class="header-section-number">1.2.12</span> ⚖️
+<strong>Resumo</strong></h3>
+<ul>
+<li>✅ <strong>Diário:</strong> ricota, cottage, minas frescal<br />
+</li>
+<li>⚠️ <strong>Algumas vezes por semana:</strong> mussarela, brie<br />
+</li>
+<li>🚫 <strong>Raramente:</strong> parmesão, cheddar, gouda</li>
+</ul>
+<hr />
+<p>💡 Dica: combine queijos com saladas, frutas e pães integrais. Assim
+você aumenta fibras, que ajudam a <strong>reduzir a absorção de
+colesterol</strong>.</p>
+<p>Quer que eu prepare também um <strong>exemplo de cardápio semanal com
+queijos</strong>, já equilibrado para colesterol?</p>
+<hr />
+<h3 data-number="1.2.13" id="utilizador-2025-09-23-144308-chatgpt"><span class="header-section-number">1.2.13</span> 👤 Utilizador
+<em>(2025-09-23 14:43:08)</em> <em>[ChatGPT]</em></h3>
+<p>Quais são os pros e contras de consumir 100 gr de queijo diariamente.
+Tendo em conta o efeito no colestrol e o aporte de calcio e proteina</p>
+<hr />
+<h3 data-number="1.2.14" id="chatgpt-2025-09-23-144308-chatgpt"><span class="header-section-number">1.2.14</span> 🤖 ChatGPT <em>(2025-09-23
+14:43:08)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente questão 👌 Vamos avaliar os <strong>prós e contras de comer
+100 g de queijo por dia</strong>, focando especialmente em colesterol,
+cálcio e proteína:</p>
+<hr />
+<h2 data-number="1.3" id="prós"><span class="header-section-number">1.3</span> ✅ <strong>Prós</strong></h2>
+<ol type="1">
+<li><strong>Alto aporte de cálcio</strong>
+<ul>
+<li>100 g de queijo pode fornecer <strong>600–1.000 mg de
+cálcio</strong>, dependendo do tipo (o que já cobre ~60–100% da
+necessidade diária de um adulto).<br />
+</li>
+<li>O cálcio é essencial para <strong>ossos, dentes e função
+muscular</strong>.</li>
+</ul></li>
+<li><strong>Boa fonte de proteína de alta qualidade</strong>
+<ul>
+<li>100 g fornecem em média <strong>18–25 g de proteína</strong>,
+comparável a uma porção de carne ou peixe.<br />
+</li>
+<li>Isso ajuda em <strong>saciedade</strong>, manutenção de massa
+muscular e metabolismo.</li>
+</ul></li>
+<li><strong>Vitaminas e minerais adicionais</strong>
+<ul>
+<li>Vitaminas A, B12, zinco e fósforo → todos importantes para
+imunidade, visão e metabolismo energético.</li>
+</ul></li>
+<li><strong>Alimento fermentado (dependendo do tipo)</strong>
+<ul>
+<li>Queijos como brie, gouda e parmesão contêm bactérias lácteas que
+podem ter <strong>efeito positivo na microbiota
+intestinal</strong>.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="1.4" id="contras"><span class="header-section-number">1.4</span> ⚠️
+<strong>Contras</strong></h2>
+<ol type="1">
+<li><strong>Excesso de gordura saturada</strong>
+<ul>
+<li>100 g de queijo amarelo (ex. cheddar, gouda, parmesão) fornecem
+<strong>20–25 g de gordura total</strong>, sendo boa parte
+saturada.<br />
+</li>
+<li>Isso pode aumentar o <strong>colesterol LDL</strong> em pessoas
+sensíveis, elevando risco cardiovascular a longo prazo.</li>
+</ul></li>
+<li><strong>Alto teor de colesterol dietético</strong>
+<ul>
+<li>100 g podem ter <strong>60–90 mg de colesterol</strong>.<br />
+</li>
+<li>Para referência, a recomendação é manter o consumo <strong>abaixo de
+300 mg/dia</strong> (ou ainda menos em quem já tem colesterol
+alto).</li>
+</ul></li>
+<li><strong>Sódio elevado</strong>
+<ul>
+<li>Dependendo do tipo, pode variar de <strong>400 até 1.500 mg de sódio
+por 100 g</strong> (quase toda a recomendação diária de 2.000 mg).<br />
+</li>
+<li>Isso pode contribuir para <strong>pressão alta</strong>.</li>
+</ul></li>
+<li><strong>Calorias concentradas</strong>
+<ul>
+<li>100 g de queijo fornecem em média <strong>350–400
+kcal</strong>.<br />
+</li>
+<li>Se não for ajustado na dieta, pode favorecer <strong>ganho de
+peso</strong>.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="1.5" id="resumo-prático"><span class="header-section-number">1.5</span> 📊 <strong>Resumo
+prático</strong></h2>
+<ul>
+<li><strong>Benefícios:</strong> ótimo aporte de cálcio, proteína e
+micronutrientes → positivo para ossos, músculos e saúde geral.<br />
+</li>
+<li><strong>Riscos:</strong> em excesso (100 g/dia, especialmente
+queijos curados), pode aumentar colesterol LDL, sódio e calorias →
+negativo para saúde cardiovascular.</li>
+</ul>
+<p>👉 Uma <strong>quantidade mais equilibrada</strong> seria
+<strong>30–40 g/dia</strong> (1 porção), garantindo os benefícios sem
+sobrecarregar colesterol, sódio e calorias.</p>
+<hr />
+<p>Quer que eu monte uma <strong>comparação lado a lado (tabela) entre
+30 g x 100 g de queijo/dia</strong>, mostrando cálcio, proteína,
+gordura, colesterol e sódio?</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-09-23-145020-chatgpt"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-09-23
+14:50:20)</em> <em>[ChatGPT]</em></h3>
+<p>sim e assim qual a recomendação</p>
+<hr />
+<h3 data-number="1.5.2" id="chatgpt-2025-09-23-145020-chatgpt"><span class="header-section-number">1.5.2</span> 🤖 ChatGPT <em>(2025-09-23
+14:50:20)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👍 Vou organizar para você a <strong>comparação 30 g vs 100
+g de queijo/dia</strong> (valores médios considerando queijos
+semicurados, como mussarela/cheddar/gouda).</p>
+<hr />
+<h2 data-number="1.6" id="comparação-nutricional-média"><span class="header-section-number">1.6</span> 📊 <strong>Comparação
+nutricional média</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Nutriente</th>
+<th>30 g (1 porção)</th>
+<th>100 g (excesso diário)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Calorias</strong></td>
+<td>~120 kcal</td>
+<td>~380 kcal</td>
+</tr>
+<tr>
+<td><strong>Proteína</strong></td>
+<td>~7 g</td>
+<td>~23 g</td>
+</tr>
+<tr>
+<td><strong>Cálcio</strong></td>
+<td>~250 mg</td>
+<td>~750–800 mg</td>
+</tr>
+<tr>
+<td><strong>Gordura total</strong></td>
+<td>~9 g</td>
+<td>~28 g</td>
+</tr>
+<tr>
+<td><strong>Gordura saturada</strong></td>
+<td>~5–6 g</td>
+<td>~18 g</td>
+</tr>
+<tr>
+<td><strong>Colesterol</strong></td>
+<td>~20–25 mg</td>
+<td>~70–90 mg</td>
+</tr>
+<tr>
+<td><strong>Sódio</strong></td>
+<td>~200–300 mg</td>
+<td>~700–1.000 mg</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.7" id="o-que-isso-significa"><span class="header-section-number">1.7</span> ✅ <strong>O que isso
+significa</strong></h2>
+<ul>
+<li><strong>30 g/dia</strong> →
+<ul>
+<li>Já cobre <strong>25–30% da necessidade de cálcio</strong>.<br />
+</li>
+<li>Fornece proteína de qualidade sem exagerar em gordura/sódio.<br />
+</li>
+<li>Quantidade considerada <strong>segura e benéfica</strong> mesmo para
+quem cuida do colesterol.</li>
+</ul></li>
+<li><strong>100 g/dia</strong> →
+<ul>
+<li>Cobre quase <strong>100% da necessidade de cálcio</strong>.<br />
+</li>
+<li>Aumenta bastante gordura saturada e sódio → pode <strong>subir
+LDL-colesterol e pressão arterial</strong> em pessoas
+predispostas.<br />
+</li>
+<li>Eleva o aporte calórico, podendo contribuir para <strong>ganho de
+peso</strong> se não compensado.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 data-number="1.8" id="recomendação-prática"><span class="header-section-number">1.8</span> 🎯 <strong>Recomendação
+prática</strong></h2>
+<ul>
+<li><p><strong>Ideal para a maioria das pessoas:</strong><br />
+👉 <strong>30–40 g de queijo/dia</strong> (equivale a 1 fatia média ou 2
+colheres de sopa de queijo ralado).</p></li>
+<li><p><strong>Se gostar muito e quiser variar:</strong></p>
+<ul>
+<li>Pode consumir até <strong>50 g/dia em pessoas saudáveis</strong>,
+desde que não haja colesterol alto ou hipertensão.<br />
+</li>
+<li>Reservar os <strong>queijos mais gordurosos e salgados (parmesão,
+cheddar, gouda)</strong> para consumo ocasional.<br />
+</li>
+<li>Dar preferência a <strong>ricota, cottage, minas frescal</strong>
+para o dia a dia.</li>
+</ul></li>
+</ul>
+<hr />
+<p>Quer que eu monte um <strong>guia visual simples</strong> (tipo
+gráfico de semáforo verde–amarelo–vermelho) mostrando quais queijos são
+mais adequados para consumo <strong>diário, moderado e
+ocasional</strong>?</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-2025-09-23-151939-chatgpt"><span class="header-section-number">1.8.1</span> 👤 Utilizador <em>(2025-09-23
+15:19:39)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.8.2" id="chatgpt-2025-09-23-151939-chatgpt"><span class="header-section-number">1.8.2</span> 🤖 ChatGPT <em>(2025-09-23
+15:19:39)</em> <em>[ChatGPT]</em></h3>
+<p>{“prompt”:“Infográfico estilo semáforo nutricional mostrando a
+adequação dos queijos para consumo diário, moderado e ocasional em
+relação ao colesterol e saúde cardiovascular.- Verde (consumo diário):
+ricota, cottage, minas frescal.- Amarelo (moderado, 2-3x por semana):
+mussarela, brie.- Vermelho (ocasional, máximo 1x por semana): parmesão,
+cheddar, gouda.limpo, ícones de queijo em cada faixa, cores vivas e
+texto legível em português.”,“size”:“1024x1024”,“n”:1}</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

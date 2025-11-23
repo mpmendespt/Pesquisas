@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>064_ChatGPT_Integrar_função_em_script</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#integrar-função-em-script" id="toc-integrar-função-em-script"><span class="toc-section-number">1</span> Integrar função em script</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="integrar-função-em-script"><span class="header-section-number">1</span> Integrar função em script</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #64</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 6903dc7a-316c-8329-b7cd-67e931c9eb82</li>
+<li><strong>Criada em:</strong> 2025-10-30 21:47:27</li>
+<li><strong>Atualizada em:</strong> 2025-10-30 21:49:01</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> pretendia que convert_pipeline3.py não
+precisa-se de: from deepseek_convert3 import html_to_pdf_dire…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-30-214725-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-30
+21:47:25)</em> <em>[ChatGPT]</em></h3>
+<p>pretendia que convert_pipeline3.py não precisa-se de: from
+deepseek_convert3 import html_to_pdf_direct; isto é que o conteudo de
+deepseek_convert3 fosse integrado no convert_pipeline3.py</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-10-30-214727-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-10-30
+21:47:27)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito! Então você quer <strong>integrar o conteúdo de
+<code>deepseek_convert3.py</code> diretamente em
+<code>convert_pipeline3.py</code></strong>, eliminando a necessidade de
+importar <code>html_to_pdf_direct</code>.</p>
+<p>Vou te mostrar um passo a passo de como fazer isso:</p>
+<hr />
+<h3 data-number="1.2.3" id="localize-a-função-em-deepseek_convert3.py"><span class="header-section-number">1.2.3</span> 1. Localize a função em
+<code>deepseek_convert3.py</code></h3>
+<p>Supondo que <code>deepseek_convert3.py</code> tenha algo assim:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deepseek_convert3.py</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_direct(html_content, output_path):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># exemplo de implementação</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    HTML(string<span class="op">=</span>html_content).write_pdf(output_path)</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.4" id="copie-a-função-para-convert_pipeline3.py"><span class="header-section-number">1.2.4</span> 2. Copie a função para
+<code>convert_pipeline3.py</code></h3>
+<p>No início do seu <code>convert_pipeline3.py</code> (ou na posição
+adequada), cole a função:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert_pipeline3.py</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_direct(html_content, output_path):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    HTML(string<span class="op">=</span>html_content).write_pdf(output_path)</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.5" id="remova-o-import"><span class="header-section-number">1.2.5</span> 3. Remova o import</h3>
+<p>Antes você tinha algo assim:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> deepseek_convert3 <span class="im">import</span> html_to_pdf_direct</span></code></pre></div>
+<p>Agora <strong>isso não é mais necessário</strong>, então pode
+apagar.</p>
+<hr />
+<h3 data-number="1.2.6" id="ajuste-o-código-que-usa-a-função"><span class="header-section-number">1.2.6</span> 4. Ajuste o código que usa a
+função</h3>
+<p>Se em <code>convert_pipeline3.py</code> você tinha:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>html_to_pdf_direct(<span class="st">&quot;&lt;h1&gt;Teste&lt;/h1&gt;&quot;</span>, <span class="st">&quot;saida.pdf&quot;</span>)</span></code></pre></div>
+<p><strong>continua funcionando normalmente</strong>, porque a função
+agora está dentro do mesmo arquivo.</p>
+<hr />
+<p>Se você quiser, posso fazer uma <strong>versão completa de
+<code>convert_pipeline3.py</code> já com a função
+<code>html_to_pdf_direct</code> integrada</strong>, pronta para uso.
+Isso evita qualquer erro de importação.</p>
+<p>Quer que eu faça isso?</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-10-30-214814-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-10-30
+21:48:14)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-10-30-214815-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-10-30
+21:48:15)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito! Vou criar uma versão completa do
+<code>convert_pipeline3.py</code> <strong>com a função
+<code>html_to_pdf_direct</code> integrada</strong>, sem necessidade de
+importar <code>deepseek_convert3.py</code>. Vou assumir que o pipeline
+principal já chamava essa função em algum ponto, e vou manter a
+estrutura típica de um pipeline de conversão de HTML para PDF.</p>
+<p>Aqui está uma versão integrada:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert_pipeline3.py</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Importações necessárias</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Função integrada do deepseek_convert3</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_direct(html_content, output_path):</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Converte HTML em PDF diretamente.</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">    :param html_content: string contendo o HTML</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">    :param output_path: caminho do arquivo PDF de saída</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    HTML(string<span class="op">=</span>html_content).write_pdf(output_path)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;PDF gerado em: </span><span class="sc">{</span>output_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Funções auxiliares do pipeline</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load_html_from_file(file_path):</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">    Carrega conteúdo HTML de um arquivo.</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">    :param file_path: caminho do arquivo HTML</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">    :return: conteúdo HTML como string</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> f.read()</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> save_pdf_from_html_file(input_html_path, output_pdf_path):</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">    Pipeline simplificado: pega um arquivo HTML e gera PDF.</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">    :param input_html_path: arquivo HTML de entrada</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">    :param output_pdf_path: arquivo PDF de saída</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    html_content <span class="op">=</span> load_html_from_file(input_html_path)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    html_to_pdf_direct(html_content, output_pdf_path)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemplo de execução direta</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="co"># -------------------------------</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    input_html <span class="op">=</span> <span class="st">&quot;exemplo.html&quot;</span>   <span class="co"># arquivo HTML de entrada</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    output_pdf <span class="op">=</span> <span class="st">&quot;saida.pdf&quot;</span>      <span class="co"># arquivo PDF de saída</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> os.path.exists(input_html):</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>        save_pdf_from_html_file(input_html, output_pdf)</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Arquivo HTML não encontrado: </span><span class="sc">{</span>input_html<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<p>✅ <strong>O que foi feito:</strong></p>
+<ol type="1">
+<li>A função <code>html_to_pdf_direct</code> foi <strong>copiada e
+integrada</strong>.</li>
+<li>Removido qualquer <code>import</code> de
+<code>deepseek_convert3</code>.</li>
+<li>Mantido pipeline para carregar HTML de arquivo e gerar PDF.</li>
+<li>Incluído bloco <code>if __name__ == &quot;__main__&quot;</code> para execução
+direta.</li>
+</ol>
+<hr />
+<p>Se você quiser, posso fazer uma <strong>versão ainda mais
+“robusta”</strong> que:</p>
+<ul>
+<li>Aceite HTML direto ou arquivo HTML.</li>
+<li>Permita definir opções de PDF (margens, tamanho de página,
+etc.).</li>
+<li>Gerei logs mais detalhados do pipeline.</li>
+</ul>
+<p>Quer que eu faça isso?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

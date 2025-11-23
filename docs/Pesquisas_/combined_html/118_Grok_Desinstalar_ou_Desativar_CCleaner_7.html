@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>118_Grok_Desinstalar_ou_Desativar_CCleaner_7</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#desinstalar-ou-desativar-ccleaner-7" id="toc-desinstalar-ou-desativar-ccleaner-7"><span class="toc-section-number">1</span> Desinstalar ou Desativar CCleaner
+7</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="desinstalar-ou-desativar-ccleaner-7"><span class="header-section-number">1</span> Desinstalar ou Desativar CCleaner
+7</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #118</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> ac9cf11f-20d3-46eb-bb48-8d2207550b59</li>
+<li><strong>Criada em:</strong> 2025-10-14 19:20:45Z</li>
+<li><strong>Atualizada em:</strong> 2025-10-14 19:23:25Z</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> CCleaner 7 desintalar ou desctivar…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-14-202045-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-14
+20:20:45)</em> <em>[Grok]</em></h3>
+<p>CCleaner 7 desintalar ou desctivar</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-10-14-202106-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-10-14
+20:21:06)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.3" id="desinstalar-ou-desativar-o-ccleaner-7"><span class="header-section-number">1.2.3</span> Desinstalar ou Desativar o
+CCleaner 7?</h3>
+<p>Olá! Pelo que entendi da sua pergunta, você está em dúvida se deve
+<strong>desinstalar</strong> (remover completamente) o CCleaner versão 7
+ou apenas <strong>desativar</strong> (paralisar) algumas de suas
+funções, como processos em segundo plano ou atualizações automáticas. O
+CCleaner 7 tem recebido críticas recentes por bugs, interface complicada
+e comportamentos invasivos, como serviços que persistem após a remoção.
+Vou explicar as opções de forma simples e passo a passo, focando no
+Windows (o mais comum para o CCleaner). Se você usa Mac ou outro
+sistema, me avise para ajustar.</p>
+<h4 data-number="1.2.3.1" id="recomendação-geral"><span class="header-section-number">1.2.3.1</span> <strong>Recomendação
+Geral</strong></h4>
+<ul>
+<li><strong>Desinstale se possível</strong>: Muitos usuários relatam
+problemas com a versão 7 (como travamentos e atualizações forçadas) e
+recomendam voltar para a versão 6 ou usar alternativas gratuitas como o
+Microsoft PC Manager ou
+BleachBit.<grok:render card_id="2897cb" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">7</argument> </grok:render> Desinstalar
+remove tudo e evita riscos.</li>
+<li><strong>Desative se quiser manter</strong>: Útil se você gosta da
+ferramenta, mas quer evitar consumo de RAM, bateria ou execuções
+automáticas.</li>
+<li><strong>Aviso</strong>: Ferramentas como o CCleaner podem danificar
+o registro do Windows se mal usadas. Sempre faça backup
+antes.<grok:render card_id="89a6a5" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">5</argument> </grok:render></li>
+</ul>
+<h4 data-number="1.2.3.2" id="opção-1-desinstalar-o-ccleaner-7-remoção-completa"><span class="header-section-number">1.2.3.2</span> <strong>Opção 1:
+Desinstalar o CCleaner 7 (Remoção Completa)</strong></h4>
+<p>Siga esses passos para remover o programa de forma segura. Se o
+desinstalador nativo falhar (comum na v7), use ferramentas extras.</p>
+<ol type="1">
+<li><p><strong>Via Configurações do Windows (Método
+Simples)</strong>:</p>
+<ul>
+<li>Pressione <strong>Windows + I</strong> para abrir
+Configurações.</li>
+<li>Vá em <strong>Aplicativos &gt; Aplicativos instalados</strong>.</li>
+<li>Busque por “CCleaner” na lista.</li>
+<li>Clique nos três pontos ao lado &gt;
+<strong>Desinstalar</strong>.</li>
+<li>Confirme e reinicie o PC.</li>
+</ul>
+<p><em>Se travar em 19% ou fechar rápido</em>: Reinicie o PC e tente
+novamente.<grok:render card_id="c8af6f" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">10</argument> </grok:render></p></li>
+<li><p><strong>Via Painel de Controle (Alternativa)</strong>:</p>
+<ul>
+<li>Busque “Adicionar ou remover programas” no menu Iniciar.</li>
+<li>Encontre “CCleaner” &gt; Clique em
+<strong>Desinstalar/Mudar</strong>.</li>
+<li>Siga as instruções na tela.</li>
+</ul></li>
+<li><p><strong>Se Não Funcionar (Limpeza Avançada)</strong>:</p>
+<ul>
+<li>Baixe o <strong>Revo Uninstaller</strong> (gratuito): Ele remove
+arquivos residuais e entradas do
+registro.<grok:render card_id="172249" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">4</argument>
+</grok:render><grok:render card_id="d0af12" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">12</argument> </grok:render>
+<ul>
+<li>Instale &gt; Selecione CCleaner &gt; Escolha “Modo Avançado” &gt;
+Desinstale.</li>
+<li>Escaneie por sobras e delete.</li>
+</ul></li>
+<li>Manualmente: Vá em **C:Files* (ou Program Files (x86)), encontre
+“uninst.exe” ou “uninstall.exe” e execute como administrador.</li>
+</ul></li>
+<li><p><strong>Limpeza Pós-Desinstalação</strong>:</p>
+<ul>
+<li>Use o CCleaner v6 (baixe do site oficial, mas desative atualizações
+automáticas) para limpar resíduos, ou evite e use o Limpeza de Disco do
+Windows.</li>
+<li>Verifique Serviços: Pressione <strong>Windows + R</strong> &gt;
+Digite <code>services.msc</code> &gt; Procure por “CCleaner” e
+desative/delete se
+persistir.<grok:render card_id="3c33c2" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">7</argument> </grok:render></li>
+</ul></li>
+</ol>
+<p><strong>Para Mac</strong>: Vá em Aplicativos &gt; Clique direito em
+CCleaner &gt; “Mostrar Conteúdo do Pacote” &gt; Delete a pasta
+“Contents”. Pode pedir
+senha.<grok:render card_id="670611" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">2</argument> </grok:render></p>
+<h4 data-number="1.2.3.3" id="opção-2-desativar-funções-do-ccleaner-7-sem-remover"><span class="header-section-number">1.2.3.3</span> <strong>Opção 2: Desativar
+Funções do CCleaner 7 (Sem Remover)</strong></h4>
+<p>Se preferir manter o programa, desative o que incomoda:</p>
+<ol type="1">
+<li><strong>Desativar Inicialização Automática</strong>:
+<ul>
+<li>Abra o CCleaner &gt; Vá em <strong>Opções &gt;
+Avançado</strong>.</li>
+<li>Desmarque “Executar CCleaner quando o Windows iniciar”.</li>
+<li>Em <strong>Opções &gt; Manutenção</strong>, desative “Atualizações
+automáticas” para evitar upgrades forçados.</li>
+</ul></li>
+<li><strong>Desativar Serviços em Segundo Plano</strong>:
+<ul>
+<li>Pressione <strong>Ctrl + Shift + Esc</strong> para abrir Gerenciador
+de Tarefas.</li>
+<li>Aba <strong>Inicializar</strong> &gt; Encontre “CCleaner” &gt;
+Clique direito &gt; <strong>Desativar</strong>.</li>
+<li>Para processos rodando: Aba <strong>Processos</strong> &gt; Encerre
+“CCleaner.exe” (mas pode reiniciar).</li>
+</ul></li>
+<li><strong>Desativar Limpezas Automáticas</strong>:
+<ul>
+<li>No CCleaner &gt; <strong>Opções &gt; Limpeza</strong> &gt; Desmarque
+itens sensíveis (ex: cookies, histórico).</li>
+<li>Em <strong>Driver Updater</strong> (se ativado): Desative para
+evitar atualizações ruins que podem quebrar
+drivers.<grok:render card_id="724e4b" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">19</argument> </grok:render></li>
+</ul></li>
+</ol>
+<h4 data-number="1.2.3.4" id="alternativas-ao-ccleaner-7"><span class="header-section-number">1.2.3.4</span> <strong>Alternativas ao
+CCleaner 7</strong></h4>
+<ul>
+<li><strong>Gratuitas e Seguras</strong>: Microsoft PC Manager (limpa e
+otimiza sem riscos), BleachBit ou Wise Disk Cleaner.</li>
+<li><strong>Por quê?</strong> A v7 é criticada por ser “invasiva” e
+instável.<grok:render card_id="b9f1b9" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">7</argument>
+</grok:render><grok:render card_id="35473e" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">14</argument> </grok:render></li>
+</ul>
+<p>Se isso não resolver ou se você tiver mais detalhes (como o SO ou o
+problema específico), me diga! 😊</p>
+<hr />
+<h3 data-number="1.2.4" id="utilizador-2025-10-14-202311-grok"><span class="header-section-number">1.2.4</span> 👤 Utilizador <em>(2025-10-14
+20:23:11)</em> <em>[Grok]</em></h3>
+<p>como fazer downgrade do CCleaner 7 para uma versão anterior</p>
+<hr />
+<h3 data-number="1.2.5" id="grok-2025-10-14-202325-grok"><span class="header-section-number">1.2.5</span> 🤖 Grok <em>(2025-10-14
+20:23:25)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.6" id="como-fazer-downgrade-do-ccleaner-7-para-uma-versão-anterior"><span class="header-section-number">1.2.6</span> Como Fazer Downgrade do
+CCleaner 7 para uma Versão Anterior</h3>
+<p>Olá! Se você está insatisfeito com o CCleaner 7 (como muitos
+usuários, que reclamam de bugs, interface confusa e limpezas que
+falham), o downgrade para a versão 6 (especificamente a 6.39, que é
+estável e bem avaliada) é uma ótima opção. O processo envolve
+desinstalar a v7 completamente e instalar a v6, pois o instalador da
+versão anterior sobrescreve a atual sem problemas.
+<strong>Importante</strong>: Faça backup de arquivos importantes antes,
+pois limpezas residuais podem ocorrer. Isso é para Windows (o mais
+comum); se for Mac ou outro SO, avise.</p>
+<h4 data-number="1.2.6.1" id="passo-1-desinstalar-o-ccleaner-7-completamente"><span class="header-section-number">1.2.6.1</span> <strong>Passo 1:
+Desinstalar o CCleaner 7 Completamente</strong></h4>
+<p>Para evitar conflitos, remova tudo da v7. Use um desinstalador
+avançado se o método padrão falhar (comum na v7).</p>
+<ol type="1">
+<li><strong>Método Simples (via Configurações)</strong>:
+<ul>
+<li>Pressione <strong>Windows + I</strong> &gt; <strong>Aplicativos &gt;
+Aplicativos instalados</strong>.</li>
+<li>Busque “CCleaner” &gt; Clique nos três pontos &gt;
+<strong>Desinstalar</strong>.</li>
+<li>Reinicie o PC.</li>
+</ul></li>
+<li><strong>Se Falhar (use Revo Uninstaller)</strong>:
+<ul>
+<li>Baixe o Revo Uninstaller gratuito em <a href="https://www.revouninstaller.com">revouninstaller.com</a>.</li>
+<li>Instale &gt; Selecione CCleaner &gt; Modo “Avançado” &gt;
+Desinstale.</li>
+<li>Escaneie por resíduos (arquivos e registro) e delete tudo.</li>
+</ul></li>
+<li><strong>Limpeza Manual de Resíduos</strong>:
+<ul>
+<li>Abra o Explorador de Arquivos &gt; Vá para
+<code>C:\Program Files\CCleaner</code> (ou
+<code>Program Files (x86)</code>).</li>
+<li>Delete a pasta se existir.</li>
+<li>Pressione <strong>Windows + R</strong> &gt; Digite
+<code>regedit</code> &gt; Busque por “CCleaner” e delete entradas
+relacionadas (cuidado: só se souber o que faz; use o Revo para
+isso).</li>
+<li>Em Serviços: <strong>Windows + R</strong> &gt;
+<code>services.msc</code> &gt; Procure “CCleaner” &gt; Clique direito
+&gt; Parar e Desativar.</li>
+</ul></li>
+</ol>
+<h4 data-number="1.2.6.2" id="passo-2-baixar-a-versão-anterior-recomendado-v6.39"><span class="header-section-number">1.2.6.2</span> <strong>Passo 2: Baixar a
+Versão Anterior (Recomendado: v6.39)</strong></h4>
+<p>O site oficial da Piriform não oferece downloads diretos de versões
+antigas, mas sites confiáveis como FileHippo, OldVersion.com ou Uptodown
+têm arquivos limpos e verificados. Evite fontes duvidosas para não pegar
+malware.</p>
+<ul>
+<li><strong>Download Recomendado</strong>:
+<ul>
+<li><a href="https://filehippo.com/download_ccleaner/history/">FileHippo:
+CCleaner 6.39</a> – Escolha a v6.39.3 (lançada em 2025, estável).</li>
+<li><a href="http://www.oldversion.com/windows/ccleaner/">OldVersion.com:
+Versões Antigas do CCleaner</a> – Lista completa, baixe a 6.39.</li>
+<li><a href="https://ccleaner.en.uptodown.com/windows/versions">Uptodown:
+CCleaner v6</a> – Versão portable disponível se preferir sem
+instalação.</li>
+</ul></li>
+</ul>
+<p>Verifique o hash do arquivo (MD5/SHA) no site para confirmar
+integridade. A v6.39 é gratuita e funciona em Windows 7+.</p>
+<h4 data-number="1.2.6.3" id="passo-3-instalar-a-versão-anterior"><span class="header-section-number">1.2.6.3</span> <strong>Passo 3: Instalar a
+Versão Anterior</strong></h4>
+<ol type="1">
+<li>Execute o instalador baixado como <strong>Administrador</strong>
+(clique direito &gt; Executar como admin).</li>
+<li>Siga o wizard: Aceite termos, escolha pasta (padrão é OK) e
+instale.</li>
+<li>Ao final, abra o CCleaner &gt; Vá em <strong>Opções &gt;
+Avançado</strong> &gt; Desmarque “Atualizações automáticas” para
+bloquear upgrades forçados para v7 (a Piriform força updates em versões
+&gt;1 ano).</li>
+<li>Reinicie o PC e teste uma limpeza para confirmar.</li>
+</ol>
+<h4 data-number="1.2.6.4" id="dicas-extras-e-precauções"><span class="header-section-number">1.2.6.4</span> <strong>Dicas Extras e
+Precauções</strong></h4>
+<ul>
+<li><strong>Bloquear Updates Forçados</strong>: Na v6, desative tudo em
+<strong>Opções &gt; Manutenção</strong>. Se persistir, use o firewall do
+Windows para bloquear o app de acessar a internet (procure tutoriais no
+YouTube).</li>
+<li><strong>Versão Portable</strong>: Se quiser evitar instalação, baixe
+a portable da v6 no Uptodown – roda direto do ZIP.</li>
+<li><strong>Problemas Comuns</strong>: Se a v7 deixou resíduos que
+causam erros, rode uma limpeza com o próprio CCleaner v6 após
+instalar.</li>
+<li><strong>Alternativas se Downgrade Falhar</strong>: Considere o
+Microsoft PC Manager (gratuito e integrado ao Windows) ou BleachBit para
+limpezas seguras, sem dramas de updates.</li>
+</ul>
+<p>Se encontrar erros específicos (como “unable to clean” persistindo),
+me mande detalhes para ajudar mais. Boa sorte – a v6 é bem mais
+confiável! 😊</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

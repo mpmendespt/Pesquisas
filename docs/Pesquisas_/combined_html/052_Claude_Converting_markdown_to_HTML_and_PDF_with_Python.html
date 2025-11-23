@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>052_Claude_Converting_markdown_to_HTML_and_PDF_with_Python</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converting-markdown-to-html-and-pdf-with-python" id="toc-converting-markdown-to-html-and-pdf-with-python"><span class="toc-section-number">1</span> Converting markdown to HTML and PDF
+with Python</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#funcionalidades" id="toc-funcionalidades"><span class="toc-section-number">1.3</span> 🎯 Funcionalidades</a></li>
+<li><a href="#instalação-de-dependências" id="toc-instalação-de-dependências"><span class="toc-section-number">1.4</span> 📦 Instalação de
+Dependências</a></li>
+<li><a href="#como-usar" id="toc-como-usar"><span class="toc-section-number">1.5</span> 🚀 Como Usar</a></li>
+</ul></li>
+<li><a href="#pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md" id="toc-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md"><span class="toc-section-number">2</span> (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf22.py
+exemplo_completo2.md</a></li>
+<li><a href="#conversor-markdown-html-pdf" id="toc-conversor-markdown-html-pdf"><span class="toc-section-number">3</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</a>
+<ul>
+<li><a href="#correções-aplicadas" id="toc-correções-aplicadas"><span class="toc-section-number">3.1</span> 🔧 Correções Aplicadas</a></li>
+<li><a href="#teste-novamente" id="toc-teste-novamente"><span class="toc-section-number">3.2</span> 🚀 Teste Novamente</a></li>
+</ul></li>
+<li><a href="#o-script-convert_md_html_pdf22.py-deve-converter-primeiro-para-html-e-depois-converter-o-html-para-pdf-o-actual-dá-erro-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md" id="toc-o-script-convert_md_html_pdf22.py-deve-converter-primeiro-para-html-e-depois-converter-o-html-para-pdf-o-actual-dá-erro-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md"><span class="toc-section-number">4</span> O script convert_md_html_pdf22.py
+deve converter primeiro para html e depois converter o html para pdf; o
+actual dá erro (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf22.py
+exemplo_completo2.md</a></li>
+<li><a href="#conversor-markdown-html-pdf-1" id="toc-conversor-markdown-html-pdf-1"><span class="toc-section-number">5</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</a>
+<ul>
+<li><a href="#correções-principais" id="toc-correções-principais"><span class="toc-section-number">5.1</span> 🔧 Correções Principais</a></li>
+<li><a href="#como-usar-1" id="toc-como-usar-1"><span class="toc-section-number">5.2</span> 🚀 Como Usar</a></li>
+<li><a href="#nota-sobre-emojis-em-pdf" id="toc-nota-sobre-emojis-em-pdf"><span class="toc-section-number">5.3</span> 📌 Nota sobre Emojis em
+PDF</a></li>
+<li><a href="#principais-melhorias" id="toc-principais-melhorias"><span class="toc-section-number">5.4</span> 🎯 Principais Melhorias</a></li>
+<li><a href="#instalação-e-uso" id="toc-instalação-e-uso"><span class="toc-section-number">5.5</span> 🚀 Instalação e Uso</a></li>
+<li><a href="#o-que-mudou" id="toc-o-que-mudou"><span class="toc-section-number">5.6</span> ⚡ O que mudou?</a></li>
+<li><a href="#comparação-das-abordagens" id="toc-comparação-das-abordagens"><span class="toc-section-number">5.7</span> 📊 Comparação das
+Abordagens</a></li>
+<li><a href="#comparação-completa-dos-motores" id="toc-comparação-completa-dos-motores"><span class="toc-section-number">5.8</span> 🎯 Comparação Completa dos
+Motores</a></li>
+<li><a href="#como-usar-2" id="toc-como-usar-2"><span class="toc-section-number">5.9</span> 🚀 Como Usar</a></li>
+<li><a href="#instalação-dos-motores" id="toc-instalação-dos-motores"><span class="toc-section-number">5.10</span> 📦 Instalação dos
+Motores</a></li>
+<li><a href="#por-que-múltiplas-opções" id="toc-por-que-múltiplas-opções"><span class="toc-section-number">5.11</span> 💡 Por que múltiplas
+opções?</a></li>
+</ul></li>
+<li><a href="#com-esta-versão-o-pdf-já-parece-correctofiz-o-rename-para-convert_md_html_pdf23.py-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf23.py-exemplo_completo2.md" id="toc-com-esta-versão-o-pdf-já-parece-correctofiz-o-rename-para-convert_md_html_pdf23.py-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf23.py-exemplo_completo2.md"><span class="toc-section-number">6</span> com esta versão o pdf já parece
+correcto,fiz o rename para convert_md_html_pdf23.py (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf23.py
+exemplo_completo2.md</a></li>
+<li><a href="#conversor-markdown-html-pdf-2" id="toc-conversor-markdown-html-pdf-2"><span class="toc-section-number">7</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</a>
+<ul>
+<li><a href="#resumo-do-sucesso" id="toc-resumo-do-sucesso"><span class="toc-section-number">7.1</span> ✅ Resumo do Sucesso</a></li>
+<li><a href="#dicas-de-uso" id="toc-dicas-de-uso"><span class="toc-section-number">7.2</span> 📝 Dicas de Uso</a></li>
+<li><a href="#principais-vantagens-da-solução" id="toc-principais-vantagens-da-solução"><span class="toc-section-number">7.3</span> 🎯 Principais Vantagens da
+Solução</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converting-markdown-to-html-and-pdf-with-python"><span class="header-section-number">1</span> Converting markdown to HTML and
+PDF with Python</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #52</li>
+<li><strong>Origem:</strong> Claude</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 1212cd23-8f75-48b4-92e6-5d51e64a2cc0</li>
+<li><strong>Criada em:</strong> 2025-11-02 18:21:15</li>
+<li><strong>Total de mensagens:</strong> 12</li>
+<li><strong>Resumo:</strong> Converer md para html e posterior pdf.
+Pretendo converter para html com pandoc pandoc exemplo_compl…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-claude"><span class="header-section-number">1.2.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Converer md para html e posterior pdf. Pretendo converter para html
+com pandoc pandoc exemplo_completo2.md -o exemplo_completo2.html
+–standalone –mathjax exemplo_completo2.md contem exemplos de formulas
+matematicas, codigo de linguagens de progamação e emojis. Pretende-se um
+modelo python que fassa a conversão, com nome:
+convert_md_html_pdf22.py</p>
+<hr />
+<h3 data-number="1.2.2" id="claude-claude"><span class="header-section-number">1.2.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Vou criar um script Python completo que converte Markdown para HTML e
+PDF, lidando com fórmulas matemáticas, código e emojis.</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Criei o script <code>convert_md_html_pdf22.py</code> completo! Aqui
+estão as principais características:</p>
+<h2 data-number="1.3" id="funcionalidades"><span class="header-section-number">1.3</span> 🎯 Funcionalidades</h2>
+<ul>
+<li><strong>Conversão MD → HTML</strong> com suporte a:
+<ul>
+<li>✅ Fórmulas matemáticas (MathJax)</li>
+<li>✅ Syntax highlighting para código</li>
+<li>✅ Emojis (UTF-8)</li>
+<li>✅ Tabela de conteúdos automática</li>
+</ul></li>
+<li><strong>Conversão HTML → PDF</strong> com dois métodos:
+<ul>
+<li><code>wkhtmltopdf</code> (recomendado)</li>
+<li>LaTeX/XeLaTeX (alternativo)</li>
+</ul></li>
+</ul>
+<h2 data-number="1.4" id="instalação-de-dependências"><span class="header-section-number">1.4</span> 📦 Instalação de
+Dependências</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ubuntu/Debian</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install pandoc wkhtmltopdf texlive-xetex</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fedora</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install pandoc wkhtmltopdf texlive-xetex</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pandoc wkhtmltopdf</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install <span class="at">--cask</span> mactex</span></code></pre></div>
+<h2 data-number="1.5" id="como-usar"><span class="header-section-number">1.5</span> 🚀 Como Usar</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversão completa (MD → HTML → PDF)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas HTML</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--html-only</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar LaTeX em vez de wkhtmltopdf</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> latex</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Com CSS customizado</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--css</span> meu_estilo.css</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver ajuda</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py <span class="at">--help</span></span></code></pre></div>
+<p>O script verifica automaticamente se as dependências estão instaladas
+e fornece mensagens claras sobre o que está acontecendo! 🎉</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-claude-1"><span class="header-section-number">1.5.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<h1 data-number="2" id="pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md"><span class="header-section-number">2</span> (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf22.py
+exemplo_completo2.md</h1>
+<h1 data-number="3" id="conversor-markdown-html-pdf"><span class="header-section-number">3</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</h1>
+✓ Pandoc encontrado: 3.8.2.1 📄 Convertendo exemplo_completo2.md para
+HTML… ✓ HTML gerado: exemplo_completo2.html ✓ wkhtmltopdf encontrado 📑
+Convertendo HTML para PDF… ✗ Erro ao gerar PDF: Loading pages (1/6)
+[&gt; ] 0% [======&gt; ] 10% [===============&gt; ] 25% Error: Failed to
+load <a href="file:///D:/Downloads/_DOCS_/_DOCS_/Teste_Converter_md_html_pdf/" class="uri">file:///D:/Downloads/_DOCS_/_DOCS_/Teste_Converter_md_html_pdf/</a>
+<p>
+body { max-width: 900px; margin: 0auto; padding: 20px; font-family:
+-apple-system, BlinkMacSystemFont,“Segoe UI”, “Noto Color Emoji”,
+“Helvetica Neue”, Arial, sans-serif;line-height: 1.6; } h1, h2, h3 {
+color: #1565C0; } pre, code {background-color: #f6f8fa; padding: 10px;
+border-radius: 5px;font-family: Consolas, monospace; }
+</p>
+, with network status code 203 and http status code 0 - Error opening
+D:/Downloads/<em>DOCS</em>/<em>DOCS</em>/Teste_Converter_md_html_pdf/
+<p>
+<p>body { max-width: 900px; margin: 0auto; padding: 20px; font-family:
+-apple-system, BlinkMacSystemFont,“Segoe UI”, “Noto Color Emoji”,
+“Helvetica Neue”, Arial, sans-serif;line-height: 1.6; } h1, h2, h3 {
+color: : The filename, directory name, or volume label syntax is
+incorrect. [=====================&gt; ] 36%
+[========================&gt; ] 41% [===========================&gt; ]
+45% [============================&gt; ] 48%
+[==============================&gt; ] 50%
+[=============================================&gt; ] 76%
+[============================================================] 100%
+Counting pages (2/6)
+[============================================================] Object 1
+of 1 Resolving links (4/6)
+[============================================================] Object 1
+of 1 Loading headers and footers (5/6) Printing pages (6/6) [&gt; ]
+Preparing [===============&gt; ] Page 1 of 4
+[==============================&gt; ] Page 2 of 4
+[=============================================&gt; ] Page 3 of 4
+[============================================================] Page 4 of
+4 Done Exit with code 1 due to network error: ContentNotFoundError</p>
+<hr />
+<h3 data-number="3.0.1" id="claude-claude-1"><span class="header-section-number">3.0.1</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>O erro está relacionado ao CSS inline no frontmatter do Markdown. O
+Pandoc está tentando carregar o CSS como um arquivo externo. Vou
+corrigir o script para lidar melhor com isso:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Atualizei o script com três melhorias importantes:</p>
+<h2 data-number="3.1" id="correções-aplicadas"><span class="header-section-number">3.1</span> 🔧 Correções Aplicadas</h2>
+<ol type="1">
+<li><p><strong><code>--embed-resources</code></strong>: Incorpora todos
+os recursos no HTML (evita referências externas problemáticas)</p></li>
+<li><p><strong><code>_fix_html_css()</code></strong>: Remove
+automaticamente links de CSS malformados gerados pelo frontmatter do
+Markdown</p></li>
+<li><p><strong>Tratamento mais robusto do wkhtmltopdf</strong>:</p>
+<ul>
+<li>Aceita código de retorno 1 (que pode indicar avisos, não erro
+fatal)</li>
+<li>Verifica se o PDF foi realmente criado</li>
+<li>Configurações otimizadas (A4, margens, print media)</li>
+</ul></li>
+</ol>
+<h2 data-number="3.2" id="teste-novamente"><span class="header-section-number">3.2</span> 🚀 Teste Novamente</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md</span></code></pre></div>
+<p>Agora deve funcionar! O script vai: 1. Gerar o HTML corretamente 2.
+Corrigir referências CSS problemáticas automaticamente 3. Criar o PDF
+mesmo com avisos do wkhtmltopdf sobre o CSS</p>
+<p>Se ainda houver problemas, você pode tentar o método alternativo com
+LaTeX:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> latex</span></code></pre></div>
+<hr />
+<h3 data-number="3.2.1" id="utilizador-claude-2"><span class="header-section-number">3.2.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<h1 data-number="4" id="o-script-convert_md_html_pdf22.py-deve-converter-primeiro-para-html-e-depois-converter-o-html-para-pdf-o-actual-dá-erro-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf22.py-exemplo_completo2.md"><span class="header-section-number">4</span> O script convert_md_html_pdf22.py
+deve converter primeiro para html e depois converter o html para pdf; o
+actual dá erro (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf22.py
+exemplo_completo2.md</h1>
+<h1 data-number="5" id="conversor-markdown-html-pdf-1"><span class="header-section-number">5</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</h1>
+<p>✓ Pandoc encontrado: 3.8.2.1 📄 Convertendo exemplo_completo2.md para
+HTML… Exception in thread Thread-4 (_readerthread): Traceback (most
+recent call last): File “C:.py”, line 1045, in _bootstrap_inner
+self.run() File “C:.py”, line 982, in run self._target(*self._args,
+**self._kwargs) File “C:.py”, line 1599, in _readerthread
+buffer.append(fh.read()) <sup></sup>^ File “C:1252.py”, line 23, in
+decode return codecs.charmap_decode(input,self.errors,decoding_table)[0]
+<sup></sup>^ UnicodeDecodeError: ‘charmap’ codec can’t decode byte 0x9d
+in position 238: character maps to <undefined> ✓ HTML gerado:
+exemplo_completo2.html ✓ HTML corrigido para compatibilidade com PDF ✓
+wkhtmltopdf encontrado 📑 Convertendo HTML para PDF… ✓ PDF gerado:
+exemplo_completo2.pdf
+============================================================ ✓ CONVERSÃO
+CONCLUÍDA COM SUCESSO!
+============================================================ 📄 HTML:
+exemplo_completo2.html 📑 PDF: exemplo_completo2.pdf ; e os emojis no
+pdf aparecem como rectangulos</p>
+<hr />
+<h3 data-number="5.0.1" id="claude-claude-2"><span class="header-section-number">5.0.1</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Vou corrigir o script para resolver o erro de Unicode e melhorar o
+suporte a emojis no PDF:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Reescrevi completamente o script com as seguintes melhorias:</p>
+<h2 data-number="5.1" id="correções-principais"><span class="header-section-number">5.1</span> 🔧 Correções Principais</h2>
+<h3 data-number="5.1.1" id="erro-unicode-resolvido"><span class="header-section-number">5.1.1</span> 1. <strong>Erro Unicode
+Resolvido</strong></h3>
+<ul>
+<li>Todos os <code>subprocess.run()</code> agora usam
+<code>encoding=&#39;utf-8&#39;</code> e <code>errors=&#39;ignore&#39;</code></li>
+<li>Evita o erro de codec cp1252 no Windows</li>
+</ul>
+<h3 data-number="5.1.2" id="pré-processamento-do-markdown"><span class="header-section-number">5.1.2</span> 2. <strong>Pré-processamento
+do Markdown</strong></h3>
+<ul>
+<li>Remove o CSS inline problemático do frontmatter YAML</li>
+<li>Cria arquivo temporário limpo antes da conversão</li>
+</ul>
+<h3 data-number="5.1.3" id="melhor-suporte-a-emojis"><span class="header-section-number">5.1.3</span> 3. <strong>Melhor Suporte a
+Emojis</strong></h3>
+<ul>
+<li><strong>HTML</strong>: CSS otimizado com fontes que suportam emojis
+(<code>Apple Color Emoji</code>, <code>Segoe UI Emoji</code>,
+<code>Noto Color Emoji</code>)</li>
+<li><strong>PDF via wkhtmltopdf</strong>: Avisa que emojis podem
+aparecer como retângulos (limitação da ferramenta)</li>
+<li><strong>PDF via LaTeX</strong>: Configuração especial para fontes
+com emojis</li>
+</ul>
+<h2 data-number="5.2" id="como-usar-1"><span class="header-section-number">5.2</span> 🚀 Como Usar</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Método padrão (HTML sempre perfeito, PDF pode ter problemas com emojis)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas HTML (sem problemas de emojis)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--html-only</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Melhor método para emojis em PDF (requer LaTeX/XeTeX)</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> latex</span></code></pre></div>
+<h2 data-number="5.3" id="nota-sobre-emojis-em-pdf"><span class="header-section-number">5.3</span> 📌 Nota sobre Emojis em
+PDF</h2>
+<p><strong>O problema dos retângulos</strong> acontece porque: - O
+wkhtmltopdf tem suporte limitado a fontes emoji - Para resolver, use
+<code>--pdf-method latex</code> (requer instalar LaTeX/XeTeX)</p>
+<p><strong>Windows LaTeX</strong>: Instale <a href="https://miktex.org/download">MiKTeX</a></p>
+<p>O HTML sempre terá emojis perfeitos! 🎉</p>
+<hr />
+<h3 data-number="5.3.1" id="utilizador-claude-3"><span class="header-section-number">5.3.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>no pdf não aparecem as formulas. Comparar com a abordagem
+convert_md_html_pdf12.py</p>
+<hr />
+<h3 data-number="5.3.2" id="claude-claude-3"><span class="header-section-number">5.3.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Entendi! O problema é que o <strong>MathJax precisa de JavaScript
+para renderizar as fórmulas</strong>, mas o wkhtmltopdf não executa
+JavaScript moderno corretamente. A abordagem do
+<code>convert_md_html_pdf12.py</code> usa
+<strong>Playwright/Chromium</strong>, que renderiza o JavaScript
+completamente antes de gerar o PDF.</p>
+<p>Vou criar uma versão melhorada que combina ambas as abordagens:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Reescrevi o script completamente! Agora ele usa <strong>Playwright
+por padrão</strong> (igual ao <code>convert_md_html_pdf12.py</code>),
+que renderiza corretamente as fórmulas MathJax.</p>
+<h2 data-number="5.4" id="principais-melhorias"><span class="header-section-number">5.4</span> 🎯 Principais Melhorias</h2>
+<h3 data-number="5.4.1" id="método-playwright-recomendado---padrão"><span class="header-section-number">5.4.1</span> ✅ <strong>Método Playwright
+(RECOMENDADO - padrão)</strong></h3>
+<ul>
+<li><strong>Renderiza fórmulas MathJax corretamente</strong> usando
+navegador real (Chromium)</li>
+<li><strong>Emojis funcionam perfeitamente</strong></li>
+<li>Aguarda o JavaScript renderizar antes de gerar o PDF</li>
+</ul>
+<h3 data-number="5.4.2" id="comparação-dos-métodos"><span class="header-section-number">5.4.2</span> 📊 Comparação dos
+Métodos</h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Fórmulas MathJax</th>
+<th>Emojis</th>
+<th>Requer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Playwright</strong></td>
+<td>✅ Perfeito</td>
+<td>✅ Perfeito</td>
+<td><code>playwright</code></td>
+</tr>
+<tr>
+<td>wkhtmltopdf</td>
+<td>❌ Não funciona</td>
+<td>❌ Retângulos</td>
+<td><code>wkhtmltopdf</code></td>
+</tr>
+<tr>
+<td>LaTeX</td>
+<td>✅ Via LaTeX</td>
+<td>⚠️ Parcial</td>
+<td>MiKTeX/TeX Live</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="5.5" id="instalação-e-uso"><span class="header-section-number">5.5</span> 🚀 Instalação e Uso</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar Playwright (RECOMENDADO)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install playwright</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">playwright</span> install chromium</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversão completa (MD → HTML → PDF)</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas HTML</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--html-only</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar wkhtmltopdf (não recomendado para fórmulas)</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> wkhtmltopdf</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar LaTeX (alternativo)</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> latex</span></code></pre></div>
+<h2 data-number="5.6" id="o-que-mudou"><span class="header-section-number">5.6</span> ⚡ O que mudou?</h2>
+<ol type="1">
+<li><strong>Playwright é o método padrão</strong> - renderiza MathJax
+corretamente</li>
+<li><strong>Espera inteligente</strong>: aguarda MathJax carregar antes
+de gerar PDF</li>
+<li><strong>Fallback automático</strong>: se Playwright não estiver
+instalado, tenta wkhtmltopdf</li>
+<li><strong>Mensagens claras</strong>: avisa sobre limitações de cada
+método</li>
+</ol>
+<p>Agora as fórmulas vão aparecer corretamente no PDF! 🎉</p>
+<hr />
+<h3 data-number="5.6.1" id="utilizador-claude-4"><span class="header-section-number">5.6.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>porque não usar uma abordagem Chrome ou Selenium</p>
+<hr />
+<h3 data-number="5.6.2" id="claude-claude-4"><span class="header-section-number">5.6.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Excelente pergunta! Vou criar uma versão que oferece
+<strong>múltiplas opções</strong>, incluindo Selenium e Chrome direto.
+Cada uma tem vantagens:</p>
+<h2 data-number="5.7" id="comparação-das-abordagens"><span class="header-section-number">5.7</span> 📊 Comparação das
+Abordagens</h2>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 33%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Método</th>
+<th>Vantagens</th>
+<th>Desvantagens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Playwright</strong></td>
+<td>Moderno, rápido, API limpa</td>
+<td>Dependência extra</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>Muito popular, amplo suporte</td>
+<td>Mais pesado, requer WebDriver</td>
+</tr>
+<tr>
+<td><strong>Chrome/Chromium CLI</strong></td>
+<td>Sem dependências Python extras</td>
+<td>Precisa Chrome instalado</td>
+</tr>
+<tr>
+<td><strong>WeasyPrint</strong></td>
+<td>Puro Python, leve</td>
+<td>CSS limitado, sem JS</td>
+</tr>
+</tbody>
+</table>
+<p>Vou criar uma versão que <strong>detecta automaticamente</strong> o
+que está disponível:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Pronto! Agora o script suporta <strong>4 motores de
+renderização</strong> com <strong>detecção automática</strong>! 🚀</p>
+<h2 data-number="5.8" id="comparação-completa-dos-motores"><span class="header-section-number">5.8</span> 🎯 Comparação Completa dos
+Motores</h2>
+<table>
+<thead>
+<tr>
+<th>Motor</th>
+<th>Fórmulas</th>
+<th>Emojis</th>
+<th>Instalação</th>
+<th>Performance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Playwright</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td><code>pip install playwright</code></td>
+<td>⚡⚡⚡ Rápido</td>
+</tr>
+<tr>
+<td><strong>Selenium</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td><code>pip install selenium</code></td>
+<td>⚡⚡ Médio</td>
+</tr>
+<tr>
+<td><strong>Chrome CLI</strong></td>
+<td>✅*</td>
+<td>✅</td>
+<td>Chrome já instalado</td>
+<td>⚡⚡⚡ Rápido</td>
+</tr>
+<tr>
+<td><strong>Auto</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>Detecta o melhor</td>
+<td>⚡⚡⚡</td>
+</tr>
+</tbody>
+</table>
+<p>*Chrome CLI pode ser mais rápido mas tem menor controle sobre timing
+do MathJax</p>
+<h2 data-number="5.9" id="como-usar-2"><span class="header-section-number">5.9</span> 🚀 Como Usar</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># AUTO - Detecta e usa o melhor disponível (RECOMENDADO)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Forçar Playwright</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> playwright</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Forçar Selenium</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> selenium</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Forçar Chrome CLI (se Chrome está instalado)</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--pdf-method</span> chrome</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas HTML</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf22.py exemplo_completo2.md <span class="at">--html-only</span></span></code></pre></div>
+<h2 data-number="5.10" id="instalação-dos-motores"><span class="header-section-number">5.10</span> 📦 Instalação dos Motores</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Playwright (recomendado - mais moderno)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install playwright</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">playwright</span> install chromium</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Selenium (mais popular)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install selenium</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Baixar ChromeDriver: https://chromedriver.chromium.org/</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Chrome CLI (sem instalar nada extra)</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas tenha Google Chrome instalado no sistema</span></span></code></pre></div>
+<h2 data-number="5.11" id="por-que-múltiplas-opções"><span class="header-section-number">5.11</span> 💡 Por que múltiplas
+opções?</h2>
+<ul>
+<li><strong>Playwright</strong>: Mais moderno, API melhor, instalação
+simples</li>
+<li><strong>Selenium</strong>: Muito usado em automação web, familiar
+para muitos</li>
+<li><strong>Chrome CLI</strong>: Zero dependências Python extras, usa
+Chrome do sistema</li>
+<li><strong>Auto</strong>: Você não precisa decidir - o script escolhe o
+melhor!</li>
+</ul>
+<p>Agora você tem flexibilidade total! 🎉</p>
+<hr />
+<h3 data-number="5.11.1" id="utilizador-claude-5"><span class="header-section-number">5.11.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<h1 data-number="6" id="com-esta-versão-o-pdf-já-parece-correctofiz-o-rename-para-convert_md_html_pdf23.py-pesquisas-d_docs__docs__converter_md_html_pdfpython-convert_md_html_pdf23.py-exemplo_completo2.md"><span class="header-section-number">6</span> com esta versão o pdf já parece
+correcto,fiz o rename para convert_md_html_pdf23.py (Pesquisas)
+D:_DOCS__DOCS__Converter_md_html_pdf&gt;python convert_md_html_pdf23.py
+exemplo_completo2.md</h1>
+<h1 data-number="7" id="conversor-markdown-html-pdf-2"><span class="header-section-number">7</span> 🔄 CONVERSOR MARKDOWN → HTML →
+PDF</h1>
+<p>✓ Pandoc encontrado: 3.8.2.1 🔧 Pré-processando Markdown… ✓ Arquivo
+temporário criado 📄 Convertendo MD → HTML… ✓ HTML gerado:
+exemplo_completo2.html ✓ HTML otimizado 🔍 Detectando motores de
+renderização disponíveis… ✓ Playwright disponível ✓ Selenium disponível
+✓ Chrome/Chromium disponível: chrome 🎯 Usando: playwright 📑
+Convertendo HTML → PDF (Playwright)… ⏳ Esperando MathJax renderizar… ✓
+Fórmulas renderizadas ✓ PDF gerado: exemplo_completo2.pdf
+============================================================ ✓ CONVERSÃO
+CONCLUÍDA COM SUCESSO!
+============================================================ 📄 HTML:
+exemplo_completo2.html 📑 PDF: exemplo_completo2.pdf</p>
+<hr />
+<h3 data-number="7.0.1" id="claude-claude-5"><span class="header-section-number">7.0.1</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Excelente! 🎉 Fico feliz que funcionou perfeitamente!</p>
+<h2 data-number="7.1" id="resumo-do-sucesso"><span class="header-section-number">7.1</span> ✅ Resumo do Sucesso</h2>
+<p>O script <strong>detectou automaticamente</strong> todos os 3 motores
+disponíveis no seu sistema e escolheu o <strong>Playwright</strong> (o
+mais moderno), resultando em:</p>
+<ul>
+<li>✅ <strong>Fórmulas matemáticas</strong> renderizadas corretamente
+(MathJax funcionando)</li>
+<li>✅ <strong>Emojis</strong> preservados</li>
+<li>✅ <strong>Código</strong> com syntax highlighting</li>
+<li>✅ <strong>Tabelas</strong> formatadas</li>
+<li>✅ <strong>Conversão fluída</strong> MD → HTML → PDF</li>
+</ul>
+<h2 data-number="7.2" id="dicas-de-uso"><span class="header-section-number">7.2</span> 📝 Dicas de Uso</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Se quiser testar os outros motores:</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf23.py exemplo_completo2.md <span class="at">--pdf-method</span> selenium</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf23.py exemplo_completo2.md <span class="at">--pdf-method</span> chrome</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Para outros documentos:</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf23.py meu_documento.md</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Apenas gerar HTML (sem PDF):</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_html_pdf23.py documento.md <span class="at">--html-only</span></span></code></pre></div>
+<h2 data-number="7.3" id="principais-vantagens-da-solução"><span class="header-section-number">7.3</span> 🎯 Principais Vantagens da
+Solução</h2>
+<ol type="1">
+<li><strong>Detecção automática</strong> - não precisa escolher
+manualmente</li>
+<li><strong>Múltiplos fallbacks</strong> - se um motor falhar, tenta
+outro</li>
+<li><strong>MathJax renderizado</strong> - esperando JavaScript
+completar</li>
+<li><strong>Encoding correto</strong> - UTF-8 em todos os processos</li>
+<li><strong>Limpa arquivos temporários</strong> - não deixa lixo</li>
+</ol>
+<p>Perfeito para converter documentação técnica, artigos acadêmicos, ou
+qualquer conteúdo Markdown rico! 📚✨</p>
+<hr />
+<p><em>Conversa exportada do Claude</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

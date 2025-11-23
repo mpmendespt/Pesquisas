@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>137_Grok_Queijos_Portugueses_Variedades,_Nutrientes,</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#queijos-portugueses-variedades-nutrientes-consumo" id="toc-queijos-portugueses-variedades-nutrientes-consumo"><span class="toc-section-number">1</span> Queijos Portugueses Variedades,
+Nutrientes, Consumo</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+<li><a href="#resumo-sobre-queijos-em-portugal" id="toc-resumo-sobre-queijos-em-portugal"><span class="toc-section-number">2</span> Resumo sobre Queijos em Portugal</a>
+<ul>
+<li><a href="#variedades-de-queijos-tradicionais-portugueses" id="toc-variedades-de-queijos-tradicionais-portugueses"><span class="toc-section-number">2.1</span> Variedades de Queijos Tradicionais
+Portugueses</a></li>
+<li><a href="#recomendações-de-consumo" id="toc-recomendações-de-consumo"><span class="toc-section-number">2.2</span> Recomendações de Consumo</a></li>
+<li><a href="#quantidade-de-queijo-diária-recomendada" id="toc-quantidade-de-queijo-diária-recomendada"><span class="toc-section-number">2.3</span> Quantidade de Queijo Diária
+Recomendada</a></li>
+<li><a href="#prós-e-contras-de-consumir-100-g-de-queijo-diariamente" id="toc-prós-e-contras-de-consumir-100-g-de-queijo-diariamente"><span class="toc-section-number">2.4</span> Prós e Contras de Consumir 100 g
+de Queijo Diariamente</a></li>
+<li><a href="#comparação-lado-a-lado-30-g-vs.-100-g-de-queijo-por-dia" id="toc-comparação-lado-a-lado-30-g-vs.-100-g-de-queijo-por-dia"><span class="toc-section-number">2.5</span> Comparação Lado a Lado: 30 g
+vs. 100 g de Queijo por Dia</a></li>
+</ul></li>
+<li><a href="#resumo-sobre-queijos-em-portugal-1" id="toc-resumo-sobre-queijos-em-portugal-1"><span class="toc-section-number">3</span> Resumo sobre Queijos em Portugal</a>
+<ul>
+<li><a href="#introdução" id="toc-introdução"><span class="toc-section-number">3.1</span> Introdução</a></li>
+<li><a href="#variedades-de-queijos-tradicionais-portugueses-1" id="toc-variedades-de-queijos-tradicionais-portugueses-1"><span class="toc-section-number">3.2</span> Variedades de Queijos Tradicionais
+Portugueses</a></li>
+<li><a href="#benefícios-nutricionais-do-queijo" id="toc-benefícios-nutricionais-do-queijo"><span class="toc-section-number">3.3</span> Benefícios Nutricionais do
+Queijo</a></li>
+<li><a href="#efeitos-no-colesterol" id="toc-efeitos-no-colesterol"><span class="toc-section-number">3.4</span> Efeitos no Colesterol</a></li>
+<li><a href="#recomendações-de-consumo-1" id="toc-recomendações-de-consumo-1"><span class="toc-section-number">3.5</span> Recomendações de Consumo</a></li>
+<li><a href="#prós-e-contras-de-consumir-100-g-de-queijo-por-dia" id="toc-prós-e-contras-de-consumir-100-g-de-queijo-por-dia"><span class="toc-section-number">3.6</span> Prós e Contras de Consumir 100 g
+de Queijo por Dia</a></li>
+<li><a href="#tabela-comparativa-30-g-vs.-100-g-de-queijo-por-dia" id="toc-tabela-comparativa-30-g-vs.-100-g-de-queijo-por-dia"><span class="toc-section-number">3.7</span> Tabela Comparativa: 30 g vs. 100 g
+de Queijo por Dia</a></li>
+<li><a href="#conclusão" id="toc-conclusão"><span class="toc-section-number">3.8</span> Conclusão</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="queijos-portugueses-variedades-nutrientes-consumo"><span class="header-section-number">1</span> Queijos Portugueses Variedades,
+Nutrientes, Consumo</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #137</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Geral</li>
+<li><strong>ID:</strong> db9e4d33-5adf-4e4b-a324-e466af615216</li>
+<li><strong>Criada em:</strong> 2025-09-29 17:50:38Z</li>
+<li><strong>Atualizada em:</strong> 2025-09-29 17:53:06Z</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Resumo em md com os varios quijos
+existentes em Portugal, e recomendações tendo em atenção o aporte …</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-29-185038-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-29
+18:50:38)</em> <em>[Grok]</em></h3>
+<p>Resumo em md com os varios quijos existentes em Portugal, e
+recomendações tendo em atenção o aporte de calcio e efeitos no
+colestrol. Quantidade de queijo diariamente. Quais são os pros e contras
+de consumir 100 gr de queijo diariamente. comparação lado a lado
+(tabela) entre 30 g x 100 g de queijo/dia, mostrando cálcio, proteína,
+gordura, colesterol e sódio.</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-09-29-185107-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-09-29
+18:51:07)</em> <em>[Grok]</em></h3>
+<h1 data-number="2" id="resumo-sobre-queijos-em-portugal"><span class="header-section-number">2</span> Resumo sobre Queijos em
+Portugal</h1>
+<h2 data-number="2.1" id="variedades-de-queijos-tradicionais-portugueses"><span class="header-section-number">2.1</span> Variedades de Queijos
+Tradicionais Portugueses</h2>
+<p>Portugal possui uma rica diversidade de queijos, muitos com
+Denominação de Origem Protegida (DOP), produzidos regionalmente com
+leite de ovelha, cabra ou vaca. Aqui vai uma lista de algumas das
+variedades mais emblemáticas:</p>
+<ul>
+<li><strong>Queijo da Serra da Estrela</strong>: Queijo curado de
+ovelha, cremoso e com sabor intenso, da região da Serra da Estrela
+(Beiras).</li>
+<li><strong>Queijo de Azeitão</strong>: Macio e cremoso, feito de leite
+de ovelha, da região de Setúbal, com notas picantes.</li>
+<li><strong>Queijo do Rabaçal</strong>: Semi-curado de ovelha e cabra,
+da Beira Litoral, com textura firme e aroma suave.</li>
+<li><strong>Queijo de Cabra Transmontano</strong>: Duro e curado, de
+leite de cabra, da região de Trás-os-Montes, com sabor picante.</li>
+<li><strong>Queijo São Jorge</strong>: Duro e salgado, de leite de vaca,
+da Ilha do São Jorge (Açores).</li>
+<li><strong>Queijo de Nisa</strong>: Semi-curado de ovelha, do Alentejo,
+com textura pastosa e sabor adocicado.</li>
+<li><strong>Queijo de Serpa</strong>: Semi-curado de ovelha, do Baixo
+Alentejo, cremoso e com casca comestível.</li>
+<li><strong>Queijo de Évora</strong>: Curado de ovelha e cabra, do
+Alentejo, com aroma forte e textura compacta.</li>
+</ul>
+<p>Esses queijos variam em textura (de macios a duros) e maturação,
+sendo ideais para pratos tradicionais como sopas, pães ou queijos de
+mesa.</p>
+<h2 data-number="2.2" id="recomendações-de-consumo"><span class="header-section-number">2.2</span> Recomendações de Consumo</h2>
+<p>O consumo de queijo deve ser moderado, considerando o aporte de
+cálcio (essencial para ossos e dentes, com recomendação diária de
+1.000-1.200 mg para adultos) e os efeitos no colesterol (devido às
+gorduras saturadas, que podem elevar o LDL se em excesso). Prefira
+variedades com baixo teor de gordura e sódio, como queijos frescos ou
+semi-desnatados, e combine com vegetais ou frutas para equilibrar a
+dieta. Estudos indicam que queijos fermentados podem ter benefícios
+cardiovasculares em porções controladas, mas evite se houver
+hipercolesterolemia ou hipertensão sem orientação médica.</p>
+<h2 data-number="2.3" id="quantidade-de-queijo-diária-recomendada"><span class="header-section-number">2.3</span> Quantidade de Queijo Diária
+Recomendada</h2>
+<p>A recomendação geral é de <strong>30 a 60 g por dia</strong>
+(equivalente a 1-2 fatias finas), o que fornece cerca de 200-400 mg de
+cálcio sem exceder as gorduras saturadas (limite: &lt;10% das calorias
+diárias). Isso atende parte das necessidades de cálcio sem riscos
+elevados para colesterol.</p>
+<h2 data-number="2.4" id="prós-e-contras-de-consumir-100-g-de-queijo-diariamente"><span class="header-section-number">2.4</span> Prós e Contras de Consumir 100
+g de Queijo Diariamente</h2>
+<p>Consumir 100 g de queijo ao dia (cerca de 3-4 fatias) pode ser
+benéfico em moderação, mas excede a recomendação para a maioria das
+pessoas.</p>
+<h3 data-number="2.4.1" id="prós"><span class="header-section-number">2.4.1</span> Prós:</h3>
+<ul>
+<li><strong>Alto aporte de cálcio</strong>: Fornece ~700 mg (70% da
+necessidade diária), promovendo saúde óssea e prevenindo
+osteoporose.</li>
+<li><strong>Proteína de alta qualidade</strong>: ~23 g, auxiliando na
+saciedade, manutenção muscular e controle de peso.</li>
+<li><strong>Benefícios probióticos</strong>: Queijos fermentados (como
+Serra da Estrela) melhoram a saúde intestinal e podem reduzir riscos
+cardiovasculares.</li>
+<li><strong>Nutrientes extras</strong>: Rico em vitaminas B12, A e
+zinco, apoiando imunidade e energia.</li>
+</ul>
+<h3 data-number="2.4.2" id="contras"><span class="header-section-number">2.4.2</span> Contras:</h3>
+<ul>
+<li><strong>Excesso calórico</strong>: ~400 kcal, podendo levar a ganho
+de peso se não equilibrado.</li>
+<li><strong>Gorduras saturadas elevadas</strong>: ~20 g, aumentando o
+LDL-colesterol e risco de doenças cardíacas em dietas já ricas em
+gorduras.</li>
+<li><strong>Sódio alto</strong>: ~650 mg (28% do limite diário),
+elevando pressão arterial e risco de hipertensão.</li>
+<li><strong>Colesterol dietético</strong>: ~100 mg, que pode impactar
+negativamente em indivíduos sensíveis, apesar de não ser o principal
+vilão.</li>
+</ul>
+<h2 data-number="2.5" id="comparação-lado-a-lado-30-g-vs.-100-g-de-queijo-por-dia"><span class="header-section-number">2.5</span> Comparação Lado a Lado: 30 g
+vs. 100 g de Queijo por Dia</h2>
+<p>Valores baseados em queijo médio (ex.: cheddar ou equivalente
+genérico; varia por tipo). %VD baseado em dieta de 2.000 kcal (cálcio:
+1.300 mg; proteína: 50 g; gordura total: 78 g; colesterol: &lt;300 mg;
+sódio: 2.300 mg).</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 23%" />
+<col style="width: 27%" />
+<col style="width: 13%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr>
+<th>Nutriente</th>
+<th>30 g (Recomendado)</th>
+<th>100 g (Exemplo Diário)</th>
+<th>%VD (30 g)</th>
+<th>%VD (100 g)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cálcio</strong></td>
+<td>213 mg</td>
+<td>710 mg</td>
+<td>16%</td>
+<td>55%</td>
+</tr>
+<tr>
+<td><strong>Proteína</strong></td>
+<td>6,9 g</td>
+<td>23 g</td>
+<td>14%</td>
+<td>46%</td>
+</tr>
+<tr>
+<td><strong>Gordura Total</strong></td>
+<td>9,9 g</td>
+<td>33 g</td>
+<td>13%</td>
+<td>42%</td>
+</tr>
+<tr>
+<td><strong>Colesterol</strong></td>
+<td>30 mg</td>
+<td>99 mg</td>
+<td>10%</td>
+<td>33%</td>
+</tr>
+<tr>
+<td><strong>Sódio</strong></td>
+<td>196 mg</td>
+<td>653 mg</td>
+<td>9%</td>
+<td>28%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 data-number="2.5.1" id="utilizador-2025-09-29-185202-grok"><span class="header-section-number">2.5.1</span> 👤 Utilizador <em>(2025-09-29
+18:52:02)</em> <em>[Grok]</em></h3>
+<p>Um resumo completo em md para download</p>
+<hr />
+<h3 data-number="2.5.2" id="grok-2025-09-29-185306-grok"><span class="header-section-number">2.5.2</span> 🤖 Grok <em>(2025-09-29
+18:53:06)</em> <em>[Grok]</em></h3>
+<p><xaiArtifact artifact_id="1fc4bcc6-1c32-481e-a5e1-cf5297359a73" artifact_version_id="050d0d15-5532-4034-bbe7-f59981b1e144" title="Resumo_Queijos_Portugal.md" contentType="text/markdown"></p>
+<h1 data-number="3" id="resumo-sobre-queijos-em-portugal-1"><span class="header-section-number">3</span> Resumo sobre Queijos em
+Portugal</h1>
+<h2 data-number="3.1" id="introdução"><span class="header-section-number">3.1</span> Introdução</h2>
+<p>Portugal é conhecido pela sua rica tradição queijeira, com uma
+diversidade de queijos artesanais, muitos com Denominação de Origem
+Protegida (DOP). Produzidos a partir de leite de ovelha, cabra ou vaca,
+esses queijos variam em textura, sabor e maturação, sendo parte
+integrante da gastronomia portuguesa. Este resumo aborda as principais
+variedades de queijos portugueses, os benefícios nutricionais
+(especialmente o aporte de cálcio), os efeitos no colesterol,
+recomendações de consumo diário e uma análise dos prós e contras de
+consumir 100 g de queijo por dia, incluindo uma tabela comparativa entre
+30 g e 100 g.</p>
+<h2 data-number="3.2" id="variedades-de-queijos-tradicionais-portugueses-1"><span class="header-section-number">3.2</span> Variedades de Queijos
+Tradicionais Portugueses</h2>
+<p>Portugal possui uma vasta gama de queijos, cada um com
+características únicas ligadas às suas regiões de origem. Abaixo estão
+alguns dos mais emblemáticos:</p>
+<ul>
+<li><strong>Queijo da Serra da Estrela (DOP)</strong>: Produzido na
+região da Serra da Estrela (Beiras) com leite de ovelha, é um queijo
+cremoso e amanteigado quando jovem, ou curado e firme com sabor intenso.
+Ideal para consumo com pão ou como sobremesa com marmelada.</li>
+<li><strong>Queijo de Azeitão (DOP)</strong>: Originário de Setúbal,
+feito com leite de ovelha, tem textura macia e cremosa, com sabor
+ligeiramente picante. Perfeito para petiscos.</li>
+<li><strong>Queijo do Rabaçal (DOP)</strong>: Da Beira Litoral, combina
+leite de ovelha e cabra, resultando em um queijo semi-curado com textura
+firme e aroma suave.</li>
+<li><strong>Queijo de Cabra Transmontano (DOP)</strong>: Produzido em
+Trás-os-Montes com leite de cabra, é duro, curado e apresenta sabor
+forte e picante, ideal para ralado ou em tábuas de queijos.</li>
+<li><strong>Queijo São Jorge (DOP)</strong>: Originário da Ilha de São
+Jorge (Açores), feito com leite de vaca, é um queijo duro com sabor
+salgado e ligeiramente picante, semelhante ao cheddar.</li>
+<li><strong>Queijo de Nisa (DOP)</strong>: Do Alentejo, feito com leite
+de ovelha, tem textura pastosa e sabor adocicado, sendo versátil em
+pratos quentes ou frios.</li>
+<li><strong>Queijo de Serpa (DOP)</strong>: Também do Baixo Alentejo, é
+um queijo de ovelha semi-curado, cremoso, com casca comestível e sabor
+robusto.</li>
+<li><strong>Queijo de Évora (DOP)</strong>: Produzido no Alentejo com
+leite de ovelha e cabra, é curado, com textura compacta e aroma forte,
+ideal para paladares intensos.</li>
+</ul>
+<p>Além desses, há queijos frescos (como o queijo fresco de vaca) e
+regionais menos conhecidos, que complementam a oferta gastronômica
+portuguesa.</p>
+<h2 data-number="3.3" id="benefícios-nutricionais-do-queijo"><span class="header-section-number">3.3</span> Benefícios Nutricionais do
+Queijo</h2>
+<p>O queijo é uma excelente fonte de nutrientes, especialmente
+<strong>cálcio</strong>, essencial para a saúde óssea, dentes e funções
+musculares. A recomendação diária de cálcio para adultos é de
+<strong>1.000 a 1.200 mg</strong>. Outros nutrientes incluem:</p>
+<ul>
+<li><strong>Proteínas</strong>: Contribui para a construção muscular,
+saciedade e reparação de tecidos.</li>
+<li><strong>Vitaminas</strong>: Rico em vitamina B12 (importante para o
+sistema nervoso) e vitamina A (saúde ocular e imunidade).</li>
+<li><strong>Minerais</strong>: Fornece zinco e fósforo, que apoiam o
+sistema imunológico e o metabolismo.</li>
+<li><strong>Probióticos</strong>: Queijos fermentados, como os de ovelha
+ou cabra, promovem a saúde intestinal.</li>
+</ul>
+<p>No entanto, o queijo também contém <strong>gorduras
+saturadas</strong>, <strong>colesterol dietético</strong> e
+<strong>sódio</strong>, que, em excesso, podem impactar negativamente a
+saúde cardiovascular, especialmente em pessoas com predisposição a
+colesterol elevado ou hipertensão.</p>
+<h2 data-number="3.4" id="efeitos-no-colesterol"><span class="header-section-number">3.4</span> Efeitos no Colesterol</h2>
+<p>As gorduras saturadas presentes no queijo podem aumentar o colesterol
+LDL (“mau”) se consumidas em grandes quantidades, especialmente em
+dietas já ricas em gorduras. No entanto, estudos recentes sugerem que
+queijos fermentados, como os portugueses tradicionais, podem ter um
+impacto neutro ou até benéfico no colesterol HDL (“bom”) devido aos
+probióticos e ácidos gordos específicos. Ainda assim, pessoas com
+hipercolesterolemia devem limitar o consumo e preferir queijos com menor
+teor de gordura, como queijos frescos ou versões desnatadas.</p>
+<h2 data-number="3.5" id="recomendações-de-consumo-1"><span class="header-section-number">3.5</span> Recomendações de Consumo</h2>
+<ul>
+<li><strong>Quantidade diária recomendada</strong>: <strong>30 a 60
+g</strong> (1-2 fatias finas), fornecendo cerca de <strong>200-400 mg de
+cálcio</strong>, o que cobre uma parte significativa da necessidade
+diária sem exceder as gorduras saturadas (recomendação: &lt;10% das
+calorias diárias, ou ~22 g numa dieta de 2.000 kcal).</li>
+<li><strong>Dicas para consumo saudável</strong>:
+<ul>
+<li>Prefira queijos com menor teor de gordura (ex.: queijo fresco,
+ricota) ou com moderação nos queijos curados.</li>
+<li>Combine com alimentos ricos em fibras (frutas, vegetais, cereais
+integrais) para equilibrar a dieta.</li>
+<li>Evite consumir em excesso se houver histórico de doenças
+cardiovasculares ou hipertensão, e consulte um médico ou
+nutricionista.</li>
+<li>Considere queijos fermentados para benefícios probióticos, mas
+controle o sódio (limite diário: 2.300 mg).</li>
+</ul></li>
+</ul>
+<h2 data-number="3.6" id="prós-e-contras-de-consumir-100-g-de-queijo-por-dia"><span class="header-section-number">3.6</span> Prós e Contras de Consumir 100
+g de Queijo por Dia</h2>
+<p>Consumir <strong>100 g de queijo por dia</strong> (aproximadamente
+3-4 fatias) excede a recomendação para a maioria das pessoas, mas pode
+ser apropriado em dietas específicas, desde que equilibrado.</p>
+<h3 data-number="3.6.1" id="prós-1"><span class="header-section-number">3.6.1</span> Prós:</h3>
+<ul>
+<li><strong>Cálcio elevado</strong>: Aproximadamente <strong>710
+mg</strong> (55-70% da necessidade diária), reduzindo o risco de
+osteoporose e fraturas.</li>
+<li><strong>Proteína de qualidade</strong>: Cerca de <strong>23
+g</strong>, promovendo saciedade, manutenção muscular e apoio à dieta de
+atletas ou idosos.</li>
+<li><strong>Probióticos</strong>: Queijos fermentados (como Serra da
+Estrela ou Serpa) melhoram a microbiota intestinal, potencialmente
+reduzindo inflamações e riscos cardiovasculares.</li>
+<li><strong>Nutrientes adicionais</strong>: Fornece vitaminas B12, A e
+zinco, essenciais para imunidade, energia e saúde geral.</li>
+</ul>
+<h3 data-number="3.6.2" id="contras-1"><span class="header-section-number">3.6.2</span> Contras:</h3>
+<ul>
+<li><strong>Alto teor calórico</strong>: Cerca de <strong>400
+kcal</strong>, podendo levar a ganho de peso se não compensado por
+atividade física ou redução calórica em outros alimentos.</li>
+<li><strong>Gorduras saturadas</strong>: Aproximadamente <strong>20
+g</strong>, equivalente a 90% do limite diário, aumentando o risco de
+colesterol LDL elevado.</li>
+<li><strong>Sódio elevado</strong>: Cerca de <strong>653 mg</strong>
+(28% do limite diário), podendo contribuir para hipertensão em
+indivíduos sensíveis.</li>
+<li><strong>Colesterol dietético</strong>: Cerca de <strong>99
+mg</strong>, que pode impactar pessoas com sensibilidade ao colesterol,
+embora o impacto seja menor do que o das gorduras saturadas.</li>
+</ul>
+<h2 data-number="3.7" id="tabela-comparativa-30-g-vs.-100-g-de-queijo-por-dia"><span class="header-section-number">3.7</span> Tabela Comparativa: 30 g
+vs. 100 g de Queijo por Dia</h2>
+<p>A tabela abaixo compara os valores nutricionais de <strong>30
+g</strong> (recomendação padrão) e <strong>100 g</strong> de queijo
+(média baseada em queijo tipo cheddar ou equivalente genérico, já que os
+valores variam por tipo). Os percentuais do Valor Diário (%VD) são
+baseados numa dieta de 2.000 kcal com as seguintes recomendações: cálcio
+(1.300 mg), proteína (50 g), gordura total (78 g), colesterol (&lt;300
+mg), sódio (2.300 mg).</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 22%" />
+<col style="width: 26%" />
+<col style="width: 13%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Nutriente</th>
+<th>30 g (Recomendado)</th>
+<th>100 g (Exemplo Diário)</th>
+<th>%VD (30 g)</th>
+<th>%VD (100 g)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cálcio</strong></td>
+<td>213 mg</td>
+<td>710 mg</td>
+<td>16%</td>
+<td>55%</td>
+</tr>
+<tr>
+<td><strong>Proteína</strong></td>
+<td>6,9 g</td>
+<td>23 g</td>
+<td>14%</td>
+<td>46%</td>
+</tr>
+<tr>
+<td><strong>Gordura Total</strong></td>
+<td>9,9 g</td>
+<td>33 g</td>
+<td>13%</td>
+<td>42%</td>
+</tr>
+<tr>
+<td><strong>Colesterol</strong></td>
+<td>30 mg</td>
+<td>99 mg</td>
+<td>10%</td>
+<td>33%</td>
+</tr>
+<tr>
+<td><strong>Sódio</strong></td>
+<td>196 mg</td>
+<td>653 mg</td>
+<td>9%</td>
+<td>28%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Notas</strong>: - Os valores são aproximados e podem variar
+dependendo do tipo de queijo (ex.: queijo fresco tem menos gordura e
+sódio, enquanto queijos curados como São Jorge têm mais). - O consumo de
+100 g fornece benefícios nutricionais significativos, mas os níveis de
+gordura e sódio podem ser preocupantes para a saúde cardiovascular em
+longo prazo.</p>
+<h2 data-number="3.8" id="conclusão"><span class="header-section-number">3.8</span> Conclusão</h2>
+<p>Os queijos portugueses são um tesouro gastronômico, oferecendo
+sabores únicos e benefícios nutricionais, como alto teor de cálcio e
+proteínas. No entanto, o consumo deve ser moderado, especialmente para
+quem monitora colesterol ou sódio. A dose diária recomendada de
+<strong>30-60 g</strong> é suficiente para aproveitar os benefícios sem
+riscos significativos. Consumir <strong>100 g por dia</strong> pode ser
+viável para pessoas ativas ou com dietas equilibradas, mas deve ser
+evitado por quem tem restrições de gordura ou sódio. Escolha queijos de
+qualidade, combine com alimentos saudáveis e consulte um nutricionista
+para personalizar a dieta.</p>
+<p></xaiArtifact></p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

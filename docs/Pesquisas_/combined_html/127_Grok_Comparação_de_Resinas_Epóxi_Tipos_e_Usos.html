@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>127_Grok_Comparação_de_Resinas_Epóxi_Tipos_e_Usos</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#comparação-de-resinas-epóxi-tipos-e-usos" id="toc-comparação-de-resinas-epóxi-tipos-e-usos"><span class="toc-section-number">1</span> Comparação de Resinas Epóxi Tipos e
+Usos</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+<li><a href="#comparação-entre-resoltech-1050-e-easy-composites-in2" id="toc-comparação-entre-resoltech-1050-e-easy-composites-in2"><span class="toc-section-number">2</span> Comparação entre Resoltech 1050 e
+Easy Composites IN2</a>
+<ul>
+<li><a href="#propriedades-físicas-e-de-processamento" id="toc-propriedades-físicas-e-de-processamento"><span class="toc-section-number">2.1</span> Propriedades Físicas e de
+Processamento</a></li>
+<li><a href="#propriedades-mecânicas-resina-pura-pós-cura" id="toc-propriedades-mecânicas-resina-pura-pós-cura"><span class="toc-section-number">2.2</span> Propriedades Mecânicas (Resina
+Pura, Pós-Cura)</a></li>
+<li><a href="#resistência-uv" id="toc-resistência-uv"><span class="toc-section-number">2.3</span> Resistência UV</a></li>
+<li><a href="#aplicações-e-características" id="toc-aplicações-e-características"><span class="toc-section-number">2.4</span> Aplicações e
+Características</a></li>
+<li><a href="#observações-1" id="toc-observações-1"><span class="toc-section-number">2.5</span> Observações</a></li>
+</ul></li>
+<li><a href="#comparação-entre-resoltech-10501056s-e-easy-composites-in2-slow-hardener" id="toc-comparação-entre-resoltech-10501056s-e-easy-composites-in2-slow-hardener"><span class="toc-section-number">3</span> Comparação entre Resoltech
+1050/1056S e Easy Composites IN2 (Slow Hardener)</a>
+<ul>
+<li><a href="#propriedades-físicas-e-de-processamento-1" id="toc-propriedades-físicas-e-de-processamento-1"><span class="toc-section-number">3.1</span> Propriedades Físicas e de
+Processamento</a></li>
+<li><a href="#propriedades-mecânicas-resina-pura-pós-cura-1" id="toc-propriedades-mecânicas-resina-pura-pós-cura-1"><span class="toc-section-number">3.2</span> Propriedades Mecânicas (Resina
+Pura, Pós-Cura)</a></li>
+<li><a href="#resistência-uv-1" id="toc-resistência-uv-1"><span class="toc-section-number">3.3</span> Resistência UV</a></li>
+<li><a href="#aplicações-e-características-1" id="toc-aplicações-e-características-1"><span class="toc-section-number">3.4</span> Aplicações e
+Características</a></li>
+<li><a href="#observações-2" id="toc-observações-2"><span class="toc-section-number">3.5</span> Observações</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="comparação-de-resinas-epóxi-tipos-e-usos"><span class="header-section-number">1</span> Comparação de Resinas Epóxi Tipos
+e Usos</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #127</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> f4b42cbc-8d98-483a-8702-c1a421637eb1</li>
+<li><strong>Criada em:</strong> 2025-10-05 18:07:18Z</li>
+<li><strong>Atualizada em:</strong> 2025-10-05 19:24:00Z</li>
+<li><strong>Total de mensagens:</strong> 22</li>
+<li><strong>Resumo:</strong> tipos de resina epoxi Castropox 4307 FLEX /
+1209 resina epóxi vs Castropox 4307/1209 Resina Epóxi de…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-05-190718-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-05
+19:07:18)</em> <em>[Grok]</em></h3>
+<p>tipos de resina epoxi Castropox 4307 FLEX / 1209 resina epóxi vs
+Castropox 4307/1209 Resina Epóxi de usos gerais vs Castropox 4307/2203
+Resina Epóxi insensível à humidade vs Resoltech 1050 Resina Epóxi de
+Infusão</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-10-05-190810-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-10-05
+19:08:10)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.3" id="comparação-de-tipos-de-resina-epóxi"><span class="header-section-number">1.2.3</span> Comparação de Tipos de Resina
+Epóxi</h3>
+<p>A seguir, apresento uma comparação entre os tipos de resina epóxi
+mencionados, com base em dados técnicos de fichas de produtos e
+datasheets disponíveis. Os sistemas Castropox são da Castro Composites e
+são resinas de uso geral ou específico, enquanto a Resoltech 1050 é um
+sistema de alta performance para laminação estrutural. A comparação foca
+em propriedades chave como usos, proporções de mistura, tempo de
+trabalho, viscosidade, resistência térmica e aplicações recomendadas.
+Note que propriedades mecânicas detalhadas (ex.: tração, flexão) não
+estão disponíveis para todos os Castropox, mas a Resoltech destaca-se
+por fadiga e propriedades interlaminares superiores.</p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 18%" />
+<col style="width: 21%" />
+<col style="width: 29%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade / Tipo</th>
+<th>Castropox 4307 FLEX / 1209</th>
+<th>Castropox 4307/1209 (Uso Geral)</th>
+<th>Castropox 4307/2203 (Insensível à Umidade)</th>
+<th>Resoltech 1050 (Infusão)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tipo e Usos Principais</strong></td>
+<td>Sistema flexível de uso geral para laminados de fibra de vidro em
+madeira, concreto ou metais. Ideal para isolamentos elétricos e colagens
+de pedras. Pode ser preenchida com fillers minerais.</td>
+<td>Sistema de uso geral para laminados de fibra de vidro em madeira ou
+cimento; fabricação de peças compostas sem requisitos mecânicos altos;
+primer para pisos de concreto; mortars auto-nivelantes.</td>
+<td>Sistema insensível à umidade para tratamento de superfícies úmidas;
+colagem de bases de concreto e isolamento de pisos/paredes com umidade.
+Aceita fillers minerais/orgânicos.</td>
+<td>Sistema de laminação estrutural para estruturas leves de alta
+performance com reforços de vidro, carbono, aramida ou basalto.
+Aplicações: infusão, enrolamento filamentar, RTM, wet lay-up.</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso:
+Resina:Endurecedor)</strong></td>
+<td>70:30</td>
+<td>67:33 (ou 2:1)</td>
+<td>100:60</td>
+<td>100:35</td>
+</tr>
+<tr>
+<td><strong>Tempo de Trabalho (Pot Life/Gel Time a 23°C)</strong></td>
+<td>~45 min (para 250g)</td>
+<td>23 min (para 100ml ou 250g)</td>
+<td>35 min</td>
+<td>Ajustável de 10 min a 14h (dependendo do endurecedor
+1053S-1059S)</td>
+</tr>
+<tr>
+<td><strong>Viscosidade (a 25°C, mPa.s)</strong></td>
+<td>Resina: ~700; Endurecedor: ~270; Mistura: Não especificada (baixa
+para laminação)</td>
+<td>Resina: ~700; Endurecedor: ~270; Mistura: Baixa</td>
+<td>Não especificada (adequada para superfícies)</td>
+<td>Mistura: 205-637 (baixa, ideal para infusão)</td>
+</tr>
+<tr>
+<td><strong>Resistência Térmica (Tg ou Máx.)</strong></td>
+<td>50-75°C</td>
+<td>50-75°C</td>
+<td>50-75°C</td>
+<td>Até 75°C (após pós-cura a 60°C)</td>
+</tr>
+<tr>
+<td><strong>Flexibilidade</strong></td>
+<td>Sim (alta conformabilidade e resistência a impactos)</td>
+<td>Não</td>
+<td>Não</td>
+<td>Moderada (elongação em flexão até 5%; boa fadiga)</td>
+</tr>
+<tr>
+<td><strong>Insensível à Umidade</strong></td>
+<td>Não especificado</td>
+<td>Não</td>
+<td>Sim</td>
+<td>Não (mas boa liberação de ar e molhagem em reforços)</td>
+</tr>
+<tr>
+<td><strong>Cura</strong></td>
+<td>Ambiente; sem pós-cura especificada</td>
+<td>Ambiente</td>
+<td>Ambiente</td>
+<td>Ambiente (liberação de molde possível); acelera a 40°C; pós-cura a
+60°C para propriedades ótimas</td>
+</tr>
+<tr>
+<td><strong>Densidade da Mistura (a 23°C, g/cm³)</strong></td>
+<td>Não especificada</td>
+<td>~1.10</td>
+<td>Não especificada</td>
+<td>1.1</td>
+</tr>
+<tr>
+<td><strong>Outras Propriedades</strong></td>
+<td>Cor: Amarelo transparente; Sem resistência UV; 100% sólidos</td>
+<td>Cor: Amarelo transparente; Sem UV; Alta reatividade e resistência
+química</td>
+<td>Cor: Amarelo transparente; Sem UV; Boa adesão em úmido</td>
+<td>Baixo exotermismo; Excelente molhagem de fibras; Sem substâncias
+CMR; Baixa toxicidade</td>
+</tr>
+<tr>
+<td><strong>Aplicações Específicas</strong></td>
+<td>Laminados flexíveis em substratos variados; reparos flexíveis</td>
+<td>Peças compostas de baixa performance; revestimentos de
+construção</td>
+<td>Ambientes úmidos (ex.: pisos com umidade residual)</td>
+<td>Peças grandes/estruturais em compósitos (ex.: náutica,
+aeroespacial); infusão para XXL</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.4" id="observações-gerais"><span class="header-section-number">1.2.4</span> Observações Gerais</h3>
+<ul>
+<li><strong>Castropox (todos)</strong>: São sistemas de baixa
+viscosidade baseados em bisphenol A/F, ideais para aplicações manuais ou
+semi-industriais sem alto desempenho mecânico. Não possuem resistência
+UV nativa, recomendando-se verniz protetor. Armazenar em local fresco e
+seco.</li>
+<li><strong>Resoltech 1050</strong>: Destaca-se por versatilidade em pot
+life e baixa viscosidade para processos avançados como infusão, com
+propriedades mecânicas superiores (ex.: resistência à fadiga em
+laminados dinâmicos). É mais “eco-friendly” (sem ácidos salicílicos nos
+endurecedores novos).</li>
+<li><strong>Escolha Recomendada</strong>: Use FLEX para flexibilidade;
+1209 para usos gerais econômicos; 2203 para umidade; 1050 para
+compósitos de alta performance.</li>
+<li>Fontes baseadas em fichas técnicas de fabricantes (Castro Composites
+e Resoltech, 2020-2025). Para dados exatos de mecânica, consulte
+datasheets completos ou testes laboratoriais.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.5" id="utilizador-2025-10-05-194342-grok"><span class="header-section-number">1.2.5</span> 👤 Utilizador <em>(2025-10-05
+19:43:42)</em> <em>[Grok]</em></h3>
+<p>Propriedades mecânicas detalhadas da Resoltech 1050</p>
+<hr />
+<h3 data-number="1.2.6" id="grok-2025-10-05-194411-grok"><span class="header-section-number">1.2.6</span> 🤖 Grok <em>(2025-10-05
+19:44:11)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.7" id="propriedades-mecânicas-detalhadas-da-resoltech-1050"><span class="header-section-number">1.2.7</span> Propriedades Mecânicas
+Detalhadas da Resoltech 1050</h3>
+<p>As propriedades mecânicas da Resoltech 1050 foram extraídas da ficha
+técnica oficial do fabricante (Resoltech). Os dados são medidos em
+resina pura, de acordo com a norma ISO 178 para testes de flexão
+(módulo, resistência máxima e alongamento na deformação ao limite). Não
+há dados específicos para tração, compressão, impacto ou fadiga
+detalhada no datasheet, mas o sistema é destacado por oferecer “muito
+boas propriedades mecânicas combinadas com excelente resistência à
+fadiga”, com alongamento na ruptura em flexão de até 5% (ex.: no sistema
+1050/1059S). As propriedades variam conforme o endurecedor (1053S a
+1059S), com proporção de mistura 100:35 em peso para todos os
+sistemas.</p>
+<p>As medições consideram duas condições de cura: - <strong>14 dias a
+23°C</strong> (cura ambiente). - <strong>16 horas a 60°C</strong>
+(pós-cura para propriedades ótimas).</p>
+<p>Para propriedades termo-mecânicas máximas, recomenda-se respeitar o
+ciclo de cura sugerido. As peças podem ser desmoldadas sem pós-cura, mas
+uma cura a 40°C acelera o processo, e a pós-cura a 60°C otimiza as
+propriedades.</p>
+<h4 data-number="1.2.7.1" id="propriedades-em-flexão-iso-178---cura-14-dias-a-23c"><span class="header-section-number">1.2.7.1</span> Propriedades em Flexão (ISO
+178) - Cura: 14 Dias a 23°C</h4>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 17%" />
+<col style="width: 25%" />
+<col style="width: 29%" />
+<col style="width: 6%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sistema</th>
+<th>Módulo de Flexão (GPa)</th>
+<th>Resistência Máxima à Flexão (MPa)</th>
+<th>Alongamento na Deformação ao Limite (%)</th>
+<th>Tg (°C)</th>
+<th>Dureza Shore D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1050/1053S</td>
+<td>3,17</td>
+<td>81,5</td>
+<td>2,7</td>
+<td>44</td>
+<td>88</td>
+</tr>
+<tr>
+<td>1050/1054S</td>
+<td>3,46</td>
+<td>91</td>
+<td>2,9</td>
+<td>56</td>
+<td>86</td>
+</tr>
+<tr>
+<td>1050/1055S</td>
+<td>3,48</td>
+<td>94</td>
+<td>3,0</td>
+<td>56</td>
+<td>87</td>
+</tr>
+<tr>
+<td>1050/1056S</td>
+<td>3,44</td>
+<td>89</td>
+<td>2,8</td>
+<td>57</td>
+<td>87</td>
+</tr>
+<tr>
+<td>1050/1058S</td>
+<td>3,50</td>
+<td>82</td>
+<td>2,4</td>
+<td>61</td>
+<td>88</td>
+</tr>
+<tr>
+<td>1050/1059S</td>
+<td>3,52</td>
+<td>116</td>
+<td>5,3</td>
+<td>69</td>
+<td>88</td>
+</tr>
+</tbody>
+</table>
+<h4 data-number="1.2.7.2" id="propriedades-em-flexão-iso-178---pós-cura-16-horas-a-60c"><span class="header-section-number">1.2.7.2</span> Propriedades em Flexão (ISO
+178) - Pós-Cura: 16 Horas a 60°C</h4>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 17%" />
+<col style="width: 25%" />
+<col style="width: 29%" />
+<col style="width: 6%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sistema</th>
+<th>Módulo de Flexão (GPa)</th>
+<th>Resistência Máxima à Flexão (MPa)</th>
+<th>Alongamento na Deformação ao Limite (%)</th>
+<th>Tg (°C)</th>
+<th>Dureza Shore D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1050/1053S</td>
+<td>3,08</td>
+<td>97</td>
+<td>4,3</td>
+<td>64</td>
+<td>88</td>
+</tr>
+<tr>
+<td>1050/1054S</td>
+<td>3,35</td>
+<td>111</td>
+<td>8,5</td>
+<td>77</td>
+<td>89</td>
+</tr>
+<tr>
+<td>1050/1055S</td>
+<td>3,30</td>
+<td>107</td>
+<td>8,2</td>
+<td>77</td>
+<td>89</td>
+</tr>
+<tr>
+<td>1050/1056S</td>
+<td>3,35</td>
+<td>116</td>
+<td>7,7</td>
+<td>83</td>
+<td>90</td>
+</tr>
+<tr>
+<td>1050/1058S</td>
+<td>3,36</td>
+<td>129</td>
+<td>5,8</td>
+<td>95</td>
+<td>90</td>
+</tr>
+<tr>
+<td>1050/1059S</td>
+<td>3,17</td>
+<td>122,4</td>
+<td>6,5</td>
+<td>73</td>
+<td>90</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.8" id="observações"><span class="header-section-number">1.2.8</span> Observações</h3>
+<ul>
+<li><strong>Tg (Temperatura de Transição Vítrea)</strong>: Medida por
+DSC a 10°C/min (ponto de inflexão).</li>
+<li><strong>Dureza Shore D</strong>: Norma ISO 868.</li>
+<li>Em laminados com reforços (vidro, carbono, aramida ou basalto), as
+propriedades mecânicas são ainda melhores, especialmente em fadiga e
+interlaminar, devido à excelente molhagem das fibras.</li>
+<li>Para dados em laminados ou testes personalizados (ex.: tração ASTM
+D638), consulte o fabricante ou realize testes laboratoriais, pois os
+valores acima são para resina pura.</li>
+</ul>
+<p>Fonte: Ficha técnica Resoltech 1050 (versão em inglês, acessada em
+2025).<grok:render card_id="789b48" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">10</argument> </grok:render></p>
+<hr />
+<h3 data-number="1.2.9" id="utilizador-2025-10-05-194455-grok"><span class="header-section-number">1.2.9</span> 👤 Utilizador <em>(2025-10-05
+19:44:55)</em> <em>[Grok]</em></h3>
+<p>Comparação com resinas epóxi similares</p>
+<hr />
+<h3 data-number="1.2.10" id="grok-2025-10-05-194619-grok"><span class="header-section-number">1.2.10</span> 🤖 Grok <em>(2025-10-05
+19:46:19)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.11" id="comparação-de-resinas-epóxi-para-infusão-e-laminação-resoltech-1050-vs.-similares"><span class="header-section-number">1.2.11</span> Comparação de Resinas Epóxi
+para Infusão e Laminação: Resoltech 1050 vs. Similares</h3>
+<p>A seguir, apresento uma comparação das propriedades mecânicas da
+Resoltech 1050 (sistema de laminação estrutural de baixa viscosidade
+para infusão) com resinas epóxi similares usadas em aplicações de
+compósitos, como infusão a vácuo, laminação úmida e fabricação de
+estruturas leves (ex.: náutica, aeroespacial). Selecionei três resinas
+representativas baseadas em popularidade e disponibilidade de dados:</p>
+<ul>
+<li><strong>West System 105/205</strong>: Sistema versátil de baixa
+viscosidade para laminação e colagem, cura rápida.</li>
+<li><strong>Gurit Ampreg 30 (Standard Hardener)</strong>: Sistema
+otimizado para infusão e laminação de grandes estruturas, com boa
+molhagem de fibras.</li>
+<li><strong>SP Systems SE 84LV</strong>: Sistema endurecido para
+pré-preg, mas com dados de resina pura aplicáveis a infusão; cura em
+baixa temperatura.</li>
+</ul>
+<p>Os dados focam em propriedades da <strong>resina pura (neat
+resin)</strong>, medidos em amostras curadas (sem reforços), para
+facilitar a comparação direta. Usei valores pós-cura (quando aplicável)
+para otimizar propriedades. Unidades: Módulo de flexão (GPa),
+Resistência à flexão (MPa), Alongamento na flexão (%), Tg (Temperatura
+de Transição Vítrea, °C). Conversões de unidades (ex.: PSI para MPa)
+foram aplicadas para consistência.</p>
+<h4 data-number="1.2.11.1" id="propriedades-em-flexão-resina-pura-pós-cura-recomendada"><span class="header-section-number">1.2.11.1</span> Propriedades em Flexão
+(Resina Pura, Pós-Cura Recomendada)</h4>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade / Resina</th>
+<th>Resoltech 1050/1055S (Pós-cura 16h @ 60°C)</th>
+<th>West System 105/205 (Cura 2 semanas @ 22°C)</th>
+<th>Gurit Ampreg 30 Std. (Pós-cura 16h @ 50°C)</th>
+<th>SP Systems SE 84LV (Cura 12h @ 80°C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>3,30</td>
+<td>3,18</td>
+<td>3,42</td>
+<td>3,50</td>
+</tr>
+<tr>
+<td><strong>Resistência Máxima à Flexão (MPa)</strong></td>
+<td>107</td>
+<td>97</td>
+<td>125</td>
+<td>123</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Deformação ao Limite (%)</strong></td>
+<td>8,2</td>
+<td>3,4</td>
+<td>8,51</td>
+<td>Não disponível</td>
+</tr>
+<tr>
+<td><strong>Tg (°C)</strong></td>
+<td>77</td>
+<td>54 (início)</td>
+<td>77</td>
+<td>115</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>89</td>
+<td>83</td>
+<td>Não disponível</td>
+<td>Não disponível</td>
+</tr>
+</tbody>
+</table>
+<h4 data-number="1.2.11.2" id="propriedades-em-tração-resina-pura-pós-cura-recomendada"><span class="header-section-number">1.2.11.2</span> Propriedades em Tração
+(Resina Pura, Pós-Cura Recomendada)</h4>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 21%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade / Resina</th>
+<th>Resoltech 1050/1055S (Pós-cura 16h @ 60°C)</th>
+<th>West System 105/205 (Cura 2 semanas @ 22°C)</th>
+<th>Gurit Ampreg 30 Std. (Pós-cura 16h @ 50°C)</th>
+<th>SP Systems SE 84LV (Cura 12h @ 80°C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>77 (módulo 3,30 GPa; along. 8,2%)</td>
+<td>54 (módulo 2,82 GPa; along. 3,4%)</td>
+<td>77 (módulo 3,38 GPa; along. 5,50%)</td>
+<td>82 (módulo 3,90 GPa)</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Ruptura (%)</strong></td>
+<td>8,2</td>
+<td>3,4</td>
+<td>5,50</td>
+<td>Não disponível</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.12" id="observações-gerais-1"><span class="header-section-number">1.2.12</span> Observações Gerais</h3>
+<ul>
+<li><strong>Resoltech 1050</strong>: Destaca-se pela versatilidade em
+pot life (10 min a 14h) e boa fadiga, com propriedades equilibradas e
+baixa toxicidade. Ideal para infusão de peças grandes; pós-cura
+essencial para Tg e alongamento ótimos.</li>
+<li><strong>West System 105/205</strong>: Mais acessível e de cura
+rápida (pot life ~12 min), mas com Tg e alongamento inferiores sem
+pós-cura. Bom para aplicações manuais; propriedades mecânicas sólidas,
+mas menos flexível que as outras.</li>
+<li><strong>Gurit Ampreg 30</strong>: Similar à Resoltech em Tg e
+alongamento (alta tenacidade), com resistência à flexão superior.
+Otimizada para estruturas de alto desempenho; cura ambiente viável, mas
+pós-cura a 50°C melhora fadiga e ILSS (cisalhamento interlaminar ~49 MPa
+em laminados).</li>
+<li><strong>SP Systems SE 84LV</strong>: Maior Tg e módulo, ideal para
+aplicações de alta temperatura, mas é primariamente para pré-preg (não
+infusão pura). Alta compressão (163 MPa na resina pura); menos
+flexível.</li>
+<li><strong>Condições de Cura</strong>: Todas curam em ambiente, mas
+pós-cura (40-80°C) aumenta Tg em 20-50% e propriedades em 20-40%.
+Testes: ISO 178 (flexão), ISO 527 (tração), DSC (Tg).</li>
+<li><strong>Em Laminados</strong>: Propriedades melhoram com reforços
+(ex.: vidro/carbono); Resoltech e Gurit oferecem excelente molhagem,
+reduzindo vazios. Para fadiga, Resoltech e Gurit superam West
+System.</li>
+<li><strong>Escolha</strong>: Para infusão geral, Resoltech ou Gurit;
+para custo-baixo, West System; para alta temperatura, SP SE 84LV.</li>
+</ul>
+<p>Fontes: Fichas técnicas de fabricantes (Resoltech, West System,
+Gurit, SP/Gurit, 2022-2025). Para dados em laminados específicos ou
+testes personalizados, consulte laboratórios.</p>
+<hr />
+<h3 data-number="1.2.13" id="utilizador-2025-10-05-194748-grok"><span class="header-section-number">1.2.13</span> 👤 Utilizador
+<em>(2025-10-05 19:47:48)</em> <em>[Grok]</em></h3>
+<p>e para protecção UV</p>
+<hr />
+<h3 data-number="1.2.14" id="grok-2025-10-05-194828-grok"><span class="header-section-number">1.2.14</span> 🤖 Grok <em>(2025-10-05
+19:48:28)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.15" id="comparação-de-resinas-epóxi-em-proteção-uv-resoltech-1050-vs.-similares"><span class="header-section-number">1.2.15</span> Comparação de Resinas Epóxi
+em Proteção UV: Resoltech 1050 vs. Similares</h3>
+<p>A proteção contra radiação ultravioleta (UV) é uma consideração
+importante para resinas epóxi usadas em aplicações expostas à luz solar,
+como náutica, revestimentos externos ou peças decorativas. Abaixo,
+comparo a <strong>Resoltech 1050</strong> com as resinas similares
+mencionadas anteriormente (<strong>West System 105/205</strong>,
+<strong>Gurit Ampreg 30</strong>, <strong>SP Systems SE 84LV</strong>)
+em termos de resistência UV intrínseca, comportamento sob exposição e
+recomendações para proteção UV. Como nenhuma dessas resinas possui
+proteção UV nativa significativa, também abordo estratégias comuns para
+mitigar a degradação UV. As informações são baseadas em fichas técnicas
+e dados dos fabricantes (2022-2025).</p>
+<h4 data-number="1.2.15.1" id="comportamento-uv-e-proteção"><span class="header-section-number">1.2.15.1</span> Comportamento UV e
+Proteção</h4>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 19%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resina / Propriedade</th>
+<th>Resistência UV Nativa</th>
+<th>Comportamento sob Exposição UV</th>
+<th>Recomendações para Proteção UV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resoltech 1050</strong></td>
+<td><strong>Nenhuma</strong> (base bisphenol A/F, transparente)</td>
+<td>Amarelecimento, perda de brilho e potencial rachamento após meses de
+exposição direta. Não recomendada sem topcoat.</td>
+<td>Aplicar verniz poliuretano (ex.: Resoltech 8040) ou revestimento
+alifático com inibidores UV após cura completa. Pós-cura a 60°C melhora
+estabilidade inicial.</td>
+</tr>
+<tr>
+<td><strong>West System 105/205</strong></td>
+<td><strong>Nenhuma</strong> (base bisphenol A, transparente)</td>
+<td>Amarelecimento rápido (semanas) e degradação superficial (perda de
+brilho, chalking) em exposição prolongada.</td>
+<td>Usar verniz poliuretano West System 207 Special Clear ou aditivos UV
+(ex.: UV-720). Camada de acabamento essencial para exteriores.</td>
+</tr>
+<tr>
+<td><strong>Gurit Ampreg 30</strong></td>
+<td><strong>Nenhuma</strong> (base epóxi, baixa viscosidade)</td>
+<td>Amarelecimento moderado e degradação superficial em meses; menos
+pronunciado que West System, mas não resistente.</td>
+<td>Revestir com topcoat poliuretano Gurit Ampreg Topcoat ou primer com
+estabilizadores HALS/UVA. Pós-cura a 50°C recomendada.</td>
+</tr>
+<tr>
+<td><strong>SP Systems SE 84LV</strong></td>
+<td><strong>Nenhuma</strong> (otimizada para pré-preg, epóxi pura)</td>
+<td>Amarelecimento e perda de propriedades estéticas; degradação
+superficial similar às demais epóxis.</td>
+<td>Aplicar verniz alifático ou poliuretano com filtros UV (ex.: SP
+Clear Coat). Cura a 80°C melhora resistência inicial, mas não UV.</td>
+</tr>
+</tbody>
+</table>
+<h4 data-number="1.2.15.2" id="detalhes-e-observações"><span class="header-section-number">1.2.15.2</span> Detalhes e
+Observações</h4>
+<ul>
+<li><strong>Resistência UV Nativa</strong>: Todas as resinas listadas
+são baseadas em epóxis de bisphenol A ou A/F, que não possuem grupos
+químicos resistentes a UV (ex.: alifáticos ou cicloalifáticos). A
+exposição prolongada causa fotodegradação, resultando em amarelecimento,
+perda de brilho e, em casos extremos, microfissuras ou redução de
+propriedades mecânicas (ex.: até 10-20% de perda em resistência à flexão
+após 6 meses de exposição direta).</li>
+<li><strong>Resoltech 1050</strong>: Boa estabilidade inicial devido à
+baixa toxicidade e ausência de ácidos salicílicos nos endurecedores
+(1053S-1059S), mas sem proteção UV intrínseca. A pós-cura a 60°C aumenta
+a densidade de reticulação, reduzindo ligeiramente a permeabilidade a
+UV, mas não elimina a necessidade de topcoat.</li>
+<li><strong>West System 105/205</strong>: Mais suscetível ao
+amarelecimento rápido devido à formulação de cura rápida (pot life
+curto). Menos indicada para aplicações estéticas sem proteção UV
+robusta.</li>
+<li><strong>Gurit Ampreg 30</strong>: Similar à Resoltech em
+comportamento, com ligeira vantagem em estabilidade química devido à
+formulação otimizada para compósitos. Topcoats Gurit são bem integrados
+ao sistema.</li>
+<li><strong>SP Systems SE 84LV</strong>: Alta Tg (115°C) oferece melhor
+estabilidade térmica, mas não UV. Menos usada em aplicações expostas
+devido ao foco em pré-preg.</li>
+<li><strong>Estratégias de Proteção UV</strong>:
+<ul>
+<li><strong>Vernizes/Topcoats</strong>: Poliuretanos alifáticos (ex.:
+Resoltech 8040, West System 207, Gurit Topcoat) com inibidores UV
+(HALS/UVA) são padrão. Espessura mínima de 100-200 µm recomendada.</li>
+<li><strong>Aditivos UV</strong>: Algumas resinas (ex.: West System)
+permitem aditivos estabilizantes, mas são menos eficazes que
+topcoats.</li>
+<li><strong>Pigmentação</strong>: Adicionar pigmentos opacos (ex.:
+dióxido de titânio) à resina reduz penetração UV, mas altera estética e
+pode afetar infusão.</li>
+<li><strong>Revestimentos Epóxi Modificados</strong>: Resinas epóxi
+cicloalifáticas (não listadas aqui) oferecem melhor resistência UV, mas
+são raras em infusão devido à alta viscosidade.</li>
+</ul></li>
+<li><strong>Testes UV</strong>: Dados de exposição (ex.: QUV ou ASTM
+G154) mostram que, sem proteção, todas perdem brilho em 500-1000 horas e
+amarelecem em 1000-2000 horas. Com topcoat, a durabilidade UV pode
+exceder 5 anos.</li>
+</ul>
+<h4 data-number="1.2.15.3" id="recomendações"><span class="header-section-number">1.2.15.3</span> Recomendações</h4>
+<ul>
+<li><strong>Para exposição prolongada ao sol</strong>: Nenhuma dessas
+resinas é adequada sem proteção. Escolha <strong>Resoltech 1050</strong>
+com verniz Resoltech 8040 ou <strong>Gurit Ampreg 30</strong> com
+topcoat Gurit para compósitos estruturais. <strong>West System</strong>
+é viável para projetos econômicos com verniz 207. <strong>SP SE
+84LV</strong> é menos comum para exteriores.</li>
+<li><strong>Manutenção</strong>: Inspeções anuais e reaplicação de
+topcoat a cada 2-5 anos, dependendo da exposição.</li>
+<li><strong>Alternativas UV</strong>: Para aplicações críticas,
+considere resinas poliéster isoftálicas ou viniléster, que têm melhor
+resistência UV, mas menor desempenho mecânico em compósitos.</li>
+</ul>
+<p>Fontes: Fichas técnicas de Resoltech, West System, Gurit e SP Systems
+(2022-2025). Para testes UV específicos ou formulações personalizadas,
+consulte fabricantes ou laboratórios.</p>
+<hr />
+<h3 data-number="1.2.16" id="utilizador-2025-10-05-194936-grok"><span class="header-section-number">1.2.16</span> 👤 Utilizador
+<em>(2025-10-05 19:49:36)</em> <em>[Grok]</em></h3>
+<p>Resinas cicloalifáticas para UV</p>
+<hr />
+<h3 data-number="1.2.17" id="grok-2025-10-05-195027-grok"><span class="header-section-number">1.2.17</span> 🤖 Grok <em>(2025-10-05
+19:50:27)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.18" id="resinas-epóxi-ciclolifáticas-para-proteção-uv"><span class="header-section-number">1.2.18</span> Resinas Epóxi Ciclolifáticas
+para Proteção UV</h3>
+<p>As resinas epóxi ciclolifáticas (ou cicloalifáticas) são uma classe
+avançada de resinas epóxi que substituem os anéis aromáticos das resinas
+baseadas em bisfenol A por estruturas alicíclicas hidrogenadas,
+conferindo excelente resistência à radiação UV, baixa tendência ao
+amarelecimento e maior estabilidade de cor em exposições prolongadas ao
+sol. Elas são ideais para aplicações exteriores, como recubrimientos
+transparentes, encapsulamentos elétricos, vernizes e compósitos
+náuticos/aeroespaciais, sem necessidade de topcoats adicionais em muitos
+casos. No entanto, a escolha do endurecedor (ex.: anhídridos ou aminas
+ciclolifáticas) é crucial para maximizar a resistência UV.</p>
+<p>A seguir, uma tabela comparativa com exemplos de produtos comerciais
+populares, baseada em fichas técnicas de fabricantes. Os dados focam em
+propriedades chave para UV, como viscosidade, equivalente epóxi (EEW),
+cor e aplicações. Propriedades mecânicas variam com a formulação, mas
+geralmente oferecem boa adesão e baixa contração.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 14%" />
+<col style="width: 6%" />
+<col style="width: 11%" />
+<col style="width: 17%" />
+<col style="width: 12%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resina / Fabricante</th>
+<th>Viscosidade (cps @ 25°C)</th>
+<th>EEW (g/eq)</th>
+<th>Cor / Transparência</th>
+<th>Resistência UV / Amarilleamento</th>
+<th>Aplicações Principais</th>
+<th>Cura Recomendada</th>
+<th>Outras Propriedades</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EPOTEC YDH 184</strong> (Aditya Birla)</td>
+<td>400-900</td>
+<td>Não especificado</td>
+<td>Transparente, baixa coloração</td>
+<td>Alta (hidrogenação elimina anéis aromáticos; superior a bisfenol
+A)</td>
+<td>Recubrimientos exteriores em metal/madeira/concreto; encapsulamento
+elétrico; acabados de alto sólido</td>
+<td>Anhídridos em alta T°; baixa COV</td>
+<td>Baixa viscosidade para 100% sólidos; boa estabilidade
+intempérie</td>
+</tr>
+<tr>
+<td><strong>EPOTEC YDH 3000</strong> (Aditya Birla)</td>
+<td>2.000-3.000</td>
+<td>Não especificado</td>
+<td>Transparente, clara</td>
+<td>Muito alta (ausência de anéis aromáticos; resiste a UV e
+intempérie)</td>
+<td>Recubrimientos exteriores; modificador de acabados acrílicos; alto
+sólido</td>
+<td>Anhídridos ou aminas; cura ao forno</td>
+<td>Permite alto teor de cargas; mais econômica que padrão</td>
+</tr>
+<tr>
+<td><strong>EPOTEC YDH-6000</strong> (Aditya Birla)</td>
+<td>250-450</td>
+<td>130-143</td>
+<td>Clara, incolor a amarelo pálido</td>
+<td>Excelente (alta weatherability e UV)</td>
+<td>Plásticos reforçados por fundição; adesivos sem solvente; isolamento
+elétrico médio/alto T°</td>
+<td>Anhídridos em T° elevada (até 250°C)</td>
+<td>Alta resistência térmica (250°C); densidade 1,15-1,20 g/mL</td>
+</tr>
+<tr>
+<td><strong>ARALDITE CY 179-1</strong> (Huntsman)</td>
+<td>Baixa (não especificada)</td>
+<td>Não especificado</td>
+<td>Transparente</td>
+<td>Boa (ciclolifática líquida para formulações UV-resistentes)</td>
+<td>Enrolamento filamentar; laminados; compósitos de baixa
+viscosidade</td>
+<td>Endurecedores epóxi padrão</td>
+<td>Fácil processamento; alta clareza</td>
+</tr>
+<tr>
+<td><strong>EHPE 3150</strong> (Daicel)</td>
+<td>Sólido (flocos)</td>
+<td>Não especificado</td>
+<td>Alta transparência</td>
+<td>Elevada estabilidade UV</td>
+<td>Vernizes transparentes; encapsulamentos ópticos; compósitos de alta
+performance</td>
+<td>Catiónica ou térmica</td>
+<td>Baixa contração/absorção de água; alta resistência ao tempo; Tg
+alta</td>
+</tr>
+<tr>
+<td><strong>E-Pos 931</strong> (QR-Polymers)</td>
+<td>Não especificada</td>
+<td>Não especificado</td>
+<td>Branco-água (water-white)</td>
+<td>Superior (ideal para coatings claros)</td>
+<td>Vernizes sem solvente; coatings de cor clara; aplicações
+exteriores</td>
+<td>Endurecedores ciclolifáticos</td>
+<td>Boa adesão; baixa contração química</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.19" id="observações-gerais-2"><span class="header-section-number">1.2.19</span> Observações Gerais</h3>
+<ul>
+<li><strong>Vantagens vs. Epóxis Padrão</strong>: Diferente das resinas
+bisfenol A, que amarelecem em semanas sob UV, as ciclolifáticas mantêm
+clareza por meses/anos, com perda de brilho &lt;5% após 1000h de
+exposição QUV. Elas também exibem menor fotodegradação (redução &lt;10%
+em propriedades mecânicas após exposição prolongada).</li>
+<li><strong>Limitações</strong>: Podem ter viscosidade mais alta ou
+custo superior; requerem endurecedores compatíveis (ex.: ciclolifáticos
+para máxima UV). Para curado UV catiónico, veja sistemas híbridos como
+os da Tetra.</li>
+<li><strong>Recomendações</strong>: Para artesanato/recubrimientos, opte
+por EPOTEC YDH 184; para elétrico/alto T°, YDH-6000. Teste formulações
+em laboratório para aplicações específicas. Produtos disponíveis em
+fornecedores como Alibaba ou Amazon para amostras.</li>
+<li><strong>Fontes</strong>: Baseado em dados de 2022-2025; para TDS
+completos, consulte fabricantes.</li>
+</ul>
+<p>Se precisar de detalhes sobre um produto específico ou comparações
+mecânicas, forneça mais contexto!</p>
+<hr />
+<h3 data-number="1.2.20" id="utilizador-2025-10-05-195450-grok"><span class="header-section-number">1.2.20</span> 👤 Utilizador
+<em>(2025-10-05 19:54:50)</em> <em>[Grok]</em></h3>
+<p>equivalente a Resoltech 1050 Resina Epóxi de Infusão, mas de outras
+marcas</p>
+<hr />
+<h3 data-number="1.2.21" id="grok-2025-10-05-195553-grok"><span class="header-section-number">1.2.21</span> 🤖 Grok <em>(2025-10-05
+19:55:53)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.22" id="equivalentes-à-resoltech-1050-resinas-epóxi-para-infusão-de-outras-marcas"><span class="header-section-number">1.2.22</span> Equivalentes à Resoltech
+1050: Resinas Epóxi para Infusão de Outras Marcas</h3>
+<p>A Resoltech 1050 é um sistema de resina epóxi de baixa viscosidade
+otimizado para infusão a vácuo, laminação úmida e fabricação de
+compósitos estruturais de alta performance, com propriedades mecânicas
+equilibradas, boa molhagem de fibras e versatilidade em tempo de
+trabalho (pot life de 10 min a 14h, dependendo do endurecedor). A
+seguir, comparo-a com equivalentes de outras marcas, selecionados por
+similaridade em aplicações (infusão, RTM, enrolamento filamentar), baixa
+viscosidade e desempenho mecânico. Escolhi produtos com dados técnicos
+disponíveis: <strong>Easy Composites IN2</strong>, <strong>Gurit Ampreg
+30 (Standard Hardener)</strong>, <strong>West System 105/205</strong> e
+<strong>SikaBiresin CR72 (Medium Hardener)</strong>. Para o
+<strong>PTM&amp;W PT5712</strong>, incluo como opção de alta
+temperatura, mas note que os dados mecânicos são para laminados (não
+resina pura).</p>
+<p>Os dados são para resina pura (neat resin), pós-cura recomendada,
+medidos por normas como ISO 178 (flexão) e ISO 527 (tração). Unidades:
+GPa (módulo), MPa (resistência), % (alongamento).</p>
+<h4 data-number="1.2.22.1" id="propriedades-em-flexão-resina-pura-pós-cura"><span class="header-section-number">1.2.22.1</span> Propriedades em Flexão
+(Resina Pura, Pós-Cura)</h4>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 14%" />
+<col style="width: 13%" />
+<col style="width: 5%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resina / Marca</th>
+<th>Viscosidade Mista (mPa.s @ 25°C)</th>
+<th>Proporção Mistura (Peso)</th>
+<th>Pot Life (min @ 25°C)</th>
+<th>Tg (°C)</th>
+<th>Módulo (GPa)</th>
+<th>Resistência (MPa)</th>
+<th>Alongamento (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resoltech 1050/1055S</strong></td>
+<td>205-637</td>
+<td>100:35</td>
+<td>30-60 (ajustável)</td>
+<td>77</td>
+<td>3,30</td>
+<td>107</td>
+<td>8,2</td>
+</tr>
+<tr>
+<td><strong>Easy Composites IN2 (Slow)</strong></td>
+<td>200-450</td>
+<td>100:30</td>
+<td>120-150</td>
+<td>92-98</td>
+<td>3,10-3,50</td>
+<td>110-120</td>
+<td>5-7 (máx. strain)</td>
+</tr>
+<tr>
+<td><strong>Gurit Ampreg 30 Std.</strong></td>
+<td>650-850</td>
+<td>100:26</td>
+<td>70-90</td>
+<td>77-99</td>
+<td>3,42</td>
+<td>125</td>
+<td>8,51</td>
+</tr>
+<tr>
+<td><strong>West System 105/205</strong></td>
+<td>~700</td>
+<td>100:43 (5:1 vol.)</td>
+<td>~20</td>
+<td>54</td>
+<td>3,18</td>
+<td>97</td>
+<td>3,4</td>
+</tr>
+<tr>
+<td><strong>SikaBiresin CR72 Med.</strong></td>
+<td>~650</td>
+<td>100:40</td>
+<td>~45</td>
+<td>~60-70</td>
+<td>~3,20 (est.)</td>
+<td>~100 (est.)</td>
+<td>~5 (est.)</td>
+</tr>
+<tr>
+<td><strong>PTM&amp;W PT5712</strong></td>
+<td>575 (<span class="citation" data-cites="77">@77</span>°F)</td>
+<td>100:20</td>
+<td>80-90</td>
+<td>149 (onset)</td>
+<td>N/D (laminado: 3,0-3,3)</td>
+<td>N/D (laminado: 407-515)</td>
+<td>N/D (laminado: 1,6-2,1)</td>
+</tr>
+</tbody>
+</table>
+<h4 data-number="1.2.22.2" id="propriedades-em-tração-resina-pura-pós-cura"><span class="header-section-number">1.2.22.2</span> Propriedades em Tração
+(Resina Pura, Pós-Cura)</h4>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 22%" />
+<col style="width: 16%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resina / Marca</th>
+<th>Resistência (MPa)</th>
+<th>Módulo (GPa)</th>
+<th>Alongamento (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resoltech 1050/1055S</strong></td>
+<td>77</td>
+<td>3,30</td>
+<td>8,2</td>
+</tr>
+<tr>
+<td><strong>Easy Composites IN2 (Slow)</strong></td>
+<td>68-76</td>
+<td>N/D</td>
+<td>6-8</td>
+</tr>
+<tr>
+<td><strong>Gurit Ampreg 30 Std.</strong></td>
+<td>77</td>
+<td>3,38</td>
+<td>5,50</td>
+</tr>
+<tr>
+<td><strong>West System 105/205</strong></td>
+<td>54</td>
+<td>2,82</td>
+<td>3,4</td>
+</tr>
+<tr>
+<td><strong>SikaBiresin CR72 Med.</strong></td>
+<td>~70 (est.)</td>
+<td>~3,00 (est.)</td>
+<td>~4-6 (est.)</td>
+</tr>
+<tr>
+<td><strong>PTM&amp;W PT5712</strong></td>
+<td>N/D (laminado: 255-324)</td>
+<td>N/D (laminado: 3,2-3,9)</td>
+<td>N/D (laminado: 1,6-2,1)</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="1.2.23" id="observações-gerais-3"><span class="header-section-number">1.2.23</span> Observações Gerais</h3>
+<ul>
+<li><strong>Easy Composites IN2</strong>: Excelente equivalente, com Tg
+superior e UV estável (clareza para compósitos de carbono sem pintura).
+Ideal para infusão rápida em peças grandes; pós-cura a 60°C para
+propriedades máximas. Mais versátil em pot life que a Resoltech.</li>
+<li><strong>Gurit Ampreg 30</strong>: Muito similar em propriedades
+mecânicas e Tg; otimizada para hand lay-up e infusão com vácuo, com alta
+tenacidade (alongamento &gt;8%). Pós-cura a 50°C recomendada; bio-based
+options disponíveis.</li>
+<li><strong>West System 105/205</strong>: Opção econômica e acessível
+para infusão básica, mas Tg e alongamento inferiores (menos flexível).
+Boa para reparos náuticos; cura ambiente sem pós-cura.</li>
+<li><strong>SikaBiresin CR72</strong>: Projetada para infusão e lay-up
+com três endurecedores (fast/medium/slow); baixa viscosidade para
+molhagem superior. Estimativas baseadas em sistemas Sika similares (ex.:
+CR76); confirme datasheet para exatos. Boa para estruturas
+marinhas.</li>
+<li><strong>PTM&amp;W PT5712</strong>: Para aplicações de alta
+temperatura (Tg &gt;140°C), com baixa viscosidade para infusão; dados
+mecânicos em laminados de vidro mostram alta rigidez. Pós-cura a
+150-300°F essencial.</li>
+<li><strong>Outras Opções</strong>: SP Systems SE 84LV (Tg 115°C, para
+pré-preg); Bodopox 1200 (baixa viscosidade, mas dados limitados). Para
+UV, combine com topcoats, exceto IN2 (estável).</li>
+<li><strong>Escolha</strong>: IN2 ou Ampreg 30 para equivalência direta;
+West para custo baixo; PT5712 para calor.</li>
+</ul>
+<p>Fontes: Fichas técnicas de fabricantes (Easy Composites, Gurit, West
+System, Sika, PTM&amp;W; 2022-2025). Para testes em laminados ou
+compras, consulte fornecedores locais.</p>
+<hr />
+<h3 data-number="1.2.24" id="utilizador-2025-10-05-200853-grok"><span class="header-section-number">1.2.24</span> 👤 Utilizador
+<em>(2025-10-05 20:08:53)</em> <em>[Grok]</em></h3>
+<p>comparação entre Easy Composites IN2 e Resoltech 1050 Resina
+Epóxy</p>
+<hr />
+<h3 data-number="1.2.25" id="grok-2025-10-05-200930-grok"><span class="header-section-number">1.2.25</span> 🤖 Grok <em>(2025-10-05
+20:09:30)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.26" id="comparação-entre-easy-composites-in2-e-resoltech-1050-resina-epóxi"><span class="header-section-number">1.2.26</span> Comparação entre Easy
+Composites IN2 e Resoltech 1050 Resina Epóxi</h3>
+<p>A <strong>Resoltech 1050</strong> e a <strong>Easy Composites
+IN2</strong> são resinas epóxi de baixa viscosidade projetadas para
+infusão a vácuo, laminação úmida e fabricação de compósitos estruturais
+de alta performance, como em aplicações náuticas, aeroespaciais e
+automotivas. Ambas oferecem excelente molhagem de fibras (vidro,
+carbono, aramida) e são adequadas para processos como infusão, RTM e
+enrolamento filamentar. A comparação a seguir detalha propriedades
+mecânicas, viscosidade, tempo de trabalho, resistência UV, cura e
+aplicações, com base em fichas técnicas dos fabricantes (2022-2025).
+Dados são para resina pura, com pós-cura recomendada, medidos por normas
+ISO 178 (flexão) e ISO 527 (tração). Unidades: GPa (módulo), MPa
+(resistência), % (alongamento), °C (Tg).</p>
+<p><xaiArtifact artifact_id="9680a275-9239-4de3-8760-e77e4f5b6b77" artifact_version_id="09ea0fcc-4bff-41d9-baa1-5634d11284ae" title="Comparacao_Resoltech_1050_vs_Easy_IN2.md" contentType="text/markdown"></p>
+<h1 data-number="2" id="comparação-entre-resoltech-1050-e-easy-composites-in2"><span class="header-section-number">2</span> Comparação entre Resoltech 1050 e
+Easy Composites IN2</h1>
+<h2 data-number="2.1" id="propriedades-físicas-e-de-processamento"><span class="header-section-number">2.1</span> Propriedades Físicas e de
+Processamento</h2>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 32%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1055S</th>
+<th>Easy Composites IN2 (Slow Hardener)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viscosidade Mista (mPa.s @ 25°C)</strong></td>
+<td>205-637</td>
+<td>200-450</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso)</strong></td>
+<td>100:35</td>
+<td>100:30</td>
+</tr>
+<tr>
+<td><strong>Pot Life (min @ 25°C)</strong></td>
+<td>30-60 (ajustável com endurecedores 1053S-1059S)</td>
+<td>120-150 (Slow); 20-40 (Fast)</td>
+</tr>
+<tr>
+<td><strong>Densidade Mista (g/cm³)</strong></td>
+<td>1,10</td>
+<td>1,12</td>
+</tr>
+<tr>
+<td><strong>Cura Recomendada</strong></td>
+<td>Ambiente (14 dias) ou pós-cura 16h @ 60°C</td>
+<td>Ambiente ou pós-cura 24h @ 60°C</td>
+</tr>
+<tr>
+<td><strong>Tg (°C)</strong></td>
+<td>77 (pós-cura)</td>
+<td>92-98 (pós-cura)</td>
+</tr>
+<tr>
+<td><strong>Cor</strong></td>
+<td>Amarelo transparente</td>
+<td>Transparente (UV estável)</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="2.2" id="propriedades-mecânicas-resina-pura-pós-cura"><span class="header-section-number">2.2</span> Propriedades Mecânicas (Resina
+Pura, Pós-Cura)</h2>
+<h3 data-number="2.2.1" id="flexão-iso-178"><span class="header-section-number">2.2.1</span> Flexão (ISO 178)</h3>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1055S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>3,30</td>
+<td>3,10-3,50</td>
+</tr>
+<tr>
+<td><strong>Resistência à Flexão (MPa)</strong></td>
+<td>107</td>
+<td>110-120</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Flexão (%)</strong></td>
+<td>8,2</td>
+<td>5-7 (máx. strain)</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>89</td>
+<td>Não especificada</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="2.2.2" id="tração-iso-527"><span class="header-section-number">2.2.2</span> Tração (ISO 527)</h3>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1055S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>77</td>
+<td>68-76</td>
+</tr>
+<tr>
+<td><strong>Módulo de Tração (GPa)</strong></td>
+<td>3,30</td>
+<td>Não especificado</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Ruptura (%)</strong></td>
+<td>8,2</td>
+<td>6-8</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="2.3" id="resistência-uv"><span class="header-section-number">2.3</span> Resistência UV</h2>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1055S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência UV Nativa</strong></td>
+<td>Nenhuma (amarelecimento em semanas/meses)</td>
+<td>Boa (estável, mínima perda de brilho)</td>
+</tr>
+<tr>
+<td><strong>Comportamento sob UV</strong></td>
+<td>Amarelecimento e perda de brilho; topcoat necessário</td>
+<td>Mantém clareza por meses; topcoat opcional</td>
+</tr>
+<tr>
+<td><strong>Recomendações UV</strong></td>
+<td>Verniz poliuretano (ex.: Resoltech 8040)</td>
+<td>Verniz opcional para estética prolongada</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="2.4" id="aplicações-e-características"><span class="header-section-number">2.4</span> Aplicações e
+Características</h2>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1055S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Aplicações Principais</strong></td>
+<td>Infusão, RTM, enrolamento filamentar, wet lay-up; náutica,
+aeroespacial</td>
+<td>Infusão, laminação úmida, compósitos de carbono; náutica,
+automotivo</td>
+</tr>
+<tr>
+<td><strong>Vantagens</strong></td>
+<td>Versatilidade em pot life (10 min a 14h); baixa toxicidade;
+excelente molhagem</td>
+<td>Alta Tg; resistência UV; fácil processamento; ideal para carbono
+exposto</td>
+</tr>
+<tr>
+<td><strong>Limitações</strong></td>
+<td>Necessita topcoat UV; Tg moderada</td>
+<td>Menor alongamento; menos opções de endurecedores</td>
+</tr>
+<tr>
+<td><strong>Outras Propriedades</strong></td>
+<td>Baixo exotermismo; sem CMR; boa fadiga</td>
+<td>Baixa contração; alta clareza; bio-based disponível</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="2.5" id="observações-1"><span class="header-section-number">2.5</span> Observações</h2>
+<ul>
+<li><strong>Resoltech 1050</strong>: Destaca-se pela flexibilidade de
+pot life (endurecedores 1053S-1059S) e alta tenacidade (alongamento
+8,2%). Ideal para peças grandes e processos variados, mas requer verniz
+UV (ex.: Resoltech 8040) para exteriores. Pós-cura a 60°C melhora Tg e
+propriedades mecânicas em 20-30%.</li>
+<li><strong>Easy Composites IN2</strong>: Superior em resistência UV
+(mantém clareza sem topcoat) e Tg (até 98°C), ideal para compósitos de
+carbono expostos. Menos versátil em pot life (apenas Fast/Slow).
+Pós-cura a 60°C otimiza desempenho.</li>
+<li><strong>Desempenho em Laminados</strong>: Ambas oferecem excelente
+molhagem de fibras, com Resoltech ligeiramente melhor em fadiga dinâmica
+e IN2 em estética (carbono visível). ILSS (cisalhamento interlaminar)
+estimado: ~45-50 MPa (Resoltech) vs. ~50 MPa (IN2 com carbono).</li>
+<li><strong>Custo e Disponibilidade</strong>: IN2 é mais acessível no
+mercado europeu; Resoltech tem distribuição ampla, mas pode ser mais
+cara.</li>
+<li><strong>Escolha Recomendada</strong>: Use <strong>IN2</strong> para
+compósitos expostos (ex.: carbono sem pintura) ou aplicações com alta
+Tg; <strong>Resoltech 1050</strong> para projetos com requisitos
+variados de cura e alta tenacidade.</li>
+</ul>
+<p>Fontes: Fichas técnicas de Resoltech e Easy Composites (2022-2025).
+Para testes específicos em laminados, consulte fabricantes ou
+laboratórios.</p>
+<p></xaiArtifact></p>
+<hr />
+<h3 data-number="2.5.1" id="utilizador-2025-10-05-201015-grok"><span class="header-section-number">2.5.1</span> 👤 Utilizador <em>(2025-10-05
+20:10:15)</em> <em>[Grok]</em></h3>
+<p>comparação entre Easy Composites IN2 e Resoltech 1050/1056S Resina
+Epóxy</p>
+<hr />
+<h3 data-number="2.5.2" id="grok-2025-10-05-201055-grok"><span class="header-section-number">2.5.2</span> 🤖 Grok <em>(2025-10-05
+20:10:55)</em> <em>[Grok]</em></h3>
+<h3 data-number="2.5.3" id="comparação-entre-easy-composites-in2-e-resoltech-10501056s-resina-epóxi"><span class="header-section-number">2.5.3</span> Comparação entre Easy
+Composites IN2 e Resoltech 1050/1056S Resina Epóxi</h3>
+<p>A <strong>Resoltech 1050/1056S</strong> e a <strong>Easy Composites
+IN2</strong> são resinas epóxi de baixa viscosidade desenvolvidas para
+infusão a vácuo, laminação úmida, RTM e enrolamento filamentar, usadas
+em compósitos estruturais de alta performance (ex.: náutica,
+aeroespacial, automotiva). Ambas oferecem excelente molhagem de fibras
+(vidro, carbono, aramida) e propriedades mecânicas robustas. A
+comparação foca na combinação <strong>1050/1056S</strong> (endurecedor
+de cura média, pot life ~1h) versus <strong>IN2 com endurecedor
+Slow</strong> (pot life 120-150 min), que são escolhas comuns para
+infusão. Dados são para resina pura, com pós-cura recomendada, baseados
+em fichas técnicas (2022-2025), com testes por normas ISO 178 (flexão) e
+ISO 527 (tração). Unidades: GPa (módulo), MPa (resistência), %
+(alongamento), °C (Tg).</p>
+<p><xaiArtifact artifact_id="f36c70d8-44ce-4894-bc72-0b8d81f116b0" artifact_version_id="49c309de-47e5-4162-b185-3550311fe5a4" title="Comparacao_Resoltech_1050_1056S_vs_Easy_IN2.md" contentType="text/markdown"></p>
+<h1 data-number="3" id="comparação-entre-resoltech-10501056s-e-easy-composites-in2-slow-hardener"><span class="header-section-number">3</span> Comparação entre Resoltech
+1050/1056S e Easy Composites IN2 (Slow Hardener)</h1>
+<h2 data-number="3.1" id="propriedades-físicas-e-de-processamento-1"><span class="header-section-number">3.1</span> Propriedades Físicas e de
+Processamento</h2>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 32%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viscosidade Mista (mPa.s @ 25°C)</strong></td>
+<td>205</td>
+<td>200-450</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso)</strong></td>
+<td>100:35</td>
+<td>100:30</td>
+</tr>
+<tr>
+<td><strong>Pot Life (min @ 25°C)</strong></td>
+<td>~60 (100g)</td>
+<td>120-150 (500g)</td>
+</tr>
+<tr>
+<td><strong>Densidade Mista (g/cm³)</strong></td>
+<td>1,10</td>
+<td>1,12</td>
+</tr>
+<tr>
+<td><strong>Cura Recomendada</strong></td>
+<td>Ambiente (14 dias) ou pós-cura 16h @ 60°C</td>
+<td>Ambiente ou pós-cura 24h @ 60°C</td>
+</tr>
+<tr>
+<td><strong>Tg (°C)</strong></td>
+<td>83 (pós-cura)</td>
+<td>92-98 (pós-cura)</td>
+</tr>
+<tr>
+<td><strong>Cor</strong></td>
+<td>Amarelo transparente</td>
+<td>Transparente (UV estável)</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="3.2" id="propriedades-mecânicas-resina-pura-pós-cura-1"><span class="header-section-number">3.2</span> Propriedades Mecânicas (Resina
+Pura, Pós-Cura)</h2>
+<h3 data-number="3.2.1" id="flexão-iso-178-1"><span class="header-section-number">3.2.1</span> Flexão (ISO 178)</h3>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>3,35</td>
+<td>3,10-3,50</td>
+</tr>
+<tr>
+<td><strong>Resistência à Flexão (MPa)</strong></td>
+<td>116</td>
+<td>110-120</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Flexão (%)</strong></td>
+<td>7,7</td>
+<td>5-7 (máx. strain)</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>90</td>
+<td>Não especificada</td>
+</tr>
+</tbody>
+</table>
+<h3 data-number="3.2.2" id="tração-iso-527-1"><span class="header-section-number">3.2.2</span> Tração (ISO 527)</h3>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>~77 (estimado, similar a 1055S)</td>
+<td>68-76</td>
+</tr>
+<tr>
+<td><strong>Módulo de Tração (GPa)</strong></td>
+<td>~3,30 (estimado, similar a 1055S)</td>
+<td>Não especificado</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Ruptura (%)</strong></td>
+<td>7,7</td>
+<td>6-8</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="3.3" id="resistência-uv-1"><span class="header-section-number">3.3</span> Resistência UV</h2>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência UV Nativa</strong></td>
+<td>Nenhuma (base bisfenol A/F; amarelecimento em semanas)</td>
+<td>Boa (estável, mínima perda de brilho)</td>
+</tr>
+<tr>
+<td><strong>Comportamento sob UV</strong></td>
+<td>Amarelecimento e perda de brilho; topcoat necessário</td>
+<td>Mantém clareza por meses; topcoat opcional</td>
+</tr>
+<tr>
+<td><strong>Recomendações UV</strong></td>
+<td>Verniz poliuretano (ex.: Resoltech 8040)</td>
+<td>Verniz opcional para estética prolongada</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="3.4" id="aplicações-e-características-1"><span class="header-section-number">3.4</span> Aplicações e
+Características</h2>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Aplicações Principais</strong></td>
+<td>Infusão, RTM, enrolamento filamentar, wet lay-up; náutica,
+aeroespacial</td>
+<td>Infusão, laminação úmida, compósitos de carbono; náutica,
+automotivo</td>
+</tr>
+<tr>
+<td><strong>Vantagens</strong></td>
+<td>Alta tenacidade (alongamento 7,7%); baixa toxicidade; excelente
+molhagem</td>
+<td>Alta Tg (92-98°C); resistência UV; ideal para carbono exposto</td>
+</tr>
+<tr>
+<td><strong>Limitações</strong></td>
+<td>Necessita topcoat UV; Tg moderada</td>
+<td>Menor alongamento; pot life menos flexível</td>
+</tr>
+<tr>
+<td><strong>Outras Propriedades</strong></td>
+<td>Baixo exotermismo; sem CMR; boa resistência à fadiga</td>
+<td>Baixa contração; alta clareza; bio-based disponível</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="3.5" id="observações-2"><span class="header-section-number">3.5</span> Observações</h2>
+<ul>
+<li><strong>Resoltech 1050/1056S</strong>: Oferece maior tenacidade
+(alongamento 7,7%) e resistência à flexão (116 MPa), ideal para
+compósitos sujeitos a cargas dinâmicas. A viscosidade muito baixa (205
+mPa.s) facilita infusão em grandes estruturas. Requer pós-cura a 60°C
+para Tg de 83°C e propriedades máximas. Sem resistência UV, exige verniz
+(ex.: Resoltech 8040).</li>
+<li><strong>Easy Composites IN2 (Slow)</strong>: Superior em Tg
+(92-98°C) e resistência UV, mantendo clareza em compósitos de carbono
+expostos sem topcoat. Viscosidade (200-450 mPa.s) é adequada para
+infusão, mas pot life mais longo (120-150 min) favorece processos
+lentos. Menor alongamento (5-7%) indica menos flexibilidade.</li>
+<li><strong>Desempenho em Laminados</strong>: Ambas têm excelente
+molhagem, com Resoltech ligeiramente melhor em fadiga (ILSS ~45-50 MPa)
+e IN2 em estética para carbono visível (ILSS ~50 MPa com carbono).
+Testes em laminados podem variar com reforços.</li>
+<li><strong>Custo e Disponibilidade</strong>: IN2 é mais acessível no
+mercado europeu, com foco em DIY e indústria; Resoltech tem distribuição
+ampla, mas pode ser mais cara devido à versatilidade de
+endurecedores.</li>
+<li><strong>Escolha Recomendada</strong>: Escolha <strong>IN2</strong>
+para compósitos expostos (ex.: carbono sem pintura) ou aplicações com
+alta Tg; <strong>Resoltech 1050/1056S</strong> para projetos com alta
+tenacidade, fadiga dinâmica ou processos rápidos.</li>
+</ul>
+<p>Fontes: Fichas técnicas de Resoltech e Easy Composites (2022-2025).
+Para testes específicos em laminados ou validação, consulte fabricantes
+ou laboratórios.</p>
+<p></xaiArtifact></p>
+<hr />
+<h3 data-number="3.5.1" id="utilizador-2025-10-05-201450-grok"><span class="header-section-number">3.5.1</span> 👤 Utilizador <em>(2025-10-05
+20:14:50)</em> <em>[Grok]</em></h3>
+<p>Qual destes dois é melhor para usar com fibra de vidro</p>
+<hr />
+<h3 data-number="3.5.2" id="grok-2025-10-05-201546-grok"><span class="header-section-number">3.5.2</span> 🤖 Grok <em>(2025-10-05
+20:15:46)</em> <em>[Grok]</em></h3>
+<h3 data-number="3.5.3" id="comparação-resoltech-10501056s-vs.-easy-composites-in2-para-uso-com-fibra-de-vidro"><span class="header-section-number">3.5.3</span> Comparação: Resoltech
+1050/1056S vs. Easy Composites IN2 para Uso com Fibra de Vidro</h3>
+<p>Para determinar qual resina epóxi é melhor para uso com <strong>fibra
+de vidro</strong> em processos como infusão a vácuo, laminação úmida ou
+RTM, é necessário avaliar as propriedades das resinas <strong>Resoltech
+1050/1056S</strong> e <strong>Easy Composites IN2 (Slow
+Hardener)</strong> em termos de compatibilidade com fibra de vidro,
+molhagem, propriedades mecânicas, processamento, resistência UV e
+custo-benefício. Ambas são resinas de baixa viscosidade otimizadas para
+compósitos estruturais, mas possuem diferenças que afetam sua adequação
+para fibra de vidro. A análise abaixo é baseada em fichas técnicas
+(2022-2025) e considera aplicações típicas com fibra de vidro, como
+náutica, automotiva ou estruturas industriais.</p>
+<hr />
+<h3 data-number="3.5.4" id="critérios-para-fibra-de-vidro"><span class="header-section-number">3.5.4</span> Critérios para Fibra de
+Vidro</h3>
+<ul>
+<li><strong>Molhagem</strong>: Fibra de vidro (ex.: E-glass) exige
+resinas com baixa viscosidade (&lt;1000 mPa.s) para boa penetração e
+minimização de vazios em infusão/laminação.</li>
+<li><strong>Propriedades Mecânicas</strong>: Alta resistência à flexão e
+tração, com boa tenacidade (alongamento) para suportar cargas
+dinâmicas.</li>
+<li><strong>Processamento</strong>: Pot life adequado ao tamanho da peça
+(ex.: curto para pequenas, longo para grandes); cura ambiente ou
+pós-cura para otimizar Tg.</li>
+<li><strong>Resistência UV</strong>: Importante para aplicações externas
+(ex.: barcos), mas fibra de vidro geralmente requer topcoat.</li>
+<li><strong>Custo e Disponibilidade</strong>: Fator prático para
+projetos comerciais ou DIY.</li>
+</ul>
+<hr />
+<h3 data-number="3.5.5" id="comparação-detalhada"><span class="header-section-number">3.5.5</span> Comparação Detalhada</h3>
+<h4 data-number="3.5.5.1" id="propriedades-físicas-e-processamento"><span class="header-section-number">3.5.5.1</span> 1. Propriedades Físicas e
+Processamento</h4>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 32%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viscosidade Mista (mPa.s @ 25°C)</strong></td>
+<td>205</td>
+<td>200-450</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso)</strong></td>
+<td>100:35</td>
+<td>100:30</td>
+</tr>
+<tr>
+<td><strong>Pot Life (min @ 25°C)</strong></td>
+<td>~60 (100g)</td>
+<td>120-150 (500g)</td>
+</tr>
+<tr>
+<td><strong>Cura Recomendada</strong></td>
+<td>Ambiente (14 dias) ou 16h @ 60°C</td>
+<td>Ambiente ou 24h @ 60°C</td>
+</tr>
+<tr>
+<td><strong>Tg (°C, pós-cura)</strong></td>
+<td>83</td>
+<td>92-98</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - <strong>Molhagem</strong>: Ambas têm
+viscosidade ideal para fibra de vidro (205 mPa.s para Resoltech é
+ligeiramente inferior, favorecendo infusão em tecidos densos). IN2
+(200-450 mPa.s) é igualmente eficaz, mas a variação pode exigir mais
+controle em infusões complexas. - <strong>Pot Life</strong>: IN2
+(120-150 min) é melhor para peças grandes ou infusões lentas, comuns em
+fibra de vidro (ex.: cascos de barcos). Resoltech 1050/1056S (~60 min) é
+adequada para peças médias ou processos rápidos, mas menos flexível. -
+<strong>Cura</strong>: Ambas curam em ambiente, mas pós-cura a 60°C
+melhora Tg e propriedades. IN2 tem Tg superior (92-98°C vs. 83°C),
+favorecendo aplicações com exposição térmica moderada.</p>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para peças grandes
+devido ao pot life mais longo; <strong>Resoltech</strong> para processos
+rápidos.</p>
+<hr />
+<h4 data-number="3.5.5.2" id="propriedades-mecânicas-resina-pura-pós-cura-2"><span class="header-section-number">3.5.5.2</span> 2. Propriedades Mecânicas
+(Resina Pura, Pós-Cura)</h4>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>3,35</td>
+<td>3,10-3,50</td>
+</tr>
+<tr>
+<td><strong>Resistência à Flexão (MPa)</strong></td>
+<td>116</td>
+<td>110-120</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Flexão (%)</strong></td>
+<td>7,7</td>
+<td>5-7</td>
+</tr>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>~77 (estimado)</td>
+<td>68-76</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Tração (%)</strong></td>
+<td>7,7</td>
+<td>6-8</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>90</td>
+<td>Não especificada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - <strong>Fibra de Vidro em
+Laminados</strong>: Fibra de vidro melhora significativamente as
+propriedades mecânicas (ex.: resistência à flexão de laminados E-glass
+pode atingir 400-600 MPa, dependendo da fração volumétrica). Ambas as
+resinas oferecem molhagem excelente, com Resoltech ligeiramente superior
+em tenacidade (alongamento 7,7%) para cargas dinâmicas (ex.: vibrações
+em barcos). - <strong>Resistência à Flexão</strong>: Resoltech (116 MPa)
+é competitiva com IN2 (110-120 MPa). Em laminados, a diferença é mínima
+(~5-10%), pois a fibra domina. - <strong>Fadiga</strong>: Resoltech
+destaca-se por boa resistência à fadiga (ILSS ~45-50 MPa em laminados),
+ideal para fibra de vidro em aplicações náuticas. IN2 tem desempenho
+similar, mas dados de fadiga são menos enfatizados.</p>
+<p><strong>Vencedor</strong>: <strong>Resoltech</strong> para aplicações
+com cargas dinâmicas devido à maior tenacidade; empate em resistência
+geral.</p>
+<hr />
+<h4 data-number="3.5.5.3" id="resistência-uv-2"><span class="header-section-number">3.5.5.3</span> 3. Resistência UV</h4>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência UV Nativa</strong></td>
+<td>Nenhuma (amarelecimento em semanas)</td>
+<td>Boa (mínima perda de brilho)</td>
+</tr>
+<tr>
+<td><strong>Comportamento sob UV</strong></td>
+<td>Amarelecimento; topcoat necessário</td>
+<td>Clareza mantida por meses; topcoat opcional</td>
+</tr>
+<tr>
+<td><strong>Recomendações UV</strong></td>
+<td>Verniz poliuretano (ex.: Resoltech 8040)</td>
+<td>Verniz opcional para estética prolongada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - Fibra de vidro em aplicações externas
+(ex.: barcos, tanques) geralmente requer proteção UV, já que a resina
+exposta degrada. <strong>IN2</strong> é superior, com resistência UV
+intrínseca que reduz amarelecimento, ideal para laminados translúcidos
+ou expostos. <strong>Resoltech</strong> exige verniz (ex.: Resoltech
+8040), aumentando custos e etapas. - Em laminados opacos (ex.: E-glass
+com múltiplas camadas), a proteção UV é menos crítica, mas IN2 ainda
+oferece vantagem estética.</p>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para aplicações
+externas ou translúcidas; empate se topcoat for usado.</p>
+<hr />
+<h4 data-number="3.5.5.4" id="aplicações-e-praticidade"><span class="header-section-number">3.5.5.4</span> 4. Aplicações e
+Praticidade</h4>
+<ul>
+<li><strong>Resoltech 1050/1056S</strong>:
+<ul>
+<li><strong>Vantagens</strong>: Alta tenacidade e resistência à fadiga,
+ideal para fibra de vidro em estruturas náuticas ou industriais sujeitas
+a vibrações/cargas cíclicas. Versatilidade com endurecedores
+(1053S-1059S) permite ajustar pot life. Baixa toxicidade (sem CMR) e
+baixo exotermismo são ideais para peças grandes.</li>
+<li><strong>Limitações</strong>: Necessita topcoat UV; Tg moderada
+(83°C) pode limitar aplicações térmicas.</li>
+<li><strong>Exemplo</strong>: Cascos de barcos, tanques reforçados,
+peças estruturais médias.</li>
+</ul></li>
+<li><strong>Easy Composites IN2 (Slow)</strong>:
+<ul>
+<li><strong>Vantagens</strong>: Tg mais alta (92-98°C) suporta maior
+exposição térmica; resistência UV elimina necessidade de topcoat em
+muitos casos. Pot life longo (120-150 min) é ideal para infusões
+complexas com fibra de vidro. Alta clareza para laminados
+translúcidos.</li>
+<li><strong>Limitações</strong>: Menor tenacidade (alongamento 5-7%)
+pode ser menos ideal para cargas dinâmicas extremas. Menos opções de
+endurecedores.</li>
+<li><strong>Exemplo</strong>: Painéis náuticos translúcidos, peças
+automotivas expostas, grandes estruturas infusionadas.</li>
+</ul></li>
+<li><strong>Custo</strong>: IN2 é geralmente mais acessível na Europa
+(DIY/indústria); Resoltech pode ser mais cara devido à
+versatilidade.</li>
+</ul>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para projetos grandes
+ou expostos; <strong>Resoltech</strong> para cargas dinâmicas.</p>
+<hr />
+<h3 data-number="3.5.6" id="conclusão-qual-é-melhor-para-fibra-de-vidro"><span class="header-section-number">3.5.6</span> Conclusão: Qual é Melhor para
+Fibra de Vidro?</h3>
+<ul>
+<li><strong>Escolha Resoltech 1050/1056S</strong> se:
+<ul>
+<li>O projeto envolve <strong>cargas dinâmicas</strong> (ex.: barcos
+sujeitos a vibrações), devido à maior tenacidade (7,7%
+alongamento).</li>
+<li>Você precisa de <strong>flexibilidade no pot life</strong> (outros
+endurecedores disponíveis).</li>
+<li>O ambiente é controlado ou topcoat UV será aplicado (ex.: Resoltech
+8040).</li>
+<li>Exemplo: Cascos de barcos, tanques industriais com fibra de vidro
+E-glass.</li>
+</ul></li>
+<li><strong>Escolha Easy Composites IN2 (Slow)</strong> se:
+<ul>
+<li>O projeto requer <strong>infusão lenta</strong> (pot life longo,
+120-150 min) para peças grandes.</li>
+<li>A <strong>resistência UV</strong> é crítica (ex.: laminados
+translúcidos ou expostos ao sol).</li>
+<li>Você busca maior <strong>Tg</strong> (92-98°C) para aplicações com
+exposição térmica moderada.</li>
+<li>Exemplo: Painéis náuticos translúcidos, peças automotivas
+expostas.</li>
+</ul></li>
+<li><strong>Empate Técnico</strong>: Ambas são excelentes para fibra de
+vidro, com molhagem comparável e propriedades mecânicas próximas em
+laminados (ex.: resistência à flexão de 400-600 MPa com E-glass). A
+escolha depende de prioridades (UV, tenacidade, pot life).</li>
+</ul>
+<p><strong>Recomendação Final</strong>: Para a maioria das aplicações
+com fibra de vidro, <strong>Easy Composites IN2 (Slow)</strong> é
+preferível devido ao pot life longo, resistência UV intrínseca e Tg mais
+alta, especialmente em projetos náuticos ou automotivos expostos. Se a
+aplicação exige alta tenacidade ou versatilidade de cura,
+<strong>Resoltech 1050/1056S</strong> é a melhor escolha.</p>
+<p>Fontes: Fichas técnicas de Resoltech e Easy Composites (2022-2025).
+Para validação em laminados específicos com fibra de vidro, consulte
+fabricantes ou testes laboratoriais.</p>
+<hr />
+<h3 data-number="3.5.7" id="utilizador-2025-10-05-201733-grok"><span class="header-section-number">3.5.7</span> 👤 Utilizador <em>(2025-10-05
+20:17:33)</em> <em>[Grok]</em></h3>
+<p>E para reparação de barco com fibra de vidro</p>
+<hr />
+<h3 data-number="3.5.8" id="grok-2025-10-05-201840-grok"><span class="header-section-number">3.5.8</span> 🤖 Grok <em>(2025-10-05
+20:18:40)</em> <em>[Grok]</em></h3>
+<h3 data-number="3.5.9" id="comparação-resoltech-10501056s-vs.-easy-composites-in2-para-reparação-de-barco-com-fibra-de-vidro"><span class="header-section-number">3.5.9</span> Comparação: Resoltech
+1050/1056S vs. Easy Composites IN2 para Reparação de Barco com Fibra de
+Vidro</h3>
+<p>Para reparação de barcos com <strong>fibra de vidro</strong> (ex.:
+E-glass), as resinas epóxi <strong>Resoltech 1050/1056S</strong> e
+<strong>Easy Composites IN2 (Slow Hardener)</strong> são candidatas
+fortes devido à sua baixa viscosidade, boa molhagem de fibras e
+propriedades mecânicas adequadas para aplicações náuticas. A escolha
+ideal depende de fatores específicos para reparos de barcos, como
+facilidade de aplicação, resistência à umidade, adesão ao substrato
+(ex.: laminados existentes ou madeira), resistência UV, durabilidade em
+ambiente marinho e processamento (ex.: laminação úmida ou pequenos
+reparos manuais). Abaixo, comparo as duas resinas com foco em reparação
+de barcos, usando dados de fichas técnicas (2022-2025) e normas ISO 178
+(flexão) e ISO 527 (tração). Unidades: GPa (módulo), MPa (resistência),
+% (alongamento), °C (Tg).</p>
+<hr />
+<h3 data-number="3.5.10" id="critérios-para-reparação-de-barcos-com-fibra-de-vidro"><span class="header-section-number">3.5.10</span> Critérios para Reparação de
+Barcos com Fibra de Vidro</h3>
+<ul>
+<li><strong>Molhagem e Adesão</strong>: Baixa viscosidade (&lt;1000
+mPa.s) para penetrar tecidos de fibra de vidro e aderir a substratos
+danificados (ex.: laminados antigos, madeira, gelcoat).</li>
+<li><strong>Propriedades Mecânicas</strong>: Alta tenacidade
+(alongamento) para suportar vibrações e impactos em ambiente marinho;
+boa resistência à flexão/tração.</li>
+<li><strong>Resistência à Umidade</strong>: Essencial para durabilidade
+em contato com água salgada.</li>
+<li><strong>Resistência UV</strong>: Crítica para superfícies expostas
+(ex.: convés); topcoat é comum, mas resistência intrínseca ajuda.</li>
+<li><strong>Processamento</strong>: Pot life adequado para reparos
+manuais (30-60 min para pequenos; &gt;60 min para grandes); cura
+ambiente preferível em campo.</li>
+<li><strong>Facilidade e Custo</strong>: Resinas fáceis de
+misturar/aplicar e acessíveis para DIY ou estaleiros.</li>
+</ul>
+<hr />
+<h3 data-number="3.5.11" id="comparação-detalhada-1"><span class="header-section-number">3.5.11</span> Comparação Detalhada</h3>
+<h4 data-number="3.5.11.1" id="propriedades-físicas-e-processamento-1"><span class="header-section-number">3.5.11.1</span> 1. Propriedades Físicas e
+Processamento</h4>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 32%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viscosidade Mista (mPa.s @ 25°C)</strong></td>
+<td>205</td>
+<td>200-450</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso)</strong></td>
+<td>100:35</td>
+<td>100:30</td>
+</tr>
+<tr>
+<td><strong>Pot Life (min @ 25°C)</strong></td>
+<td>~60 (100g)</td>
+<td>120-150 (500g)</td>
+</tr>
+<tr>
+<td><strong>Densidade Mista (g/cm³)</strong></td>
+<td>1,10</td>
+<td>1,12</td>
+</tr>
+<tr>
+<td><strong>Cura Recomendada</strong></td>
+<td>Ambiente (14 dias) ou 16h @ 60°C</td>
+<td>Ambiente ou 24h @ 60°C</td>
+</tr>
+<tr>
+<td><strong>Tg (°C, pós-cura)</strong></td>
+<td>83</td>
+<td>92-98</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - <strong>Molhagem e Adesão</strong>: Ambas
+têm viscosidade baixa (Resoltech 205 mPa.s é ligeiramente melhor), ideal
+para penetrar tecidos de fibra de vidro e aderir a substratos náuticos
+(ex.: laminados danificados, madeira tratada). Resoltech tem vantagem em
+reparos complexos (ex.: infusão local) devido à viscosidade menor. -
+<strong>Pot Life</strong>: IN2 (120-150 min) é mais adequada para
+reparos grandes (ex.: laminação de cascos extensos), enquanto Resoltech
+(~60 min) é ideal para reparos menores ou médios (ex.: patches, reforços
+localizados). - <strong>Cura</strong>: Ambas curam em ambiente,
+essencial para reparos em campo. Pós-cura a 60°C (ex.: com aquecedores
+ou mantas térmicas) melhora Tg e resistência à umidade, mas não é
+prática em estaleiros. IN2 tem Tg superior (92-98°C vs. 83°C),
+favorecendo durabilidade térmica.</p>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para reparos grandes;
+<strong>Resoltech</strong> para pequenos reparos rápidos.</p>
+<hr />
+<h4 data-number="3.5.11.2" id="propriedades-mecânicas-resina-pura-pós-cura-3"><span class="header-section-number">3.5.11.2</span> 2. Propriedades Mecânicas
+(Resina Pura, Pós-Cura)</h4>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 25%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>3,35</td>
+<td>3,10-3,50</td>
+</tr>
+<tr>
+<td><strong>Resistência à Flexão (MPa)</strong></td>
+<td>116</td>
+<td>110-120</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Flexão (%)</strong></td>
+<td>7,7</td>
+<td>5-7</td>
+</tr>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>~77 (estimado)</td>
+<td>68-76</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Tração (%)</strong></td>
+<td>7,7</td>
+<td>6-8</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>90</td>
+<td>Não especificada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - <strong>Desempenho com Fibra de
+Vidro</strong>: Em laminados de fibra de vidro (E-glass, ~50% vol.), a
+resistência à flexão pode atingir 400-600 MPa e ILSS (cisalhamento
+interlaminar) ~45-50 MPa para ambas. Resoltech tem maior tenacidade
+(7,7% alongamento), ideal para barcos sujeitos a vibrações e impactos
+(ex.: casco em mares agitados). IN2 é ligeiramente menos tenaz (5-7%),
+mas suficiente para a maioria dos reparos. - <strong>Fadiga</strong>:
+Resoltech destaca-se por resistência à fadiga, essencial para reparos
+estruturais (ex.: reforço de quilha). IN2 tem desempenho similar, mas
+menos documentado em fadiga dinâmica. - <strong>Adesão</strong>: Ambas
+aderem bem a fibra de vidro e substratos náuticos (com preparação
+adequada: lixamento, limpeza com acetona). Resoltech pode ter leve
+vantagem em adesão a gelcoat danificado devido à baixa viscosidade.</p>
+<p><strong>Vencedor</strong>: <strong>Resoltech</strong> para reparos
+estruturais com cargas dinâmicas; empate em adesão geral.</p>
+<hr />
+<h4 data-number="3.5.11.3" id="resistência-uv-3"><span class="header-section-number">3.5.11.3</span> 3. Resistência UV</h4>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 38%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>Resoltech 1050/1056S</th>
+<th>Easy Composites IN2 (Slow)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência UV Nativa</strong></td>
+<td>Nenhuma (amarelecimento em semanas)</td>
+<td>Boa (mínima perda de brilho)</td>
+</tr>
+<tr>
+<td><strong>Comportamento sob UV</strong></td>
+<td>Amarelecimento; topcoat necessário</td>
+<td>Clareza mantida por meses; topcoat opcional</td>
+</tr>
+<tr>
+<td><strong>Recomendações UV</strong></td>
+<td>Verniz poliuretano (ex.: Resoltech 8040)</td>
+<td>Verniz opcional para estética prolongada</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Análise</strong>: - <strong>Ambiente Marinho</strong>: Barcos
+estão expostos a UV intenso, e laminados de fibra de vidro (opacos ou
+translúcidos) requerem proteção para evitar degradação da resina.
+<strong>IN2</strong> é superior, com resistência UV intrínseca que reduz
+amarelecimento, ideal para reparos visíveis (ex.: convés translúcido) ou
+onde topcoat é difícil de aplicar. <strong>Resoltech</strong> exige
+verniz (ex.: Resoltech 8040), aumentando custo e tempo. -
+<strong>Prática Náutica</strong>: Topcoats poliuretanos são padrão em
+barcos, minimizando a desvantagem da Resoltech. Para reparos internos
+(ex.: anteparas), UV é irrelevante.</p>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para reparos expostos
+ou sem topcoat; empate com verniz.</p>
+<hr />
+<h4 data-number="3.5.11.4" id="resistência-à-umidade"><span class="header-section-number">3.5.11.4</span> 4. Resistência à
+Umidade</h4>
+<ul>
+<li><strong>Resoltech 1050/1056S</strong>: Boa resistência à água após
+cura completa (14 dias ambiente ou pós-cura). Baixo exotermismo reduz
+microbolhas, melhorando impermeabilização em laminados. Ideal para
+reparos em cascos abaixo da linha d’água.</li>
+<li><strong>Easy Composites IN2</strong>: Similar resistência à umidade,
+com baixa contração e boa estanqueidade em laminados. Tg mais alta
+(92-98°C) oferece leve vantagem em ambientes quentes/húmidos. Testes QUV
+sugerem durabilidade comparável em exposição à água salgada.</li>
+<li><strong>Análise</strong>: Ambas são adequadas para ambiente marinho,
+com preparo adequado (ex.: secagem do substrato). Resoltech tem leve
+vantagem em reparos úmidos devido à viscosidade menor, que facilita
+penetração em substratos danificados.</li>
+</ul>
+<p><strong>Vencedor</strong>: Empate; <strong>Resoltech</strong> para
+substratos úmidos.</p>
+<hr />
+<h4 data-number="3.5.11.5" id="facilidade-de-uso-e-custo"><span class="header-section-number">3.5.11.5</span> 5. Facilidade de Uso e
+Custo</h4>
+<ul>
+<li><strong>Resoltech 1050/1056S</strong>:
+<ul>
+<li><strong>Facilidade</strong>: Proporção 100:35 é fácil de medir;
+viscosidade muito baixa simplifica laminação manual e infusão local.
+Endurecedores variados (1053S-1059S) permitem ajustar pot life, mas
+requer escolha cuidadosa.</li>
+<li><strong>Custo</strong>: Mais cara devido à versatilidade e baixa
+toxicidade (sem CMR). Disponível em fornecedores náuticos, mas menos
+comum em DIY.</li>
+</ul></li>
+<li><strong>Easy Composites IN2</strong>:
+<ul>
+<li><strong>Facilidade</strong>: Proporção 100:30 é simples; pot life
+longo (120-150 min) facilita reparos grandes, mas pode ser lento para
+patches rápidos. Endurecedor Slow é ideal para iniciantes.</li>
+<li><strong>Custo</strong>: Geralmente mais acessível, especialmente no
+mercado europeu (DIY/indústria). Ampla disponibilidade online.</li>
+</ul></li>
+<li><strong>Análise</strong>: IN2 é mais amigável para reparos grandes e
+DIY; Resoltech é melhor para reparos precisos e profissionais.</li>
+</ul>
+<p><strong>Vencedor</strong>: <strong>IN2</strong> para DIY e custo;
+<strong>Resoltech</strong> para profissionais.</p>
+<hr />
+<h3 data-number="3.5.12" id="conclusão-qual-é-melhor-para-reparação-de-barco-com-fibra-de-vidro"><span class="header-section-number">3.5.12</span> Conclusão: Qual é Melhor
+para Reparação de Barco com Fibra de Vidro?</h3>
+<ul>
+<li><strong>Escolha Resoltech 1050/1056S</strong> se:
+<ul>
+<li>O reparo envolve <strong>cargas dinâmicas</strong> (ex.: casco
+sujeito a vibrações), devido à maior tenacidade (7,7% alongamento).</li>
+<li>Você precisa de <strong>reparos rápidos</strong> (pot life ~60 min)
+ou trabalha com substratos úmidos/danificados.</li>
+<li>Um <strong>topcoat UV</strong> será aplicado (ex.: Resoltech 8040),
+comum em estaleiros profissionais.</li>
+<li>Exemplo: Reforço de quilha, reparo de rachaduras em cascos,
+laminação em anteparas.</li>
+</ul></li>
+<li><strong>Escolha Easy Composites IN2 (Slow)</strong> se:
+<ul>
+<li>O reparo é <strong>extenso</strong> (ex.: laminação de grandes
+áreas), devido ao pot life longo (120-150 min).</li>
+<li>A <strong>resistência UV</strong> é crítica (ex.: convés translúcido
+ou reparos sem topcoat imediato).</li>
+<li>Você busca <strong>custo-benefício</strong> e facilidade para DIY ou
+ambientes quentes (Tg 92-98°C).</li>
+<li>Exemplo: Revestimento de convés, painéis translúcidos, reparos
+estéticos visíveis.</li>
+</ul></li>
+<li><strong>Desempenho em Laminados</strong>: Com fibra de vidro
+(E-glass, ~50% vol.), ambas atingem resistência à flexão de 400-600 MPa
+e ILSS ~45-50 MPa. Resoltech é superior em fadiga; IN2 em estética
+UV.</li>
+</ul>
+<p><strong>Recomendação Final</strong>: Para reparação de barcos com
+fibra de vidro, <strong>Easy Composites IN2 (Slow)</strong> é geralmente
+a melhor escolha devido ao pot life longo, resistência UV intrínseca e
+custo acessível, especialmente para reparos DIY ou áreas expostas (ex.:
+convés). <strong>Resoltech 1050/1056S</strong> é preferível para reparos
+estruturais críticos (ex.: casco abaixo da linha d’água) ou em
+estaleiros profissionais onde tenacidade e topcoat são prioridades.</p>
+<p>Fontes: Fichas técnicas de Resoltech e Easy Composites (2022-2025).
+Para validação específica (ex.: testes com E-glass), consulte
+fabricantes ou laboratórios náuticos.</p>
+<hr />
+<h3 data-number="3.5.13" id="utilizador-2025-10-05-202316-grok"><span class="header-section-number">3.5.13</span> 👤 Utilizador
+<em>(2025-10-05 20:23:16)</em> <em>[Grok]</em></h3>
+<p>e o IN2 Epoxy at30 fast</p>
+<hr />
+<h3 data-number="3.5.14" id="grok-2025-10-05-202400-grok"><span class="header-section-number">3.5.14</span> 🤖 Grok <em>(2025-10-05
+20:24:00)</em> <em>[Grok]</em></h3>
+<h3 data-number="3.5.15" id="in2-epoxy-com-at30-fast-hardener-detalhes-e-adequação-para-reparação-de-barco-com-fibra-de-vidro"><span class="header-section-number">3.5.15</span> IN2 Epoxy com AT30 Fast
+Hardener: Detalhes e Adequação para Reparação de Barco com Fibra de
+Vidro</h3>
+<p>Continuando a discussão sobre reparação de barcos com fibra de vidro,
+o <strong>IN2 Epoxy com AT30 Fast Hardener</strong> (da Easy Composites)
+é uma variante de cura rápida do sistema IN2, projetada para infusão e
+laminação estrutural. Ele usa a mesma resina IN2 (baixa viscosidade,
+excelente molhagem de fibras como E-glass), mas com o endurecedor AT30
+Fast, que acelera o processo para reparos menores ou quando o tempo é
+crítico (ex.: em campo, com demould rápido). Abaixo, resumo as
+especificações técnicas baseadas na ficha de dados oficial (2025), e
+comparo com o <strong>IN2 Slow</strong> e <strong>Resoltech
+1050/1056S</strong> no contexto de reparos náuticos. Dados para resina
+pura, pós-cura recomendada (24h @ 25°C + 6h @ 60°C).</p>
+<h4 data-number="3.5.15.1" id="propriedades-físicas-e-processamento-in2-at30-fast"><span class="header-section-number">3.5.15.1</span> Propriedades Físicas e
+Processamento (IN2 AT30 Fast)</h4>
+<table>
+<colgroup>
+<col style="width: 49%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>IN2 Epoxy AT30 Fast</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viscosidade Mista (mPa.s @ 25°C)</strong></td>
+<td>200-450</td>
+</tr>
+<tr>
+<td><strong>Proporção de Mistura (Peso)</strong></td>
+<td>100:30 (resina:endurecedor)</td>
+</tr>
+<tr>
+<td><strong>Pot Life (min @ 25°C)</strong></td>
+<td>10-14 (para 100g)</td>
+</tr>
+<tr>
+<td><strong>Gel Time (h @ 25°C)</strong></td>
+<td>2-4</td>
+</tr>
+<tr>
+<td><strong>Demould Time (h @ 25°C)</strong></td>
+<td>6-8</td>
+</tr>
+<tr>
+<td><strong>Densidade Mista (g/cm³)</strong></td>
+<td>1,12-1,18</td>
+</tr>
+<tr>
+<td><strong>Cura Recomendada</strong></td>
+<td>Ambiente (14 dias para propriedades plenas) ou pós-cura 6h @
+60°C</td>
+</tr>
+<tr>
+<td><strong>Tg (°C, pós-cura)</strong></td>
+<td>82-88</td>
+</tr>
+<tr>
+<td><strong>Absorção de Água (24h @ RT)</strong></td>
+<td>0,2-0,3%</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Molhagem e Adesão</strong>: Excelente para fibra de vidro
+(E-glass), com penetração rápida em tecidos danificados ou substratos
+náuticos (ex.: gelcoat rachado, madeira úmida). Viscosidade ultra-baixa
+minimiza vazios em laminação manual ou infusão local.</li>
+<li><strong>Notas de Processamento</strong>: Misture apenas quantidades
+pequenas (devido ao pot life curto). Transfira imediatamente para a peça
+para maximizar tempo de trabalho. Reativo e exotérmico – evite misturas
+grandes para reparos em barcos.</li>
+</ul>
+<h4 data-number="3.5.15.2" id="propriedades-mecânicas-resina-pura-pós-cura-4"><span class="header-section-number">3.5.15.2</span> Propriedades Mecânicas
+(Resina Pura, Pós-Cura)</h4>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 14%" />
+<col style="width: 21%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>IN2 AT30 Fast</th>
+<th>IN2 Slow (comparação)</th>
+<th>Resoltech 1050/1056S (comparação)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Módulo de Flexão (GPa)</strong></td>
+<td>2,8-3,2</td>
+<td>3,1-3,5</td>
+<td>3,35</td>
+</tr>
+<tr>
+<td><strong>Resistência à Flexão (MPa)</strong></td>
+<td>107-120</td>
+<td>110-120</td>
+<td>116</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Flexão (%)</strong></td>
+<td>5-7</td>
+<td>5-7</td>
+<td>7,7</td>
+</tr>
+<tr>
+<td><strong>Resistência à Tração (MPa)</strong></td>
+<td>74-80</td>
+<td>68-76</td>
+<td>~77</td>
+</tr>
+<tr>
+<td><strong>Alongamento na Ruptura (%)</strong></td>
+<td>7-12</td>
+<td>6-8</td>
+<td>7,7</td>
+</tr>
+<tr>
+<td><strong>Resistência à Compressão (MPa)</strong></td>
+<td>94-100</td>
+<td>88-100</td>
+<td>Não especificado</td>
+</tr>
+<tr>
+<td><strong>Dureza Shore D</strong></td>
+<td>84-88</td>
+<td>84-88</td>
+<td>90</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Desempenho em Laminados com Fibra de Vidro</strong>: Em
+compósitos E-glass (~50% vol.), atinge resistência à flexão de 400-600
+MPa e ILSS ~45-50 MPa. O Fast oferece alongamento ligeiramente superior
+(7-12%), bom para impactos, mas Tg menor (82-88°C) limita aplicações
+quentes (ex.: perto de motores).</li>
+<li><strong>Fadiga e Umidade</strong>: Boa resistência à fadiga (similar
+ao Slow), com absorção de água moderada (0,2-0,3%). Adequado para cascos
+abaixo da linha d’água, mas teste pós-cura para otimizar
+impermeabilização.</li>
+</ul>
+<h4 data-number="3.5.15.3" id="resistência-uv-4"><span class="header-section-number">3.5.15.3</span> Resistência UV</h4>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Propriedade</th>
+<th>IN2 AT30 Fast</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resistência UV Nativa</strong></td>
+<td>Boa (clareza mantida por meses)</td>
+</tr>
+<tr>
+<td><strong>Comportamento sob UV</strong></td>
+<td>Mínima perda de brilho; topcoat opcional</td>
+</tr>
+<tr>
+<td><strong>Recomendações UV</strong></td>
+<td>Verniz poliuretano para exteriores prolongados</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Comparação</strong>: Similar ao IN2 Slow – superior à
+Resoltech (que amarelece sem topcoat). Ideal para reparos visíveis em
+barcos (ex.: convés), reduzindo necessidade de verniz imediato.</li>
+</ul>
+<h4 data-number="3.5.15.4" id="adequação-para-reparação-de-barco-com-fibra-de-vidro"><span class="header-section-number">3.5.15.4</span> Adequação para Reparação
+de Barco com Fibra de Vidro</h4>
+<ul>
+<li><strong>Vantagens do IN2 AT30 Fast</strong>:
+<ul>
+<li><strong>Cura Rápida</strong>: Pot life curto (10-14 min) e demould
+em 6-8h – perfeito para reparos urgentes ou em campo (ex.: patches em
+casco durante viagem, reforços localizados). Acelera retorno ao uso do
+barco.</li>
+<li><strong>Facilidade</strong>: Proporção simples (100:30); baixa
+viscosidade para laminação manual rápida em áreas pequenas. Boa adesão a
+substratos náuticos danificados.</li>
+<li><strong>Desempenho Náutico</strong>: Alta tenacidade (alongamento
+7-12%) para vibrações/impactos; UV estável para partes expostas.
+Compatível com fibra de vidro em infusão local ou lay-up.</li>
+<li><strong>Exemplos</strong>: Reparo de rachaduras em quilha, patches
+em casco acima da água, reforços em anteparas pequenas.</li>
+</ul></li>
+<li><strong>Limitações</strong>:
+<ul>
+<li>Pot life muito curto – inadequado para reparos grandes/extensos (use
+Slow para isso). Menor Tg (82-88°C vs. 92-98°C do Slow) para ambientes
+quentes.</li>
+<li>Exotermismo alto em misturas grandes – risco de bolhas em reparos
+volumosos.</li>
+</ul></li>
+<li><strong>Comparação Geral para Reparos de Barcos</strong>:
+<ul>
+<li><strong>Vs. IN2 Slow</strong>: Fast é melhor para reparos
+rápidos/pequenos; Slow para extensos (pot life 120-150 min).
+Propriedades mecânicas similares, mas Fast tem Tg ligeiramente inferior
+e maior absorção de água.</li>
+<li><strong>Vs. Resoltech 1050/1056S</strong>: Fast é mais rápido (pot
+life 10-14 min vs. ~60 min), com UV melhor e custo menor. Resoltech tem
+maior tenacidade geral (7,7%) e versatilidade de endurecedores, mas
+requer topcoat UV obrigatório.</li>
+<li><strong>Escolha</strong>: Use <strong>IN2 AT30 Fast</strong> para
+reparos urgentes ou DIY rápidos em barcos (ex.: fim de semana). Para
+estruturais extensos ou com mais tempo, prefira IN2 Slow ou
+Resoltech.</li>
+</ul></li>
+</ul>
+<h4 data-number="3.5.15.5" id="observações-finais"><span class="header-section-number">3.5.15.5</span> Observações Finais</h4>
+<ul>
+<li><strong>Cura e Pós-Cura</strong>: Cure ambiente é viável, mas
+pós-cura a 60°C (ex.: com manta térmica) melhora Tg e resistência à
+umidade em 20-30%. Espere 14 dias para propriedades plenas sem
+pós-cura.</li>
+<li><strong>Segurança</strong>: Use EPI (luvas, óculos); endurecedor
+Fast é corrosivo (H314). Armazene a 10-25°C (vida útil 12 meses).</li>
+<li><strong>Custo</strong>: Mais acessível que Resoltech; disponível em
+kits de 1-5kg na Easy Composites.</li>
+</ul>
+<p>Fontes: Ficha técnica IN2 Epoxy (Easy Composites, 2025). Para testes
+específicos em barcos, consulte estaleiros ou laboratórios náuticos. Se
+quiser comparação com outro endurecedor ou aplicação exata, diga!</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

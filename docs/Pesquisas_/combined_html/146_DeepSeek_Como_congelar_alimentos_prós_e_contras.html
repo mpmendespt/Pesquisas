@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>146_DeepSeek_Como_congelar_alimentos_prós_e_contras</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#como-congelar-alimentos-prós-e-contras" id="toc-como-congelar-alimentos-prós-e-contras"><span class="toc-section-number">1</span> Como congelar alimentos prós e
+contras</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="como-congelar-alimentos-prós-e-contras"><span class="header-section-number">1</span> Como congelar alimentos prós e
+contras</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #146</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> 92dc3ca0-c98c-4cad-a503-7fc5fdfd8604</li>
+<li><strong>Criada em:</strong> 2025-09-15 01:41:11</li>
+<li><strong>Atualizada em:</strong> 2025-09-27 02:56:54</li>
+<li><strong>Total de mensagens:</strong> 20</li>
+<li><strong>Resumo:</strong> Como congelar varios produtos, prós e
+contras:…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-15-014113-deepseek-chat"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-15
+01:41:13)</em> <em>[deepseek-chat]</em></h3>
+<p>Como congelar varios produtos, prós e contras:</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-09-15-014113-deepseek-chat"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-09-15
+01:41:13)</em> <em>[deepseek-chat]</em></h3>
+<p>Claro! Congelar alimentos é uma técnica excelente para reduzir
+desperdícios, economizar tempo e dinheiro, mas precisa ser feita de
+forma correta para manter a qualidade dos produtos.</p>
+<p>Aqui está um guia completo sobre como congelar vários tipos de
+produtos, com seus prós e contras.</p>
+<hr />
+<h3 data-number="1.2.3" id="princípios-gerais-para-um-congelamento-eficaz"><span class="header-section-number">1.2.3</span> <strong>Princípios Gerais
+para um Congelamento Eficaz</strong></h3>
+<ol type="1">
+<li><strong>Qualidade Inicial:</strong> Só congele produtos frescos e em
+perfeito estado. O congelamento não melhora a qualidade, apenas a
+preserva.</li>
+<li><strong>Embalagem Adequada:</strong> Use embalagens herméticas para
+evitar <strong>queimadura de freezer</strong> (ressecamento causado pelo
+ar frio). Prefira:
+<ul>
+<li>Sacos plásticos para freezer (zip lock ou a vácuo).</li>
+<li>Potes de plástico rígido com tampa (deixando um espaço para a
+expansão do alimento).</li>
+<li>Papel alumínio ou filme plástico próprio para freezer.</li>
+</ul></li>
+<li><strong>Rotulagem:</strong> Sempre identifique o conteúdo e a data
+de congelamento. Use uma etiqueta ou caneta permanente. A maioria dos
+alimentos dura bem por <strong>3 a 6 meses</strong>.</li>
+<li><strong>Temperatura:</strong> Seu freezer deve estar a -18°C ou
+menos.</li>
+<li><strong>Resfriamento:</strong> Deixe os alimentos cozidos esfriarem
+completamente em temperatura ambiente antes de congelar para não elevar
+a temperatura do freezer e formar cristais de gelo excessivos.</li>
+<li><strong>Porções:</strong> Congele em porções menores. Isso facilita
+o descongelamento e evita que você tenha que descongelar uma quantidade
+grande desnecessariamente.</li>
+</ol>
+<hr />
+<h3 data-number="1.2.4" id="como-congelar-diferentes-categorias-de-produtos"><span class="header-section-number">1.2.4</span> <strong>Como Congelar
+Diferentes Categorias de Produtos</strong></h3>
+<h4 data-number="1.2.4.1" id="carnes-bovina-frango-peixe"><span class="header-section-number">1.2.4.1</span> <strong>1. Carnes (Bovina,
+Frango, Peixe)</strong></h4>
+<ul>
+<li><strong>Como Fazer:</strong> Se for congelar na embalagem do
+mercado, reforce com outro saco plástico para evitar queimaduras. Para
+peixes, a melhor técnica é a <strong>glaceação</strong> (mergulhar o
+peixe em água gelada e congelar, formando uma camada de gelo
+protetora).</li>
+<li><strong>Dica:</strong> Retire o máximo de ar possível da
+embalagem.</li>
+<li><strong>Tempo Aproximado:</strong> 3 a 6 meses (carne moída dura
+menos, cerca de 3 meses).</li>
+</ul>
+<h4 data-number="1.2.4.2" id="pães-e-massas"><span class="header-section-number">1.2.4.2</span> <strong>2. Pães e
+Massas</strong></h4>
+<ul>
+<li><strong>Pão:</strong> Congele inteiro ou em fatias. Pode ser
+colocado diretamente no freezer. Para descongelar, leve direto ao forno
+ou torradeira para ficar crocante.</li>
+<li><strong>Massa Fresca:</strong> Dispor em uma assadeira forrada com
+papel manteiga, levar ao freezer até endurecer e depois transferir para
+um saco. Isso evita que grudem.</li>
+<li><strong>Massa Assada (bolos, pães de ló):</strong> Deixe esfriar
+completamente, embale bem em filme plástico e depois em um saco ou
+pote.</li>
+<li><strong>Tempo Aproximado:</strong> 2 a 3 meses.</li>
+</ul>
+<h4 data-number="1.2.4.3" id="frutas"><span class="header-section-number">1.2.4.3</span> <strong>3.
+Frutas</strong></h4>
+<ul>
+<li><strong>Como Fazer:</strong> A melhor técnica é o
+<strong>espalhamento congelante (IQF)</strong>. Lave, seque e corte as
+frutas. Espalhe-as em uma assadeira forrada com papel manteiga e leve ao
+freezer. Quando estiverem duras, transfira para um saco. Isso impede que
+virem um bloco sólido.</li>
+<li><strong>Indicação:</strong> Ideal para smoothies, vitaminas e
+preparações cozidas (como compotas). A textura para comer in natura fica
+alterada (mais moles).</li>
+<li><strong>Tempo Aproximado:</strong> 8 a 12 meses.</li>
+</ul>
+<h4 data-number="1.2.4.4" id="legumes-e-verduras"><span class="header-section-number">1.2.4.4</span> <strong>4. Legumes e
+Verduras</strong></h4>
+<ul>
+<li><strong>Como Fazer:</strong> A maioria requer
+<strong>branqueamento</strong> (escaldar em água fervente por 1-3
+minutos e depois mergulhar em água gelada). Este processo para a ação
+das enzimas, preservando cor, sabor e textura. Exemplos: brócolis,
+cenoura, vagem, espinafre.</li>
+<li><strong>Exceção:</strong> Tomate, pimentão e cebola podem ser
+picados e congelados sem branqueamento, mas ficarão moles (ótimos para
+refogados e sopas).</li>
+<li><strong>Tempo Aproximado:</strong> 8 a 12 meses.</li>
+</ul>
+<h4 data-number="1.2.4.5" id="alimentos-cozidos-e-sobras"><span class="header-section-number">1.2.4.5</span> <strong>5. Alimentos
+Cozidos e Sobras</strong></h4>
+<ul>
+<li><strong>Como Fazer:</strong> Deixe esfriar completamente. Armazene
+em porções individuais. Sopas, molhos e guisados congelam muito
+bem.</li>
+<li><strong>Dica:</strong> Para molhos a base de creme de leite ou
+queijos, congele com cuidado, pois podem talhar. Mexa bem após
+descongelar e aquecer.</li>
+<li><strong>Tempo Aproximado:</strong> 2 a 3 meses.</li>
+</ul>
+<h4 data-number="1.2.4.6" id="laticínios"><span class="header-section-number">1.2.4.6</span> <strong>6.
+Laticínios</strong></h4>
+<ul>
+<li><strong>Leite:</strong> Pode ser congelado, mas pode separar-se.
+Bata bem após descongelar. Ideal para usar em receitas.</li>
+<li><strong>Queijos Duros (Parmesão, Mussarela):</strong> Rale e congele
+em sacos. Para fatiar, a textura pode ficar mais quebradiça.</li>
+<li><strong>Queijos Macios (Ricota, Cream Cheese):</strong> A textura
+fica alterada, ficando granulada ou esfarelada. Use apenas para
+cocção.</li>
+<li><strong>Manteiga:</strong> Congela perfeitamente em sua embalagem
+original.</li>
+<li><strong>Tempo Aproximado:</strong> 3 a 6 meses.</li>
+</ul>
+<h4 data-number="1.2.4.7" id="ervas-frescas"><span class="header-section-number">1.2.4.7</span> <strong>7. Ervas
+Frescas</strong></h4>
+<ul>
+<li><strong>Como Fazer:</strong>
+<ol type="1">
+<li><strong>Picadas:</strong> Pique as ervas, coloque em forminhas de
+gelo, cubra com azeite ou água e congele.</li>
+<li><strong>Puro:</strong> Lave, seque bem e congele inteiras em sacos
+herméticos (manjericão escurece).</li>
+</ol></li>
+<li><strong>Indicação:</strong> Ótimas para jogar diretamente na panela
+quente. Não servem para salada ou guarnição.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.5" id="prós-e-contras-do-congelamento"><span class="header-section-number">1.2.5</span> <strong>Prós e Contras do
+Congelamento</strong></h3>
+<h4 data-number="1.2.5.1" id="vantagens-prós"><span class="header-section-number">1.2.5.1</span> <strong>Vantagens
+(Prós)</strong></h4>
+<ol type="1">
+<li><strong>Redução de Desperdício:</strong> É a maior vantagem. Você
+preserva alimentos que estragariam.</li>
+<li><strong>Economia:</strong> Permite comprar em promoção ou quantidade
+e aproveitar toda a produção.</li>
+<li><strong>Praticidade:</strong> Ter refeições ou ingredientes
+pré-preparados economiza muito tempo no dia a dia.</li>
+<li><strong>Preservação de Nutrientes:</strong> Quando feito
+corretamente (especialmente com o branqueamento de vegetais), preserva
+vitaminas melhor do que guardar por muitos dias na geladeira.</li>
+<li><strong>Variedade:</strong> Permite ter uma maior diversidade de
+alimentos à disposição.</li>
+</ol>
+<h4 data-number="1.2.5.2" id="desvantagens-contras"><span class="header-section-number">1.2.5.2</span> <strong>Desvantagens
+(Contras)</strong></h4>
+<ol type="1">
+<li><strong>Alteração de Textura:</strong> É o principal efeito
+colateral. Alimentos com alto teor de água (como alface, pepino, tomate
+cru) ficam moles e encharcados após o descongelamento. Carnes podem
+perder um pouco de sua suculência.</li>
+<li><strong>Queimadura do Freezer:</strong> Ocorre quando a embalagem
+não é adequada, deixando o alimento ressecado e com manchas
+esbranquiçadas. É seguro para consumo, mas a qualidade sensorial é
+prejudicada.</li>
+<li><strong>Alteração de Sabor:</strong> Alguns alimentos, especialmente
+temperos e especiarias, podem ter seu sabor alterado ou perder
+intensidade com o tempo.</li>
+<li><strong>Requer Planejamento:</strong> Descongelar leva tempo e,
+muitas vezes, precisa ser planejado com antecedência (na
+geladeira).</li>
+<li><strong>Custo de Energia:</strong> Um freezer cheio consome menos
+energia do que um vazio, mas ainda é um eletrodoméstico que fica ligado
+24h.</li>
+</ol>
+<h3 data-number="1.2.6" id="descongelamento-seguro"><span class="header-section-number">1.2.6</span> <strong>Descongelamento
+Seguro</strong></h3>
+<ul>
+<li><strong>O Melhor Método:</strong> Na geladeira. É lento, mas mantém
+o alimento em temperatura segura durante todo o processo.</li>
+<li><strong>No Micro-ondas:</strong> Use a função “descongelar” para
+alimentos que serão consumidos imediatamente, pois partes podem começar
+a cozinhar.</li>
+<li><strong>Na Água Fria:</strong> Para alimentos bem embalados (à prova
+d’água), mergulhe em uma tigela com água fria, trocando a água a cada 30
+minutos.</li>
+<li><strong>NUNCA descongele</strong> alimentos em temperatura ambiente,
+pois isso os coloca na “Zona de Perigo” (entre 4°C e 60°C), onde
+bactérias se multiplicam rapidamente.</li>
+</ul>
+<p>Resumindo, o congelamento é uma ferramenta fantástica na cozinha
+moderna. Conhecendo as técnicas certas para cada tipo de alimento e
+estando ciente de suas limitações, você pode aproveitar ao máximo todos
+os seus benefícios.</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-09-15-014258-deepseek-chat"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-09-15
+01:42:58)</em> <em>[deepseek-chat]</em></h3>
+<p>Arroz</p>
+<hr />
+<h3 data-number="1.2.8" id="deepseek-2025-09-15-014258-deepseek-chat"><span class="header-section-number">1.2.8</span> 🤖 DeepSeek <em>(2025-09-15
+01:42:58)</em> <em>[deepseek-chat]</em></h3>
+<p>Claro! O arroz é um dos alimentos mais comuns no dia a dia e
+congelá-lo pode ser uma grande mão na roda, mas existem detalhes
+importantes para que o resultado seja perfeito.</p>
+<p>Aqui está um guia completo sobre como congelar arroz, com seus
+<strong>prós</strong>, <strong>contras</strong> e o <strong>passo a
+passo ideal</strong>.</p>
+<hr />
+<h3 data-number="1.2.9" id="como-congelar-arroz-corretamente"><span class="header-section-number">1.2.9</span> <strong>Como Congelar Arroz
+Corretamente</strong></h3>
+<p>Seguir os passos corretos é crucial para evitar que o arroz fique
+seco, grudado ou com uma textura esponjosa após o descongelamento.</p>
+<ol type="1">
+<li><p><strong>Cozinhe o Arroz “Al Dente”:</strong> Cozinhe o arroz
+normalmente, mas pare o cozimento quando ele ainda estiver um pouco
+firme (“al dente”). Isso porque ele será reaquecido depois, e esse
+processo completa o cozimento. Se você cozinhar totalmente, ele pode
+ficar muito mole após descongelar.</p></li>
+<li><p><strong>Resfrie Rápida e Completamente:</strong> Esta é a etapa
+<strong>mais importante</strong> para a segurança alimentar.</p>
+<ul>
+<li>Espalhe o arroz cozido e ainda quente em uma assadeira grande ou
+bandeja, formando uma camada fina.</li>
+<li>Deixe esfriar em temperatura ambiente por um tempo breve (não mais
+que 30 minutos) e depois leve à geladeira até que ele fique
+completamente frio. Isso evita que ele fique muito tempo na “zona de
+perigo” de temperatura (entre 4°C e 60°C), onde bactérias podem se
+multiplicar.</li>
+</ul></li>
+<li><p><strong>Embalagem em Porções:</strong></p>
+<ul>
+<li><strong>Método do Saquinho:</strong> Divida o arroz em porções
+individuais ou para a família. Coloque cada porção em um saco plástico
+próprio para freezer (zip lock). Feche quase totalmente a abertura,
+aperte o saco para sair o máximo de ar possível e depois feche
+completamente.</li>
+<li><strong>Método da Forminha:</strong> Para porções individuais (ótimo
+para marmitas), pressione o arroz em forminhas de silicone ou de muffin.
+Depois de congelado, você pode desenformar e armazenar os “discos” de
+arroz em um saco maior.</li>
+</ul></li>
+<li><p><strong>Congelamento:</strong></p>
+<ul>
+<li>Leve as porções embaladas ao freezer e espalhe-as para congelar
+rápido.</li>
+<li><strong>Dica Pro:</strong> Se usou o método do saquinho, depois de
+congelado, você pode “massagear” o saco para soltar os grãos, evitando
+que vire um bloco único. Isso facilita na hora de usar apenas uma
+parte.</li>
+</ul></li>
+<li><p><strong>Rotulagem:</strong> Não se esqueça de escrever o conteúdo
+e a data no saco. Arroz congelado dura bem por <strong>1 a 2
+meses</strong> com boa qualidade.</p></li>
+</ol>
+<hr />
+<h3 data-number="1.2.10" id="como-descongelar-e-reaquecer"><span class="header-section-number">1.2.10</span> <strong>Como Descongelar e
+Reaquecer</strong></h3>
+<ul>
+<li><strong>Micro-ondas (Mais Prático):</strong> Coloque a porção de
+arroz congelado em um recipiente próprio para micro-ondas. Adicione 1-2
+colheres de sopa de água para criar vapor e evitar que resseque. Cubra
+com uma tampa ou outro prato e aqueça em potência alta por 2-4 minutos,
+mexendo na metade do tempo.</li>
+<li><strong>Frigideira / Wok:</strong> Ideal para fazer “arroz fried” ou
+refogados. Jogue o arroz ainda congelado em uma frigideira ou wok bem
+quente com um pouco de óleo. Mexa constantemente até descongelar e
+aquecer por completo. É o método que dá o melhor resultado de
+textura.</li>
+<li><strong>Panela (Vapor):</strong> Coloque o arroz congelado em uma
+peneira sobre uma panela com água fervente. Tampe e deixe o vapor
+aquecê-lo por alguns minutos.</li>
+</ul>
+<p><strong>NUNCA descongele arroz em temperatura ambiente.</strong> O
+descongelamento deve ser rápido (micro-ondas/fogão) ou na geladeira por
+algumas horas.</p>
+<hr />
+<h3 data-number="1.2.11" id="prós-e-contras-de-congelar-arroz"><span class="header-section-number">1.2.11</span> <strong>Prós e Contras de
+Congelar Arroz</strong></h3>
+<h4 data-number="1.2.11.1" id="vantagens-prós-1"><span class="header-section-number">1.2.11.1</span> <strong>Vantagens
+(Prós)</strong></h4>
+<ul>
+<li><strong>Extrema Praticidade:</strong> Ter arroz pronto congelado em
+porções é um salva-vidas para dias corridos, montagem de marmitas
+rápidas e acompanhamentos no jantar.</li>
+<li><strong>Redução de Desperdício:</strong> Acabou de cozinhar e sobrou
+muito? Congele! Evita que estrague na geladeira.</li>
+<li><strong>Preserva o Sabor:</strong> Quando feito corretamente, o
+sabor do arroz permanece muito bom após o descongelamento.</li>
+<li><strong>Economia de Tempo e Energia:</strong> Cozinhar uma grande
+quantidade de uma vez e congelar economiza gás e tempo no futuro.</li>
+</ul>
+<h4 data-number="1.2.11.2" id="desvantagens-contras-1"><span class="header-section-number">1.2.11.2</span> <strong>Desvantagens
+(Contras)</strong></h4>
+<ul>
+<li><strong>Alteração de Textura:</strong> Este é o principal ponto
+negativo. O arroz pode perder um pouco da sua textura fofa e ficar
+ligeiramente mais seco ou quebradiço. O reaquecimento com um pouco de
+água ou vapor ajuda muito a minimizar isso.</li>
+<li><strong>Risco de Contaminação se Mal Manipulado:</strong> O arroz
+pode conter esporos de <em>Bacillus cereus</em>, uma bactéria que pode
+causar intoxicação alimentar. Esses esporos sobrevivem ao cozimento. Se
+o arroz for deixado esfriando lentamente em temperatura ambiente, as
+bactérias podem se multiplicar. O resfriamento rápido é
+<strong>essencial</strong> para segurança.</li>
+<li><strong>Ocupa Espaço no Freezer:</strong> Pacotes grandes de arroz
+podem ser volumosos.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.12" id="dica-extra-congelar-arroz-de-festa"><span class="header-section-number">1.2.12</span> <strong>Dica Extra: Congelar
+“Arroz de Festa”</strong></h3>
+<p>Arroz temperado (como arroz a grega) congela muito bem! Os grãos
+soltinhos e os temperos preservam o sabor. Siga o mesmo processo: esfrie
+rapidamente e congele em porções.</p>
+<p><strong>Resumo Final:</strong> Congelar arroz é <strong>sim, uma
+excelente ideia</strong>, desde que você siga as regras de
+<strong>resfriamento rápido</strong> e <strong>reaqueça com um pouco de
+umidade</strong> para recuperar a textura. É um truque de praticidade
+que vale muito a pena.</p>
+<hr />
+<h3 data-number="1.2.13" id="utilizador-2025-09-15-014434-deepseek-chat"><span class="header-section-number">1.2.13</span> 👤 Utilizador
+<em>(2025-09-15 01:44:34)</em> <em>[deepseek-chat]</em></h3>
+<p>Massa (por exemplo cotovelos)</p>
+<hr />
+<h3 data-number="1.2.14" id="deepseek-2025-09-15-014434-deepseek-chat"><span class="header-section-number">1.2.14</span> 🤖 DeepSeek <em>(2025-09-15
+01:44:34)</em> <em>[deepseek-chat]</em></h3>
+<p>Com certeza! Congelar massa (como cotovelos, penne, espaguete, etc.)
+é uma técnica fantástica para ter refeições rápidas sempre à mão. O
+processo é simples, mas exige um passo crucial para o sucesso.</p>
+<p>Aqui está o guia completo para congelar massas, com <strong>prós,
+contras</strong> e o <strong>método correto</strong>.</p>
+<hr />
+<h3 data-number="1.2.15" id="como-congelar-massa-cozida-corretamente"><span class="header-section-number">1.2.15</span> <strong>Como Congelar Massa
+Cozida Corretamente</strong></h3>
+<p>O grande segredo para evitar que a massa vire uma pasta grudenta e
+intragável é <strong>interromper o cozimento no ponto exato e resfriá-la
+bruscamente</strong>.</p>
+<ol type="1">
+<li><strong>Cozinhe “Al Dente” (ou até um pouco menos):</strong>
+<ul>
+<li>Isso é fundamental. Cozinhe a massa por <strong>1 a 2 minutos a
+menos</strong> do que o tempo indicado na embalagem. Ela terminará de
+cozinhar durante o processo de reaquecimento. Se você cozinhar
+totalmente, ela ficará mole e pastosa após o descongelamento.</li>
+</ul></li>
+<li><strong>Resfriamento Imediato (Choque Térmico):</strong>
+<ul>
+<li>Assim que retirar a massa do fogo, escorra-a em um escorredor.</li>
+<li>Imediatamente, mergulhe-a em uma tigela grande com <strong>água
+gelada e gelo</strong>. Mexa bem. Este processo (“shocking”) para o
+cozimento instantaneamente, fixando o ponto “al dente” e removendo o
+amido superficial que faz a massa grudar.</li>
+</ul></li>
+<li><strong>Escorra e Seque Muito Bem:</strong>
+<ul>
+<li>Após a água de gelo, escorra a massa novamente.</li>
+<li>Opcional, mas recomendado: espalhe a massa em uma assadeira forrada
+com papel toalha e seque levemente com outro papel. Quanto menos
+umidade, melhor para congelar.</li>
+</ul></li>
+<li><strong>Embalagem e Porção:</strong>
+<ul>
+<li><strong>Método da Camada Única (Recomendado):</strong> Espalhe a
+massa já fria e seca em uma assadeira ou bandeja forrada com papel
+manteiga. Leve ao freezer por <strong>1-2 horas</strong> ou até que os
+grãos (como os cotovelos) estejem durinhos e individuais. Isso é chamado
+de <strong>Congelamento Rápido Individual (IQF)</strong> e impede que a
+massa congele em um bloco sólido.</li>
+<li><strong>Embalagem Final:</strong> Após o congelamento rápido,
+transfira a massa para um saco plástico próprio para freezer (zip lock)
+ou pote hermético. Tire o máximo de ar possível antes de fechar.</li>
+</ul></li>
+<li><strong>Rotulagem:</strong> Anote o tipo de massa e a data. Ela dura
+perfeitamente por <strong>até 3 meses</strong>.</li>
+</ol>
+<p><strong>Para massas recheadas</strong> (como ravioli ou tortellini
+cozidos), o processo é o mesmo. Congele-os individualmente em uma
+assadeira antes de embalar.</p>
+<hr />
+<h3 data-number="1.2.16" id="como-descongelar-e-reaquecer-1"><span class="header-section-number">1.2.16</span> <strong>Como Descongelar e
+Reaquecer</strong></h3>
+<p>A grande vantagem da massa congelada corretamente é que <strong>não é
+necessário descongelar</strong>.</p>
+<ul>
+<li><strong>Direto na Panela/Molho Quente:</strong> Este é o melhor
+método!
+<ul>
+<li>Simplesmente jogue a massa ainda congelada em um molho quente e
+fervente.</li>
+<li>Mexa e deixe cozinhar por <strong>2-4 minutos</strong>, até aquecer
+completamente e terminar de cozinhar. Ela absorverá o sabor do molho
+perfeitamente.</li>
+</ul></li>
+<li><strong>Micro-ondas:</strong>
+<ul>
+<li>Coloque a porção em um refratário, adicione uma colher de sopa de
+água ou molho, tampe e aqueça em intervalos de 1 minuto, mexendo a cada
+intervalo.</li>
+</ul></li>
+<li><strong>Água Quente:</strong>
+<ul>
+<li>Em uma emergência, você pode mergulhar a massa congelada em água
+fervente por 1 minuto apenas para aquecer, mas escorra bem antes de
+adicionar ao molho para não aguá-lo.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.17" id="prós-e-contras-de-congelar-massa"><span class="header-section-number">1.2.17</span> <strong>Prós e Contras de
+Congelar Massa</strong></h3>
+<h4 data-number="1.2.17.1" id="vantagens-prós-2"><span class="header-section-number">1.2.17.1</span> <strong>Vantagens
+(Prós)</strong></h4>
+<ul>
+<li><strong>Praticidade Inigualável:</strong> Ter porções individuais de
+massa pronta para usar é o maior trunfo. Reduce o tempo de preparo de
+uma refeição para menos de 5 minutos.</li>
+<li><strong>Redução de Desperdício:</strong> Perfect para quando você
+cozinhou demais e não quer jogar fora.</li>
+<li><strong>Preservação do Ponto Ideal:</strong> Ao congelar no ponto
+“al dente”, você garante que, após o reaquecimento, ela ficará perfeita,
+muitas vezes melhor do que se fosse guardada na geladeira por alguns
+dias.</li>
+<li><strong>Facilidade para Marmitas:</strong> É uma opção segura e
+saborosa para preparar marmitas com antecedência.</li>
+</ul>
+<h4 data-number="1.2.17.2" id="desvantagens-contras-2"><span class="header-section-number">1.2.17.2</span> <strong>Desvantagens
+(Contras)</strong></h4>
+<ul>
+<li><strong>Alteração de Textura (Se Feito Incorretamente):</strong> Se
+a massa for congelada sem o choque térmico ou já muito cozida, a textura
+pode ficar mole e grudenta. O método correto é essencial.</li>
+<li><strong>Ocupa Espaço no Freezer:</strong> Requer o passo inicial de
+congelar espalhado, que usa espaço em uma bandeja.</li>
+<li><strong>Pode Absorver Odores:</strong> Se não estiver bem embalada
+(a vácuo ou em sacos herméticos), a massa pode absorver odores de outros
+alimentos no freezer.</li>
+</ul>
+<h3 data-number="1.2.18" id="dica-de-ouro-congele-com-o-molho"><span class="header-section-number">1.2.18</span> <strong>Dica de Ouro:
+Congele com o Molho!</strong></h3>
+<p>Uma estratégia ainda melhor é congelar a massa <strong>junto com o
+molho</strong>. 1. Prepare o molho de sua preferência. 2. Adicione a
+massa cozida “al dente” e resfriada ao molho. 3. Deixe a mistura esfriar
+completamente. 4. Divida em porções em potinhos herméticos e leve ao
+freezer.</p>
+<p>Para consumir, basta descongelar na geladeira overnight e reaquecer
+no micro-ondas ou em uma panela, adicionando um pouco de água ou leite
+se necessário. Esta é a maneira mais eficaz de preservar o sabor e a
+textura.</p>
+<p><strong>Conclusão:</strong> Congelar massa é <strong>altamente
+recomendável</strong> se você seguir o protocolo de <strong>cozinhar “al
+dente”, resfriar em água gelada e congelar rapidamente de forma
+individual</strong>. É um dos alimentos que mais se beneficiam do
+congelamento em termos de praticidade sem grande perda de qualidade.</p>
+<hr />
+<h3 data-number="1.2.19" id="utilizador-2025-09-15-014621-deepseek-chat"><span class="header-section-number">1.2.19</span> 👤 Utilizador
+<em>(2025-09-15 01:46:21)</em> <em>[deepseek-chat]</em></h3>
+<p>Pretendo um resumo do que foi dito acima em pdf</p>
+<hr />
+<h3 data-number="1.2.20" id="deepseek-2025-09-15-014621-deepseek-chat"><span class="header-section-number">1.2.20</span> 🤖 DeepSeek <em>(2025-09-15
+01:46:21)</em> <em>[deepseek-chat]</em></h3>
+<p>Claro! Vou criar um resumo completo e estruturado de todo o conteúdo
+discutido, formatado de maneira ideal para ser salvo como um PDF. Você
+pode copiar e colar este texto em um editor (como Word ou Google Docs) e
+exportá-lo como PDF.</p>
+<hr />
+<p><strong>📄 GUIA PRÁTICO: COMO CONGELAR ALIMENTOS
+CORRETAMENTE</strong><br />
+<em>Resumo de Principais Técnicas, Prós e Contras</em></p>
+<hr />
+<h3 data-number="1.2.21" id="princípios-gerais"><span class="header-section-number">1.2.21</span> <strong>📌 PRINCÍPIOS
+GERAIS</strong></h3>
+<ol type="1">
+<li><strong>Qualidade:</strong> Congele apenas alimentos frescos.</li>
+<li><strong>Embalagem:</strong> Use sacos herméticos (vácuo ou zip lock)
+ou potes de plástico (deixando espaço para expansão).</li>
+<li><strong>Rotulagem:</strong> Identifique com conteúdo e data. Vida
+útil geral: <strong>3 a 6 meses</strong>.</li>
+<li><strong>Temperatura:</strong> Freezer a <strong>-18°C ou
+menos</strong>.</li>
+<li><strong>Resfriamento:</strong> Deixe alimentos cozidos esfriarem
+completamente antes de congelar.</li>
+<li><strong>Porções:</strong> Congele em porções pequenas para facilitar
+o descongelamento.</li>
+</ol>
+<hr />
+<h3 data-number="1.2.22" id="arroz"><span class="header-section-number">1.2.22</span> <strong>🍚
+ARROZ</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong>
+<ul>
+<li>Cozinhe “al dente”.</li>
+<li>Resfrie rapidamente (espalhe em uma bandeja).</li>
+<li>Embalagem a vácuo ou em sacos com ar removido.</li>
+</ul></li>
+<li><strong>Descongelar:</strong> Micro-ondas (com 1-2 colheres de água)
+ou direto na panela/wok.</li>
+<li><strong>Prós:</strong> Praticidade, reduz desperdício, economia de
+tempo.</li>
+<li><strong>Contras:</strong> Pode perder textura (fica seco); requer
+resfriamento rápido para segurança.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.23" id="massa-cotovelos-penne-etc."><span class="header-section-number">1.2.23</span> <strong>🍝 MASSA (COTOVELOS,
+PENNE, ETC.)</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong>
+<ul>
+<li>Cozinhe <strong>1-2 min a menos</strong> que o tempo indicado (“al
+dente”).</li>
+<li><strong>Choque térmico:</strong> Mergulhe em água com gelo
+imediatamente após cozinhar.</li>
+<li>Seque bem e congele espalhada em uma bandeja (IQF) antes de
+embalar.</li>
+</ul></li>
+<li><strong>Descongelar:</strong> <strong>Direto no molho
+quente</strong> por 2-4 min (não precisa descongelar).</li>
+<li><strong>Prós:</strong> Máxima praticidade, perfeito para
+marmitas.</li>
+<li><strong>Contras:</strong> Pode ficar grudenta se mal acondicionada;
+ocupa espaço.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.24" id="carnes-bovina-frango-peixe-1"><span class="header-section-number">1.2.24</span> <strong>🥩 CARNES (BOVINA,
+FRANGO, PEIXE)</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong> Reforce embalagem do mercado ou use
+sacos para freezer. Para peixes: glaceação (mergulhar em água gelada
+para formar camada de gelo protetora).</li>
+<li><strong>Tempo:</strong> 3 a 6 meses (carne moída: ~3 meses).</li>
+</ul>
+<hr />
+<h3 data-number="1.2.25" id="pães-e-massas-assadas"><span class="header-section-number">1.2.25</span> <strong>🍞 PÃES E MASSAS
+ASSADAS</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong> Pão inteiro ou fatiado direto no
+freezer. Massas assadas: esfriar completamente, embrulhar em filme
+plástico e depois em saco.</li>
+<li><strong>Descongelar:</strong> Forno/torradeira (para ficar
+crocante).</li>
+</ul>
+<hr />
+<h3 data-number="1.2.26" id="frutas-1"><span class="header-section-number">1.2.26</span> <strong>🍓
+FRUTAS</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong> Técnica IQF: lavar, secar, cortar,
+espalhar em bandeja e congelar individualmente antes de embalar.</li>
+<li><strong>Uso:</strong> Ideal para vitaminas, smoothies e preparações
+cozidas. <strong>Textura fica alterada</strong> para consumo in
+natura.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.27" id="legumes-e-verduras-1"><span class="header-section-number">1.2.27</span> <strong>🥦 LEGUMES E
+VERDURAS</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong> A maioria precisa de
+<strong>branqueamento</strong> (escaldar em água fervente e depois
+mergulhar em água gelada) para preservar cor e textura.</li>
+<li><strong>Exceções:</strong> Tomate, cebola, pimentão podem ser
+picados e congelados sem branqueamento (ficam moles, bons para
+refogados).</li>
+</ul>
+<hr />
+<h3 data-number="1.2.28" id="alimentos-cozidos-e-sobras-1"><span class="header-section-number">1.2.28</span> <strong>🍲 ALIMENTOS COZIDOS
+E SOBRAS</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong> Esfriar completamente. Armazenar em
+porções.</li>
+<li><strong>Cuidado:</strong> Molhos com creme de leite podem talhar.
+Mexer bem ao reaquecer.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.29" id="laticínios-1"><span class="header-section-number">1.2.29</span> <strong>🧀
+LATICÍNIOS</strong></h3>
+<ul>
+<li><strong>Leite:</strong> Pode separar; bater bem após descongelar.
+Ideal para receitas.</li>
+<li><strong>Queijos Duros:</strong> Ralar e congelar.</li>
+<li><strong>Queijos Macios:</strong> Textura fica alterada; usar apenas
+para cozinhar.</li>
+<li><strong>Manteiga:</strong> Congela perfeitamente.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.30" id="ervas-frescas-1"><span class="header-section-number">1.2.30</span> <strong>🌿 ERVAS
+FRESCAS</strong></h3>
+<ul>
+<li><strong>Como Fazer:</strong>
+<ol type="1">
+<li>Picadas em forminhas de gelo com azeite/água.</li>
+<li>Inteiras e secas em sacos herméticos.</li>
+</ol></li>
+<li><strong>Uso:</strong> Direto na panela quente. Não serve para
+salada.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.31" id="prós-gerais-do-congelamento"><span class="header-section-number">1.2.31</span> <strong>✅ PRÓS GERAIS DO
+CONGELAMENTO</strong></h3>
+<ul>
+<li>Reduz desperdício de alimentos.</li>
+<li>Economia de tempo e dinheiro (compras em promoção).</li>
+<li>Praticidade no dia a dia.</li>
+<li>Preserva nutrientes (se feito corretamente).</li>
+</ul>
+<hr />
+<h3 data-number="1.2.32" id="contras-gerais-do-congelamento"><span class="header-section-number">1.2.32</span> <strong>❌ CONTRAS GERAIS DO
+CONGELAMENTO</strong></h3>
+<ul>
+<li><strong>Alteração de textura</strong> (principalmente em alimentos
+aquosos).</li>
+<li><strong>Queimadura do freezer</strong> se embalado
+incorretamente.</li>
+<li>Risco de alteração de sabor.</li>
+<li>Requer planejamento para descongelamento.</li>
+<li>Ocupa espaço e consome energia.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.33" id="descongelamento-seguro-métodos"><span class="header-section-number">1.2.33</span> <strong>🛑 DESCONGELAMENTO
+SEGURO (MÉTODOS)</strong></h3>
+<ol type="1">
+<li><strong>Geladeira:</strong> Melhor método (lento mas seguro).</li>
+<li><strong>Micro-ondas:</strong> Rápido, ideal para porções
+pequenas.</li>
+<li><strong>Água Fria:</strong> Para alimentos bem embalados (trocar
+água a cada 30 min).</li>
+<li><strong>NUNCA:</strong> Em temperatura ambiente.</li>
+</ol>
+<hr />
+<p><strong>Elaborado com base em orientações de segurança
+alimentar.</strong><br />
+<strong>Data: [Inserir Data]</strong></p>
+<hr />
+<p>Para salvar como PDF, copie todo este texto, cole em um editor de sua
+preferência e utilize a opção “Exportar como PDF” ou “Imprimir para
+PDF”.</p>
+<hr />
+<h3 data-number="1.2.34" id="utilizador-2025-09-15-014739-deepseek-chat"><span class="header-section-number">1.2.34</span> 👤 Utilizador
+<em>(2025-09-15 01:47:39)</em> <em>[deepseek-chat]</em></h3>
+<p>Pretendo um pdf para download</p>
+<hr />
+<h3 data-number="1.2.35" id="deepseek-2025-09-15-014739-deepseek-chat"><span class="header-section-number">1.2.35</span> 🤖 DeepSeek <em>(2025-09-15
+01:47:39)</em> <em>[deepseek-chat]</em></h3>
+<p>Claro! Vou fornecer um resumo completo em formato Markdown, que você
+pode facilmente converter para PDF usando qualquer conversor online
+(como <a href="https://www.markdowntopdf.com/">Markdown to PDF</a>) ou
+extensões do Visual Studio Code.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 🧊 Guia Completo: Como Congelar Alimentos</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📌 Princípios Gerais</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Qualidade Inicial**: Congele apenas alimentos frescos.</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem**: Use sacos herméticos, potes adequados ou vácuo.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Rotulagem**: Identifique com data e conteúdo (vida útil: 1-6 meses).</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temperatura**: Mantenha o freezer a -18°C ou menos.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Porções**: Congele em porções menores para facilitar.</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍚 Arroz</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe &quot;al dente&quot;</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Resfrie rapidamente espalhando em bandeja</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Embalagem a vácuo ou sacos com ar removido</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Micro-ondas com 1-2 colheres de água</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Direto na panela/wok quente</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Praticidade <span class="pp">|</span> Pode perder textura <span class="pp">|</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reduz desperdício <span class="pp">|</span> Requer resfriamento rápido <span class="pp">|</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Economia de tempo <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍝 Massa (Cotovelos, Penne, etc.)</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe 1-2 min a menos que o indicado</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Choque térmico**: Água com gelo imediatamente</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Congele espalhada em bandeja antes de embalar</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Direto no molho quente** (2-4 minutos)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Máxima praticidade <span class="pp">|</span> Pode grudar se mal acondicionada <span class="pp">|</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Perfeito para marmitas <span class="pp">|</span> Ocupa espaço <span class="pp">|</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preserva ponto ideal <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🥩 Carnes</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Embalagem reforçada ou vácuo</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peixes: glaceação (camada de gelo protetora)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">### Tempo de Conservação</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Carnes vermelhas: 3-6 meses</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Carne moída: 3 meses</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Frango: 6-9 meses</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 Tabela de Tempos de Congelamento</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Alimento <span class="pp">|</span> Tempo (meses) <span class="pp">|</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|---------------|</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Carnes vermelhas <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Frango <span class="pp">|</span> 6-9 <span class="pp">|</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sopas e caldos <span class="pp">|</span> 2-3 <span class="pp">|</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Pães <span class="pp">|</span> 3-4 <span class="pp">|</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Frutas <span class="pp">|</span> 8-12 <span class="pp">|</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Vegetais <span class="pp">|</span> 8-12 <span class="pp">|</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## ❌ Alimentos que Não Congelam Bem</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Folhas verdes cruas</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ovos com casca</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Maionese</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Iogurte</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Batata crua</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🔒 Métodos de Embalagem</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Sacos herméticos**: Melhor para líquidos</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Embalagem a vácuo**: Ideal para carnes</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Potes plásticos**: Para alimentos frágeis</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Papel alumínio**: Para assados</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## ⚠️ Dicas de Segurança</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Nunca recongele alimentos descongelados</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Descongele na geladeira, não em temperatura ambiente</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Verifique sinais de queimadura de freezer</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Siga sempre as datas de validade</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>*Guia elaborado com base em normas de segurança alimentar. Consumir preferencialmente dentro dos prazos indicados.*</span></code></pre></div>
+<h3 data-number="1.2.36" id="para-converter-para-pdf"><span class="header-section-number">1.2.36</span> Para converter para
+PDF:</h3>
+<ol type="1">
+<li>Copie todo o texto acima</li>
+<li>Acesse <a href="https://www.markdowntopdf.com/">Markdown to
+PDF</a></li>
+<li>Cole o texto e converta</li>
+<li>Download do PDF pronto</li>
+</ol>
+<h3 data-number="1.2.37" id="alternativamente"><span class="header-section-number">1.2.37</span> Alternativamente:</h3>
+<ul>
+<li>Salve como arquivo <code>.md</code></li>
+<li>Use extensão “Markdown PDF” no VS Code</li>
+<li>Ou use pandoc:
+<code>pandoc guia-congelamento.md -o guia-congelamento.pdf</code></li>
+</ul>
+<p>Deseja que eu faça alguma alteração específica no conteúdo antes de
+converter?</p>
+<hr />
+<h3 data-number="1.2.38" id="utilizador-2025-09-27-024426-deepseek-chat"><span class="header-section-number">1.2.38</span> 👤 Utilizador
+<em>(2025-09-27 02:44:26)</em> <em>[deepseek-chat]</em></h3>
+<p>Sim gostaria de acrescentar peixes arranjados e não arrenjados</p>
+<hr />
+<h3 data-number="1.2.39" id="deepseek-2025-09-27-024426-deepseek-chat"><span class="header-section-number">1.2.39</span> 🤖 DeepSeek <em>(2025-09-27
+02:44:26)</em> <em>[deepseek-chat]</em></h3>
+<p>Excelente adição! Vou acrescentar uma seção específica sobre peixes,
+diferenciando entre arranjados (temperados, com molhos) e não arranjados
+(limpos e crus). Aqui está o conteúdo completo atualizado:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 🧊 Guia Completo: Como Congelar Alimentos</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📌 Princípios Gerais</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Qualidade Inicial**: Congele apenas alimentos frescos.</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem**: Use sacos herméticos, potes adequados ou vácuo.</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Rotulagem**: Identifique com data e conteúdo (vida útil: 1-6 meses).</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temperatura**: Mantenha o freezer a -18°C ou menos.</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Porções**: Congele em porções menores para facilitar.</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🐟 Peixes: Arranjados vs Não Arranjados</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### 🐠 Peixes NÃO Arranjados (Limpos e Crus)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limpeza completa**: Escamas, vísceras e guelras removidas</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lave e seque bem** com papel toalha</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem individual**: Filmes plásticos ou sacos herméticos</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Técnica da glaceação**: Mergulhe em água gelada, congele, repita para formar camada de gelo protetora</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Descongelamento</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Geladeira**: 12-24 horas (método mais seguro)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Água fria**: Saco hermético submerso (trocar água a cada 30 min)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tempo de Conservação</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peixes magros (pescada, linguado): 6 meses</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peixes gordos (salmão, atum): 3 meses</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">### 🍋 Peixes ARRANJADOS (Temperados/Marinados)</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temperos simples**: Limão, alho, ervas funcionam bem</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Evite molhos cremosos** (maionese, creme de leite)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congele com marinada**: Em potes herméticos</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Marinadas ácidas** (vinagre, limão) podem alterar textura em longo prazo</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Descongelamento</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Geladeira** por 12-24 horas</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Assar/cozinhar direto** do freezer (acrescente 50% mais tempo)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tempo de Conservação</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peixes temperados: 2-3 meses</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Peixes com marinadas: 1-2 meses</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras - Peixes</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tipo <span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|------|---------|</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Não Arranjados** <span class="pp">|</span> Preserva sabor natural, maior tempo de conservação <span class="pp">|</span> Requer preparo após descongelamento <span class="pp">|</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Arranjados** <span class="pp">|</span> Praticidade, sabor incorporado <span class="pp">|</span> Menor tempo de validade, risco de textura alterada <span class="pp">|</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍚 Arroz</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe &quot;al dente&quot;</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Resfrie rapidamente espalhando em bandeja</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Embalagem a vácuo ou sacos com ar removido</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Micro-ondas com 1-2 colheres de água</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Direto na panela/wok quente</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Praticidade <span class="pp">|</span> Pode perder textura <span class="pp">|</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reduz desperdício <span class="pp">|</span> Requer resfriamento rápido <span class="pp">|</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Economia de tempo <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍝 Massa (Cotovelos, Penne, etc.)</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe 1-2 min a menos que o indicado</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Choque térmico**: Água com gelo imediatamente</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Congele espalhada em bandeja antes de embalar</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Direto no molho quente** (2-4 minutos)</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Máxima praticidade <span class="pp">|</span> Pode grudar se mal acondicionada <span class="pp">|</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Perfeito para marmitas <span class="pp">|</span> Ocupa espaço <span class="pp">|</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preserva ponto ideal <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 Tabela de Tempos de Congelamento</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Alimento <span class="pp">|</span> Tempo (meses) <span class="pp">|</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|---------------|</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Carnes vermelhas <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Frango <span class="pp">|</span> 6-9 <span class="pp">|</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes não arranjados <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes arranjados <span class="pp">|</span> 1-3 <span class="pp">|</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sopas e caldos <span class="pp">|</span> 2-3 <span class="pp">|</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Pães <span class="pp">|</span> 3-4 <span class="pp">|</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Frutas <span class="pp">|</span> 8-12 <span class="pp">|</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Vegetais <span class="pp">|</span> 8-12 <span class="pp">|</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## ❌ Alimentos que Não Congelam Bem</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Folhas verdes cruas</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ovos com casca</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Maionese</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Iogurte</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Batata crua</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🔒 Métodos de Embalagem</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Sacos herméticos**: Melhor para líquidos</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Embalagem a vácuo**: Ideal para carnes</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Potes plásticos**: Para alimentos frágeis</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Papel alumínio**: Para assados</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## ⚠️ Dicas de Segurança</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Nunca recongele alimentos descongelados</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Descongele na geladeira, não em temperatura ambiente</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Verifique sinais de queimadura de freezer</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Siga sempre as datas de validade</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>*Guia elaborado com base em normas de segurança alimentar. Consumir preferencialmente dentro dos prazos indicados.*</span></code></pre></div>
+<h3 data-number="1.2.40" id="dicas-extras-para-peixes"><span class="header-section-number">1.2.40</span> 🎣 Dicas Extras para
+Peixes:</h3>
+<p><strong>Para peixes inteiros:</strong> - Coloque papel filme entre as
+brânquias para evitar queimadura - Envolva a cauda e nadadeiras com
+papel alumínio</p>
+<p><strong>Para filés:</strong> - Separe com papel manteiga entre eles
+para não grudarem - Ideal para porções individuais</p>
+<p><strong>Marinadas que congelam bem:</strong> - Azeite, alho, ervas
+(sálvia, tomilho, alecrim) - Molho de soja, gengibre, cebolinha - Limão,
+pimenta, coentro</p>
+<p>Agora seu guia está mais completo! Para converter para PDF, use os
+mesmos métodos mencionados anteriormente.</p>
+<hr />
+<h3 data-number="1.2.41" id="utilizador-2025-09-27-024716-deepseek-chat"><span class="header-section-number">1.2.41</span> 👤 Utilizador
+<em>(2025-09-27 02:47:16)</em> <em>[deepseek-chat]</em></h3>
+<p>Correcção o que eu pretendo dizer com peixes arranjados e não
+arrenjados são ambos crus e limpos ou não limpos</p>
+<hr />
+<h3 data-number="1.2.42" id="deepseek-2025-09-27-024716-deepseek-chat"><span class="header-section-number">1.2.42</span> 🤖 DeepSeek <em>(2025-09-27
+02:47:16)</em> <em>[deepseek-chat]</em></h3>
+<p>Perfeito! Agora entendi a distinção. Vou corrigir a seção sobre
+peixes para refletir exatamente o que você pretende:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 🧊 Guia Completo: Como Congelar Alimentos</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📌 Princípios Gerais</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Qualidade Inicial**: Congele apenas alimentos frescos.</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem**: Use sacos herméticos, potes adequados ou vácuo.</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Rotulagem**: Identifique com data e conteúdo (vida útil: 1-6 meses).</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temperatura**: Mantenha o freezer a -18°C ou menos.</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Porções**: Congele em porções menores para facilitar.</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🐟 Peixes: Arranjados vs Não Arranjados</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### ❌ Peixes NÃO ARRAJADOS (Inteiros, Não Limpos)</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Características</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Inteiros com escamas, vísceras e guelras**</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não eviscerados** - como comprados diretamente da pesca</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Requerem limpeza completa** antes do consumo</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lave externamente** e seque com papel toalha</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem individual** em sacos para freezer</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Glaceação recomendada** para melhor proteção</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congele o mais rápido possível** após a compra/captura</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⚠️ Considerações Importantes</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Menor tempo de conservação** devido às vísceras</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Risco de rancificação acelerada**</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sabor pode ser afetado** pelas enzimas das vísceras</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sempre limpar antes de cozinhar**</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### ✅ Peixes ARRAJADOS (Limpos e Preparados)</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Características</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limpos e eviscerados** - sem escamas, vísceras nem guelras</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Inteiros, em filés ou postas**</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Prontos para o consumo** após descongelamento</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Secar bem** com papel toalha após limpeza</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem a vácuo** ideal para evitar queimaduras</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Separar por porções** com papel manteiga</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Glaceação** para proteção extra</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 👍 Vantagens</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Maior tempo de conservação**</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Melhor qualidade** do produto final</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Mais práticos** para uso direto</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Menor risco** de contaminação</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="fu">### 📊 Comparação Direta</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Aspecto <span class="pp">|</span> Não Arranjados <span class="pp">|</span> Arranjados <span class="pp">|</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|----------------|------------|</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Estado** <span class="pp">|</span> Inteiros com vísceras <span class="pp">|</span> Limpos e eviscerados <span class="pp">|</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Tempo de Conservação** <span class="pp">|</span> 1-2 meses <span class="pp">|</span> 3-6 meses <span class="pp">|</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Praticidade** <span class="pp">|</span> Baixa (requer limpeza) <span class="pp">|</span> Alta (pronto para usar) <span class="pp">|</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Qualidade** <span class="pp">|</span> Pode deteriorar mais rápido <span class="pp">|</span> Preserva melhor sabor <span class="pp">|</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Espaço no Freezer** <span class="pp">|</span> Ocupam mais espaço <span class="pp">|</span> Mais compactos <span class="pp">|</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍚 Arroz</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe &quot;al dente&quot;</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Resfrie rapidamente espalhando em bandeja</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Embalagem a vácuo ou sacos com ar removido</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Micro-ondas com 1-2 colheres de água</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Direto na panela/wok quente</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Praticidade <span class="pp">|</span> Pode perder textura <span class="pp">|</span></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reduz desperdício <span class="pp">|</span> Requer resfriamento rápido <span class="pp">|</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Economia de tempo <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🍝 Massa (Cotovelos, Penne, etc.)</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### Como Congelar</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Cozinhe 1-2 min a menos que o indicado</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Choque térmico**: Água com gelo imediatamente</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Congele espalhada em bandeja antes de embalar</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="fu">### Descongelamento</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Direto no molho quente** (2-4 minutos)</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚖️ Prós vs Contras</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Prós <span class="pp">|</span> Contras <span class="pp">|</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|---------|</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Máxima praticidade <span class="pp">|</span> Pode grudar se mal acondicionada <span class="pp">|</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Perfeito para marmitas <span class="pp">|</span> Ocupa espaço <span class="pp">|</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Preserva ponto ideal <span class="pp">|</span> <span class="pp">|</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 Tabela de Tempos de Congelamento</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Alimento <span class="pp">|</span> Tempo (meses) <span class="pp">|</span></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|---------------|</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes não arranjados (com vísceras) <span class="pp">|</span> 1-2 <span class="pp">|</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes arranjados (limpos) <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Carnes vermelhas <span class="pp">|</span> 3-6 <span class="pp">|</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Frango <span class="pp">|</span> 6-9 <span class="pp">|</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sopas e caldos <span class="pp">|</span> 2-3 <span class="pp">|</span></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Pães <span class="pp">|</span> 3-4 <span class="pp">|</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## ⚠️ Recomendações para Peixes</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Prefira sempre congelar já arranjados** (limpos)</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Se congelar não arranjados**, consuma rapidamente</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Descongele sempre na geladeira**</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Nunca recongele peixes descongelados**</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>*Guia elaborado com base em normas de segurança alimentar. Peixes não arranjados devem ser consumidos prioritariamente.*</span></code></pre></div>
+<h3 data-number="1.2.43" id="dica-crucial"><span class="header-section-number">1.2.43</span> 🎣 <strong>Dica
+Crucial:</strong></h3>
+<p><strong>Sempre que possível, limpe os peixes antes de
+congelar.</strong> As vísceras aceleram a deterioração e podem afetar o
+sabor da carne. A diferença na qualidade final é significativa!</p>
+<p>Agora o guia reflete corretamente a distinção entre peixes arranjados
+(limpos) e não arranjados (com vísceras). Para converter para PDF, use
+os métodos mencionados anteriormente.</p>
+<hr />
+<h3 data-number="1.2.44" id="utilizador-2025-09-27-025039-deepseek-chat"><span class="header-section-number">1.2.44</span> 👤 Utilizador
+<em>(2025-09-27 02:50:39)</em> <em>[deepseek-chat]</em></h3>
+<p>Há quem diga que os peixes não limpos se conservam melhor congelados,
+sendo que os peixes a congelar são frescos</p>
+<hr />
+<h3 data-number="1.2.45" id="deepseek-2025-09-27-025039-deepseek-chat"><span class="header-section-number">1.2.45</span> 🤖 DeepSeek <em>(2025-09-27
+02:50:39)</em> <em>[deepseek-chat]</em></h3>
+<p>Excelente observação! Este é um ponto importante da tradição
+culinária. Vou corrigir o guia para refletir essa perspectiva:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 🧊 Guia Completo: Como Congelar Alimentos</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📌 Princípios Gerais</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Qualidade Inicial**: Congele apenas alimentos frescos.</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem**: Use sacos herméticos, potes adequados ou vácuo.</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Rotulagem**: Identifique com data e conteúdo.</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temperatura**: Mantenha o freezer a -18°C ou menos.</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🐟 Peixes: Arranjados vs Não Arranjados - Duas Perspectivas</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### 🎣 PEIXES NÃO ARRAJADOS (Com Vísceras - Tradição)</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Fundamentos da Técnica</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Vísceras funcionam como proteção natural** da carne</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Peixe mantém seus líquidos internos** preservados</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Menor manipulação** = menor risco de contaminação</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Técnica tradicional** em comunidades pesqueiras</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar Corretamente</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congelar imediatamente** após captura/compra</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lavar apenas externamente** - não manipular</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem individual** e hermética</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Glaceação recomendada** para proteção extra</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ✅ Vantagens (quando feito corretamente)</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carne mantém suculência** natural</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sabor mais autêntico** preservado</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Menor oxidação** da carne</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Técnica testada por gerações**</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⚠️ Requisitos Essenciais</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PEIXE DE ALTÍSSIMA FRESCURA** - fundamental!</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congelamento ultra-rápido**</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tempo de conservação reduzido** (1-2 meses)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Descongelamento lento na geladeira**</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="fu">### 🔪 PEIXES ARRAJADOS (Limpos - Método Moderno)</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Vantagens da Limpeza Prévia</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Remoção de vísceras** que podem rancificar</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Maior tempo de conservação** (3-6 meses)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Mais prático** para uso direto</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Padrão industrial** e comercial</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Como Congelar</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limpeza profissional** e completa</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Secagem adequada** da carne</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem a vácuo** ideal</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congelamento rápido**</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 Comparação Técnica Detalhada</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Aspecto <span class="pp">|</span> Não Arranjados (Tradicional) <span class="pp">|</span> Arranjados (Moderno) <span class="pp">|</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----------------------------|----------------------|</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Frescura Requerida** <span class="pp">|</span> Altíssima (máximo 6h pós-captura) <span class="pp">|</span> Fresco (até 24h) <span class="pp">|</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Tempo Conservação** <span class="pp">|</span> 1-2 meses <span class="pp">|</span> 3-6 meses <span class="pp">|</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Sabor** <span class="pp">|</span> Mais natural e suculento <span class="pp">|</span> Pode perder umidade <span class="pp">|</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Praticidade** <span class="pp">|</span> Requer limpeza pós-descongelamento <span class="pp">|</span> Pronto para usar <span class="pp">|</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Segurança** <span class="pp">|</span> Depende da frescura inicial <span class="pp">|</span> Mais controlado <span class="pp">|</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🎯 Recomendações Práticas por Situação</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### Escolha NÃO ARRAJADO quando:</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Peixe **ultra-fresco** (captura própria/pescaria direta)</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Vai consumir em **até 2 meses**</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Prefere **sabor tradicional** e suculento</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Tem experiência com **limpeza pós-descongelamento**</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### Escolha ARRAJADO quando:</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Peixe fresco mas não **ultra-fresco**</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Quer **maior prazo** de validade</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Prefere **praticidade**</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>✅ Não tem experiência em limpeza de peixes</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🔬 Evidências Científicas vs Tradição</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### A Favor da Tradição (Não Arranjados):</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Vísceras protegem a carne do ar direto</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Menos manipulação = menos bactérias introduzidas</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Líquidos naturais preservados</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### A Favor do Método Moderno (Arranjados):</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Vísceras contêm enzimas que aceleram deterioração</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Limpeza remove focos de contaminação</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Maior controle de qualidade</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="fu">## ⚠️ ALERTAS IMPORTANTES</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Não Arranjados:</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Só funciona com peixe FRESCÚSSIMO**</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Não vale para peixe de 1-2 dias na peixaria**</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Descongelar SEMPRE na geladeira**</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limpar IMEDIATAMENTE após descongelar**</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Ambos os Métodos:</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Nunca recongelar</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Verificar sinais de deterioração</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Seguir rigorosamente prazos máximos</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🕒 Tabela de Tempos de Conservação</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tipo de Peixe <span class="pp">|</span> Não Arranjado <span class="pp">|</span> Arranjado <span class="pp">|</span></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|---------------|-----------|</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes magros (pescada) <span class="pp">|</span> 2 meses <span class="pp">|</span> 6 meses <span class="pp">|</span></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes gordos (salmão) <span class="pp">|</span> 1 mês <span class="pp">|</span> 3 meses <span class="pp">|</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Peixes muito gordurosos (atum) <span class="pp">|</span> 3 semanas <span class="pp">|</span> 2 meses <span class="pp">|</span></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>*Guia que considera tanto o conhecimento tradicional quanto as práticas modernas de conservação.*</span></code></pre></div>
+<h3 data-number="1.2.46" id="conclusão-equilibrada"><span class="header-section-number">1.2.46</span> 🎣 <strong>Conclusão
+Equilibrada:</strong></h3>
+<p>Ambos os métodos têm méritos, mas dependem
+<strong>criticamente</strong> da frescura inicial:</p>
+<ul>
+<li><strong>Não arranjados</strong>: Melhor para peixes
+<strong>ultra-frescos</strong> (captura própria)</li>
+<li><strong>Arranjados</strong>: Mais seguro para peixes <strong>frescos
+de peixaria</strong></li>
+</ul>
+<p>A tradição tem razão quando o peixe é realmente fresquíssimo! 🐟</p>
+<p>Deseja que eu ajuste mais algum aspecto desta perspectiva?</p>
+<hr />
+<h3 data-number="1.2.47" id="utilizador-2025-09-27-025505-deepseek-chat"><span class="header-section-number">1.2.47</span> 👤 Utilizador
+<em>(2025-09-27 02:55:05)</em> <em>[deepseek-chat]</em></h3>
+<p>Sim os peixes não arranjados são ultra-frescos (captura própria):
+assim nestes gotaria de especificar alguns tipos como: Carpa,
+Lucio-perca, Achigã e Savel (peixes capturados na albufeira de Castelo
+de Bode)</p>
+<hr />
+<h3 data-number="1.2.48" id="deepseek-2025-09-27-025505-deepseek-chat"><span class="header-section-number">1.2.48</span> 🤖 DeepSeek <em>(2025-09-27
+02:55:05)</em> <em>[deepseek-chat]</em></h3>
+<p>Perfeito! Vou criar uma seção específica para esses peixes de água
+doce da Albufeira de Castelo de Bode, com dicas personalizadas para cada
+espécie:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 🎣 Guia Especial: Congelamento de Peixes de Castelo de Bode</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🌊 Peixes Não Arranjados (Captura Própria - Ultra Frescos)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 📍 Contexto Específico</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Albufeira de Castelo de Bode** - águas interiores</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Captura própria** - frescura máxima garantida</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Espécies características** da região</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🐟 Características e Técnicas por Espécie</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. **CARPA** (*Cyprinus carpio*)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 🎯 Características Específicas</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Peixe de escamas** grandes e resistentes</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carnes brancas e saborosas**</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tendência a acumular lama/algas**</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ❄️ Técnica de Congelamento Ideal</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**NÃO remover escamas** antes de congelar</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limpar externamente** com escova macia</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Manter vísceras** para proteção natural</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dupla embalagem**: filme plástico + saco freezer</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⏱️ Tempo de Conservação</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**2-3 meses** (carne mais gordurosa)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 👨‍🍳 Dica de Preparo Pós-Descongelamento</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Descascar antes de cozinhar**</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ideal para ensopados** e caldeiradas</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. **LÚCIO-PERCA** (*Sander lucioperca*)</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 🎯 Características Específicas</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carnes magras** e firmes</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poucas espinhas**</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sabor delicado**</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ❄️ Técnica de Congelamento Ideal</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Manter guelras** (protegem a cabeça)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Glaceação tripla** para maior proteção</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posição horizontal** no freezer</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⏱️ Tempo de Conservação</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**3-4 meses** (carne magra conserva melhor)</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 👨‍🍳 Dica de Preparo Pós-Descongelamento</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Excelente para filetar** após descongelamento</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ideal para grelhados** e assados</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3. **ACHIGÃ** (*Micropterus salmoides*)</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 🎯 Características Específicas</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carnes firmes** e saborosas</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pele resistente**</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sabor característico**</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ❄️ Técnica de Congelamento Ideal</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Manter pele** durante congelamento</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem individual** rigorosa</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Evitar sobreposição** no freezer</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⏱️ Tempo de Conservação</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**2-3 meses** (sabor intenso preserva bem)</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 👨‍🍳 Dica de Preparo Pós-Descongelamento</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pode ser grelhado** com pele</span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Excelente para ceviche** após descongelamento</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### 4. **SAVEL** (*Alosa fallax*)</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 🎯 Características Específicas</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Peixe semipelágico**</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carnes mais delicadas**</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sabor distintivo**</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ❄️ Técnica de Congelamento Ideal</span></span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Congelamento ultra-rápido** essencial</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Embalagem a vácuo** recomendada</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posição vertical** no freezer</span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="fu">#### ⏱️ Tempo de Conservação</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**1-2 meses** (carne mais delicada)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 👨‍🍳 Dica de Preparo Pós-Descongelamento</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Descongelamento lento** na geladeira</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ideal para fumagem** após descongelamento</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🕒 Cronograma de Congelamento Pós-Captura</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Etapa <span class="pp">|</span> Tempo Máximo <span class="pp">|</span> Ação Crítica <span class="pp">|</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------|--------------|-------------|</span></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Captura** <span class="pp">|</span> Imediato <span class="pp">|</span> Manter vivo/em gelo <span class="pp">|</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Transporte** <span class="pp">|</span> 2-4 horas <span class="pp">|</span> Caixa térmica com gelo <span class="pp">|</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Pré-congelamento** <span class="pp">|</span> 6 horas <span class="pp">|</span> Limpeza externa básica <span class="pp">|</span></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Congelamento final** <span class="pp">|</span> 12 horas <span class="pp">|</span> Embalagem definitiva <span class="pp">|</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🌡️ Técnica de Glaceação para Peixes de Água Doce</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="fu">### Passo a Passo:</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Peixe seco** superficialmente</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Imersão em água gelada** por 30 segundos</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Congelamento rápido** por 1 hora</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Repetir processo** 2-3 vezes</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Embalagem final** para armazenamento</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🏞️ Fatores Específicos de Castelo de Bode</span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### ✅ Vantagens da Albufeira:</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Águas limpas** e bem oxigenadas</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Peixes com carnes firmes**</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Diversidade de espécies**</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="fu">### ⚠️ Considerações Especiais:</span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Monitorar algas** sazonais</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Verificar qualidade da água** periodicamente</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Época de reprodução** de cada espécie</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## 📊 Tabela Resumo por Espécie</span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Espécie <span class="pp">|</span> Tempo Congelamento <span class="pp">|</span> Ponto Forte <span class="pp">|</span> Cuidado Especial <span class="pp">|</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------------------|-------------|------------------|</span></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Carpa** <span class="pp">|</span> 2-3 meses <span class="pp">|</span> Sabor intenso <span class="pp">|</span> Limpeza externa cuidadosa <span class="pp">|</span></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Lúcio-perca** <span class="pp">|</span> 3-4 meses <span class="pp">|</span> Carne magra <span class="pp">|</span> Glaceação reforçada <span class="pp">|</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Achigã** <span class="pp">|</span> 2-3 meses <span class="pp">|</span> Textura firme <span class="pp">|</span> Embalagem individual <span class="pp">|</span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Savel** <span class="pp">|</span> 1-2 meses <span class="pp">|</span> Sabor único <span class="pp">|</span> Congelamento rápido <span class="pp">|</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="fu">## 🚨 Sinais de Qualidade Pós-Descongelamento</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a><span class="fu">### ✅ Aceitável:</span></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Olhos levemente opacos**</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pele com coloração natural**</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Odor fresco de rio**</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### ❌ Rejeitar:</span></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Olhos muito brancos**</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Odor ácido/amoniacal**</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carne mole/desfiando**</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="fu">## 👨‍🍳 Métodos de Preparo Recomendados</span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Carpa:</span></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Caldeirada** tradicional</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ensopados** com legumes</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Lúcio-perca:</span></span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Filetes grelhados**</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Assados no forno**</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Achigã:</span></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Grelhado inteiro**</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ceviche** (após descongelamento)</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="fu">### Para Savel:</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Fumagem leve**</span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Marinados** em vinha d&#39;alhos</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>*Guia específico para pescadores de Castelo de Bode - baseado em tradições locais e técnicas modernas*</span></code></pre></div>
+<p>Este guia agora está totalmente personalizado para os peixes
+específicos da sua região! 🎣</p>
+<p>Quer que eu adicione mais alguma espécie ou ajuste alguma informação
+específica?</p>
+<hr />
+<h3 data-number="1.2.49" id="utilizador-2025-09-27-025647-deepseek-chat"><span class="header-section-number">1.2.49</span> 👤 Utilizador
+<em>(2025-09-27 02:56:47)</em> <em>[deepseek-chat]</em></h3>
+<p>por agora não</p>
+<hr />
+<h3 data-number="1.2.50" id="deepseek-2025-09-27-025647-deepseek-chat"><span class="header-section-number">1.2.50</span> 🤖 DeepSeek <em>(2025-09-27
+02:56:47)</em> <em>[deepseek-chat]</em></h3>
+<p>Perfeito! Fico feliz por ter ajudado a criar um guia completo e
+personalizado para o congelamento dos peixes de Castelo de Bode.</p>
+<p>Sempre que precisar de ajustes ou tiver novas dúvidas sobre
+conservação de alimentos, estarei aqui para ajudar!</p>
+<p><strong>Boa sorte com as suas pescarias e aproveite esses peixes
+fresquíssimos!</strong> 🎣❄️</p>
+<p>Se quiser fazer o download do PDF, basta copiar o texto final que
+forneci e usar um conversor online de Markdown para PDF.</p>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

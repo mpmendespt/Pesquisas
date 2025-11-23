@@ -1,0 +1,55 @@
+
+.content_backups
+.pandoc_cache
+archive/
+
+assets_img/
+Cleanfiles.py
+combined_attachments/
+combined_csv/
+combined_json/
+combined_pdfs/
+comb_fragments_system10.3.0_html_export.py
+data/
+export/
+
+# Arquivos de desenvolvimento temporários
+*.tmp
+*.temp
+*.log
+
+# Cache de build
+.cache/
+.parcel-cache/
+dist/
+build/
+
+# Dependências do frontend (se usar npm no futuro)
+node_modules/
+
+# Arquivos de ambiente
+.env
+.env.local
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Arquivos de backup
+*.backup
+*.bak
+
+# Logs de erro
+error.log
+npm-debug.log*
+
+# Arquivos de usuário gerados
+uploads/
+user-data/

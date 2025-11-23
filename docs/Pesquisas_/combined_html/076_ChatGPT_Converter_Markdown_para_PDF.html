@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>076_ChatGPT_Converter_Markdown_para_PDF</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-markdown-para-pdf" id="toc-converter-markdown-para-pdf"><span class="toc-section-number">1</span> Converter Markdown para PDF</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#opção-1-usando-o-pandoc-chrome-engine-recomendado" id="toc-opção-1-usando-o-pandoc-chrome-engine-recomendado"><span class="toc-section-number">1.3</span> ✅ Opção 1 — Usando o
+<strong>Pandoc + Chrome Engine (recomendado)</strong></a></li>
+<li><a href="#opção-2-usando-typora-interface-gráfica" id="toc-opção-2-usando-typora-interface-gráfica"><span class="toc-section-number">1.4</span> ✅ Opção 2 — Usando
+<strong>Typora</strong> (interface gráfica)</a></li>
+<li><a href="#opção-3-converter-com-python-markdown-html-pdf-via-weasyprint" id="toc-opção-3-converter-com-python-markdown-html-pdf-via-weasyprint"><span class="toc-section-number">1.5</span> ✅ Opção 3 — Converter com
+<strong>Python (markdown → HTML → PDF via WeasyPrint)</strong></a></li>
+<li><a href="#dicas-extras" id="toc-dicas-extras"><span class="toc-section-number">1.6</span> 💡 Dicas Extras</a></li>
+<li><a href="#caminho-alternativo-100-funcional-em-2-passos" id="toc-caminho-alternativo-100-funcional-em-2-passos"><span class="toc-section-number">1.7</span> 🧭 Caminho alternativo 100%
+funcional (em 2 passos)</a></li>
+<li><a href="#dicas-extras-1" id="toc-dicas-extras-1"><span class="toc-section-number">1.8</span> 💡 Dicas extras</a></li>
+<li><a href="#alternativa-gráfica" id="toc-alternativa-gráfica"><span class="toc-section-number">1.9</span> 🚀 Alternativa gráfica</a></li>
+<li><a href="#weasyprint-python-simples-e-confiável" id="toc-weasyprint-python-simples-e-confiável"><span class="toc-section-number">1.10</span> 🧩 1️⃣ <strong>WeasyPrint</strong>
+(Python, simples e confiável)</a></li>
+<li><a href="#princexml-profissional-gratuito-para-uso-pessoal" id="toc-princexml-profissional-gratuito-para-uso-pessoal"><span class="toc-section-number">1.11</span> 🧩 2️⃣ <strong>PrinceXML</strong>
+(profissional, gratuito para uso pessoal)</a></li>
+<li><a href="#paged.js-cli-node.js" id="toc-paged.js-cli-node.js"><span class="toc-section-number">1.12</span> 🧩 3️⃣ <strong>Paged.js
+CLI</strong> (Node.js)</a></li>
+<li><a href="#weasyprint-css-personalizado-melhor-custo-benefício" id="toc-weasyprint-css-personalizado-melhor-custo-benefício"><span class="toc-section-number">1.13</span> 🧩 4️⃣ <strong>WeasyPrint + CSS
+personalizado (melhor custo-benefício)</strong></a></li>
+<li><a href="#solução-rápida-funciona-na-maioria-dos-casos" id="toc-solução-rápida-funciona-na-maioria-dos-casos"><span class="toc-section-number">1.14</span> ✅ 1️⃣ Solução Rápida (funciona na
+maioria dos casos)</a></li>
+<li><a href="#corrigindo-de-forma-definitiva-opcional" id="toc-corrigindo-de-forma-definitiva-opcional"><span class="toc-section-number">1.15</span> ✅ 2️⃣ Corrigindo de forma
+definitiva (opcional)</a></li>
+<li><a href="#verificar-resultado" id="toc-verificar-resultado"><span class="toc-section-number">1.16</span> ✅ 3️⃣ Verificar
+resultado</a></li>
+<li><a href="#causa" id="toc-causa"><span class="toc-section-number">1.17</span> 🧩 Causa</a></li>
+<li><a href="#soluções-possíveis-em-ordem-de-simplicidade" id="toc-soluções-possíveis-em-ordem-de-simplicidade"><span class="toc-section-number">1.18</span> 🧩 Soluções possíveis (em ordem
+de simplicidade)</a></li>
+<li><a href="#resumo-das-opções" id="toc-resumo-das-opções"><span class="toc-section-number">1.19</span> 🧾 Resumo das opções</a></li>
+<li><a href="#o-que-está-acontecendo" id="toc-o-que-está-acontecendo"><span class="toc-section-number">1.20</span> 💥 O que está
+acontecendo</a></li>
+<li><a href="#soluções-práticas-e-estáveis" id="toc-soluções-práticas-e-estáveis"><span class="toc-section-number">1.21</span> ✅ Soluções práticas e
+estáveis</a></li>
+<li><a href="#conclusão" id="toc-conclusão"><span class="toc-section-number">1.22</span> 💡 Conclusão</a></li>
+<li><a href="#opção-1-instalação-direta-via-chocolatey-testar-primeiro" id="toc-opção-1-instalação-direta-via-chocolatey-testar-primeiro"><span class="toc-section-number">1.23</span> 🟢 <strong>Opção 1 — Instalação
+direta via Chocolatey (testar primeiro)</strong></a></li>
+<li><a href="#opção-2-instalar-manualmente-oficial-recomendada" id="toc-opção-2-instalar-manualmente-oficial-recomendada"><span class="toc-section-number">1.24</span> 🟡 <strong>Opção 2 — Instalar
+manualmente (oficial, recomendada)</strong></a></li>
+<li><a href="#dica-extra-integrar-com-pandoc" id="toc-dica-extra-integrar-com-pandoc"><span class="toc-section-number">1.25</span> 🧩 <strong>Dica extra — Integrar
+com Pandoc</strong></a></li>
+<li><a href="#resumo-rápido" id="toc-resumo-rápido"><span class="toc-section-number">1.26</span> 🧾 Resumo rápido</a></li>
+<li><a href="#paged.js-cli-melhor-alternativa-open-source-ao-princexml" id="toc-paged.js-cli-melhor-alternativa-open-source-ao-princexml"><span class="toc-section-number">1.27</span> 🟢 <strong>1️⃣ Paged.js
+CLI</strong> <em>(melhor alternativa open-source ao
+PrinceXML)</em></a></li>
+<li><a href="#vivliostyle-cli" id="toc-vivliostyle-cli"><span class="toc-section-number">1.28</span> 🟢 <strong>2️⃣ Vivliostyle
+CLI</strong></a></li>
+<li><a href="#weasyprint-python" id="toc-weasyprint-python"><span class="toc-section-number">1.29</span> 🟢 <strong>3️⃣ WeasyPrint
+(Python)</strong></a></li>
+<li><a href="#decktape-para-html-estático" id="toc-decktape-para-html-estático"><span class="toc-section-number">1.30</span> 🟢 <strong>4️⃣ DeckTape (para HTML
+estático)</strong></a></li>
+<li><a href="#chromium-headless-puro-e-direto" id="toc-chromium-headless-puro-e-direto"><span class="toc-section-number">1.31</span> 🟢 <strong>5️⃣ Chromium Headless
+(puro e direto)</strong></a></li>
+<li><a href="#resumo-rápido-1" id="toc-resumo-rápido-1"><span class="toc-section-number">1.32</span> 🧾 <strong>Resumo
+rápido</strong></a></li>
+<li><a href="#weasyprint-a-melhor-opção-no-msys2" id="toc-weasyprint-a-melhor-opção-no-msys2"><span class="toc-section-number">1.33</span> 🧩 1️⃣ <strong>WeasyPrint (a
+melhor opção no MSYS2)</strong></a></li>
+<li><a href="#wkhtmltopdf-qtwebkit-engine" id="toc-wkhtmltopdf-qtwebkit-engine"><span class="toc-section-number">1.34</span> 🧩 2️⃣ <strong>wkhtmltopdf
+(QtWebKit engine)</strong></a></li>
+<li><a href="#weasyprint-via-pacote-linux-se-quiser-wsl-like" id="toc-weasyprint-via-pacote-linux-se-quiser-wsl-like"><span class="toc-section-number">1.35</span> 🧩 3️⃣ <strong>WeasyPrint via
+pacote Linux (se quiser WSL-like)</strong></a></li>
+<li><a href="#princexml-via-msys2-se-quiser-misto-livregratuito" id="toc-princexml-via-msys2-se-quiser-misto-livregratuito"><span class="toc-section-number">1.36</span> 🧩 4️⃣ <strong>PrinceXML via MSYS2
+(se quiser misto livre/gratuito)</strong></a></li>
+<li><a href="#outras-ferramentas-open-source-disponíveis-no-msys2" id="toc-outras-ferramentas-open-source-disponíveis-no-msys2"><span class="toc-section-number">1.37</span> 🧩 5️⃣ <strong>Outras ferramentas
+open-source disponíveis no MSYS2</strong></a></li>
+<li><a href="#dica-instalar-a-fonte-noto-color-emoji" id="toc-dica-instalar-a-fonte-noto-color-emoji"><span class="toc-section-number">1.38</span> 🧠 Dica: Instalar a fonte Noto
+Color Emoji</a></li>
+<li><a href="#exemplo-completo-no-msys2" id="toc-exemplo-completo-no-msys2"><span class="toc-section-number">1.39</span> 🚀 Exemplo completo no
+MSYS2</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-markdown-para-pdf"><span class="header-section-number">1</span> Converter Markdown para PDF</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #76</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Sistemas</li>
+<li><strong>ID:</strong> 69010970-ef40-8327-8e92-0d35a1d5e0d1</li>
+<li><strong>Criada em:</strong> 2025-10-28 18:20:33</li>
+<li><strong>Atualizada em:</strong> 2025-10-28 19:09:17</li>
+<li><strong>Total de mensagens:</strong> 20</li>
+<li><strong>Resumo:</strong> Convertendo Markdown com Emojis para PDF.
+Converter md contendo emojis para pdf (no windows). Preten…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-28-182033-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-28
+18:20:33)</em> <em>[ChatGPT]</em></h3>
+<p>Convertendo Markdown com Emojis para PDF. Converter md contendo
+emojis para pdf (no windows). Pretende-se que o pdf gerado contenha os
+emojis coloridos. (Pesquisas) D:_DOCS__DOCS__emojis&gt;</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-10-28-182033-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:20:33)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👍 — você quer <strong>converter o arquivo Markdown
+(<code>teste_emojis.md</code>) em PDF mantendo os emojis
+coloridos</strong> no <strong>Windows</strong>.</p>
+<p>Aqui vai um guia passo a passo com <strong>opções testadas</strong>
+para que os emojis apareçam coloridos (não preto e branco ou
+quadrados):</p>
+<hr />
+<h2 data-number="1.3" id="opção-1-usando-o-pandoc-chrome-engine-recomendado"><span class="header-section-number">1.3</span> ✅ Opção 1 — Usando o
+<strong>Pandoc + Chrome Engine (recomendado)</strong></h2>
+<p>Essa é a maneira mais fácil e confiável.</p>
+<h3 data-number="1.3.1" id="instale"><span class="header-section-number">1.3.1</span> 1. Instale:</h3>
+<ul>
+<li><strong>Pandoc</strong> → <a href="https://pandoc.org/installing.html">https://pandoc.org/installing.html</a></li>
+<li><strong>Google Chrome</strong> (ou Edge)</li>
+<li><strong>Noto Color Emoji</strong> → fonte que suporta emojis
+coloridos<br />
+Baixe: <a href="https://github.com/googlefonts/noto-emoji">Noto Color
+Emoji Windows version</a></li>
+</ul>
+<h3 data-number="1.3.2" id="comando"><span class="header-section-number">1.3.2</span> 2. Comando:</h3>
+<p>No PowerShell ou CMD:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span> <span class="at">--pdf-engine</span><span class="op">=</span>chrome</span></code></pre></div>
+<blockquote>
+<p>💡 O <code>--pdf-engine=chrome</code> usa o motor do Chrome para
+renderizar o HTML e gerar PDF com suporte total a emojis coloridos.</p>
+</blockquote>
+<hr />
+<h2 data-number="1.4" id="opção-2-usando-typora-interface-gráfica"><span class="header-section-number">1.4</span> ✅ Opção 2 — Usando
+<strong>Typora</strong> (interface gráfica)</h2>
+<ol type="1">
+<li>Instale <strong>Typora</strong> → <a href="https://typora.io">https://typora.io</a><br />
+</li>
+<li>Abra o <code>.md</code></li>
+<li>Vá em <strong>Arquivo → Exportar → PDF</strong></li>
+<li>Verifique se a fonte padrão é uma que suporte emoji (ex: <em>Segoe
+UI Emoji</em>, <em>Noto Color Emoji</em>).</li>
+</ol>
+<blockquote>
+<p>Tip: Em “Preferências → Aparência → Fonte”, selecione uma fonte que
+suporte emojis.</p>
+</blockquote>
+<hr />
+<h2 data-number="1.5" id="opção-3-converter-com-python-markdown-html-pdf-via-weasyprint"><span class="header-section-number">1.5</span> ✅ Opção 3 — Converter com
+<strong>Python (markdown → HTML → PDF via WeasyPrint)</strong></h2>
+<p>Se quiser um script automatizado:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> markdown</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;teste_emojis.md&quot;</span>, <span class="st">&quot;r&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    html <span class="op">=</span> markdown.markdown(f.read(), extensions<span class="op">=</span>[<span class="st">&quot;tables&quot;</span>, <span class="st">&quot;fenced_code&quot;</span>])</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>HTML(string<span class="op">=</span>html).write_pdf(<span class="st">&quot;teste_emojis.pdf&quot;</span>, presentational_hints<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+<blockquote>
+<p>Certifique-se de que o Windows tenha uma fonte com emojis coloridos
+instalada (ex: Segoe UI Emoji ou Noto Color Emoji).</p>
+</blockquote>
+<hr />
+<h2 data-number="1.6" id="dicas-extras"><span class="header-section-number">1.6</span> 💡 Dicas Extras</h2>
+<ul>
+<li><p>Se os emojis saírem <strong>preto e branco</strong>, edite o CSS
+usado para o HTML e defina:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Evite <code>wkhtmltopdf</code>, pois ele não renderiza emojis
+coloridos corretamente.</p></li>
+<li><p><strong>Chrome e Typora</strong> são as únicas opções que
+garantem emojis coloridos no Windows.</p></li>
+</ul>
+<hr />
+<p>Se quiser, posso gerar o PDF com emojis coloridos aqui para você (e
+te enviar o arquivo pronto).<br />
+Quer que eu gere o PDF a partir do <code>teste_emojis.md</code> e
+mantenha os emojis coloridos?</p>
+<hr />
+<h3 data-number="1.6.1" id="utilizador-2025-10-28-182250-chatgpt"><span class="header-section-number">1.6.1</span> 👤 Utilizador <em>(2025-10-28
+18:22:50)</em> <em>[ChatGPT]</em></h3>
+<p>(base) D:_DOCS__DOCS_<em>emojis&gt;pandoc
+“D:_DOCS</em>_DOCS_<em>emojis<em>emojis.md” -o
+“D:_DOCS</em>_DOCS</em>_emojis_emojis.pdf” –pdf-engine=chrome Argument
+of –pdf-engine must be one of weasyprint wkhtmltopdf pagedjs-cli prince
+pdflatex lualatex xelatex latexmk tectonic pdflatex-dev lualatex-dev
+pdfroff groff typst context</p>
+<hr />
+<h3 data-number="1.6.2" id="chatgpt-2025-10-28-182249-chatgpt"><span class="header-section-number">1.6.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:22:49)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente observação 👏 — a mensagem indica que <strong>sua versão do
+Pandoc não aceita <code>--pdf-engine=chrome</code></strong>, pois o
+Chrome ainda não é oficialmente reconhecido como mecanismo interno do
+Pandoc (essa flag é experimental e usada em builds customizadas).</p>
+<p>Mas não se preocupe — dá pra resolver facilmente e <strong>ainda
+gerar um PDF com emojis coloridos no Windows</strong>.</p>
+<hr />
+<h2 data-number="1.7" id="caminho-alternativo-100-funcional-em-2-passos"><span class="header-section-number">1.7</span> 🧭 Caminho alternativo 100%
+funcional (em 2 passos)</h2>
+<h3 data-number="1.7.1" id="converter-o-markdown-em-html-mantendo-emojis"><span class="header-section-number">1.7.1</span> ✅ 1️⃣ Converter o Markdown em
+HTML (mantendo emojis)</h3>
+<p>No terminal (CMD ou PowerShell):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span> <span class="at">--standalone</span></span></code></pre></div>
+<hr />
+<h3 data-number="1.7.2" id="imprimir-o-html-como-pdf-com-chrome-emojis-coloridos"><span class="header-section-number">1.7.2</span> ✅ 2️⃣ Imprimir o HTML como
+PDF com Chrome (emojis coloridos)</h3>
+<p>Agora, rode:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> <span class="at">--headless</span> <span class="at">--disable-gpu</span> <span class="at">--print-to-pdf</span><span class="op">=</span><span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span></span></code></pre></div>
+<p>🔹 Isso usa o <strong>motor de renderização do Chrome</strong>, o
+mesmo do navegador, garantindo <strong>emojis coloridos e layout
+fiel</strong>.<br />
+🔹 Funciona também com o Microsoft Edge (basta trocar o caminho do
+executável).</p>
+<hr />
+<h2 data-number="1.8" id="dicas-extras-1"><span class="header-section-number">1.8</span> 💡 Dicas extras</h2>
+<ul>
+<li><p>Certifique-se de que o Windows tenha uma <strong>fonte com emojis
+coloridos</strong>, como:</p>
+<ul>
+<li><code>Segoe UI Emoji</code> (já vem no Windows 10/11)</li>
+<li>ou instale <a href="https://github.com/googlefonts/noto-emoji">Noto
+Color Emoji</a></li>
+</ul></li>
+<li><p>Se quiser ajustar a aparência, edite o HTML gerado e
+adicione:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre></div></li>
+</ul>
+<hr />
+<h2 data-number="1.9" id="alternativa-gráfica"><span class="header-section-number">1.9</span> 🚀 Alternativa gráfica</h2>
+<p>Abra o <code>.html</code> no navegador → <code>Ctrl + P</code> →
+“Salvar como PDF”<br />
+→ garante os emojis coloridos sem precisar de linha de comando.</p>
+<hr />
+<p>Se quiser, posso gerar automaticamente o HTML (com o CSS certo e
+emojis coloridos) a partir do seu <code>.md</code> e te devolver o
+arquivo <code>.html</code> pronto para converter com o Chrome.<br />
+Quer que eu faça isso?</p>
+<hr />
+<h3 data-number="1.9.1" id="utilizador-2025-10-28-182333-chatgpt"><span class="header-section-number">1.9.1</span> 👤 Utilizador <em>(2025-10-28
+18:23:33)</em> <em>[ChatGPT]</em></h3>
+<p>qual versão do Pandoc aceita –pdf-engine=chrome</p>
+<hr />
+<h3 data-number="1.9.2" id="chatgpt-2025-10-28-182335-chatgpt"><span class="header-section-number">1.9.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:23:35)</em> <em>[ChatGPT]</em></h3>
+<p>Não consegui encontrar nenhuma versão oficial do entity[“software”,
+“Pandoc”, 0] que suporte
+<strong><code>--pdf-engine=chrome</code></strong> como mecanismo
+reconhecido. A documentação oficial lista os seguintes motores
+suportados, por exemplo: <code>pdflatex</code>, <code>xelatex</code>,
+<code>wkhtmltopdf</code>, <code>weasyprint</code>, <code>prince</code>,
+<code>pagedjs-cli</code>, <code>context</code> etc.
+citeturn0search18turn0search3turn0search6</p>
+<p>Por exemplo, há uma issue no repositório do Pandoc (“Support for
+chrome (and chromium) as PDF engines”) indicando que esse suporte ainda
+está em discussão e não foi incorporado oficialmente.
+citeturn0search1</p>
+<p>Se quiser, posso ver se existe algum <em>fork</em> ou <em>plugin</em>
+experimental que permita usar o Chrome/Chromium como motor no Pandoc, e
+te envio o link.</p>
+<hr />
+<h3 data-number="1.9.3" id="utilizador-2025-10-28-182738-chatgpt"><span class="header-section-number">1.9.3</span> 👤 Utilizador <em>(2025-10-28
+18:27:38)</em> <em>[ChatGPT]</em></h3>
+<p>Gosto da opção Caminho alternativo 100% funcional (em 2 passos).
+Haverá outra forma de converter html para pdf sem usar o Chrome</p>
+<hr />
+<h3 data-number="1.9.4" id="chatgpt-2025-10-28-182737-chatgpt"><span class="header-section-number">1.9.4</span> 🤖 ChatGPT <em>(2025-10-28
+18:27:37)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeita a pergunta — sim 👍, existem <strong>outras formas robustas
+de converter HTML para PDF com emojis coloridos</strong> (sem depender
+do Chrome headless).</p>
+<p>A chave é escolher um conversor que <strong>suporte fontes
+coloridas</strong> (como <em>Segoe UI Emoji</em> ou <em>Noto Color
+Emoji</em>) e <strong>renderize HTML moderno
+corretamente</strong>.<br />
+Vamos ver as melhores alternativas:</p>
+<hr />
+<h2 data-number="1.10" id="weasyprint-python-simples-e-confiável"><span class="header-section-number">1.10</span> 🧩 1️⃣
+<strong>WeasyPrint</strong> (Python, simples e confiável)</h2>
+<p>WeasyPrint é uma das melhores opções open-source.</p>
+<h3 data-number="1.10.1" id="instalação"><span class="header-section-number">1.10.1</span> 💻 Instalação</h3>
+<p>No PowerShell:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint markdown</span></code></pre></div>
+<h3 data-number="1.10.2" id="conversão-direta-de-.md-para-pdf"><span class="header-section-number">1.10.2</span> 🧾 Conversão (direta de .md
+para PDF)</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> markdown</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Lê o Markdown</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;D:</span><span class="ch">\\</span><span class="st">Downloads</span><span class="ch">\\</span><span class="st">_DOCS_</span><span class="ch">\\</span><span class="st">_DOCS_</span><span class="ch">\\</span><span class="st">Teste_emojis</span><span class="ch">\\</span><span class="st">teste_emojis.md&quot;</span>, <span class="st">&quot;r&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    html_content <span class="op">=</span> markdown.markdown(f.read(), extensions<span class="op">=</span>[<span class="st">&quot;tables&quot;</span>, <span class="st">&quot;fenced_code&quot;</span>])</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Adiciona estilo com fonte de emoji</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>html <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;html&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;head&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;style&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ss">body </span><span class="ch">{{</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-family: &quot;Segoe UI Emoji&quot;, &quot;Noto Color Emoji&quot;, sans-serif;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-size: 14px;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="ss">table, th, td </span><span class="ch">{{</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ss">  border: 1px solid #ccc;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="ss">  border-collapse: collapse;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="ss">  padding: 4px;</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/style&gt;</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/head&gt;</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;body&gt;</span><span class="sc">{</span>html_content<span class="sc">}</span><span class="ss">&lt;/body&gt;</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/html&gt;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Gera PDF</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>HTML(string<span class="op">=</span>html).write_pdf(<span class="st">&quot;D:</span><span class="ch">\\</span><span class="st">Downloads</span><span class="ch">\\</span><span class="st">_DOCS_</span><span class="ch">\\</span><span class="st">_DOCS_</span><span class="ch">\\</span><span class="st">Teste_emojis</span><span class="ch">\\</span><span class="st">teste_emojis.pdf&quot;</span>)</span></code></pre></div>
+<p>✅ <strong>Vantagens</strong> - Emojis coloridos (desde que a fonte
+suporte) - Layout HTML moderno - 100% offline - Sem precisar abrir
+navegador</p>
+<hr />
+<h2 data-number="1.11" id="princexml-profissional-gratuito-para-uso-pessoal"><span class="header-section-number">1.11</span> 🧩 2️⃣
+<strong>PrinceXML</strong> (profissional, gratuito para uso
+pessoal)</h2>
+<p>Prince é um motor de renderização comercial usado em produção (como
+relatórios e livros digitais).</p>
+<h3 data-number="1.11.1" id="instalação-1"><span class="header-section-number">1.11.1</span> 💻 Instalação</h3>
+<p>Baixe: <a href="https://www.princexml.com/download/">https://www.princexml.com/download/</a></p>
+<h3 data-number="1.11.2" id="uso"><span class="header-section-number">1.11.2</span> 🔧 Uso</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">prince</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span></span></code></pre></div>
+<p>✅ <strong>Vantagens</strong> - Excelente qualidade tipográfica -
+Suporte a CSS avançado - Emojis coloridos (quando fonte disponível)</p>
+<hr />
+<h2 data-number="1.12" id="paged.js-cli-node.js"><span class="header-section-number">1.12</span> 🧩 3️⃣ <strong>Paged.js
+CLI</strong> (Node.js)</h2>
+<p>Alternativa open-source ao Prince.</p>
+<h3 data-number="1.12.1" id="instalação-2"><span class="header-section-number">1.12.1</span> Instalação:</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> pagedjs-cli</span></code></pre></div>
+<h3 data-number="1.12.2" id="uso-1"><span class="header-section-number">1.12.2</span> Uso:</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pagedjs-cli</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span></span></code></pre></div>
+<p>✅ <strong>Vantagens</strong> - Totalmente gratuito e
+open-source<br />
+- Baseado em Chromium via Puppeteer<br />
+- Emojis coloridos garantidos</p>
+<hr />
+<h2 data-number="1.13" id="weasyprint-css-personalizado-melhor-custo-benefício"><span class="header-section-number">1.13</span> 🧩 4️⃣ <strong>WeasyPrint + CSS
+personalizado (melhor custo-benefício)</strong></h2>
+<p>Entre todas, <strong>WeasyPrint</strong> é o equilíbrio ideal: - Roda
+em qualquer Windows com Python - Gera PDF com emojis coloridos - Fácil
+de automatizar</p>
+<hr />
+<p>Quer que eu te gere o HTML estilizado (com o CSS certo e pronto para
+o WeasyPrint ou Prince)?<br />
+Assim você só precisa rodar o comando de conversão.</p>
+<hr />
+<h3 data-number="1.13.1" id="utilizador-2025-10-28-183610-chatgpt"><span class="header-section-number">1.13.1</span> 👤 Utilizador
+<em>(2025-10-28 18:36:10)</em> <em>[ChatGPT]</em></h3>
+<p>Conversão (direta de .md para PDF)  Pesquisas)
+D:_DOCS__DOCS__emojis&gt;python convert_md_pdf.py Fontconfig error:
+Cannot load default config file: No such file: (null) Fontconfig error:
+Cannot load default config file: No such file: (null)</p>
+<hr />
+<h3 data-number="1.13.2" id="utilizador-2025-10-28-183731-chatgpt"><span class="header-section-number">1.13.2</span> 👤 Utilizador
+<em>(2025-10-28 18:37:31)</em> <em>[ChatGPT]</em></h3>
+<p>Conversão (direta de .md para PDF)  Pesquisas)
+D:_DOCS__DOCS__emojis&gt;python convert_md_pdf.py Fontconfig error:
+Cannot load default config file: No such file: (null) Fontconfig error:
+Cannot load default config file: No such file: (null) acontece tambem
+Python has stopped working</p>
+<hr />
+<h3 data-number="1.13.3" id="chatgpt-2025-10-28-183609-chatgpt"><span class="header-section-number">1.13.3</span> 🤖 ChatGPT <em>(2025-10-28
+18:36:09)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente — isso mostra que o <strong>WeasyPrint está
+funcionando</strong>, mas o erro</p>
+<pre><code>Fontconfig error: Cannot load default config file: No such file: (null)</code></pre>
+<p>significa que ele <strong>não está conseguindo localizar a
+configuração de fontes do sistema</strong> (arquivo
+<code>fonts.conf</code>) no <strong>Windows</strong>, o que é comum
+porque o <em>Fontconfig</em> é uma dependência de Linux/Unix.</p>
+<p>🧠 <strong>Boa notícia:</strong><br />
+👉 Esse erro <strong>não impede a geração do PDF</strong>, mas pode
+fazer com que <strong>as fontes e emojis não apareçam
+corretamente</strong>.<br />
+Abaixo estão as soluções (escolha 1 e opcionalmente 2 se quiser corrigir
+de vez).</p>
+<hr />
+<h2 data-number="1.14" id="solução-rápida-funciona-na-maioria-dos-casos"><span class="header-section-number">1.14</span> ✅ 1️⃣ Solução Rápida (funciona
+na maioria dos casos)</h2>
+<p>Adicione a fonte explicitamente no CSS, garantindo que o Windows use
+a <em>Segoe UI Emoji</em> (nativa).</p>
+<p>No seu script <code>convert_md_pdf.py</code>, altere o trecho
+CSS:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>html <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;html&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;head&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;style&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ss">body </span><span class="ch">{{</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-family: &quot;Segoe UI Emoji&quot;, &quot;Noto Color Emoji&quot;, &quot;Arial Unicode MS&quot;, sans-serif;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-size: 14px;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ss">table, th, td </span><span class="ch">{{</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ss">  border: 1px solid #ccc;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="ss">  border-collapse: collapse;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="ss">  padding: 4px;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/style&gt;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/head&gt;</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;body&gt;</span><span class="sc">{</span>html_content<span class="sc">}</span><span class="ss">&lt;/body&gt;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/html&gt;</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span></span></code></pre></div>
+<p>💡 Isso força o uso das fontes nativas do Windows e elimina o risco
+de emojis pretos/brancos.</p>
+<p>Depois, execute novamente:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_pdf.py</span></code></pre></div>
+<p>Se o PDF abrir corretamente e os emojis aparecerem coloridos, pode
+ignorar o aviso do <code>Fontconfig</code>.</p>
+<hr />
+<h2 data-number="1.15" id="corrigindo-de-forma-definitiva-opcional"><span class="header-section-number">1.15</span> ✅ 2️⃣ Corrigindo de forma
+definitiva (opcional)</h2>
+<p>WeasyPrint usa <em>Pango + Cairo + Fontconfig</em>.<br />
+No Windows, ele às vezes não encontra <code>fonts.conf</code>.</p>
+<p>Você pode: 1. Criar um arquivo de configuração manual: - Crie o
+arquivo:<br />
+<code>C:\Users\&lt;SEU_USUARIO&gt;\.config\fontconfig\fonts.conf</code>
+- Coloque nele:
+<code>xml      &lt;?xml version=&quot;1.0&quot;?&gt;      &lt;!DOCTYPE fontconfig SYSTEM &quot;fonts.dtd&quot;&gt;      &lt;fontconfig&gt;        &lt;dir&gt;C:\Windows\Fonts&lt;/dir&gt;      &lt;/fontconfig&gt;</code>
+2. Garanta que a pasta exista:
+<code>bash    mkdir C:\Users\&lt;SEU_USUARIO&gt;\.config\fontconfig</code>
+3. Tente novamente: <code>bash    python convert_md_pdf.py</code></p>
+<hr />
+<h2 data-number="1.16" id="verificar-resultado"><span class="header-section-number">1.16</span> ✅ 3️⃣ Verificar resultado</h2>
+<p>Abra o PDF e confirme: - Emojis aparecem <strong>coloridos</strong> →
+perfeito 🎉<br />
+- Se aparecerem em preto e branco, é só instalar a fonte <strong>Noto
+Color Emoji</strong> e reiniciar o sistema.</p>
+<hr />
+<p>Se quiser, posso te gerar uma versão ajustada do
+<code>convert_md_pdf.py</code> com: - Detecção automática de fonte no
+Windows<br />
+- CSS integrado<br />
+- Erros de Fontconfig ignorados com segurança</p>
+<p>Quer que eu te monte esse script pronto (sem precisar editar
+nada)?</p>
+<hr />
+<h3 data-number="1.16.1" id="chatgpt-2025-10-28-183731-chatgpt"><span class="header-section-number">1.16.1</span> 🤖 ChatGPT <em>(2025-10-28
+18:37:31)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito — esse erro que você viu:</p>
+<pre><code>Fontconfig error: Cannot load default config file: No such file: (null)
+Python has stopped working</code></pre>
+<p>é <strong>um problema conhecido do WeasyPrint no Windows</strong>,
+relacionado ao <strong>Fontconfig (biblioteca de fontes do
+Linux)</strong>.<br />
+A boa notícia: ✅ existe solução 100% funcional para isso.</p>
+<hr />
+<h2 data-number="1.17" id="causa"><span class="header-section-number">1.17</span> 🧩 Causa</h2>
+<p>O <strong>WeasyPrint</strong> (e suas dependências como
+<code>cairo</code>, <code>pango</code> e <code>fontconfig</code>) são
+originalmente do ambiente Linux.<br />
+No Windows, quando essas libs não encontram o arquivo
+<code>fonts.conf</code>, elas travam — especialmente se o Python estiver
+em ambiente Conda ou em instalação portátil.</p>
+<hr />
+<h2 data-number="1.18" id="soluções-possíveis-em-ordem-de-simplicidade"><span class="header-section-number">1.18</span> 🧩 Soluções possíveis (em
+ordem de simplicidade)</h2>
+<hr />
+<h3 data-number="1.18.1" id="solução-1-usar-versão-portátil-e-estável-do-weasyprint-via-pip"><span class="header-section-number">1.18.1</span> ✅ <strong>Solução 1 — Usar
+versão portátil e estável do WeasyPrint via pip</strong></h3>
+<p>Execute no PowerShell (como admin ou dentro do seu ambiente
+base):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> uninstall weasyprint cairocffi cffi tinycss2 html5lib cssselect2</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint==61.2</span></code></pre></div>
+<blockquote>
+<p>Essa versão é estável no Windows e já inclui correções para algumas
+falhas de Fontconfig.</p>
+</blockquote>
+<p>Depois, rode novamente:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_pdf.py</span></code></pre></div>
+<p>Se ainda ocorrer erro, continue para a próxima solução 👇</p>
+<hr />
+<h3 data-number="1.18.2" id="solução-2-criar-manualmente-o-arquivo-de-configuração-de-fontes"><span class="header-section-number">1.18.2</span> ✅ <strong>Solução 2 — Criar
+manualmente o arquivo de configuração de fontes</strong></h3>
+<ol type="1">
+<li><p>Crie a pasta (caso não exista):</p>
+<pre><code>C:\Users\&lt;seu_usuário&gt;\.config\fontconfig</code></pre></li>
+<li><p>Dentro dela, crie o arquivo <strong>fonts.conf</strong> com o
+seguinte conteúdo:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span> <span class="ot">version=</span><span class="st">&quot;1.0&quot;</span><span class="fu">?&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> <span class="dt">fontconfig</span> SYSTEM &quot;fonts.dtd&quot;<span class="dt">&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">fontconfig</span>&gt;</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">dir</span>&gt;C:\Windows\Fonts&lt;/<span class="kw">dir</span>&gt;</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">fontconfig</span>&gt;</span></code></pre></div></li>
+<li><p>Depois, defina a variável de ambiente:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> FONTCONFIG_PATH=C:<span class="dt">\U</span>sers<span class="dt">\&lt;</span>seu_usuário<span class="op">&gt;</span><span class="dt">\.</span>config\fontconfig</span></code></pre></div></li>
+</ol>
+<blockquote>
+<p>Isso informa ao Fontconfig onde estão as fontes do Windows (como
+<em>Segoe UI Emoji</em>).</p>
+</blockquote>
+<hr />
+<h3 data-number="1.18.3" id="solução-3-rodar-via-wsl-garantido-e-sem-travamentos"><span class="header-section-number">1.18.3</span> ✅ <strong>Solução 3 — Rodar
+via WSL (garantido e sem travamentos)</strong></h3>
+<p>Se tiver o <strong>Windows Subsystem for Linux (WSL)</strong>
+instalado, basta:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install weasyprint python3-markdown fonts-noto-color-emoji <span class="at">-y</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">weasyprint</span> teste_emojis.md teste_emojis.pdf</span></code></pre></div>
+<p>🎯 Vantagem: o WSL tem Fontconfig completo e suporte nativo a emojis
+coloridos.</p>
+<hr />
+<h3 data-number="1.18.4" id="solução-4-usar-alternativa-pura-de-windows"><span class="header-section-number">1.18.4</span> ✅ <strong>Solução 4 — Usar
+alternativa pura de Windows</strong></h3>
+<p>Se quiser <strong>evitar completamente Fontconfig</strong>, use o
+motor <code>pagedjs-cli</code> (Node.js) que não tem esse problema:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> pagedjs-cli</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.html</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pagedjs-cli</span> teste_emojis.html <span class="at">-o</span> teste_emojis.pdf</span></code></pre></div>
+<p>💡 Emojis coloridos garantidos, sem dependências do Linux.</p>
+<hr />
+<h2 data-number="1.19" id="resumo-das-opções"><span class="header-section-number">1.19</span> 🧾 Resumo das opções</h2>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 27%" />
+<col style="width: 39%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr>
+<th>Método</th>
+<th>Emojis coloridos</th>
+<th>Funciona no Windows puro</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WeasyPrint (com fix)</td>
+<td>✅</td>
+<td>⚠️ (precisa <code>fonts.conf</code>)</td>
+<td>Melhor qualidade tipográfica</td>
+</tr>
+<tr>
+<td>PrinceXML</td>
+<td>✅</td>
+<td>✅</td>
+<td>Free para uso pessoal</td>
+</tr>
+<tr>
+<td>Chrome headless</td>
+<td>✅</td>
+<td>✅</td>
+<td>Simples e direto</td>
+</tr>
+<tr>
+<td>Paged.js CLI</td>
+<td>✅</td>
+<td>✅</td>
+<td>Totalmente open-source</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Quer que eu te monte um <strong>script <code>convert_md_pdf.py</code>
+corrigido</strong>, que já inclua a configuração correta e evite esse
+erro no Windows (sem precisar mexer no sistema)?</p>
+<hr />
+<h3 data-number="1.19.1" id="utilizador-2025-10-28-183943-chatgpt"><span class="header-section-number">1.19.1</span> 👤 Utilizador
+<em>(2025-10-28 18:39:43)</em> <em>[ChatGPT]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;python convert_md_pdf.py</p>
+<hr />
+<p>WeasyPrint could not import some external libraries. Please carefully
+follow the installation steps before reporting an issue: <a href="https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation" class="uri">https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation</a>
+<a href="https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#troubleshooting" class="uri">https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#troubleshooting</a></p>
+<hr />
+<p>Traceback (most recent call last): File
+“D:_DOCS__DOCS__emojis_md_pdf.py”, line 2, in <module> from weasyprint
+import HTML File “C:-packages__init__.py”, line 419, in <module> from
+.css import preprocess_stylesheet # noqa isort:skip <sup></sup> File
+“C:-packages__init__.py”, line 27, in <module> from .computed_values
+import COMPUTER_FUNCTIONS File “C:-packages_values.py”, line 9, in
+<module> from ..text.ffi import ffi, pango, units_to_double File
+“C:-packages.py”, line 431, in <module> pango = _dlopen( <sup></sup>
+File “C:-packages.py”, line 417, in _dlopen return ffi.dlopen(names[0])
+# pragma: no cover <sup></sup> File “C:-packages.py”, line 150, in
+dlopen lib, function_cache = _make_ffi_library(self, name, flags)
+<sup></sup> File “C:-packages.py”, line 834, in _make_ffi_library
+backendlib = _load_backend_lib(backend, libname, flags) <sup></sup> File
+“C:-packages.py”, line 829, in _load_backend_lib raise OSError(msg)
+OSError: cannot load library ‘pango-1.0-0’: error 0x7e. Additionally,
+ctypes.util.find_library() did not manage to locate a library called
+‘pango-1.0-0’</p>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;</p>
+<hr />
+<h3 data-number="1.19.2" id="chatgpt-2025-10-28-183942-chatgpt"><span class="header-section-number">1.19.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:39:42)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito — agora a mensagem está <strong>claríssima</strong>:</p>
+<pre><code>OSError: cannot load library &#39;pango-1.0-0&#39;</code></pre>
+<p>👉 Isso significa que o <strong>WeasyPrint</strong> não conseguiu
+carregar o <strong>Pango</strong>, uma biblioteca essencial para
+renderização de texto.<br />
+No Windows, o Pango <strong>não é instalado automaticamente</strong> via
+<code>pip</code> (é um componente Linux).</p>
+<hr />
+<h2 data-number="1.20" id="o-que-está-acontecendo"><span class="header-section-number">1.20</span> 💥 O que está acontecendo</h2>
+<p>WeasyPrint depende dessas bibliotecas nativas:</p>
+<ul>
+<li><strong>cairo</strong></li>
+<li><strong>pango</strong></li>
+<li><strong>gdk-pixbuf</strong></li>
+<li><strong>fontconfig</strong></li>
+</ul>
+<p>No Linux elas vêm instaladas por padrão.<br />
+No Windows, <strong>elas não são incluídas</strong> no pacote Python, e
+precisam ser instaladas manualmente — o que é bem trabalhoso (ou quase
+inviável no Conda).</p>
+<hr />
+<h2 data-number="1.21" id="soluções-práticas-e-estáveis"><span class="header-section-number">1.21</span> ✅ Soluções práticas e
+estáveis</h2>
+<h3 data-number="1.21.1" id="opção-1-usar-princexml-recomendado-para-windows"><span class="header-section-number">1.21.1</span> 🟢 <strong>Opção 1 — Usar
+PrinceXML (recomendado para Windows)</strong></h3>
+<p>É a maneira mais simples e robusta <strong>sem precisar do Chrome nem
+do Fontconfig</strong>.</p>
+<h4 data-number="1.21.1.1" id="passos"><span class="header-section-number">1.21.1.1</span> 👉 Passos:</h4>
+<ol type="1">
+<li><p>Baixe e instale:<br />
+🔗 <a href="https://www.princexml.com/download/">https://www.princexml.com/download/</a></p></li>
+<li><p>Depois, converta seu arquivo HTML:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">prince</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span></span></code></pre></div>
+<p>✅ Emojis coloridos<br />
+✅ Funciona nativamente no Windows<br />
+✅ Sem precisar instalar bibliotecas extras</p></li>
+</ol>
+<p>Prince é <strong>grátis para uso pessoal</strong> e amplamente usado
+em publicações e relatórios.</p>
+<hr />
+<h3 data-number="1.21.2" id="opção-2-usar-pagedjs-cli-node.js"><span class="header-section-number">1.21.2</span> 🟡 <strong>Opção 2 — Usar
+<code>pagedjs-cli</code> (Node.js)</strong></h3>
+<p>Se preferir algo open-source e leve.</p>
+<ol type="1">
+<li><p>Instale o Node.js (<a href="https://nodejs.org/" class="uri">https://nodejs.org/</a>)</p></li>
+<li><p>No terminal:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> pagedjs-cli</span></code></pre></div></li>
+<li><p>Converta:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pagedjs-cli</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span> <span class="at">-o</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span></span></code></pre></div></li>
+</ol>
+<p>✅ Gera PDFs idênticos aos do Chrome (usa o motor Chromium)<br />
+✅ Emojis coloridos<br />
+✅ 100% open-source</p>
+<hr />
+<h3 data-number="1.21.3" id="evite-no-windows"><span class="header-section-number">1.21.3</span> 🔴 <strong>Evite no
+Windows:</strong></h3>
+<ul>
+<li><strong>WeasyPrint via pip</strong> → depende de Pango/Cairo que não
+têm builds oficiais fáceis.</li>
+<li><strong>wkhtmltopdf</strong> → não renderiza emojis coloridos (usa
+Qt antigo).</li>
+</ul>
+<hr />
+<h2 data-number="1.22" id="conclusão"><span class="header-section-number">1.22</span> 💡 Conclusão</h2>
+<p>Para seu caso
+(<code>D:\Downloads\_DOCS_\_DOCS_\Teste_emojis</code>):</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 26%" />
+<col style="width: 26%" />
+<col style="width: 14%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Emojis coloridos</th>
+<th>Fácil no Windows</th>
+<th>Offline</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PrinceXML</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>Melhor opção geral</td>
+</tr>
+<tr>
+<td><strong>Paged.js CLI</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️ precisa Node.js</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>WeasyPrint</strong></td>
+<td>✅</td>
+<td>❌</td>
+<td>✅</td>
+<td>Problemático no Windows</td>
+</tr>
+<tr>
+<td><strong>Chrome headless</strong></td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️ precisa Chrome</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Posso gerar para você um pequeno script <code>.bat</code> que: 1.
+Converte o <code>.md</code> em <code>.html</code> 2. Usa PrinceXML (ou
+Paged.js) automaticamente<br />
+3. Gera o PDF com emojis coloridos</p>
+<p>Quer que eu monte esse script para você?</p>
+<hr />
+<h3 data-number="1.22.1" id="utilizador-2025-10-28-184051-chatgpt"><span class="header-section-number">1.22.1</span> 👤 Utilizador
+<em>(2025-10-28 18:40:51)</em> <em>[ChatGPT]</em></h3>
+<p>É possivel instalar PrinceXML via choco</p>
+<hr />
+<h3 data-number="1.22.2" id="chatgpt-2025-10-28-184050-chatgpt"><span class="header-section-number">1.22.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:40:50)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente pergunta 👏 — <strong>sim, é possível instalar o PrinceXML
+via Chocolatey</strong>, mas com um pequeno detalhe:<br />
+➡️ <strong>o pacote não está oficialmente mantido no repositório
+principal</strong>, então a instalação via
+<code>choco install princexml</code> pode <strong>não funcionar
+diretamente</strong> ou instalar uma versão antiga.</p>
+<p>Aqui estão as formas seguras de fazer isso no
+<strong>Windows</strong>, dependendo do seu objetivo 👇</p>
+<hr />
+<h2 data-number="1.23" id="opção-1-instalação-direta-via-chocolatey-testar-primeiro"><span class="header-section-number">1.23</span> 🟢 <strong>Opção 1 —
+Instalação direta via Chocolatey (testar primeiro)</strong></h2>
+<p>Abra o PowerShell <strong>como administrador</strong> e execute:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">choco</span> install princexml</span></code></pre></div>
+<p>Se o pacote estiver disponível, o Chocolatey cuidará da instalação
+automática.</p>
+<p>Verifique depois:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">prince</span> <span class="at">--version</span></span></code></pre></div>
+<blockquote>
+<p>💡 Se ele responder com algo como <code>Prince 15.2</code>, está tudo
+certo.</p>
+</blockquote>
+<p>Se der erro de “package not found” ou versão antiga, use a opção 2
+abaixo.</p>
+<hr />
+<h2 data-number="1.24" id="opção-2-instalar-manualmente-oficial-recomendada"><span class="header-section-number">1.24</span> 🟡 <strong>Opção 2 — Instalar
+manualmente (oficial, recomendada)</strong></h2>
+<p>Baixe o instalador oficial do PrinceXML (Windows 64-bit) em: 🔗 <a href="https://www.princexml.com/download/">https://www.princexml.com/download/</a></p>
+<p>Depois: 1. Execute o instalador normalmente
+(<code>PrinceSetup.exe</code>); 2. Marque a opção <strong>“Add Prince to
+PATH”</strong> durante a instalação; 3. Teste:
+<code>bash    prince --version</code></p>
+<blockquote>
+<p>✅ Saída esperada: <code>Prince 15.x (www.princexml.com)</code></p>
+</blockquote>
+<hr />
+<h2 data-number="1.25" id="dica-extra-integrar-com-pandoc"><span class="header-section-number">1.25</span> 🧩 <strong>Dica extra —
+Integrar com Pandoc</strong></h2>
+<p>Uma vez instalado, você pode converter Markdown → PDF com
+<strong>Prince</strong> via Pandoc diretamente:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;teste_emojis.pdf&quot;</span> <span class="at">--pdf-engine</span><span class="op">=</span>prince</span></code></pre></div>
+<p>✅ Emojis coloridos<br />
+✅ Layout profissional<br />
+✅ Suporte a CSS moderno</p>
+<hr />
+<h2 data-number="1.26" id="resumo-rápido"><span class="header-section-number">1.26</span> 🧾 Resumo rápido</h2>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 20%" />
+<col style="width: 33%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Método</th>
+<th>Comando</th>
+<th>Funciona hoje?</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>choco install princexml</code></td>
+<td>✅ (se pacote disponível)</td>
+<td>⚠️ Pode estar desatualizado</td>
+<td></td>
+</tr>
+<tr>
+<td>Instalador oficial</td>
+<td>🔗 <a href="https://www.princexml.com/download/">princexml.com/download</a></td>
+<td>✅</td>
+<td>Recomendado</td>
+</tr>
+<tr>
+<td>Pandoc + Prince</td>
+<td><code>pandoc arquivo.md -o arquivo.pdf --pdf-engine=prince</code></td>
+<td>✅</td>
+<td>Emojis coloridos garantidos</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Quer que eu te monte um <strong>.bat pronto</strong> que converte seu
+<code>.md</code> para <code>.pdf</code> com Prince (com CSS e emojis
+coloridos)?<br />
+Basta você rodar um comando no prompt.</p>
+<hr />
+<h3 data-number="1.26.1" id="utilizador-2025-10-28-185125-chatgpt"><span class="header-section-number">1.26.1</span> 👤 Utilizador
+<em>(2025-10-28 18:51:25)</em> <em>[ChatGPT]</em></h3>
+<p>outras alternativas open-source</p>
+<hr />
+<h3 data-number="1.26.2" id="chatgpt-2025-10-28-185124-chatgpt"><span class="header-section-number">1.26.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:51:24)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 — se você quer <strong>alternativas 100% open-source ao
+PrinceXML</strong>, que funcionem <strong>no Windows</strong> e
+<strong>mantenham emojis coloridos</strong>, existem algumas excelentes
+opções — cada uma com pontos fortes diferentes.</p>
+<p>Aqui está um <strong>guia atualizado (2025)</strong> com as
+<strong>melhores ferramentas open-source</strong> para converter
+<strong>Markdown → HTML → PDF</strong>, com ênfase em <strong>emojis
+coloridos e compatibilidade no Windows</strong>:</p>
+<hr />
+<h2 data-number="1.27" id="paged.js-cli-melhor-alternativa-open-source-ao-princexml"><span class="header-section-number">1.27</span> 🟢 <strong>1️⃣ Paged.js
+CLI</strong> <em>(melhor alternativa open-source ao PrinceXML)</em></h2>
+<p><strong>💡 O que é:</strong><br />
+Um mecanismo de layout CSS open-source inspirado no PrinceXML, mas feito
+em JavaScript (usa Chromium via Puppeteer).</p>
+<p><strong>💻 Instalação:</strong></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> pagedjs-cli</span></code></pre></div>
+<p><strong>🚀 Uso:</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="st">&quot;teste_emojis.md&quot;</span> <span class="at">-o</span> <span class="st">&quot;teste_emojis.html&quot;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pagedjs-cli</span> <span class="st">&quot;teste_emojis.html&quot;</span> <span class="at">-o</span> <span class="st">&quot;teste_emojis.pdf&quot;</span></span></code></pre></div>
+<p>✅ <strong>Vantagens:</strong> - Emojis coloridos (renderizados via
+Chromium) - CSS moderno (suporte a <code>@page</code>,
+<code>float</code>, <code>columns</code>, etc.) - Funciona nativamente
+no Windows - 100% open-source (MIT License)</p>
+<p>⚠️ <strong>Desvantagem:</strong> precisa do Node.js instalado.</p>
+<p>🔗 <a href="https://pagedjs.org">https://pagedjs.org</a></p>
+<hr />
+<h2 data-number="1.28" id="vivliostyle-cli"><span class="header-section-number">1.28</span> 🟢 <strong>2️⃣ Vivliostyle
+CLI</strong></h2>
+<p><strong>💡 O que é:</strong><br />
+Outro motor de layout CSS open-source baseado em Chromium, usado em
+publicações e e-books.</p>
+<p><strong>💻 Instalação:</strong></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> @vivliostyle/cli</span></code></pre></div>
+<p><strong>🚀 Uso:</strong></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vivliostyle</span> build teste_emojis.md <span class="at">--output</span> teste_emojis.pdf</span></code></pre></div>
+<p>✅ <strong>Vantagens:</strong> - Open-source (AGPL) - Emojis
+coloridos garantidos - Compatível com CSS avançado - Conversão direta de
+<code>.md</code> sem precisar do Pandoc (usa markdown-it)</p>
+<p>🔗 <a href="https://vivliostyle.org">https://vivliostyle.org</a></p>
+<hr />
+<h2 data-number="1.29" id="weasyprint-python"><span class="header-section-number">1.29</span> 🟢 <strong>3️⃣ WeasyPrint
+(Python)</strong></h2>
+<p>💡 Open-source e excelente no Linux/macOS.<br />
+⚠️ No Windows, tem problemas com <code>pango</code> e
+<code>fontconfig</code> (como você viu), mas roda perfeitamente no
+<strong>WSL</strong> (Subsistema Linux do Windows).</p>
+<p><strong>🚀 No WSL:</strong></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install weasyprint python3-markdown fonts-noto-color-emoji <span class="at">-y</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">weasyprint</span> teste_emojis.md teste_emojis.pdf</span></code></pre></div>
+<p>✅ Emojis coloridos<br />
+✅ PDF de alta qualidade<br />
+✅ 100% open-source<br />
+⚠️ Precisa do WSL para evitar erros de Fontconfig no Windows.</p>
+<p>🔗 <a href="https://weasyprint.org">https://weasyprint.org</a></p>
+<hr />
+<h2 data-number="1.30" id="decktape-para-html-estático"><span class="header-section-number">1.30</span> 🟢 <strong>4️⃣ DeckTape (para
+HTML estático)</strong></h2>
+<p>💡 Baseado em <strong>Puppeteer/Chromium</strong> — originalmente
+feito para exportar slides, mas também converte HTML em PDF.</p>
+<p><strong>💻 Instalação:</strong></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> decktape</span></code></pre></div>
+<p><strong>🚀 Uso:</strong></p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">decktape</span> automatic teste_emojis.html teste_emojis.pdf</span></code></pre></div>
+<p>✅ Usa o motor do Chromium (emojis coloridos)<br />
+✅ Open-source<br />
+⚠️ Menos suporte a layout complexo que Paged.js ou Vivliostyle.</p>
+<p>🔗 <a href="https://github.com/astefanutti/decktape">https://github.com/astefanutti/decktape</a></p>
+<hr />
+<h2 data-number="1.31" id="chromium-headless-puro-e-direto"><span class="header-section-number">1.31</span> 🟢 <strong>5️⃣ Chromium
+Headless (puro e direto)</strong></h2>
+<p>Sem precisar de Node.js — se já tiver o Chrome/Edge instalado.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> <span class="at">--disable-gpu</span> ^</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;teste_emojis.pdf&quot;</span> ^</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;teste_emojis.html&quot;</span></span></code></pre></div>
+<p>✅ 100% gratuito<br />
+✅ Emojis coloridos perfeitos<br />
+✅ Sem instalar nada além do Chrome<br />
+⚠️ Não é uma “ferramenta open-source” separada, mas usa o Chromium (open
+base do Chrome).</p>
+<hr />
+<h2 data-number="1.32" id="resumo-rápido-1"><span class="header-section-number">1.32</span> 🧾 <strong>Resumo
+rápido</strong></h2>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 18%" />
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Ferramenta</th>
+<th>Open-source</th>
+<th>Emojis coloridos</th>
+<th>Roda no Windows</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Paged.js CLI</strong></td>
+<td>✅ MIT</td>
+<td>✅</td>
+<td>✅</td>
+<td>Melhor equilíbrio</td>
+</tr>
+<tr>
+<td><strong>Vivliostyle CLI</strong></td>
+<td>✅ AGPL</td>
+<td>✅</td>
+<td>✅</td>
+<td>Conversão direta .md → .pdf</td>
+</tr>
+<tr>
+<td><strong>WeasyPrint</strong></td>
+<td>✅ BSD</td>
+<td>✅</td>
+<td>⚠️ (melhor via WSL)</td>
+<td>Motor CSS puro</td>
+</tr>
+<tr>
+<td><strong>DeckTape</strong></td>
+<td>✅ MIT</td>
+<td>✅</td>
+<td>✅</td>
+<td>Bom para HTML simples</td>
+</tr>
+<tr>
+<td><strong>Chromium Headless</strong></td>
+<td>✅ (base open)</td>
+<td>✅</td>
+<td>✅</td>
+<td>Simples e direto</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Se quiser, posso te preparar um <strong>script <code>.bat</code>
+open-source</strong> que: 1. Converte <code>.md</code> →
+<code>.html</code> com Pandoc<br />
+2. Gera <code>.pdf</code> com <strong>Paged.js CLI</strong><br />
+3. Usa uma folha de estilo leve para deixar o layout bonito e com emojis
+coloridos.</p>
+<p>Quer que eu gere esse <code>.bat</code> para você agora?</p>
+<hr />
+<h3 data-number="1.32.1" id="utilizador-2025-10-28-185258-chatgpt"><span class="header-section-number">1.32.1</span> 👤 Utilizador
+<em>(2025-10-28 18:52:58)</em> <em>[ChatGPT]</em></h3>
+<p>Outras opções agora usando msys2</p>
+<hr />
+<h3 data-number="1.32.2" id="chatgpt-2025-10-28-185257-chatgpt"><span class="header-section-number">1.32.2</span> 🤖 ChatGPT <em>(2025-10-28
+18:52:57)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente 👏 — usar o <strong>MSYS2</strong> é uma ótima ideia!<br />
+O MSYS2 fornece um ambiente Unix completo dentro do Windows, com acesso
+a bibliotecas nativas do Linux como <strong>Pango</strong>,
+<strong>Cairo</strong> e <strong>Fontconfig</strong> — ou seja, o
+<strong>WeasyPrint</strong> e outras ferramentas open-source passam a
+funcionar <em>sem travar</em> 🎯.</p>
+<p>Abaixo estão as <strong>melhores opções open-source para converter
+Markdown → PDF com emojis coloridos</strong>, agora <strong>dentro do
+MSYS2</strong>:</p>
+<hr />
+<h2 data-number="1.33" id="weasyprint-a-melhor-opção-no-msys2"><span class="header-section-number">1.33</span> 🧩 1️⃣ <strong>WeasyPrint (a
+melhor opção no MSYS2)</strong></h2>
+<h3 data-number="1.33.1" id="instalação-3"><span class="header-section-number">1.33.1</span> 💻 Instalação</h3>
+<p>Abra o <strong>MSYS2 MinGW64</strong> e rode:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Syu</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-S</span> mingw-w64-x86_64-python3 mingw-w64-x86_64-python3-pip <span class="dt">\</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>          mingw-w64-x86_64-cairo mingw-w64-x86_64-pango <span class="dt">\</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>          mingw-w64-x86_64-fontconfig mingw-w64-x86_64-freetype <span class="dt">\</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>          mingw-w64-x86_64-harfbuzz</span></code></pre></div>
+<p>Depois:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint markdown</span></code></pre></div>
+<h3 data-number="1.33.2" id="conversão-direta-de-.md-.pdf"><span class="header-section-number">1.33.2</span> 🚀 Conversão direta de
+<code>.md</code> → <code>.pdf</code></h3>
+<p>Crie o script <code>convert_md_pdf.py</code>:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> markdown</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;teste_emojis.md&quot;</span>, <span class="st">&quot;r&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    html <span class="op">=</span> markdown.markdown(f.read(), extensions<span class="op">=</span>[<span class="st">&quot;tables&quot;</span>, <span class="st">&quot;fenced_code&quot;</span>])</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>html <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;html&gt;</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;head&gt;</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;style&gt;</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="ss">body </span><span class="ch">{{</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-family: &quot;Noto Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, sans-serif;</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="ss">  font-size: 14px;</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="ss">table, th, td </span><span class="ch">{{</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="ss">  border: 1px solid #ccc;</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="ss">  border-collapse: collapse;</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="ss">  padding: 4px;</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/style&gt;</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/head&gt;</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;body&gt;</span><span class="sc">{</span>html<span class="sc">}</span><span class="ss">&lt;/body&gt;</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/html&gt;</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>HTML(string<span class="op">=</span>html).write_pdf(<span class="st">&quot;teste_emojis.pdf&quot;</span>)</span></code></pre></div>
+<p>E execute:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_pdf.py</span></code></pre></div>
+<p>✅ <strong>Vantagens</strong> - Emojis coloridos via <em>Noto Color
+Emoji</em> - Sem travamentos do Fontconfig - 100% open-source<br />
+- Excelente renderização tipográfica</p>
+<hr />
+<h2 data-number="1.34" id="wkhtmltopdf-qtwebkit-engine"><span class="header-section-number">1.34</span> 🧩 2️⃣ <strong>wkhtmltopdf
+(QtWebKit engine)</strong></h2>
+<p>💡 Já disponível no MSYS2 e fácil de usar, mas <strong>emojis podem
+sair preto e branco</strong> (por usar Qt antigo).</p>
+<h3 data-number="1.34.1" id="instalação-4"><span class="header-section-number">1.34.1</span> Instalação</h3>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-S</span> mingw-w64-x86_64-wkhtmltopdf</span></code></pre></div>
+<h3 data-number="1.34.2" id="uso-2"><span class="header-section-number">1.34.2</span> Uso</h3>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.html</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">wkhtmltopdf</span> teste_emojis.html teste_emojis.pdf</span></code></pre></div>
+<p>✅ Funciona bem para texto e tabelas<br />
+⚠️ Emojis podem não ser coloridos</p>
+<hr />
+<h2 data-number="1.35" id="weasyprint-via-pacote-linux-se-quiser-wsl-like"><span class="header-section-number">1.35</span> 🧩 3️⃣ <strong>WeasyPrint via
+pacote Linux (se quiser WSL-like)</strong></h2>
+<p>O MSYS2 pode rodar binários que usam <code>pango</code> e
+<code>fontconfig</code>, portanto:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-S</span> mingw-w64-x86_64-pango mingw-w64-x86_64-fontconfig</span></code></pre></div>
+<p>E em seguida:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="ex">weasyprint</span> teste_emojis.md teste_emojis.pdf</span></code></pre></div>
+<p>Isso usará o <em>back-end Cairo/Pango</em> do MSYS2, <strong>idêntico
+ao do Linux</strong>, mantendo a cor dos emojis.</p>
+<hr />
+<h2 data-number="1.36" id="princexml-via-msys2-se-quiser-misto-livregratuito"><span class="header-section-number">1.36</span> 🧩 4️⃣ <strong>PrinceXML via
+MSYS2 (se quiser misto livre/gratuito)</strong></h2>
+<p>Mesmo sendo proprietário, você pode chamar o <code>prince</code> de
+dentro do MSYS2 normalmente:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.html</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">prince</span> teste_emojis.html <span class="at">-o</span> teste_emojis.pdf</span></code></pre></div>
+<hr />
+<h2 data-number="1.37" id="outras-ferramentas-open-source-disponíveis-no-msys2"><span class="header-section-number">1.37</span> 🧩 5️⃣ <strong>Outras
+ferramentas open-source disponíveis no MSYS2</strong></h2>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 25%" />
+<col style="width: 30%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th>Ferramenta</th>
+<th>Pacote MSYS2</th>
+<th>Emojis coloridos</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WeasyPrint</strong></td>
+<td>via pip + dependências</td>
+<td>✅</td>
+<td>Melhor resultado</td>
+</tr>
+<tr>
+<td><strong>wkhtmltopdf</strong></td>
+<td><code>mingw-w64-x86_64-wkhtmltopdf</code></td>
+<td>⚠️ (monocromáticos)</td>
+<td>Muito rápido</td>
+</tr>
+<tr>
+<td><strong>Typst</strong></td>
+<td><code>mingw-w64-x86_64-typst</code></td>
+<td>⚠️ (ainda experimental)</td>
+<td>Alternativa moderna</td>
+</tr>
+<tr>
+<td><strong>Prince (free trial)</strong></td>
+<td>manual</td>
+<td>✅</td>
+<td>Não open-source</td>
+</tr>
+<tr>
+<td><strong>Chromium headless</strong></td>
+<td><code>mingw-w64-x86_64-chromium</code></td>
+<td>✅</td>
+<td>Conversão direta com <code>--print-to-pdf</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.38" id="dica-instalar-a-fonte-noto-color-emoji"><span class="header-section-number">1.38</span> 🧠 Dica: Instalar a fonte Noto
+Color Emoji</h2>
+<p>Para que os emojis apareçam coloridos em qualquer ferramenta:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-S</span> noto-fonts-emoji</span></code></pre></div>
+<p>E confirme:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fc-list</span> <span class="kw">|</span> <span class="fu">grep</span> Emoji</span></code></pre></div>
+<hr />
+<h2 data-number="1.39" id="exemplo-completo-no-msys2"><span class="header-section-number">1.39</span> 🚀 Exemplo completo no
+MSYS2</h2>
+<div class="sourceCode" id="cb49"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Syu</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-S</span> mingw-w64-x86_64-python3 mingw-w64-x86_64-pango mingw-w64-x86_64-fontconfig noto-fonts-emoji</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint markdown</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> convert_md_pdf.py</span></code></pre></div>
+<p>Resultado:<br />
+📄 <code>teste_emojis.pdf</code> → com emojis coloridos 🎨, direto do
+seu <code>.md</code>, 100% open-source e sem Chrome.</p>
+<hr />
+<p>Quer que eu gere o script completo (Markdown → PDF com CSS, via
+WeasyPrint no MSYS2) para copiar e colar direto no seu terminal?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>067_Grok_Verificar_pacotes_em_ambientes_Conda</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#verificar-pacotes-em-ambientes-conda" id="toc-verificar-pacotes-em-ambientes-conda"><span class="toc-section-number">1</span> Verificar pacotes em ambientes
+Conda</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="verificar-pacotes-em-ambientes-conda"><span class="header-section-number">1</span> Verificar pacotes em ambientes
+Conda</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #67</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 5ad60882-f558-475e-8ad2-e424fd4ed93e</li>
+<li><strong>Criada em:</strong> 2025-10-30 17:50:47Z</li>
+<li><strong>Atualizada em:</strong> 2025-10-30 18:01:07Z</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> conda environments. Verificar packages
+instaladas no ambiente atual com conda e pip. Portugues…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-30-175047-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-30
+17:50:47)</em> <em>[Grok]</em></h3>
+<p>conda environments. Verificar packages instaladas no ambiente atual
+com conda e pip. Portugues</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-10-30-175102-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-10-30
+17:51:02)</em> <em>[Grok]</em></h3>
+<p>Para verificar os pacotes instalados no ambiente atual do Conda, você
+pode usar comandos tanto do Conda quanto do pip, dependendo de como os
+pacotes foram instalados. Abaixo estão os passos para verificar os
+pacotes instalados no ambiente atual em português:</p>
+<ol type="1">
+<li><p><strong>Verificar o ambiente atual do Conda</strong><br />
+Primeiro, confirme que você está no ambiente desejado:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> info <span class="at">--envs</span></span></code></pre></div>
+<p>O ambiente ativo terá um asterisco (<code>*</code>) ao lado do nome.
+Se precisar ativar um ambiente específico:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nome_do_ambiente</span></code></pre></div></li>
+<li><p><strong>Listar pacotes instalados com Conda</strong><br />
+Para ver os pacotes instalados pelo Conda no ambiente atual:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span></code></pre></div>
+<p>Isso exibe uma lista de todos os pacotes instalados no ambiente
+ativo, incluindo nome, versão, build e canal (como
+<code>conda-forge</code> ou <code>defaults</code>).</p></li>
+<li><p><strong>Listar pacotes instalados com pip no ambiente
+atual</strong><br />
+Alguns pacotes podem ter sido instalados com o pip no ambiente Conda.
+Para verificar:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> list</span></code></pre></div>
+<p>Isso lista os pacotes instalados via pip no ambiente ativo, mostrando
+nome e versão.</p></li>
+<li><p><strong>Dicas adicionais</strong></p>
+<ul>
+<li><p>Para verificar apenas pacotes instalados explicitamente (não
+dependências) pelo Conda:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list <span class="at">--explicit</span></span></code></pre></div></li>
+<li><p>Para exportar a lista de pacotes (útil para compartilhar ou
+recriar o ambiente):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list <span class="at">--export</span> <span class="op">&gt;</span> requirements.txt</span></code></pre></div>
+<p>Para pacotes pip:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> freeze <span class="op">&gt;</span> requirements.txt</span></code></pre></div></li>
+<li><p>Se quiser verificar conflitos ou pacotes instalados por ambos
+(Conda e pip), compare as saídas de <code>conda list</code> e
+<code>pip list</code>. Pacotes instalados por pip podem aparecer com a
+anotação <code>&lt;pip&gt;</code> no <code>conda list</code>.</p></li>
+</ul></li>
+<li><p><strong>Notas importantes</strong></p>
+<ul>
+<li>Use sempre o Conda como gerenciador principal no ambiente Conda para
+evitar conflitos. Instalar pacotes com pip pode causar problemas de
+compatibilidade.</li>
+<li>Se você não souber quais pacotes estão no ambiente, comece com
+<code>conda list</code> para uma visão geral.</li>
+</ul></li>
+</ol>
+<p>Se precisar de mais detalhes ou ajuda com algum comando específico, é
+só perguntar!</p>
+<hr />
+<h3 data-number="1.2.3" id="utilizador-2025-10-30-175418-grok"><span class="header-section-number">1.2.3</span> 👤 Utilizador <em>(2025-10-30
+17:54:18)</em> <em>[Grok]</em></h3>
+<p>Gerenciar dependências Python</p>
+<hr />
+<h3 data-number="1.2.4" id="grok-2025-10-30-175452-grok"><span class="header-section-number">1.2.4</span> 🤖 Grok <em>(2025-10-30
+17:54:52)</em> <em>[Grok]</em></h3>
+<p>Gerenciar dependências em Python é essencial para garantir que
+projetos sejam reproduzíveis, estáveis e compatíveis com diferentes
+ambientes. Abaixo, explico como gerenciar dependências usando
+ferramentas como <strong>Conda</strong> e <strong>pip</strong>, com foco
+em boas práticas, em português.</p>
+<hr />
+<h3 data-number="1.2.5" id="ferramentas-para-gerenciamento-de-dependências"><span class="header-section-number">1.2.5</span> 1. <strong>Ferramentas para
+Gerenciamento de Dependências</strong></h3>
+<h4 data-number="1.2.5.1" id="a-conda"><span class="header-section-number">1.2.5.1</span> a)
+<strong>Conda</strong></h4>
+<ul>
+<li><strong>O que é?</strong> Conda é um gerenciador de pacotes e
+ambientes que suporta Python e outras linguagens, ideal para projetos
+com dependências complexas (como bibliotecas científicas).</li>
+<li><strong>Vantagens</strong>: Gerencia ambientes virtuais e
+dependências binárias, evita conflitos e suporta pacotes de
+<code>conda-forge</code>.</li>
+<li><strong>Comandos principais</strong>:
+<ul>
+<li><p>Criar um ambiente:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> nome_do_ambiente python=3.10</span></code></pre></div></li>
+<li><p>Ativar um ambiente:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nome_do_ambiente</span></code></pre></div></li>
+<li><p>Instalar pacotes:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install nome_do_pacote</span></code></pre></div></li>
+<li><p>Listar pacotes instalados:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span></code></pre></div></li>
+<li><p>Exportar dependências:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env export <span class="op">&gt;</span> environment.yml</span></code></pre></div></li>
+<li><p>Recriar ambiente a partir de um arquivo:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env create <span class="at">-f</span> environment.yml</span></code></pre></div></li>
+</ul></li>
+</ul>
+<h4 data-number="1.2.5.2" id="b-pip"><span class="header-section-number">1.2.5.2</span> b)
+<strong>pip</strong></h4>
+<ul>
+<li><strong>O que é?</strong> O gerenciador de pacotes padrão do Python,
+ideal para bibliotecas disponíveis no PyPI.</li>
+<li><strong>Vantagens</strong>: Simples, amplamente usado, mas não
+gerencia dependências binárias como o Conda.</li>
+<li><strong>Comandos principais</strong>:
+<ul>
+<li><p>Instalar pacotes:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nome_do_pacote</span></code></pre></div></li>
+<li><p>Listar pacotes instalados:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> list</span></code></pre></div></li>
+<li><p>Exportar dependências:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> freeze <span class="op">&gt;</span> requirements.txt</span></code></pre></div></li>
+<li><p>Instalar dependências a partir de um arquivo:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code></pre></div></li>
+</ul></li>
+</ul>
+<h4 data-number="1.2.5.3" id="c-conda-pip"><span class="header-section-number">1.2.5.3</span> c) <strong>Conda +
+pip</strong></h4>
+<ul>
+<li>É comum usar ambos no mesmo ambiente, mas <strong>use pip com
+cuidado</strong> em ambientes Conda para evitar conflitos.</li>
+<li>Sempre instale pacotes com Conda primeiro. Use pip apenas para
+pacotes não disponíveis no Conda.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.6" id="boas-práticas-para-gerenciar-dependências"><span class="header-section-number">1.2.6</span> 2. <strong>Boas Práticas para
+Gerenciar Dependências</strong></h3>
+<ol type="1">
+<li><strong>Use Ambientes Virtuais</strong>
+<ul>
+<li><p>Crie ambientes separados para cada projeto para evitar conflitos
+entre versões de pacotes:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> meu_projeto python=3.10</span></code></pre></div></li>
+<li><p>Ou com <code>venv</code> (se usar apenas pip):</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv meu_projeto</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> meu_projeto/bin/activate  <span class="co"># Linux/Mac</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">meu_projeto\Scripts\activate</span>  <span class="co"># Windows</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>Especifique Versões</strong>
+<ul>
+<li><p>Para garantir reprodutibilidade, especifique versões exatas ou
+mínimas:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install numpy=1.23.5</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install requests<span class="op">&gt;</span>=2.28.0</span></code></pre></div></li>
+</ul></li>
+<li><strong>Exporte e Versione Dependências</strong>
+<ul>
+<li>Exporte as dependências para um arquivo:
+<ul>
+<li>Conda: <code>conda env export &gt; environment.yml</code></li>
+<li>pip: <code>pip freeze &gt; requirements.txt</code></li>
+</ul></li>
+<li>Adicione esses arquivos ao controle de versão (ex.: Git) para
+facilitar a colaboração.</li>
+</ul></li>
+<li><strong>Evite Instalar Pacotes Globalmente</strong>
+<ul>
+<li>Instalar pacotes no ambiente base (global) pode causar conflitos.
+Sempre ative um ambiente específico antes de instalar.</li>
+</ul></li>
+<li><strong>Atualize Pacotes com Cautela</strong>
+<ul>
+<li><p>Atualize pacotes apenas quando necessário:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update nome_do_pacote</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> nome_do_pacote</span></code></pre></div></li>
+<li><p>Para atualizar todos os pacotes no Conda:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update <span class="at">--all</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>Resolva Conflitos</strong>
+<ul>
+<li><p>Se houver conflitos no Conda, tente usar o canal
+<code>conda-forge</code>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge nome_do_pacote</span></code></pre></div></li>
+<li><p>Para diagnosticar problemas, use:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list <span class="at">--show-channel-urls</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>Use Ferramentas Complementares</strong>
+<ul>
+<li><strong>Poetry</strong> ou <strong>Pipenv</strong>: Alternativas
+modernas ao pip para gerenciar dependências e ambientes com mais
+controle.</li>
+<li><strong>requirements.txt vs environment.yml</strong>: Use
+<code>environment.yml</code> para Conda (mais completo, inclui
+dependências binárias) e <code>requirements.txt</code> para pip (mais
+simples, apenas Python).</li>
+</ul></li>
+</ol>
+<hr />
+<h3 data-number="1.2.7" id="verificar-dependências-instaladas"><span class="header-section-number">1.2.7</span> 3. <strong>Verificar
+Dependências Instaladas</strong></h3>
+<ul>
+<li><p><strong>Conda</strong>:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list</span></code></pre></div>
+<p>Para listar apenas pacotes instalados explicitamente:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> list <span class="at">--explicit</span></span></code></pre></div></li>
+<li><p><strong>pip</strong>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> list</span></code></pre></div>
+<p>Para verificar pacotes desatualizados:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> list <span class="at">--outdated</span></span></code></pre></div></li>
+</ul>
+<hr />
+<h3 data-number="1.2.8" id="exemplo-prático"><span class="header-section-number">1.2.8</span> 4. <strong>Exemplo
+Prático</strong></h3>
+<p>Suponha que você quer criar um ambiente para um projeto com
+<code>numpy</code> e <code>requests</code>: 1. Crie o ambiente:
+<code>bash    conda create -n meu_projeto python=3.10    conda activate meu_projeto</code>
+2. Instale pacotes:
+<code>bash    conda install numpy    pip install requests</code> 3.
+Verifique pacotes: <code>bash    conda list    pip list</code> 4.
+Exporte dependências:
+<code>bash    conda env export &gt; environment.yml    pip freeze &gt; requirements.txt</code></p>
+<hr />
+<h3 data-number="1.2.9" id="solução-de-problemas-comuns"><span class="header-section-number">1.2.9</span> 5. <strong>Solução de
+Problemas Comuns</strong></h3>
+<ul>
+<li><p><strong>Conflitos de dependências</strong>: Tente criar um novo
+ambiente ou use <code>conda env update --prune</code> para limpar
+dependências não utilizadas.</p></li>
+<li><p><strong>Pacote não encontrado</strong>: Verifique se o pacote
+está no canal <code>conda-forge</code> ou no PyPI.</p></li>
+<li><p><strong>Ambiente corrompido</strong>: Remova e recrie o
+ambiente:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> env remove <span class="at">-n</span> nome_do_ambiente</span></code></pre></div></li>
+</ul>
+<hr />
+<p>Se precisar de ajuda com um caso específico, como resolver conflitos,
+configurar um ambiente ou usar Poetry/Pipenv, é só perguntar!</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

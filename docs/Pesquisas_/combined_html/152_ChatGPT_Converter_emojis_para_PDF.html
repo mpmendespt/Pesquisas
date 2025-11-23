@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>152_ChatGPT_Converter_emojis_para_PDF</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-emojis-para-pdf" id="toc-converter-emojis-para-pdf"><span class="toc-section-number">1</span> Converter emojis para PDF</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-emojis-para-pdf"><span class="header-section-number">1</span> Converter emojis para PDF</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #152</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 68d5a397-9c30-8332-9793-ffcab16ca45d</li>
+<li><strong>Criada em:</strong> 2025-09-25 21:18:32</li>
+<li><strong>Atualizada em:</strong> 2025-09-25 21:23:07</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> como converter guia-congelamento.md para
+pdf visto que dá erro pandoc-env) D:_DOCS__DOC…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-25-211831-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-25
+21:18:31)</em> <em>[ChatGPT]</em></h3>
+<p>como converter guia-congelamento.md para pdf visto que dá erro
+pandoc-env) D:_DOCS__DOCS_-congelamento&gt;pandoc guia-congelamento.md
+-o guia-congelamento.pdf –pdf-engine=lualatex
+–include-in-header=header.tex [WARNING] Missing character: There is no
+🧊 (U+1F9CA) (U+1F9CA) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no 🧊 (U+1F9CA) (U+1F9CA) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+🧊 (U+1F9CA) (U+1F9CA) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no 📌 (U+1F4CC) (U+1F4CC) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+📌 (U+1F4CC) (U+1F4CC) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no 🍚 (U+1F35A) (U+1F35A) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+🍚 (U+1F35A) (U+1F35A) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ⚖ (U+2696) (U+2696) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ⚖ (U+2696)
+(U+2696) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no 🍝 (U+1F35D) (U+1F35D) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no 🍝 (U+1F35D)
+(U+1F35D) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ⚖ (U+2696) (U+2696) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ⚖ (U+2696)
+(U+2696) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no 🧊 (U+1F9CA) (U+1F9CA) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no 📌 (U+1F4CC)
+(U+1F4CC) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no 🍚 (U+1F35A) (U+1F35A) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ⚖ (U+2696)
+(U+2696) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no 🍝 (U+1F35D) (U+1F35D) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no 🥩 (U+1F969)
+(U+1F969) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no 🥩 (U+1F969) (U+1F969) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no 📊 (U+1F4CA)
+(U+1F4CA) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no 📊 (U+1F4CA) (U+1F4CA) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ❌ (U+274C)
+(U+274C) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ❌ (U+274C) (U+274C) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ⚖ (U+2696)
+(U+2696) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no 🥩 (U+1F969) (U+1F969) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no 📊 (U+1F4CA)
+(U+1F4CA) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ❌ (U+274C) (U+274C) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no 🔒 (U+1F512)
+(U+1F512) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no 🔒 (U+1F512) (U+1F512) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ⚠ (U+26A0)
+(U+26A0) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ⚠ (U+26A0) (U+26A0) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no 🔒 (U+1F512)
+(U+1F512) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ⚠ (U+26A0) (U+26A0) in font”name:DejaVu
+Serif/B:mode=no</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-25-211832-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-25
+21:18:32)</em> <em>[ChatGPT]</em></h3>
+<p>O erro que você está vendo não é do <strong>Pandoc em si</strong>,
+mas do <strong>LaTeX</strong>: as fontes padrão que o
+<code>lualatex</code> usa (no caso, <code>DejaVu Serif</code>)
+<strong>não suportam os emojis</strong> usados no seu guia
+(<code>🧊</code>, <code>📌</code>, <code>🍚</code>,
+etc.)【5†guia-congelamento.md】.</p>
+<h3 data-number="1.2.3" id="soluções-possíveis"><span class="header-section-number">1.2.3</span> Soluções possíveis:</h3>
+<h4 data-number="1.2.3.1" id="usar-uma-fonte-que-suporte-emojis"><span class="header-section-number">1.2.3.1</span> ✅ 1. Usar uma fonte que
+suporte emojis</h4>
+<p>No seu <code>header.tex</code>, você pode trocar a fonte para uma que
+tenha cobertura Unicode maior, como <code>Noto Color Emoji</code>,
+<code>Segoe UI Emoji</code> ou <code>Symbola</code>.</p>
+<p>Adicione isso ao seu <code>header.tex</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif} <span class="co">% texto normal</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\emoji</span>{Noto Color Emoji} <span class="co">% emojis</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Substitui automaticamente se o caractere existir na fonte emoji</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\DeclareTextFontCommand</span>{<span class="fu">\textemoji</span>}{<span class="fu">\emoji</span>}</span></code></pre></div>
+<p>E no Markdown, troque manualmente os emojis, por exemplo:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># \textemoji{🧊} Guia Completo: Como Congelar Alimentos</span></span></code></pre></div>
+<p>⚠️ Isso exige que a fonte esteja instalada no seu sistema.</p>
+<hr />
+<h4 data-number="1.2.3.2" id="usar-xelatex-em-vez-de-lualatex"><span class="header-section-number">1.2.3.2</span> ✅ 2. Usar
+<code>xelatex</code> em vez de <code>lualatex</code></h4>
+<p>O <code>xelatex</code> lida melhor com fontes Unicode e emojis.<br />
+Tente converter assim:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<hr />
+<h4 data-number="1.2.3.3" id="converter-emojis-para-imagens"><span class="header-section-number">1.2.3.3</span> ✅ 3. Converter emojis para
+imagens</h4>
+<p>O Pandoc tem filtros (<code>pandoc-emoji</code>,
+<code>pandoc-emojify</code>) que convertem emojis em imagens PNG/SVG.
+Exemplo:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--filter</span> pandoc-emoji</span></code></pre></div>
+<hr />
+<h4 data-number="1.2.3.4" id="substituir-emojis-por-textoícones-latex"><span class="header-section-number">1.2.3.4</span> ✅ 4. Substituir emojis por
+texto/ícones LaTeX</h4>
+<p>Se quiser manter só símbolos sem depender de fontes externas, pode
+trocar <code>🧊</code> por <code>\ding{110}</code> (do pacote
+<code>pifont</code>) ou similares. É menos bonito, mas mais robusto.</p>
+<hr />
+<p>👉 Resumindo:<br />
+O jeito mais simples é <strong>rodar com <code>xelatex</code></strong>
+(solução 2). Se quiser manter os emojis coloridos, instale
+<code>Noto Color Emoji</code> e aponte no seu <code>header.tex</code>
+(solução 1).</p>
+<hr />
+<p>Quer que eu ajuste o seu <code>header.tex</code> para já suportar os
+emojis com <code>Noto Color Emoji</code>?</p>
+<hr />
+<h3 data-number="1.2.4" id="utilizador-2025-09-25-212224-chatgpt"><span class="header-section-number">1.2.4</span> 👤 Utilizador <em>(2025-09-25
+21:22:24)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.2.5" id="chatgpt-2025-09-25-212225-chatgpt"><span class="header-section-number">1.2.5</span> 🤖 ChatGPT <em>(2025-09-25
+21:22:25)</em> <em>[ChatGPT]</em></h3>
+<p>Beleza 👍 Vou te montar um <code>header.tex</code> pronto para rodar
+com <code>xelatex</code> (ou <code>lualatex</code>, se preferir). Ele
+vai manter a fonte principal em algo legível (DejaVu Serif) e usar
+<strong>Noto Color Emoji</strong> especificamente para os emojis.</p>
+<p>Aqui está o conteúdo sugerido para o <code>header.tex</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">% Usa fontspec para escolher fontes</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte principal para o texto</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte fallback para emojis (precisa estar instalada no sistema)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\emoji</span>{Noto Color Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Substitui automaticamente quando você usar \textemoji{}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\DeclareTextFontCommand</span>{<span class="fu">\textemoji</span>}{<span class="fu">\emoji</span>}</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.6" id="como-usar"><span class="header-section-number">1.2.6</span> Como usar:</h3>
+<ol type="1">
+<li>Salve esse conteúdo no seu <code>header.tex</code> (substituindo o
+atual).</li>
+<li>Rode o comando com <code>xelatex</code> (melhor para Unicode):</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<ol start="3" type="1">
+<li>No seu <code>.md</code>, troque cada emoji direto pelo comando, por
+exemplo:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># \textemoji{🧊} Guia Completo: Como Congelar Alimentos</span></span></code></pre></div>
+<p>Assim, todos os emojis vão sair renderizados no PDF.</p>
+<hr />
+<p>👉 Quer que eu já edite o <code>guia-congelamento.md</code> para
+substituir todos os emojis (<code>🧊</code>, <code>📌</code>,
+<code>🍚</code>, <code>⚖️</code>, etc.) por <code>\textemoji{...}</code>
+automaticamente, de forma que rode direto sem você precisar ajustar
+manualmente?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

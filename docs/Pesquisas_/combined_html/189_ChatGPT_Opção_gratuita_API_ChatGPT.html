@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>189_ChatGPT_Opção_gratuita_API_ChatGPT</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#opção-gratuita-api-chatgpt" id="toc-opção-gratuita-api-chatgpt"><span class="toc-section-number">1</span> Opção gratuita API ChatGPT</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#uso-gratuito-via-openrouter" id="toc-uso-gratuito-via-openrouter"><span class="toc-section-number">1.3</span> 1. Uso Gratuito via
+OpenRouter</a></li>
+<li><a href="#modelos-open-source-e-self-hosting" id="toc-modelos-open-source-e-self-hosting"><span class="toc-section-number">1.4</span> 2. Modelos Open-Source e
+Self-hosting</a></li>
+<li><a href="#outra-alternativa-grátis-puter.js" id="toc-outra-alternativa-grátis-puter.js"><span class="toc-section-number">1.5</span> 3. Outra Alternativa “Grátis”:
+Puter.js</a></li>
+<li><a href="#formato-padrão-de-preço-da-api-não-gratuito" id="toc-formato-padrão-de-preço-da-api-não-gratuito"><span class="toc-section-number">1.6</span> 4. Formato Padrão de Preço da API
+(não gratuito)</a></li>
+<li><a href="#opiniões-e-discussões-comunitárias" id="toc-opiniões-e-discussões-comunitárias"><span class="toc-section-number">1.7</span> 5. Opiniões e Discussões
+Comunitárias</a></li>
+<li><a href="#obter-chave-de-api" id="toc-obter-chave-de-api"><span class="toc-section-number">1.8</span> 🔑 1. Obter chave de API</a></li>
+<li><a href="#exemplo-em-python" id="toc-exemplo-em-python"><span class="toc-section-number">1.9</span> 💻 2. Exemplo em Python</a></li>
+<li><a href="#exemplo-com-curl" id="toc-exemplo-com-curl"><span class="toc-section-number">1.10</span> 🌐 3. Exemplo com cURL</a></li>
+<li><a href="#exemplo-em-javascript-node.js" id="toc-exemplo-em-javascript-node.js"><span class="toc-section-number">1.11</span> ⚡ 4. Exemplo em JavaScript
+(Node.js)</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="opção-gratuita-api-chatgpt"><span class="header-section-number">1</span> Opção gratuita API ChatGPT</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #189</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 68b1adfb-2908-8333-8dc9-342bdb2ac064</li>
+<li><strong>Criada em:</strong> 2025-08-29 14:42:21</li>
+<li><strong>Atualizada em:</strong> 2025-08-29 14:49:37</li>
+<li><strong>Total de mensagens:</strong> 6</li>
+<li><strong>Resumo:</strong> Existe alguma opção para usar gratuitamente
+a api do chatgpt…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-08-29-144221-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-08-29
+14:42:21)</em> <em>[ChatGPT]</em></h3>
+<p>Existe alguma opção para usar gratuitamente a api do chatgpt</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-08-29-144223-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-08-29
+14:42:23)</em> <em>[ChatGPT]</em></h3>
+<p>Se estás a perguntar se é possível usar a <strong>API do ChatGPT
+totalmente de forma gratuita</strong>, a resposta direta é: <strong>não
+existe uma opção completamente gratuita</strong>, mas há uma forma de
+experimentar sem custo imediato.</p>
+<hr />
+<h3 data-number="1.2.3" id="experimentação-gratuita-via-créditos-iniciais"><span class="header-section-number">1.2.3</span> Experimentação gratuita via
+créditos iniciais</h3>
+<ul>
+<li>Quando crias uma conta na plataforma da OpenAI e registares um
+método de pagamento, geralmente recebes um <strong>crédito inicial de
+aproximadamente 5 USD</strong> para explorar a API
+citeturn0search11turn0search13.<br />
+</li>
+<li>Esses créditos expiram após <strong>3 meses</strong>
+citeturn0search13.<br />
+</li>
+<li>Ou seja, é possível usar a API gratuitamente <strong>até esgotares
+esses créditos de 5 USD</strong>, dentro desse prazo.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.4" id="o-que-dizem-os-utilizadores"><span class="header-section-number">1.2.4</span> O que dizem os
+utilizadores</h3>
+<ul>
+<li><p>Conforme relatado em fóruns da comunidade, é possível ver que:
+&gt; “API doesn’t have a free plan, chatGPT does. You need to spend at
+least 5 USD to get API access.”<br />
+citeturn0search10</p></li>
+<li><p>Outro utilizador compartilhou que o sistema exige um pagamento
+mínimo antes de ativar o uso: &gt; “You’ll need to drop in at least $5
+to use it, I believe.”<br />
+citeturn0search9</p></li>
+</ul>
+<hr />
+<h3 data-number="1.2.5" id="sumário"><span class="header-section-number">1.2.5</span> Sumário</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 67%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Pergunta</strong></th>
+<th><strong>Resposta</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Existe uma API gratuita sem pagar?</td>
+<td>Não — é necessário adicionar um método de pagamento para ativar a
+API.</td>
+</tr>
+<tr>
+<td>Posso testar sem gastar?</td>
+<td>Sim — recebes cerca de 5 USD de crédito inicial ao criar conta.</td>
+</tr>
+<tr>
+<td>Quanto tempo dura o crédito gratuito?</td>
+<td>Aproximadamente 3 meses, até esgotar o saldo.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 data-number="1.2.6" id="conclusão"><span class="header-section-number">1.2.6</span> Conclusão</h3>
+<p>Embora não exista um plano gratuito ilimitado, <strong>é possível
+testar a API sem gastar dinheiro imediatamente</strong>, usando os
+créditos iniciais de cerca de 5 USD que a OpenAI oferece aos novos
+utilizadores (válidos por até 3 meses). Mais do que isso, o uso passa a
+ser cobrado conforme o consumo, após esgotado esse crédito ou expirado o
+período.</p>
+<p>Se quiseres, posso ajudar-te a entender como te inscrever, gerir
+limites de faturação, ou usar os modelos da forma mais eficiente — basta
+dizer!</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-08-29-144446-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-08-29
+14:44:46)</em> <em>[ChatGPT]</em></h3>
+<p>E em relação ao deepseek</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-08-29-144448-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-08-29
+14:44:48)</em> <em>[ChatGPT]</em></h3>
+<p>Claro! Vamos explorar as opções gratuitas — ou quase gratuitas — para
+utilizar a API do DeepSeek:</p>
+<hr />
+<h2 data-number="1.3" id="uso-gratuito-via-openrouter"><span class="header-section-number">1.3</span> 1. Uso Gratuito via
+OpenRouter</h2>
+<p>Há uma forma de <strong>aceder à API do DeepSeek
+gratuitamente</strong> por intermédio da plataforma
+<strong>OpenRouter</strong>:</p>
+<ul>
+<li>Um guia de junho de 2025 ensina a obter uma chave de API gratuita
+através da OpenRouter e a usá-la para aceder ao modelo
+<code>deepseek-chat:free</code>, enviando pedidos sem custo
+imediato.<br />
+citeturn0search2</li>
+<li>Esse método permite experimentar o modelo sem pagar — ideal para
+desenvolvedores que queiram explorar antes de investir.<br />
+citeturn0search11</li>
+</ul>
+<hr />
+<h2 data-number="1.4" id="modelos-open-source-e-self-hosting"><span class="header-section-number">1.4</span> 2. Modelos Open-Source e
+Self-hosting</h2>
+<ul>
+<li>O modelo <strong>DeepSeek-R1</strong> é distribuído sob licença
+<strong>MIT</strong>, o que significa que é <strong>totalmente
+open-source</strong> e pode ser <strong>executado localmente</strong>,
+sem custos de utilização.<br />
+citeturn0search14turn0search23</li>
+<li>No site oficial há indicações de “Free access” ao DeepSeek-V3.1 na
+web e em aplicações móveis, o que sugere uma versão interativa gratuita
+(embora possa diferir da API paga).<br />
+citeturn0search6</li>
+<li>Um artigo afirma que o DeepSeek é “open-source e gratuito”, com
+possibilidade de <strong>self-hosting</strong> que elimina custos e
+aumenta a privacidade.<br />
+citeturn0search9</li>
+</ul>
+<hr />
+<h2 data-number="1.5" id="outra-alternativa-grátis-puter.js"><span class="header-section-number">1.5</span> 3. Outra Alternativa “Grátis”:
+Puter.js</h2>
+<ul>
+<li>Um tutorial recente (agosto de 2025) mostra como usar a biblioteca
+<strong>Puter.js</strong> para aceder aos modelos DeepSeek (Chat e
+Reasoner) <strong>sem chave de API, sem registo e sem restrições de
+uso</strong>.<br />
+citeturn0search15</li>
+<li>Este método parece ser bastante direto: simplesmente inclui-se um
+<code>&lt;script&gt;</code> num HTML e já se acede aos serviços, mas
+pede-se atenção quanto à fonte e à fiabilidade.</li>
+</ul>
+<hr />
+<h2 data-number="1.6" id="formato-padrão-de-preço-da-api-não-gratuito"><span class="header-section-number">1.6</span> 4. Formato Padrão de Preço da
+API (não gratuito)</h2>
+<p>Se pretendes usar os modelos via API standard, então há custos
+associados:</p>
+<ul>
+<li><strong>deepseek-chat (V3.1)</strong>:
+<ul>
+<li>Input (cache hit): ≈ $0,07 por milhão de tokens</li>
+<li>Input (cache miss): ≈ $0,27 por milhão</li>
+<li>Output: ≈ $1,10 por milhão<br />
+citeturn0search12turn0search3</li>
+</ul></li>
+<li><strong>deepseek-reasoner (R1)</strong>:
+<ul>
+<li>Input (cache hit): ≈ $0,14 por milhão</li>
+<li>Input (cache miss): ≈ $0,55 por milhão</li>
+<li>Output: ≈ $2,19 por milhão<br />
+citeturn0search12turn0search8</li>
+</ul></li>
+<li>Segundo a Wikipédia (versão inglesa), no início de 2025 a API era
+mais cara:
+<ul>
+<li>Input: ≈ $0,55 por milhão, Output: ≈ $2,19 por milhão<br />
+citeturn0search23</li>
+</ul></li>
+<li>E houve atualizações de preços relatadas numa thread, com novos
+custos mais elevados ou descontos noturnos alterados.<br />
+citeturn0search7</li>
+</ul>
+<hr />
+<h2 data-number="1.7" id="opiniões-e-discussões-comunitárias"><span class="header-section-number">1.7</span> 5. Opiniões e Discussões
+Comunitárias</h2>
+<ul>
+<li>Na comunidade <strong>r/LLMDevs</strong>, um utilizador relatou
+gastar apenas cerca de <strong>US$ 1,18</strong> usando aproximadamente
+<strong>8 milhões de tokens</strong> com o modelo DeepSeek V3, o que
+mostra custos realmente baixos mesmo em uso real.<br />
+citeturn0search4</li>
+<li>Contudo, existem preocupações levantadas sobre privacidade, visto
+que é uma empresa chinesa, e sobre potenciais restrições ou
+censura.<br />
+citeturn0search4turn0search23</li>
+</ul>
+<hr />
+<h3 data-number="1.7.1" id="resumo-prático"><span class="header-section-number">1.7.1</span> Resumo Prático</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 14%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr>
+<th>Método</th>
+<th>Gratuito?</th>
+<th>Comentários</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenRouter (deepseek-chat:free)</strong></td>
+<td>Sim</td>
+<td>Ideal para testes rápidos via API grátis
+citeturn0search2turn0search11</td>
+</tr>
+<tr>
+<td><strong>Self-hosting (DeepSeek-R1)</strong></td>
+<td>Sim</td>
+<td>Totalmente open-source, sob licença MIT
+citeturn0search14turn0search9turn0search23</td>
+</tr>
+<tr>
+<td><strong>Puter.js</strong></td>
+<td>Sim (via web)</td>
+<td>Uso simples e sem API key citeturn0search15</td>
+</tr>
+<tr>
+<td><strong>Uso normal da API</strong></td>
+<td>Não</td>
+<td>Cobrado com base em tokens
+citeturn0search12turn0search8turn0search3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Se desejas, posso ajudar-te a orientar conforme o teu caso:</p>
+<ul>
+<li>Queres experimentar sem pagar? Posso ajudar com exemplos via
+<strong>OpenRouter</strong> ou <strong>Puter.js</strong>.</li>
+<li>Pretendes usar localmente (self-hosted)? Posso compartilhar
+instruções para configurar o <strong>DeepSeek-R1</strong>.</li>
+<li>Caso queiras estimar custos para um projeto, posso ajudar com esse
+cálculo também.</li>
+</ul>
+<p>Diz-me o que te interessa mais!</p>
+<hr />
+<h3 data-number="1.7.2" id="utilizador-2025-08-29-144920-chatgpt"><span class="header-section-number">1.7.2</span> 👤 Utilizador <em>(2025-08-29
+14:49:20)</em> <em>[ChatGPT]</em></h3>
+<p>Exemplos openrouter</p>
+<hr />
+<h3 data-number="1.7.3" id="chatgpt-2025-08-29-144920-chatgpt"><span class="header-section-number">1.7.3</span> 🤖 ChatGPT <em>(2025-08-29
+14:49:20)</em> <em>[ChatGPT]</em></h3>
+<p>Beleza 🚀 Vou te mostrar como podes usar o <strong>DeepSeek grátis no
+OpenRouter</strong> com alguns exemplos práticos.</p>
+<p>O <strong>OpenRouter</strong> funciona como um “hub” que expõe várias
+APIs de modelos (incluindo DeepSeek), e oferece o modelo
+<code>deepseek-chat:free</code> sem custo inicial.</p>
+<hr />
+<h2 data-number="1.8" id="obter-chave-de-api"><span class="header-section-number">1.8</span> 🔑 1. Obter chave de API</h2>
+<ol type="1">
+<li><p>Cria conta em <a href="https://openrouter.ai/">openrouter.ai</a>.</p></li>
+<li><p>Vai em <strong>API Keys</strong> e gera a tua chave.</p></li>
+<li><p>Guarda algo no formato:</p>
+<pre><code>sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxx</code></pre></li>
+</ol>
+<hr />
+<h2 data-number="1.9" id="exemplo-em-python"><span class="header-section-number">1.9</span> 💻 2. Exemplo em Python</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">&quot;https://openrouter.ai/api/v1/chat/completions&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Authorization&quot;</span>: <span class="st">&quot;Bearer YOUR_API_KEY&quot;</span>,   <span class="co"># substitui pela tua chave</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Content-Type&quot;</span>: <span class="st">&quot;application/json&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;model&quot;</span>: <span class="st">&quot;deepseek/deepseek-chat:free&quot;</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;messages&quot;</span>: [</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">&quot;role&quot;</span>: <span class="st">&quot;system&quot;</span>, <span class="st">&quot;content&quot;</span>: <span class="st">&quot;Tu és um assistente útil.&quot;</span>},</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        {<span class="st">&quot;role&quot;</span>: <span class="st">&quot;user&quot;</span>, <span class="st">&quot;content&quot;</span>: <span class="st">&quot;Explica-me a diferença entre RNA e DNA em poucas linhas.&quot;</span>}</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(url, headers<span class="op">=</span>headers, json<span class="op">=</span>data)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.json()[<span class="st">&quot;choices&quot;</span>][<span class="dv">0</span>][<span class="st">&quot;message&quot;</span>][<span class="st">&quot;content&quot;</span>])</span></code></pre></div>
+<hr />
+<h2 data-number="1.10" id="exemplo-com-curl"><span class="header-section-number">1.10</span> 🌐 3. Exemplo com cURL</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://openrouter.ai/api/v1/chat/completions <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Authorization: Bearer YOUR_API_KEY&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;model&quot;: &quot;deepseek/deepseek-chat:free&quot;,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;messages&quot;: [</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Conta uma curiosidade sobre o universo.&quot;}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">    ]</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">  }&#39;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.11" id="exemplo-em-javascript-node.js"><span class="header-section-number">1.11</span> ⚡ 4. Exemplo em JavaScript
+(Node.js)</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> fetch <span class="im">from</span> <span class="st">&quot;node-fetch&quot;</span><span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&quot;https://openrouter.ai/api/v1/chat/completions&quot;</span><span class="op">,</span> {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">&quot;POST&quot;</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Authorization&quot;</span><span class="op">:</span> <span class="st">&quot;Bearer YOUR_API_KEY&quot;</span><span class="op">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Content-Type&quot;</span><span class="op">:</span> <span class="st">&quot;application/json&quot;</span><span class="op">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">model</span><span class="op">:</span> <span class="st">&quot;deepseek/deepseek-chat:free&quot;</span><span class="op">,</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">messages</span><span class="op">:</span> [</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">role</span><span class="op">:</span> <span class="st">&quot;system&quot;</span><span class="op">,</span> <span class="dt">content</span><span class="op">:</span> <span class="st">&quot;És um assistente conciso.&quot;</span> }<span class="op">,</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      { <span class="dt">role</span><span class="op">:</span> <span class="st">&quot;user&quot;</span><span class="op">,</span> <span class="dt">content</span><span class="op">:</span> <span class="st">&quot;Escreve um haiku sobre a primavera.&quot;</span> }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  })<span class="op">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(data<span class="op">.</span><span class="at">choices</span>[<span class="dv">0</span>]<span class="op">.</span><span class="at">message</span><span class="op">.</span><span class="at">content</span>)<span class="op">;</span></span></code></pre></div>
+<hr />
+<p>👉 Nota: o modelo <code>deepseek-chat:free</code> é
+<strong>limitado</strong> em capacidade e prioridade (pode ser mais
+lento ou ter fila), mas serve bem para testes antes de passar para as
+versões pagas (<code>deepseek-chat</code>,
+<code>deepseek-reasoner</code>).</p>
+<hr />
+<p>Queres que eu prepare também um <strong>exemplo de integração com
+LangChain</strong> para usar o DeepSeek via OpenRouter, ou preferes só
+ficar no uso direto da API?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

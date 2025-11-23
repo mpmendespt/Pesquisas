@@ -1,0 +1,4 @@
+/* CSS personalizado para Pandoc */
+code { background: #f4f4f4; padding: 0.2em 0.4em; }
+pre { border-left: 4px solid #3498db; background: #f8f9fa; }
+.math { text-align: center; margin: 1em 0; }

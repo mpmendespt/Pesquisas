@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>161_ChatGPT_Converter_NotoColorEmoji_TTF</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-notocoloremoji-ttf" id="toc-converter-notocoloremoji-ttf"><span class="toc-section-number">1</span> Converter NotoColorEmoji TTF</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#o-problema" id="toc-o-problema"><span class="toc-section-number">1.3</span> 📌 O problema</a></li>
+<li><a href="#como-converter-para-windows-10" id="toc-como-converter-para-windows-10"><span class="toc-section-number">1.4</span> 🔧 Como converter para Windows
+10</a></li>
+<li><a href="#alternativa-prática" id="toc-alternativa-prática"><span class="toc-section-number">1.5</span> 🚀 Alternativa prática</a></li>
+<li><a href="#formatos-de-cor-suportados-pelo-nanoemoji" id="toc-formatos-de-cor-suportados-pelo-nanoemoji"><span class="toc-section-number">1.6</span> ✅ Formatos de cor suportados pelo
+nanoemoji</a></li>
+<li><a href="#compatibilidade-windows-10" id="toc-compatibilidade-windows-10"><span class="toc-section-number">1.7</span> ⚠ Compatibilidade Windows
+10</a></li>
+<li><a href="#como-gerar-fonte-compatível" id="toc-como-gerar-fonte-compatível"><span class="toc-section-number">1.8</span> 🔧 Como gerar fonte
+compatível</a></li>
+<li><a href="#instalar-python-3.8" id="toc-instalar-python-3.8"><span class="toc-section-number">1.9</span> 1) Instalar (Python 3.8+)</a></li>
+<li><a href="#pegar-os-svgs-do-noto-exemplo" id="toc-pegar-os-svgs-do-noto-exemplo"><span class="toc-section-number">1.10</span> 2) Pegar os SVGs do Noto
+(exemplo)</a></li>
+<li><a href="#comando-mínimo-testar-com-1-arquivo-primeiro" id="toc-comando-mínimo-testar-com-1-arquivo-primeiro"><span class="toc-section-number">1.11</span> 3) Comando mínimo (testar com 1
+arquivo primeiro)</a></li>
+<li><a href="#se-quiser-gerar-o-conjunto-inteiro-aviso" id="toc-se-quiser-gerar-o-conjunto-inteiro-aviso"><span class="toc-section-number">1.12</span> 4) Se quiser gerar o conjunto
+inteiro (AVISO)</a></li>
+<li><a href="#problemas-comuns-e-soluções-rápidas" id="toc-problemas-comuns-e-soluções-rápidas"><span class="toc-section-number">1.13</span> 5) Problemas comuns e soluções
+rápidas</a></li>
+<li><a href="#alternativa-prática-se-você-só-quer-emojis-coloridos-no-windows-10" id="toc-alternativa-prática-se-você-só-quer-emojis-coloridos-no-windows-10"><span class="toc-section-number">1.14</span> 6) Alternativa prática (se você
+só quer emojis coloridos no Windows 10)</a></li>
+<li><a href="#passo-a-passo-no-windows-10-powershell" id="toc-passo-a-passo-no-windows-10-powershell"><span class="toc-section-number">1.15</span> 🚀 Passo a passo no Windows 10
+(PowerShell)</a></li>
+<li><a href="#script-powershell-build-notoemoji.ps1" id="toc-script-powershell-build-notoemoji.ps1"><span class="toc-section-number">1.16</span> 📜 Script PowerShell
+(<code>build-notoemoji.ps1</code>)</a></li>
+<li><a href="#como-rodar" id="toc-como-rodar"><span class="toc-section-number">1.17</span> 🚀 Como rodar</a></li>
+<li><a href="#observações" id="toc-observações"><span class="toc-section-number">1.18</span> ⚠️ Observações</a></li>
+<li><a href="#script-python-build_notoemoji.py" id="toc-script-python-build_notoemoji.py"><span class="toc-section-number">1.19</span> 📜 Script Python
+(<code>build_notoemoji.py</code>)</a></li>
+<li><a href="#como-usar" id="toc-como-usar"><span class="toc-section-number">1.20</span> 🚀 Como usar</a></li>
+<li><a href="#dicas" id="toc-dicas"><span class="toc-section-number">1.21</span> ⚠️ Dicas</a></li>
+<li><a href="#por-que-não-funciona-direto" id="toc-por-que-não-funciona-direto"><span class="toc-section-number">1.22</span> 📌 Por que não funciona
+direto?</a></li>
+<li><a href="#como-converter-usando-só-python" id="toc-como-converter-usando-só-python"><span class="toc-section-number">1.23</span> 🔧 Como converter (usando só
+Python)</a></li>
+<li><a href="#limitações" id="toc-limitações"><span class="toc-section-number">1.24</span> ⚠️ Limitações</a></li>
+<li><a href="#como-corrigir" id="toc-como-corrigir"><span class="toc-section-number">1.25</span> ✅ Como corrigir</a></li>
+<li><a href="#resultado" id="toc-resultado"><span class="toc-section-number">1.26</span> 🚀 Resultado</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-notocoloremoji-ttf"><span class="header-section-number">1</span> Converter NotoColorEmoji TTF</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #161</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Sistemas</li>
+<li><strong>ID:</strong> 68d05af0-99e0-8329-b2c2-ccf2dd03de87</li>
+<li><strong>Criada em:</strong> 2025-09-21 21:08:15</li>
+<li><strong>Atualizada em:</strong> 2025-09-22 18:06:24</li>
+<li><strong>Total de mensagens:</strong> 20</li>
+<li><strong>Resumo:</strong> Como converter NotoColorEmoji.ttf de forma
+que seja compatível com Windows 10…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-21-210814-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-21
+21:08:14)</em> <em>[ChatGPT]</em></h3>
+<p>Como converter NotoColorEmoji.ttf de forma que seja compatível com
+Windows 10</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-21-210815-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:08:15)</em> <em>[ChatGPT]</em></h3>
+<p>O problema é que o <strong>Noto Color Emoji</strong> (o usado pelo
+Android/Google) não funciona no Windows 10 “de fábrica” porque:</p>
+<ul>
+<li>O <strong>NotoColorEmoji.ttf</strong> usa o formato
+<strong>CBDT/CBLC (bitmap PNG embutido)</strong> para armazenar os
+emojis.<br />
+</li>
+<li>O <strong>Windows 10</strong> não entende CBDT/CBLC — ele só suporta
+<strong>COLR/CPAL (vector outlines)</strong> e, em versões mais
+recentes, <strong>SVGinOT</strong>.</li>
+</ul>
+<p>Ou seja: para que os emojis apareçam corretamente no Windows 10, você
+precisa <strong>converter o arquivo TTF</strong> para um formato que o
+Windows consiga ler.</p>
+<hr />
+<h3 data-number="1.2.3" id="como-converter-notocoloremoji.ttf-para-windows-10"><span class="header-section-number">1.2.3</span> 🔧 Como converter
+NotoColorEmoji.ttf para Windows 10</h3>
+<p>Existem algumas alternativas:</p>
+<h4 data-number="1.2.3.1" id="usar-uma-versão-já-portada"><span class="header-section-number">1.2.3.1</span> 1. Usar uma versão já
+portada</h4>
+<p>Existe um projeto chamado <strong>Segoe UI Emoji
+(modificado)</strong> e outros forks do Noto que convertem os PNGs em
+<strong>COLR/CPAL</strong>.<br />
+- <a href="https://github.com/mozilla/twemoji-colr">Twemoji Mozilla</a>
+é um exemplo (baseado nos emojis do Twitter).<br />
+- <a href="https://github.com/googlefonts/noto-emoji/issues/74">Google
+Noto Color Emoji COLR</a> — alguns usuários já compartilharam builds
+prontos.</p>
+<h4 data-number="1.2.3.2" id="converter-manualmente-com-ferramentas-de-fontes"><span class="header-section-number">1.2.3.2</span> 2. Converter manualmente
+com ferramentas de fontes</h4>
+<p>Se quiser fazer você mesmo:</p>
+<ol type="1">
+<li><p>Instale o <a href="https://github.com/fonttools/fonttools">FontTools</a>
+(Python).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install fonttools brotli</span></code></pre></div></li>
+<li><p>Extraia as imagens do <code>NotoColorEmoji.ttf</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ttx</span> <span class="at">-s</span> <span class="at">-t</span> CBDT <span class="at">-o</span> emoji.ttx NotoColorEmoji.ttf</span></code></pre></div></li>
+<li><p>Converta para <strong>COLR/CPAL</strong> (necessário script
+extra, porque o FontTools não faz bitmap→vector automaticamente).</p>
+<ul>
+<li>Alguns scripts da comunidade usam <strong>SVG exportado dos
+PNGs</strong> e depois embutem no TTF.</li>
+</ul></li>
+</ol>
+<p>Isso é mais trabalhoso, mas funciona.</p>
+<h4 data-number="1.2.3.3" id="usar-versões-alternativas-de-fontes-emoji-compatíveis-com-windows"><span class="header-section-number">1.2.3.3</span> 3. Usar versões
+alternativas de fontes emoji compatíveis com Windows</h4>
+<ul>
+<li><strong>Segoe UI Emoji</strong> já vem no Windows 10 (mas é mais
+limitado que o Noto).<br />
+</li>
+<li><strong>Twitter Color Emoji (COLR/CPAL)</strong> é totalmente
+compatível com Windows 10.<br />
+</li>
+<li><strong>JoyPixels</strong> e outros pacotes comerciais também têm
+suporte nativo.</li>
+</ul>
+<hr />
+<p>👉 Se o seu objetivo é <strong>apenas ter emojis coloridos estilo
+Google no Windows 10</strong>, a forma mais prática é instalar uma
+versão já portada do <strong>Noto Emoji em COLR/CPAL</strong> em vez de
+converter manualmente.</p>
+<p>Quer que eu procure e te traga um link para uma versão já portada do
+<strong>NotoColorEmoji compatível com Windows 10</strong>, pronta para
+instalar?</p>
+<hr />
+<h3 data-number="1.2.4" id="utilizador-2025-09-21-211003-chatgpt"><span class="header-section-number">1.2.4</span> 👤 Utilizador <em>(2025-09-21
+21:10:03)</em> <em>[ChatGPT]</em></h3>
+<p>NotoColorEmoji_WindowsCompatible.ttf funciona mas não é colorida</p>
+<hr />
+<h3 data-number="1.2.5" id="chatgpt-2025-09-21-211003-chatgpt"><span class="header-section-number">1.2.5</span> 🤖 ChatGPT <em>(2025-09-21
+21:10:03)</em> <em>[ChatGPT]</em></h3>
+<p>Isso faz sentido 👍.</p>
+<p>O arquivo <strong>NotoColorEmoji_WindowsCompatible.ttf</strong> que
+circula por aí geralmente é uma <strong>versão de fallback em preto e
+branco</strong> (ou seja, só os contornos dos emojis, sem cor). Ele
+funciona no Windows 10 porque foi convertido para <strong>glyph
+outlines</strong> simples, mas perdeu a camada de cor — por isso você só
+vê emojis monocromáticos.</p>
+<hr />
+<h3 data-number="1.2.6" id="por-que-não-fica-colorido-no-windows-10"><span class="header-section-number">1.2.6</span> 🔎 Por que não fica colorido
+no Windows 10?</h3>
+<ul>
+<li>O <strong>NotoColorEmoji original</strong> usa <strong>CBDT/CBLC
+(bitmaps PNG)</strong> → Windows 10 <strong>não entende</strong>.<br />
+</li>
+<li>A versão “compatível” converte os bitmaps em <strong>contornos
+vetoriais monocromáticos</strong> → compatível, mas sem cor.<br />
+</li>
+<li>Para ter cor no Windows 10, a fonte precisa estar no formato
+<strong>COLR/CPAL v0</strong> (ou v1 em versões mais novas do Windows
+11).</li>
+</ul>
+<hr />
+<h3 data-number="1.2.7" id="opções-para-ter-emojis-coloridos-no-windows-10"><span class="header-section-number">1.2.7</span> ✅ Opções para ter emojis
+coloridos no Windows 10</h3>
+<ol type="1">
+<li><strong>Usar uma versão COLR/CPAL já pronta</strong>
+<ul>
+<li>O Google não mantém oficialmente, mas existem builds de terceiros
+que convertem Noto para COLR/CPAL.<br />
+</li>
+<li>O <strong>Twemoji Mozilla (COLR/CPAL)</strong> funciona bem no
+Windows 10 e é colorido.</li>
+</ul></li>
+<li><strong>Converter você mesmo para COLR/CPAL</strong>
+<ul>
+<li>Usando <strong>FontTools</strong> + scripts que transformam os PNGs
+em camadas vetoriais.<br />
+</li>
+<li>Isso é trabalhoso e pode deixar a fonte pesada.</li>
+</ul></li>
+<li><strong>Alternativa prática: usar Twemoji ou Segoe UI Emoji</strong>
+<ul>
+<li>O Windows já tem o <strong>Segoe UI Emoji</strong> (COLR/CPAL), mas
+os desenhos são diferentes dos do Google.<br />
+</li>
+<li>O <strong>Twemoji Mozilla</strong> dá um visual mais parecido com
+Noto e já funciona colorido.</li>
+</ul></li>
+</ol>
+<hr />
+<p>👉 Pergunto: você quer especificamente o <strong>visual do Noto
+(Google)</strong> em versão colorida no Windows 10, ou aceitaria uma
+alternativa como o <strong>Twemoji Mozilla</strong> (que já está pronto
+e colorido)?</p>
+<p>Se for o caso do Noto, posso procurar um <strong>build não-oficial
+COLR/CPAL</strong> para você baixar. Quer que eu faça isso?</p>
+<hr />
+<h3 data-number="1.2.8" id="utilizador-2025-09-21-211107-chatgpt"><span class="header-section-number">1.2.8</span> 👤 Utilizador <em>(2025-09-21
+21:11:07)</em> <em>[ChatGPT]</em></h3>
+<p>como converter NotoColorEmoji para que seja compativel com windows
+10</p>
+<hr />
+<h3 data-number="1.2.9" id="chatgpt-2025-09-21-211107-chatgpt"><span class="header-section-number">1.2.9</span> 🤖 ChatGPT <em>(2025-09-21
+21:11:07)</em> <em>[ChatGPT]</em></h3>
+<p>Boa pergunta — e entendo a confusão, porque o
+<strong>NotoColorEmoji.ttf oficial do Google</strong> não fica colorido
+no Windows 10 justamente por causa do formato de cores. Vou te explicar
+como converter para que funcione:</p>
+<hr />
+<h2 data-number="1.3" id="o-problema"><span class="header-section-number">1.3</span> 📌 O problema</h2>
+<ul>
+<li><strong>NotoColorEmoji.ttf oficial</strong> → usa
+<strong>CBDT/CBLC</strong> (bitmaps PNG embutidos).<br />
+</li>
+<li><strong>Windows 10</strong> → entende apenas <strong>COLR/CPAL
+(camadas vetoriais de cor)</strong> e, em versões mais novas,
+<strong>SVGinOT</strong>.<br />
+</li>
+<li>Resultado: se você só instalar, ou ele aparece preto e branco ou nem
+abre os emojis coloridos.</li>
+</ul>
+<hr />
+<h2 data-number="1.4" id="como-converter-para-windows-10"><span class="header-section-number">1.4</span> 🔧 Como converter para Windows
+10</h2>
+<p>Não existe um botão único “converter”, mas dá pra fazer com as
+ferramentas certas. O processo é:</p>
+<h3 data-number="1.4.1" id="instalar-dependências"><span class="header-section-number">1.4.1</span> 1. Instalar dependências</h3>
+<p>Você vai precisar do <strong>FontTools</strong> (Python) e de
+ferramentas auxiliares.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install fonttools brotli</span></code></pre></div>
+<p>Opcional: também instalar <strong>nanoemoji</strong> (um conversor do
+Google que gera fontes COLR/CPAL a partir de SVGs):</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nanoemoji</span></code></pre></div>
+<hr />
+<h3 data-number="1.4.2" id="obter-os-svgs-do-noto"><span class="header-section-number">1.4.2</span> 2. Obter os SVGs do Noto</h3>
+<p>O repositório oficial do Google disponibiliza os emojis em
+<strong>SVG</strong>, além do TTF: 👉 <a href="https://github.com/googlefonts/noto-emoji/tree/main/svg" class="uri">https://github.com/googlefonts/noto-emoji/tree/main/svg</a></p>
+<p>Esses SVGs são a matéria-prima para criar uma fonte COLR/CPAL.</p>
+<hr />
+<h3 data-number="1.4.3" id="gerar-a-fonte-colrcpal"><span class="header-section-number">1.4.3</span> 3. Gerar a fonte
+COLR/CPAL</h3>
+<p>Com o <code>nanoemoji</code>, você pode gerar uma versão compatível
+com Windows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nanoemoji</span> noto-emoji/svg/emoji_u<span class="pp">*</span>.svg <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--color_format</span> colr_0 <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output_file</span> NotoColorEmoji_Windows10.ttf</span></code></pre></div>
+<ul>
+<li><code>--color_format colr_0</code> força o formato que o Windows 10
+entende.<br />
+</li>
+<li>O arquivo resultante (<code>NotoColorEmoji_Windows10.ttf</code>) vai
+carregar os emojis coloridos.</li>
+</ul>
+<hr />
+<h3 data-number="1.4.4" id="instalar-no-windows-10"><span class="header-section-number">1.4.4</span> 4. Instalar no Windows
+10</h3>
+<ul>
+<li>Copie o <code>.ttf</code> para <code>C:\Windows\Fonts\</code><br />
+</li>
+<li>Ou clique com o botão direito → <strong>Instalar para todos os
+usuários</strong></li>
+</ul>
+<p>Depois feche e reabra os programas para testar (Word, navegador,
+etc.).</p>
+<hr />
+<h2 data-number="1.5" id="alternativa-prática"><span class="header-section-number">1.5</span> 🚀 Alternativa prática</h2>
+<p>Se você não quer compilar nada, pode usar uma versão pronta: -
+<strong>Twemoji Mozilla (COLR/CPAL)</strong> → <a href="https://github.com/mozilla/twemoji-colr" class="uri">https://github.com/mozilla/twemoji-colr</a><br />
+Funciona colorido no Windows 10 sem precisar converter.</p>
+<hr />
+<p>👉 Quer que eu te passe um <strong>passo a passo detalhado em
+português para usar o <code>nanoemoji</code> e gerar a versão COLR/CPAL
+do Noto</strong> (com comandos e links prontos), ou prefere que eu te
+traga <strong>um build já pronto para baixar</strong>?</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-09-21-211604-chatgpt"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-09-21
+21:16:04)</em> <em>[ChatGPT]</em></h3>
+<p>nanoemoji FATAL Flags parsing error: flag –color_format=colr_0: value
+should be one of</p>
+<hr />
+<h3 data-number="1.5.2" id="chatgpt-2025-09-21-211607-chatgpt"><span class="header-section-number">1.5.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:16:07)</em> <em>[ChatGPT]</em></h3>
+<p>Tive uma olhada: realmente o <code>nanoemoji</code> não aceita
+<code>--color_format=colr_0</code> como valor — esse valor não está na
+lista de formatos válidos. citeturn0search0</p>
+<p>Aqui estão os formatos de cor que <em>sim</em> são aceites, e como
+usá-los para gerar uma fonte colorida compatível:</p>
+<hr />
+<h2 data-number="1.6" id="formatos-de-cor-suportados-pelo-nanoemoji"><span class="header-section-number">1.6</span> ✅ Formatos de cor suportados
+pelo nanoemoji</h2>
+<p>Segundo a documentação, os formatos que <em>nanoemoji</em> suporta
+incluem: citeturn0search0</p>
+<ul>
+<li><code>COLRv0</code> — formato COLR versão 0, vetorial, sem
+gradientes. citeturn0search0turn0search4<br />
+</li>
+<li><code>COLRv1</code> — versão mais nova do COLR, com suporte a
+gradientes, composições, reutilização de glyphs vetoriais, etc.
+citeturn0search0turn0search4turn0search5<br />
+</li>
+<li><code>SVG</code> — como em SVG dentro de fonte (OT-SVG).
+citeturn0search0<br />
+</li>
+<li><code>sbix</code> — bitmap; mais usado para sistemas que suportam
+bitmaps (ex: macOS/Safari). citeturn0search0<br />
+</li>
+<li><code>CBDT</code> — bitmap embutido (como o Noto original).
+citeturn0search0</li>
+</ul>
+<hr />
+<h2 data-number="1.7" id="compatibilidade-windows-10"><span class="header-section-number">1.7</span> ⚠ Compatibilidade Windows
+10</h2>
+<p><strong>Importante</strong>: nem todos os formatos são totalmente
+suportados pelo Windows 10. Até onde sei:</p>
+<ul>
+<li>Windows 10 suporta COLR (versão 0) para fontes coloridas.<br />
+</li>
+<li>COLR-v1 só em versões mais modernas ou com atualizações específicas;
+se não for suportado, pode cair para visual sem cor ou parte sem
+cor.<br />
+</li>
+<li>SVG/OT-SVG em geral <em>não</em> é bem suportado no Windows 10 para
+fontes coloridas; depende da aplicação.<br />
+</li>
+<li>Bitmaps (sbix, CBDT) normalmente <em>não</em> funcionam para cor no
+Windows 10 padrão.</li>
+</ul>
+<hr />
+<h2 data-number="1.8" id="como-gerar-fonte-compatível"><span class="header-section-number">1.8</span> 🔧 Como gerar fonte
+compatível</h2>
+<p>Aqui vai um comando que <em>deveria</em> funcionar para gerar uma
+versão COLR-v0 do Noto Color Emoji (mais segura para Windows 10):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nanoemoji</span> noto-emoji/svg <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--color_format</span><span class="op">=</span>COLRv0 <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output_file</span> NotoColorEmoji_COLRv0.ttf</span></code></pre></div>
+<ul>
+<li><code>noto-emoji/svg</code> → caminho onde estão os SVGs oficiais do
+repositório do Google Noto Emoji.<br />
+</li>
+<li><code>--color_format=COLRv0</code> → esse formato que o Windows 10
+normalmente aceita para cor em fontes vetoriais.<br />
+</li>
+<li><code>--output_file</code> → nome de saída da fonte convertida.</li>
+</ul>
+<hr />
+<p>Se quiser, posso te guiar passo-a-passo no Windows (ou Linux) para
+fazer isso e testar, e ver se o resultado fica realmente colorido no seu
+sistema. Você prefere esse tutorial detalhado?</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-2025-09-21-211857-chatgpt"><span class="header-section-number">1.8.1</span> 👤 Utilizador <em>(2025-09-21
+21:18:57)</em> <em>[ChatGPT]</em></h3>
+<p>o acima tambem não funciona</p>
+<hr />
+<h3 data-number="1.8.2" id="chatgpt-2025-09-21-211957-chatgpt"><span class="header-section-number">1.8.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:19:57)</em> <em>[ChatGPT]</em></h3>
+<p>Certo — esse erro acontece porque o valor que você passou para
+<code>--color_format</code> não é um dos valores válidos do
+<strong>nanoemoji</strong>.<br />
+Use <strong><code>glyf_colr_0</code></strong> (COLR v0),
+<strong><code>glyf_colr_1</code></strong> (COLR v1) ou outros formatos
+suportados (<code>picosvg</code>, <code>sbix</code>, <code>cbdt</code>,
+etc.). A documentação dá o exemplo
+<code>--color_format glyf_colr_1</code>. citeturn1view0</p>
+<p>Abaixo vai um passo-a-passo prático (Windows PowerShell +
+cross-platform) — com comandos testáveis — e dicas de
+troubleshooting.</p>
+<hr />
+<h2 data-number="1.9" id="instalar-python-3.8"><span class="header-section-number">1.9</span> 1) Instalar (Python 3.8+)</h2>
+<p>Windows / PowerShell:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\Activate</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m pip install <span class="op">--</span>upgrade pip</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pip install nanoemoji picosvg</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># resvg/resvg_py é opcional (ajuda em bitmaps/rasters); instalar se quiser suportar sbix/CBDT:</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>pip install resvg_py</span></code></pre></div>
+<p>Linux/macOS (bash):</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv .venv</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .venv/bin/activate</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nanoemoji picosvg resvg_py</span></code></pre></div>
+<p>(Instalação e exemplo na README do nanoemoji). citeturn1view0</p>
+<hr />
+<h2 data-number="1.10" id="pegar-os-svgs-do-noto-exemplo"><span class="header-section-number">1.10</span> 2) Pegar os SVGs do Noto
+(exemplo)</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--depth</span> 1 https://github.com/googlefonts/noto-emoji.git</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> noto-emoji/svg</span></code></pre></div>
+<p>ou baixe apenas os SVGs que você quer converter.</p>
+<hr />
+<h2 data-number="1.11" id="comando-mínimo-testar-com-1-arquivo-primeiro"><span class="header-section-number">1.11</span> 3) Comando mínimo (testar com
+1 arquivo primeiro)</h2>
+<p>No diretório <code>svg</code>, tente com <strong>um emoji</strong>
+(ex.: U+1F600 → <code>emoji_u1f600.svg</code>):</p>
+<p>PowerShell:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m nanoemoji <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\emoji_u1f600<span class="op">.</span><span class="fu">svg</span></span></code></pre></div>
+<p>bash:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji <span class="at">--color_format</span> glyf_colr_0 ./emoji_u1f600.svg</span></code></pre></div>
+<p>Para gerar <strong>COLR v0</strong> (mais compatível com Windows 10).
+Use <code>glyf_colr_1</code> se quiser COLRv1 (melhor fidelidade para
+gradientes), mas atenção à compatibilidade do cliente final.
+citeturn1view0turn3search9</p>
+<p>Depois de rodar, o <code>nanoemoji</code> cria uma pasta
+<code>build/</code> — procure pelo <code>.ttf</code> gerado:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bash</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> build <span class="at">-type</span> f <span class="at">-iname</span> <span class="st">&quot;*glyf_colr_0*.ttf&quot;</span> <span class="at">-print</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># PowerShell</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Get-ChildItem</span> <span class="at">-Recurse</span> <span class="at">-Filter</span> <span class="st">&quot;*glyf_colr_0*.ttf&quot;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.12" id="se-quiser-gerar-o-conjunto-inteiro-aviso"><span class="header-section-number">1.12</span> 4) Se quiser gerar o conjunto
+inteiro (AVISO)</h2>
+<p>Converter <strong>todos</strong> os ~3.5k SVGs é pesado e pode
+travar/errar (há relatos de <code>ninja</code>/write_font falhando ou
+processo muito lento). Se for tentar, faça por partes/subconjuntos e
+primeiro teste com 10–50 SVGs. citeturn3search1</p>
+<p>Exemplo para um lote (bash):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># só alguns para teste</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji <span class="at">--color_format</span> glyf_colr_0 ./emoji_u1f60<span class="pp">[</span><span class="ss">0</span><span class="pp">-</span><span class="ss">9</span><span class="pp">]</span>.svg</span></code></pre></div>
+<p>ou toda a pasta (pode demorar MUITO):</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji <span class="at">--color_format</span> glyf_colr_0 ./<span class="pp">*</span>.svg</span></code></pre></div>
+<hr />
+<h2 data-number="1.13" id="problemas-comuns-e-soluções-rápidas"><span class="header-section-number">1.13</span> 5) Problemas comuns e soluções
+rápidas</h2>
+<ul>
+<li><strong>Erro <code>flag --color_format=colr_0</code></strong> → você
+usou <code>colr_0</code> (inválido). Use <code>glyf_colr_0</code> /
+<code>glyf_colr_1</code> / <code>picosvg</code> / <code>sbix</code> /
+<code>cbdt</code>. citeturn1view0<br />
+</li>
+<li><strong>Processo muito lento ou falha ao final</strong> → converta
+em partes; tente gerar primeiro COLRv1 (<code>glyf_colr_1</code>) para
+fidelidade (mas Windows 10 antigo talvez não renderize v1 corretamente),
+ou use um set com cores planas (ex.: Twemoji) para COLRv0.
+citeturn3search1turn0search3<br />
+</li>
+<li><strong>Gradientes / efeitos complexos</strong> → COLR v0 NÃO
+suporta gradientes; COLR v1 sim. Noto costuma usar gradientes — portanto
+o resultado em <code>glyf_colr_0</code> pode perder aparência. Se
+precisa que fique igualzinho ao Noto, considere <code>glyf_colr_1</code>
+(se o target renderizador aceitar). citeturn3search9</li>
+</ul>
+<hr />
+<h2 data-number="1.14" id="alternativa-prática-se-você-só-quer-emojis-coloridos-no-windows-10"><span class="header-section-number">1.14</span> 6) Alternativa prática (se
+você só quer emojis coloridos no Windows 10)</h2>
+<p>Se o objetivo é só “ter emoji colorido estilo Google/Twitter no
+Windows 10” e você quer evitar compilar, use uma fonte já pronta em COLR
+(por exemplo os builds do Twemoji em COLR v0 ou repositórios que já
+fornecem builds). Isso evita dores de cabeça com nanoemoji e com SVGs
+com gradientes. citeturn0search3</p>
+<hr />
+<p>Se quiser eu te passo <strong>um script pronto</strong> adaptado ao
+seu Windows (PowerShell) que:</p>
+<ul>
+<li>cria o venv, instala dependências,</li>
+<li>baixa um subconjunto do Noto SVG (ou usa um ZIP que você me diga que
+já tem),</li>
+<li>roda <code>nanoemoji</code> num lote de 50 arquivos,</li>
+<li>e mostra onde está o <code>.ttf</code> gerado.</li>
+</ul>
+<p>Diz só: você está no <strong>Windows 10</strong> (64-bits)? prefere
+<strong>COLR v0</strong> (compatibilidade) ou <strong>COLR v1</strong>
+(melhor fidelidade aos gradientes)? Não preciso de mais nada — se você
+confirmar, já te dou o script pronto.</p>
+<hr />
+<h3 data-number="1.14.1" id="utilizador-2025-09-21-212324-chatgpt"><span class="header-section-number">1.14.1</span> 👤 Utilizador
+<em>(2025-09-21 21:23:24)</em> <em>[ChatGPT]</em></h3>
+<p>Windows 10 (64-bits)</p>
+<hr />
+<h3 data-number="1.14.2" id="chatgpt-2025-09-21-212325-chatgpt"><span class="header-section-number">1.14.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:23:25)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 então vamos focar no <strong>Windows 10
+(64-bits)</strong>.<br />
+O que precisa ter em mente:</p>
+<ul>
+<li>O <strong>Windows 10</strong> suporta <strong>COLRv0</strong> (cores
+planas, sem gradiente).<br />
+</li>
+<li>Ele <strong>não suporta COLRv1</strong> (gradientes, transparências
+avançadas), isso só no Windows 11.<br />
+</li>
+<li>Portanto, se você usar <code>glyf_colr_1</code>, provavelmente vai
+ver preto-e-branco ou falhas.<br />
+</li>
+<li>A forma mais segura é gerar a fonte em
+<strong><code>glyf_colr_0</code></strong> (COLRv0).</li>
+</ul>
+<hr />
+<h2 data-number="1.15" id="passo-a-passo-no-windows-10-powershell"><span class="header-section-number">1.15</span> 🚀 Passo a passo no Windows 10
+(PowerShell)</h2>
+<ol type="1">
+<li><strong>Criar ambiente e instalar dependências</strong></li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\Activate</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m pip install <span class="op">--</span>upgrade pip</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>pip install nanoemoji picosvg</span></code></pre></div>
+<hr />
+<ol start="2" type="1">
+<li><strong>Baixar os SVGs do Noto Emoji</strong></li>
+</ol>
+<div class="sourceCode" id="cb16"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>git clone <span class="op">--</span>depth <span class="dv">1</span> https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>googlefonts<span class="op">/</span>noto-emoji<span class="op">.</span><span class="fu">git</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> noto-emoji\svg</span></code></pre></div>
+<p><em>(Se não tiver Git, pode baixar o ZIP do repositório e
+extrair).</em></p>
+<hr />
+<ol start="3" type="1">
+<li><strong>Gerar um teste (1 emoji)</strong></li>
+</ol>
+<div class="sourceCode" id="cb17"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m nanoemoji <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\emoji_u1f600<span class="op">.</span><span class="fu">svg</span></span></code></pre></div>
+<p>👉 Isso deve criar uma pasta <code>build\...</code> com um
+<code>.ttf</code> dentro.</p>
+<hr />
+<ol start="4" type="1">
+<li><strong>Gerar lote (10 emojis para teste)</strong></li>
+</ol>
+<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m nanoemoji <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\emoji_u1f60<span class="op">*.</span><span class="fu">svg</span></span></code></pre></div>
+<hr />
+<ol start="5" type="1">
+<li><strong>Gerar a fonte inteira (pode demorar MUITO)</strong></li>
+</ol>
+<div class="sourceCode" id="cb19"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m nanoemoji <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\emoji_u<span class="op">*.</span><span class="fu">svg</span></span></code></pre></div>
+<p>⚠️ Isso vai consumir tempo/memória. Se travar, faça em partes (ex.:
+<code>emoji_u1f3*.svg</code>, depois <code>emoji_u1f4*.svg</code>,
+etc.).</p>
+<hr />
+<ol start="6" type="1">
+<li><strong>Instalar no Windows</strong> Pegue o <code>.ttf</code> que
+aparece dentro de <code>build\</code> → copie para
+<code>C:\Windows\Fonts</code><br />
+ou clique com o botão direito → <strong>Instalar para todos os
+usuários</strong>.</li>
+</ol>
+<hr />
+<p>✅ Agora, o Windows 10 deve renderizar os emojis coloridos no estilo
+do Google, mas <strong>sem gradientes complexos</strong> (porque no
+COLRv0 eles viram cores chapadas).</p>
+<hr />
+<p>👉 Quer que eu monte para você um <strong>script PowerShell
+automático</strong> que já baixa os SVGs, roda o <code>nanoemoji</code>
+em partes e junta numa única fonte
+<code>NotoColorEmoji_Windows10.ttf</code>?</p>
+<hr />
+<h3 data-number="1.15.1" id="utilizador-2025-09-21-212512-chatgpt"><span class="header-section-number">1.15.1</span> 👤 Utilizador
+<em>(2025-09-21 21:25:12)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.15.2" id="chatgpt-2025-09-21-212512-chatgpt"><span class="header-section-number">1.15.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:25:12)</em> <em>[ChatGPT]</em></h3>
+<p>Ótimo 🙌 Vou montar um <strong>script PowerShell automático</strong>
+para você. Ele vai:</p>
+<ol type="1">
+<li>Criar um ambiente virtual Python.<br />
+</li>
+<li>Instalar as dependências (<code>nanoemoji</code>,
+<code>picosvg</code>).<br />
+</li>
+<li>Baixar os SVGs do repositório oficial do Noto Emoji.<br />
+</li>
+<li>Gerar a fonte em <strong>COLRv0</strong> (compatível com Windows
+10).<br />
+</li>
+<li>Deixar o arquivo pronto para instalar.</li>
+</ol>
+<hr />
+<h2 data-number="1.16" id="script-powershell-build-notoemoji.ps1"><span class="header-section-number">1.16</span> 📜 Script PowerShell
+(<code>build-notoemoji.ps1</code>)</h2>
+<p>Salve o conteúdo abaixo como <code>build-notoemoji.ps1</code> e
+execute no PowerShell <strong>como Administrador</strong>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ativar modo de erro estrito</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="va">$ErrorActionPreference</span> <span class="op">=</span> <span class="st">&quot;Stop&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;=== Preparando ambiente Python ===&quot;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\Activate</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m pip install <span class="op">--</span>upgrade pip</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>pip install nanoemoji picosvg</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;=== Baixando Noto Emoji (SVGs) ===&quot;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(-not</span> <span class="op">(</span><span class="fu">Test-Path</span> <span class="st">&quot;.\noto-emoji&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    git clone <span class="op">--</span>depth <span class="dv">1</span> https<span class="op">://</span>github<span class="op">.</span><span class="fu">com</span><span class="op">/</span>googlefonts<span class="op">/</span>noto-emoji<span class="op">.</span><span class="fu">git</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-Location</span> <span class="op">.</span>\noto-emoji\svg</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;=== Gerando fonte COLRv0 (compatível com Windows 10) ===&quot;</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Aqui gera um subconjunto de teste (🙂😁😂)</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m nanoemoji <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\emoji_u1f60<span class="op">*.</span><span class="fu">svg</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Para gerar TODOS (pode demorar muito e usar bastante memória)</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co"># python -m nanoemoji --color_format glyf_colr_0 .\emoji_u*.svg</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;=== Procurando TTF gerado ===&quot;</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-Location</span> <span class="op">..</span>\<span class="op">..</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">-</span>Recurse <span class="op">-</span>Filter <span class="st">&quot;*.ttf&quot;</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;=== Concluído! Instale o arquivo TTF encontrado na pasta build\ ===&quot;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.17" id="como-rodar"><span class="header-section-number">1.17</span> 🚀 Como rodar</h2>
+<ol type="1">
+<li><p>Abra o <strong>PowerShell</strong> como Administrador.<br />
+</p></li>
+<li><p>Vá até a pasta onde salvou <code>build-notoemoji.ps1</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> C<span class="op">:</span>\caminho\para\pasta</span></code></pre></div></li>
+<li><p>Execute:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\build-notoemoji<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div></li>
+<li><p>Ao final, procure o arquivo <code>.ttf</code> dentro de
+<code>noto-emoji\build\...</code>.<br />
+</p></li>
+<li><p>Clique com o botão direito nele → <strong>Instalar para todos os
+usuários</strong>.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.18" id="observações"><span class="header-section-number">1.18</span> ⚠️ Observações</h2>
+<ul>
+<li>A compilação de <strong>TODOS os emojis</strong> pode demorar
+bastante (&gt;30 minutos e consumir &gt;1GB RAM).<br />
+</li>
+<li>Recomendo primeiro testar com <strong>10–20 emojis</strong> antes de
+tentar a fonte completa.<br />
+</li>
+<li>O resultado terá emojis coloridos no Windows 10, mas <strong>sem
+gradientes</strong>, já que o COLRv0 não os suporta.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu já adapte esse script para <strong>gerar a fonte
+completa de uma vez só</strong> (todos os ~3.5k emojis), mesmo sendo
+pesado, ou prefere que eu deixe no modo <strong>subconjunto de
+teste</strong> para validar primeiro?</p>
+<hr />
+<h3 data-number="1.18.1" id="utilizador-2025-09-21-212637-chatgpt"><span class="header-section-number">1.18.1</span> 👤 Utilizador
+<em>(2025-09-21 21:26:37)</em> <em>[ChatGPT]</em></h3>
+<p>apenas python</p>
+<hr />
+<h3 data-number="1.18.2" id="chatgpt-2025-09-21-212638-chatgpt"><span class="header-section-number">1.18.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:26:38)</em> <em>[ChatGPT]</em></h3>
+<p>Beleza 👍 se você prefere <strong>apenas Python</strong> (sem script
+PowerShell separado), dá pra fazer tudo direto em um único script
+<code>.py</code>.</p>
+<p>Esse script vai:<br />
+1. Criar diretórios de trabalho.<br />
+2. Instalar dependências (via <code>subprocess</code> chamando
+<code>pip</code>).<br />
+3. Clonar (ou baixar) os SVGs do Noto Emoji.<br />
+4. Rodar o <strong>nanoemoji</strong> em <code>glyf_colr_0</code>
+(compatível com Windows 10).<br />
+5. Mostrar o caminho do <code>.ttf</code> gerado.</p>
+<hr />
+<h2 data-number="1.19" id="script-python-build_notoemoji.py"><span class="header-section-number">1.19</span> 📜 Script Python
+(<code>build_notoemoji.py</code>)</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co"># === Funções auxiliares ===</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run(cmd, cwd<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss">&gt;&gt;&gt; Executando: </span><span class="sc">{</span><span class="st">&#39; &#39;</span><span class="sc">.</span>join(cmd)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    subprocess.check_call(cmd, cwd<span class="op">=</span>cwd)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co"># === Preparar ambiente ===</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;=== Atualizando pip e instalando dependências ===&quot;</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>run([sys.executable, <span class="st">&quot;-m&quot;</span>, <span class="st">&quot;pip&quot;</span>, <span class="st">&quot;install&quot;</span>, <span class="st">&quot;--upgrade&quot;</span>, <span class="st">&quot;pip&quot;</span>])</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>run([sys.executable, <span class="st">&quot;-m&quot;</span>, <span class="st">&quot;pip&quot;</span>, <span class="st">&quot;install&quot;</span>, <span class="st">&quot;nanoemoji&quot;</span>, <span class="st">&quot;picosvg&quot;</span>])</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co"># === Baixar Noto Emoji ===</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> Path(<span class="st">&quot;noto-emoji&quot;</span>).exists():</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    run([<span class="st">&quot;git&quot;</span>, <span class="st">&quot;clone&quot;</span>, <span class="st">&quot;--depth&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;https://github.com/googlefonts/noto-emoji.git&quot;</span>])</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>svg_dir <span class="op">=</span> Path(<span class="st">&quot;noto-emoji/svg&quot;</span>)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co"># === Teste com alguns emojis (🙂😁😂) ===</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;=== Gerando subconjunto COLRv0 (para teste) ===&quot;</span>)</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>run([sys.executable, <span class="st">&quot;-m&quot;</span>, <span class="st">&quot;nanoemoji&quot;</span>, <span class="st">&quot;--color_format&quot;</span>, <span class="st">&quot;glyf_colr_0&quot;</span>] <span class="op">+</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    [<span class="bu">str</span>(svg_dir <span class="op">/</span> <span class="st">&quot;emoji_u1f600.svg&quot;</span>),</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>     <span class="bu">str</span>(svg_dir <span class="op">/</span> <span class="st">&quot;emoji_u1f601.svg&quot;</span>),</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>     <span class="bu">str</span>(svg_dir <span class="op">/</span> <span class="st">&quot;emoji_u1f602.svg&quot;</span>)])</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="co"># === Para todos os emojis (pode ser pesado) ===</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="co"># print(&quot;=== Gerando TODOS os emojis COLRv0 (pode demorar bastante) ===&quot;)</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a><span class="co"># all_svgs = [str(f) for f in svg_dir.glob(&quot;emoji_u*.svg&quot;)]</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="co"># run([sys.executable, &quot;-m&quot;, &quot;nanoemoji&quot;, &quot;--color_format&quot;, &quot;glyf_colr_0&quot;] + all_svgs)</span></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a><span class="co"># === Procurar arquivos gerados ===</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">=== Arquivos TTF gerados ===&quot;</span>)</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ttf <span class="kw">in</span> Path(<span class="st">&quot;noto-emoji&quot;</span>).rglob(<span class="st">&quot;*.ttf&quot;</span>):</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;👉&quot;</span>, ttf.resolve())</span></code></pre></div>
+<hr />
+<h2 data-number="1.20" id="como-usar"><span class="header-section-number">1.20</span> 🚀 Como usar</h2>
+<ol type="1">
+<li><p>Salve o script como <code>build_notoemoji.py</code>.<br />
+</p></li>
+<li><p>Abra o terminal (cmd ou PowerShell) e rode:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> build_notoemoji.py</span></code></pre></div></li>
+<li><p>Depois de alguns minutos, veja o caminho do <code>.ttf</code>
+listado no final.<br />
+</p></li>
+<li><p>Clique duas vezes no <code>.ttf</code> → Instalar → Pronto (em
+<code>C:\Windows\Fonts</code>).</p></li>
+</ol>
+<hr />
+<h2 data-number="1.21" id="dicas"><span class="header-section-number">1.21</span> ⚠️ Dicas</h2>
+<ul>
+<li>Teste primeiro com o <strong>subconjunto de 3 emojis</strong> (já
+está no script).<br />
+</li>
+<li>Se funcionar, descomente a parte “TODOS os emojis” para gerar a
+fonte completa.<br />
+</li>
+<li>O build completo pode levar 20–40 min e usar bastante memória.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu já adapte esse script para <strong>sempre gerar direto
+a fonte completa</strong> (todos os ~3.5k emojis), ou prefere deixar no
+modo “subconjunto” para validar primeiro?</p>
+<hr />
+<h3 data-number="1.21.1" id="utilizador-2025-09-21-212824-chatgpt"><span class="header-section-number">1.21.1</span> 👤 Utilizador
+<em>(2025-09-21 21:28:24)</em> <em>[ChatGPT]</em></h3>
+<p>Como converter para Windows 10compativel, o Noto Color Emoji</p>
+<hr />
+<h3 data-number="1.21.2" id="chatgpt-2025-09-21-212824-chatgpt"><span class="header-section-number">1.21.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:28:24)</em> <em>[ChatGPT]</em></h3>
+<p>Boa! Vou resumir de forma <strong>clara e prática</strong> como você
+pode pegar o <strong>Noto Color Emoji</strong> oficial do Google (que
+não aparece colorido no Windows 10) e transformá-lo em uma <strong>fonte
+compatível com o Windows 10</strong>.</p>
+<hr />
+<h2 data-number="1.22" id="por-que-não-funciona-direto"><span class="header-section-number">1.22</span> 📌 Por que não funciona
+direto?</h2>
+<ul>
+<li>O <strong>NotoColorEmoji.ttf oficial</strong> usa
+<strong>CBDT/CBLC</strong> (bitmaps PNG embutidos).<br />
+</li>
+<li>O <strong>Windows 10</strong> <strong>não entende</strong> esse
+formato.<br />
+</li>
+<li>Ele só suporta <strong>COLRv0</strong> (camadas vetoriais planas,
+sem gradientes).<br />
+</li>
+<li>Então precisamos <strong>converter os SVGs do Noto</strong> em uma
+fonte <strong>COLRv0</strong>.</li>
+</ul>
+<hr />
+<h2 data-number="1.23" id="como-converter-usando-só-python"><span class="header-section-number">1.23</span> 🔧 Como converter (usando só
+Python)</h2>
+<h3 data-number="1.23.1" id="instale-dependências"><span class="header-section-number">1.23.1</span> 1. Instale dependências</h3>
+<p>Abra o terminal (cmd ou PowerShell) e rode:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> pip</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install nanoemoji picosvg</span></code></pre></div>
+<hr />
+<h3 data-number="1.23.2" id="baixe-os-arquivos-svg-do-noto"><span class="header-section-number">1.23.2</span> 2. Baixe os arquivos SVG do
+Noto</h3>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--depth</span> 1 https://github.com/googlefonts/noto-emoji.git</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> noto-emoji/svg</span></code></pre></div>
+<p><em>(ou baixe o ZIP no GitHub e extraia)</em></p>
+<hr />
+<h3 data-number="1.23.3" id="gere-a-fonte-compatível"><span class="header-section-number">1.23.3</span> 3. Gere a fonte
+compatível</h3>
+<p>Exemplo com 3 emojis (para testar):</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji <span class="at">--color_format</span> glyf_colr_0 emoji_u1f600.svg emoji_u1f601.svg emoji_u1f602.svg</span></code></pre></div>
+<p>Isso cria um <code>.ttf</code> dentro da pasta
+<code>build/</code>.</p>
+<p>👉 O segredo está no parâmetro: -
+<code>--color_format glyf_colr_0</code> → gera em
+<strong>COLRv0</strong>, que funciona no Windows 10.</p>
+<hr />
+<h3 data-number="1.23.4" id="opcional-gerar-a-fonte-inteira"><span class="header-section-number">1.23.4</span> 4. (Opcional) Gerar a fonte
+inteira</h3>
+<p>⚠️ pode ser pesado (milhares de SVGs, demora bastante):</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji <span class="at">--color_format</span> glyf_colr_0 emoji_u<span class="pp">*</span>.svg</span></code></pre></div>
+<hr />
+<h3 data-number="1.23.5" id="instale-no-windows"><span class="header-section-number">1.23.5</span> 5. Instale no Windows</h3>
+<ul>
+<li>Ache o <code>.ttf</code> em <code>build/</code><br />
+</li>
+<li>Clique com o botão direito → <strong>Instalar para todos os
+usuários</strong><br />
+</li>
+<li>Reinicie o app para ver os emojis coloridos.</li>
+</ul>
+<hr />
+<h2 data-number="1.24" id="limitações"><span class="header-section-number">1.24</span> ⚠️ Limitações</h2>
+<ul>
+<li>O <strong>COLRv0</strong> não suporta gradientes → alguns emojis
+perdem “brilho/sombra”.<br />
+</li>
+<li>No Windows 11 já existe suporte ao <strong>COLRv1</strong> (com
+gradientes), mas no Windows 10 não.<br />
+</li>
+<li>Se quiser praticidade, também pode usar <strong>Twemoji
+COLR</strong> (Mozilla), que já vem pronto para Windows 10.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu te passe um <strong>script Python completo</strong>
+(um arquivo só) que já baixa o Noto Emoji, gera em
+<code>glyf_colr_0</code> e mostra o caminho do <code>.ttf</code> pronto
+para instalar?</p>
+<hr />
+<h3 data-number="1.24.1" id="utilizador-2025-09-21-213105-chatgpt"><span class="header-section-number">1.24.1</span> 👤 Utilizador
+<em>(2025-09-21 21:31:05)</em> <em>[ChatGPT]</em></h3>
+<p>No module named nanoemoji.__main__; ‘nanoemoji’ is a package and
+cannot be directly executed</p>
+<hr />
+<h3 data-number="1.24.2" id="chatgpt-2025-09-21-213106-chatgpt"><span class="header-section-number">1.24.2</span> 🤖 ChatGPT <em>(2025-09-21
+21:31:06)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito, esse erro é <strong>esperado</strong> 👍</p>
+<p>No Python, alguns pacotes podem ser executados com
+<code>python -m pacote</code>, mas outros não têm um
+<code>__main__.py</code> interno.<br />
+O <strong><code>nanoemoji</code></strong> é um desses: ele não tem
+<code>__main__.py</code>, então você não consegue rodar direto com</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> nanoemoji ...</span></code></pre></div>
+<p>👉 A forma correta é rodar o <strong>executável de console</strong>
+que o <code>pip</code> instala:
+<strong><code>nanoemoji</code></strong>.</p>
+<hr />
+<h2 data-number="1.25" id="como-corrigir"><span class="header-section-number">1.25</span> ✅ Como corrigir</h2>
+<h3 data-number="1.25.1" id="teste-se-o-comando-existe"><span class="header-section-number">1.25.1</span> 1. Teste se o comando
+existe</h3>
+<p>No terminal:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nanoemoji</span> <span class="at">--help</span></span></code></pre></div>
+<p>Se aparecer a ajuda, está pronto.</p>
+<hr />
+<h3 data-number="1.25.2" id="rodar-no-windows-10-powershell-ou-cmd"><span class="header-section-number">1.25.2</span> 2. Rodar no Windows 10
+(PowerShell ou CMD)</h3>
+<p>Exemplo com 3 emojis de teste:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nanoemoji <span class="op">--</span>color_format glyf_colr_0 noto-emoji\svg\emoji_u1f600<span class="op">.</span><span class="fu">svg</span> noto-emoji\svg\emoji_u1f601<span class="op">.</span><span class="fu">svg</span> noto-emoji\svg\emoji_u1f602<span class="op">.</span><span class="fu">svg</span></span></code></pre></div>
+<hr />
+<h3 data-number="1.25.3" id="rodar-no-linuxmacos"><span class="header-section-number">1.25.3</span> 3. Rodar no Linux/macOS</h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nanoemoji</span> <span class="at">--color_format</span> glyf_colr_0 noto-emoji/svg/emoji_u1f600.svg noto-emoji/svg/emoji_u1f601.svg noto-emoji/svg/emoji_u1f602.svg</span></code></pre></div>
+<hr />
+<h3 data-number="1.25.4" id="se-o-comando-nanoemoji-não-for-encontrado"><span class="header-section-number">1.25.4</span> 4. Se o comando
+<code>nanoemoji</code> não for encontrado</h3>
+<p>Em algumas instalações do Windows, o executável pode estar em:</p>
+<pre><code>.\.venv\Scripts\nanoemoji.exe</code></pre>
+<p>ou</p>
+<pre><code>C:\Users\SEU_USUARIO\AppData\Local\Programs\Python\PythonXY\Scripts\nanoemoji.exe</code></pre>
+<p>Então você roda assim:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\nanoemoji<span class="op">.</span><span class="fu">exe</span> <span class="op">--</span>color_format glyf_colr_0 <span class="op">.</span>\noto-emoji\svg\emoji_u1f600<span class="op">.</span><span class="fu">svg</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.26" id="resultado"><span class="header-section-number">1.26</span> 🚀 Resultado</h2>
+<p>Isso vai gerar um <code>.ttf</code> dentro da pasta
+<code>build/</code>.<br />
+- Esse <code>.ttf</code> já está em <strong>COLRv0</strong>, ou seja,
+compatível com o Windows 10.<br />
+- Depois é só instalar (clique direito → <strong>Instalar para todos os
+usuários</strong>).</p>
+<hr />
+<p>👉 Quer que eu prepare um <strong>script Python que chama
+<code>nanoemoji</code> via <code>subprocess</code></strong> (sem
+precisar rodar o comando manualmente), para automatizar a geração do
+<code>.ttf</code>?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

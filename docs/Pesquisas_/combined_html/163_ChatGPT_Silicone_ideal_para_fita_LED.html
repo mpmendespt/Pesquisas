@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>163_ChatGPT_Silicone_ideal_para_fita_LED</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#silicone-ideal-para-fita-led" id="toc-silicone-ideal-para-fita-led"><span class="toc-section-number">1</span> Silicone ideal para fita LED</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#o-que-procurar-num-silicone-para-fita-led" id="toc-o-que-procurar-num-silicone-para-fita-led"><span class="toc-section-number">1.3</span> ✅ O que procurar num silicone
+para fita LED</a></li>
+<li><a href="#alguns-silicones-soudal-recomendados" id="toc-alguns-silicones-soudal-recomendados"><span class="toc-section-number">1.4</span> 🛒 Alguns silicones Soudal
+recomendados</a></li>
+<li><a href="#qual-escolher-em-função-da-aplicação" id="toc-qual-escolher-em-função-da-aplicação"><span class="toc-section-number">1.5</span> 🔍 Qual escolher, em função da
+aplicação</a></li>
+<li><a href="#exemplos-no-leroy-merlin-de-silicones-soudal-com-boas-características" id="toc-exemplos-no-leroy-merlin-de-silicones-soudal-com-boas-características"><span class="toc-section-number">1.6</span> 🔍 Exemplos no Leroy Merlin de
+silicones Soudal com boas características</a></li>
+<li><a href="#exemplos-de-produtos-que-podes-comprar-já-da-leroy-merlin" id="toc-exemplos-de-produtos-que-podes-comprar-já-da-leroy-merlin"><span class="toc-section-number">1.7</span> 🛒 Exemplos de produtos que podes
+comprar já da Leroy Merlin</a></li>
+<li><a href="#qual-escolher-para-fita-led" id="toc-qual-escolher-para-fita-led"><span class="toc-section-number">1.8</span> ⚠️ Qual escolher para fita
+LED</a></li>
+<li><a href="#opções-recomendadas-no-leroy-merlin" id="toc-opções-recomendadas-no-leroy-merlin"><span class="toc-section-number">1.9</span> 🔧 Opções recomendadas no Leroy
+Merlin</a></li>
+<li><a href="#qual-escolher-para-fita-led-1" id="toc-qual-escolher-para-fita-led-1"><span class="toc-section-number">1.10</span> ✅ Qual escolher para fita
+LED</a></li>
+<li><a href="#boas-opções-de-outras-marcas" id="toc-boas-opções-de-outras-marcas"><span class="toc-section-number">1.11</span> ✅ Boas opções de outras
+marcas</a></li>
+<li><a href="#exemplos-de-produtos-prontos-para-comprar" id="toc-exemplos-de-produtos-prontos-para-comprar"><span class="toc-section-number">1.12</span> 🛒 Exemplos de produtos prontos
+para comprar</a></li>
+<li><a href="#produtos-transparentes-que-achei-na-leroy-merlin-pt-portugal" id="toc-produtos-transparentes-que-achei-na-leroy-merlin-pt-portugal"><span class="toc-section-number">1.13</span> 🛒 Produtos transparentes que
+achei na Leroy Merlin PT / Portugal</a></li>
+<li><a href="#outras-boas-alternativas-transparentes-de-várias-marcas-que-podes-considerar" id="toc-outras-boas-alternativas-transparentes-de-várias-marcas-que-podes-considerar"><span class="toc-section-number">1.14</span> ✅ Outras boas alternativas
+transparentes (de várias marcas) que podes considerar</a></li>
+<li><a href="#verificado-no-site-da-leroy-merlin" id="toc-verificado-no-site-da-leroy-merlin"><span class="toc-section-number">1.15</span> 🔎 Verificado no site da Leroy
+Merlin</a></li>
+<li><a href="#exemplos-de-produtos-transparentes-do-stock-leroy-merlin" id="toc-exemplos-de-produtos-transparentes-do-stock-leroy-merlin"><span class="toc-section-number">1.16</span> 🛒 Exemplos de Produtos
+Transparentes do stock Leroy Merlin</a></li>
+<li><a href="#o-que-fazer-para-confirmar-stock-na-tua-loja-em-lisboa" id="toc-o-que-fazer-para-confirmar-stock-na-tua-loja-em-lisboa"><span class="toc-section-number">1.17</span> 🔧 O que fazer para confirmar
+stock na tua loja em Lisboa</a></li>
+<li><a href="#boas-opções-transparentes-no-leroy-merlin-para-fita-led" id="toc-boas-opções-transparentes-no-leroy-merlin-para-fita-led"><span class="toc-section-number">1.18</span> ✅ Boas opções transparentes no
+Leroy Merlin para fita LED</a></li>
+<li><a href="#o-que-confirmar-para-que-fique-bom-numa-instalação-de-fita-led" id="toc-o-que-confirmar-para-que-fique-bom-numa-instalação-de-fita-led"><span class="toc-section-number">1.19</span> 🛠 O que confirmar para que fique
+bom numa instalação de fita LED</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="silicone-ideal-para-fita-led"><span class="header-section-number">1</span> Silicone ideal para fita LED</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #163</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> 68cd1501-c968-832c-a248-f2fd9b7da8da</li>
+<li><strong>Criada em:</strong> 2025-09-19 09:32:03</li>
+<li><strong>Atualizada em:</strong> 2025-09-22 10:37:41</li>
+<li><strong>Total de mensagens:</strong> 14</li>
+<li><strong>Resumo:</strong> Qual o silicone de marca soudal ideal para
+fita led…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-19-093203-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-19
+09:32:03)</em> <em>[ChatGPT]</em></h3>
+<p>Qual o silicone de marca soudal ideal para fita led</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-19-093205-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-19
+09:32:05)</em> <em>[ChatGPT]</em></h3>
+<p>Depende um pouco do tipo de instalação da fita LED (interior ou
+exterior, se vai haver contacto com água, se precisa de alta
+durabilidade ou resistência a UV, etc.), mas posso indicar quais as
+características que deves procurar num silicone Soudal ideal, e alguns
+produtos concretos que se adequam bem.</p>
+<hr />
+<h2 data-number="1.3" id="o-que-procurar-num-silicone-para-fita-led"><span class="header-section-number">1.3</span> ✅ O que procurar num silicone
+para fita LED</h2>
+<ol type="1">
+<li><p><strong>Silicone neutro</strong><br />
+— Não ácido, para evitar corrosão em componentes metálicos, alumínio,
+contatos elétricos, etc. Ex: “Silicone de construção neutro” da Soudal.
+citeturn0search2</p></li>
+<li><p><strong>Transparente ou translúcido</strong><br />
+— Para que a luz não fique bloqueada ou alterada em cor. Se o silicone
+for muito opaco, pode “abafar” a luz, ou gerar sombras</p></li>
+<li><p><strong>Boa elasticidade / permanência de
+elasticidade</strong><br />
+— Para que com as variações de temperatura ou dilatações nada se rache
+ou solte.</p></li>
+<li><p><strong>Resistência ao UV</strong><br />
+— Se for exterior ou se houver luz solar direta, para evitar
+amarelecimento com o tempo.</p></li>
+<li><p><strong>Boa aderência a superfícies plásticas,
+metálicas</strong><br />
+— Muitas fitas LED têm substrato plástico ou PCB com verniz, e ligadores
+metálicos; o silicone deve aderir bem a esses materiais.</p></li>
+<li><p><strong>Estanqueidade se for necessário (IP)</strong><br />
+— Se fores vedar ou proteger de água ou humidade, é importante que o
+silicone seja adequado para ambientes húmidos, e se possível recomendado
+para exteriores.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.4" id="alguns-silicones-soudal-recomendados"><span class="header-section-number">1.4</span> 🛒 Alguns silicones Soudal
+recomendados</h2>
+<p>Aqui vão alguns produtos da Soudal que se enquadram bem ou que podem
+servir, dependendo do que precisas, e uma lista de sugestões:</p>
+<p>products{“selections”:[[“turn0product1”,“Silicone Silirub AL2T
+Transparente 300ml”],[“turn0product4”,“Silicone Silirub Neutral
+300ml”],[“turn0product17”,“Silicone San Transparente
+280ml”],[“turn0product2”,“Silicone Universal Branco
+280ml”],[“turn0product12”,“Cola e Veda Cristal T-Rex
+290ml”],[“turn0product13”,“Soudal T-Rex Flex
+290ml”],[“turn0product10”,“Soudaseal 215 LM
+290ml”],[“turn0product6”,“Fire-Retard Silicone Firecryl FR
+Branco”]],“tags”:[“transparente”,“neutro”,“s‎an”,“branco”,“cristal”,“flexível”,“vedação”,“resistência
+ao fogo”]}</p>
+<p>Aqui vão os destaques:</p>
+<ul>
+<li><strong>product_entity[“turn0product1”,“Silicone Silirub AL2T
+Transparente 300ml”]</strong> — Silicone transparente, ideal para
+quando queres máxima claridade e estética.<br />
+</li>
+<li><strong>product_entity[“turn0product4”,“Silicone Silirub Neutral
+300ml”]</strong> — Silicone neutro; é bom se houver componentes mais
+sensíveis ou metais.<br />
+</li>
+<li><strong>product_entity[“turn0product17”,“Silicone San Transparente
+280ml”]</strong> — Também translúcido, útil para uso geral onde se
+queira conservar a cor da fita.<br />
+</li>
+<li><strong>product_entity[“turn0product2”,“Silicone Universal Branco
+280ml”]</strong> — Branco; pode ficar visível dependendo de onde
+aplique, mas bom para uso interior ou onde não precise de
+transparência.<br />
+</li>
+<li><strong>product_entity[“turn0product12”,“Cola e Veda Cristal T-Rex
+290ml”]</strong> — “Cristal” sugere clareza; pode ser muito útil para
+vedar extremidades ou junções expostas.<br />
+</li>
+<li><strong>product_entity[“turn0product13”,“Soudal T-Rex Flex
+290ml”]</strong> — Mais flexível, bom para locais onde haja vibração ou
+movimentos pequenos.<br />
+</li>
+<li><strong>product_entity[“turn0product10”,“Soudaseal 215 LM
+290ml”]</strong> — Produto de vedação, pode servir se quiseres algo
+mais forte ou resistente.<br />
+</li>
+<li><strong>product_entity[“turn0product6”,“Fire-Retard Silicone
+Firecryl FR Branco”]</strong> — Silicone com propriedade de retardância
+de fogo; útil se for para locais que exijam normas de incêndio, mas
+normalmente não é necessário para fitas LED simples.</li>
+</ul>
+<hr />
+<h2 data-number="1.5" id="qual-escolher-em-função-da-aplicação"><span class="header-section-number">1.5</span> 🔍 Qual escolher, em função da
+aplicação</h2>
+<p>Aqui uns cenários e o que escolher em cada um:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Melhor escolha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interior, painel decorativo, luz ambiente, sem exposição à água</td>
+<td>Silicone transparente ou translúcido (Silirub AL2T Transparente,
+“Cristal”, etc.)</td>
+</tr>
+<tr>
+<td>Exterior, varanda, /caixilhos de fachada visíveis ao sol</td>
+<td>Silicone neutro + resistente a UV (Silirub Neutral, produtos
+“neutros construção”)</td>
+</tr>
+<tr>
+<td>Ambiente húmido ou molhado (como casa de banho, bordas de
+lavatório)</td>
+<td>Silicone apropriado para superfície húmida; preferir os que dizem
+“uso geral / exterior / boa aderência a superfícies não porosas”</td>
+</tr>
+<tr>
+<td>Quando a estética é importante (visibilidade da fita LED e
+acabamento)</td>
+<td>Transparente + acabamento limpo, usar perfil e difusor se possível,
+para uniformizar luz</td>
+</tr>
+<tr>
+<td>Se precisares de resistência ao fogo ou normas especiais</td>
+<td>Algo como o Firecryl FR ou equivalente, mas só se for exigido
+regulamento local ou segurança extra</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Se quiser, posso ver produtos disponíveis <strong>no teu local
+(Lisboa / Portugal)</strong>, que sejam ideais para LED, com bons preços
+— queres isso?</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-09-22-102821-chatgpt"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-09-22
+10:28:21)</em> <em>[ChatGPT]</em></h3>
+<p>No leroy merlin existe o silicone soudal silirub, ou outro de
+características semelhantes</p>
+<hr />
+<h3 data-number="1.5.2" id="chatgpt-2025-09-22-102824-chatgpt"><span class="header-section-number">1.5.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:28:24)</em> <em>[ChatGPT]</em></h3>
+<p>Sim — no Leroy Merlin existem silicones da gama Soudal Silirub ou com
+características semelhantes aos que idealmente se usam para fitas LED.
+Vou-te mostrar algumas opções que vi, e depois dou-te sugestões de
+produtos específicos (“tipo ideal”) que podes comprar lá. Se quiseres,
+posso procurar o stock concreto da tua loja em Lisboa.</p>
+<hr />
+<h2 data-number="1.6" id="exemplos-no-leroy-merlin-de-silicones-soudal-com-boas-características"><span class="header-section-number">1.6</span> 🔍 Exemplos no Leroy Merlin de
+silicones Soudal com boas características</h2>
+<p>Aqui vão alguns produtos Soudal da Leroy Merlin.pt que cumprem várias
+características que são desejáveis para fitas LED (neutro, transparente
+ou com boa elasticidade, resistência UV, etc.):</p>
+<ul>
+<li><strong>Silirub-2</strong>, selante de silicone neutro, cartucho de
+290 ml transparente. Características: muito maleável, resistente a UV,
+endurecimento neutro, excelente resistência à umidade.
+citeturn0search8<br />
+</li>
+<li><strong>Silirub MA</strong>, selante de silicone neutro especial,
+310 ml, preto ou outras cores via encomenda. Boas propriedades de
+adesão, resistência aos raios UV, elasticidade permanente.
+citeturn0search16<br />
+</li>
+<li><strong>Silirub AQ</strong>, selante elástico para construções de
+vidro, transparente, selo EC 1 PLUS (baixas emissões), muito maleável,
+aderente ao vidro e alumínio. citeturn0search17<br />
+</li>
+<li><strong>Silirub+ S8100</strong>, sanitário neutro, próprio para
+ambientes como casa de banho, junções entre metais, etc.
+citeturn0search6</li>
+</ul>
+<p>Estes produtos são bons candidatos para vedar ou fixar fitas LED,
+consoante o local.</p>
+<hr />
+<h2 data-number="1.7" id="exemplos-de-produtos-que-podes-comprar-já-da-leroy-merlin"><span class="header-section-number">1.7</span> 🛒 Exemplos de produtos que
+podes comprar já da Leroy Merlin</h2>
+<p>Aqui estão algumas opções disponíveis no site da Leroy Merlin.pt que
+podes adquirir, todas da marca Soudal, e ver se o produto realmente está
+na tua loja:</p>
+<p>products{“selections”:[[“turn0product3”,“Silicone Silirub 280 ml
+Transparente”],[“turn0product4”,“Silicone Universal 280 ml
+Soudal”],[“turn0product0”,“Silicone Universal 280 ml (versão
+básica)”],[“turn0product2”,“Silicone Sanitário Silirub S 290
+ml”],[“turn0product7”,“Silicone “San” Soudal Transparente 280
+ml”],[“turn0product9”,“Silicone Soudasil San Transparente 280
+ml”],[“turn0product13”,“Silicone Transparente 290 ml
+Soudal”],[“turn0product5”,“Silicone Soudasil NX 290
+ml”]],“tags”:[“transparente”,“uso geral”,“DIY
+básico”,“sanitário”,“decoração”,“alta claridade”,“vedação”,“alto
+desempenho”]}</p>
+<p>Aqui ficam os destaques:</p>
+<ul>
+<li><strong>product_entity[“turn0product3”,“Silicone Silirub 280 ml
+Transparente”]</strong> — muito bom se queres transparência total para
+que a luz da fita LED passe sem distorções visuais.</li>
+<li><strong>product_entity[“turn0product4”,“Silicone Universal 280 ml
+Soudal”]</strong> — opção versátil, boa aderência, uso geral; pode
+servir bem em muitos casos.</li>
+<li><strong>product_entity[“turn0product2”,“Silicone Sanitário Silirub
+S 290 ml”]</strong> — usado tipicamente em junções de casa de banho,
+bom contra humidade; se a fita estiver em local húmido, é útil.</li>
+<li><strong>product_entity[“turn0product5”,“Silicone Soudasil NX 290
+ml”]</strong> — pode oferecer melhor resistência ou acabamento
+dependendo da aplicação.</li>
+</ul>
+<hr />
+<h2 data-number="1.8" id="qual-escolher-para-fita-led"><span class="header-section-number">1.8</span> ⚠️ Qual escolher para fita
+LED</h2>
+<p>Considera estas variáveis para escolher:</p>
+<ul>
+<li>Se a fita LED vai estar <strong>exposta à humidade ou água</strong>
+→ usar silicone neutro apropriado para “sanitário” ou “uso
+externo/húmido”.<br />
+</li>
+<li>Se a fita vai estar <strong>ao sol ou em fachada</strong> →
+resistência UV e que não amarele com o tempo.<br />
+</li>
+<li>Se quiseres um acabamento limpo, minimalista → optar por
+transparente ou tons muito claros, dependendo do perfil ou da
+superfície.<br />
+</li>
+<li>Importa também garantir que o silicone não seja ácido, para evitar
+corrosão dos componentes metálicos ou placas de circuito da fita
+LED.</li>
+</ul>
+<hr />
+<p>Se quiser, posso ver <strong>o stock disponível</strong> na loja
+Leroy Merlin mais próxima de ti em Lisboa, para te confirmar se há algum
+destes produtos aí. Queres que faça isso?</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-2025-09-22-102952-chatgpt"><span class="header-section-number">1.8.1</span> 👤 Utilizador <em>(2025-09-22
+10:29:52)</em> <em>[ChatGPT]</em></h3>
+<p>E que seja bom para fita led</p>
+<hr />
+<h3 data-number="1.8.2" id="chatgpt-2025-09-22-102955-chatgpt"><span class="header-section-number">1.8.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:29:55)</em> <em>[ChatGPT]</em></h3>
+<p>Sim — encontrei várias boas opções de silicones que estão disponíveis
+no Leroy Merlin que têm características muito adequadas para uso com
+fita LED. Vou listar aqui os mais indicados, com os prós/ contras, para
+te ajudar a escolher.</p>
+<hr />
+<h2 data-number="1.9" id="opções-recomendadas-no-leroy-merlin"><span class="header-section-number">1.9</span> 🔧 Opções recomendadas no Leroy
+Merlin</h2>
+<p>products{“selections”:[[“turn0product9”,“Silicone Silirub 280 ml
+Transparente”],[“turn0product3”,“Silicone Soudasil San Transparente 280
+ml”],[“turn0product7”,“Silicone Sanitário Neutro 290 ml
+Transparente”],[“turn0product11”,“Silicone Caixilharia Neutro 300 ml
+Transparente”],[“turn0product1”,“Silirub-S Silicone Sanitário 290
+ml”],[“turn0product10”,“Silicone Universal 280 ml
+Soudal”],[“turn0product0”,“Silicone Universal 280 ml
+Castanho”],[“turn0product15”,“Soudasil San X Transparente 280
+ml”]],“tags”:[“Silirub”,“Sanitário”,“Neutro”,“Caixilharia”,“Sanitário”,“Universal”,“Cor”,“Extra”]}</p>
+<p>Aqui vão os destaques:</p>
+<ul>
+<li><p><strong>product_entity[“turn0product9”,“Silicone Silirub 280 ml
+Transparente”]</strong>: Muito boa escolha. Silirub é uma linha neutra,
+transparente — excelente para acabamento e para que a luz da fita LED se
+mantenha clara e uniforme.</p></li>
+<li><p><strong>product_entity[“turn0product3”,“Silicone Soudasil San
+Transparente 280 ml”]</strong>: Também transparente, ideal para
+aplicações onde a iluminação visível não pode ficar alterada.
+Especialmente bom em interiores ou zonas secas.</p></li>
+<li><p><strong>product_entity[“turn0product7”,“Silicone Sanitário
+Neutro 290 ml Transparente”]</strong>: Este é “sanitário” — resistente
+à humidade, bolor, etc. Pode ser uma excelente escolha se a fita LED
+estiver perto de zonas mais húmidas ou com variações de
+temperatura.</p></li>
+<li><p><strong>product_entity[“turn0product11”,“Silicone Caixilharia
+Neutro 300 ml Transparente”]</strong>: Produto de qualidade para uso
+com caixilhos, vidro, etc. Boa aderência, boa elasticidade — útil se o
+perfil da fita LED for de alumínio ou vidro ou tiver contato com
+superfícies metálicas ou plásticas.</p></li>
+<li><p><strong>product_entity[“turn0product1”,“Silirub-S Silicone
+Sanitário 290 ml”]</strong>: Versão sanitária da Silirub, com boas
+propriedades de vedação contra humidade, bom para encaixes ou costuras
+em áreas onde possa haver vapor ou humidade.</p></li>
+<li><p><strong>product_entity[“turn0product10”,“Silicone Universal 280
+ml Soudal”]</strong>: Se procuras algo mais versátil para várias
+superfícies, esta “universal” pode servir, embora possa não ter todas as
+características premium de um silicone neutro especializado.</p></li>
+<li><p><strong>product_entity[“turn0product0”,“Silicone Universal 280
+ml Castanho”]</strong>: Cor castanha — só usar se a estética permitir
+(por exemplo, se vai ficar escondido ou se a cor da fita permitir um tom
+quente). Se for visível, uma cor clara ou transparente é
+preferível.</p></li>
+<li><p><strong>product_entity[“turn0product15”,“Soudasil San X
+Transparente 280 ml”]</strong>: Versão extra “premium” / especial da
+linha Soudasil, transparente — bom acabamento e resistência.</p></li>
+</ul>
+<hr />
+<h2 data-number="1.10" id="qual-escolher-para-fita-led-1"><span class="header-section-number">1.10</span> ✅ Qual escolher para fita
+LED</h2>
+<p>Destas opções, as que eu recomendaria como <em>mais seguras /
+óptimas</em> para fita LED são:</p>
+<ol type="1">
+<li><p><strong>Silicone neutro e transparente</strong>, como o
+<strong>Silirub 280 ml Transparente</strong> ou o <strong>Caixilharia
+Neutro 300 ml Transparente</strong>. Estes vão evitar que a luz fique
+com sombras, alterar cor ou amarelar muito com o tempo.</p></li>
+<li><p><strong>Silicone sanitário neutro</strong> se estiver em zonas
+húmidas, perto de banheiros ou lavagem, para evitar bolor, infiltração,
+degradação.</p></li>
+<li><p>Evitar silicones acéticos se estiverem perto de metal ou plástico
+sensível, pois podem corroer ou reagir mal.</p></li>
+<li><p>Verificar que o silicone tem boa elasticidade e é resistente a UV
+se houver alguma exposição solar ou luz direta.</p></li>
+</ol>
+<hr />
+<p>Se quiser, posso filtrar os silicones que estão <strong>físicamente
+disponíveis</strong> na tua loja Leroy Merlin em Lisboa, para ires lá e
+comprares diretamente, com garantia de stock. Queres isso que faça?</p>
+<hr />
+<h3 data-number="1.10.1" id="utilizador-2025-09-22-103122-chatgpt"><span class="header-section-number">1.10.1</span> 👤 Utilizador
+<em>(2025-09-22 10:31:22)</em> <em>[ChatGPT]</em></h3>
+<p>E de outra marca</p>
+<hr />
+<h3 data-number="1.10.2" id="chatgpt-2025-09-22-103125-chatgpt"><span class="header-section-number">1.10.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:31:25)</em> <em>[ChatGPT]</em></h3>
+<p>Sim, há várias marcas além da Soudal que têm silicones com
+características boas para uso em fita LED. Aqui vão algumas opções e
+sugestões com as que vi — transparentes ou neutros, boas aderências,
+resistentes, etc.</p>
+<hr />
+<h2 data-number="1.11" id="boas-opções-de-outras-marcas"><span class="header-section-number">1.11</span> ✅ Boas opções de outras
+marcas</h2>
+<ul>
+<li><strong>Bostik S350, Silicone Neutro Construção e Caixilharia 300 ml
+Transparente</strong> — excelente aderência, resistente à água e aos
+raios UV. citeturn0search2<br />
+</li>
+<li><strong>Sika – Silicone Neutro Cozinha/WC Transparente 300
+ml</strong> — não corrosivo, boa elasticidade, resistente ao
+envelhecimento. citeturn0search8<br />
+</li>
+<li><strong>Olive C-22 Neutro Transparente</strong> — silicone neutro de
+alta qualidade, inodoro, elasticidade permanente, bom para vedação entre
+alumínio, PVC, vidro. citeturn0search9<br />
+</li>
+<li><strong>Fischer SuperBanhos Transparente 280 ml</strong> — selante
+anti-mofo, transparente, bom para juntas em cozinhas/banheiros,
+resistentes aos agentes atmosféricos.
+citeturn0search20turn0search21</li>
+</ul>
+<hr />
+<h2 data-number="1.12" id="exemplos-de-produtos-prontos-para-comprar"><span class="header-section-number">1.12</span> 🛒 Exemplos de produtos
+prontos para comprar</h2>
+<p>Aqui ficam alguns produtos que cumprem bem, e que podes encontrar
+online ou em lojas portuguesas, com características boas para fita
+LED:</p>
+<p>products{“selections”:[[“turn0product3”,“Chemitool Chemisil Neutro
+Transparente 300 ml”],[“turn0product12”,“Axton Cozinha/Banho Neutro
+Antifungos 280 ml”],[“turn0product13”,“Quaidisa CS-34
+Neutro”],[“turn0product20”,“Quilosa Aklesil
+Transparente”],[“turn0product22”,“Pattex Transparente 280
+ml”],[“turn0product7”,“Würth Silicone Alta Performance
+A9”],[“turn0product10”,“Cola/Veda Especial Tiras
+LED”],[“turn0product1”,“Silou Soudasil SAN
+Transparente”]],“tags”:[“neutro”,“antifungos”,“marca
+local”,“barato”,“alta tensão”,“pro uso exterior”,“vedação LED”,“linha
+Soudal”]}</p>
+<p>Aqui vão os destaques:</p>
+<ul>
+<li><strong>product_entity[“turn0product3”,“Chemitool Chemisil Neutro
+Transparente 300 ml”]</strong> — silicone neutro, transparente, boa
+escolha geral para fita LED.<br />
+</li>
+<li><strong>product_entity[“turn0product12”,“Axton Cozinha/Banho
+Neutro Antifungos 280 ml”]</strong> — já preparado para ambientes
+húmidos, menos fungos, transparente.<br />
+</li>
+<li><strong>product_entity[“turn0product13”,“Quaidsa CS-34
+Neutro”]</strong> — boa elasticidade, neutro, útil para uso
+comum.<br />
+</li>
+<li><strong>product_entity[“turn0product20”,“Quilosa Aklesil
+Transparente”]</strong> — marca conhecida, transparente, adequado para
+acabamento limpo.<br />
+</li>
+<li><strong>product_entity[“turn0product22”,“Pattex Transparente 280
+ml”]</strong> — Pattex também é marca boa, ideal para juntas visíveis,
+acabamento estético.<br />
+</li>
+<li><strong>product_entity[“turn0product7”,“Würth Silicone Alta
+Performance A9”]</strong> — pode ter custo mais alto, mas geralmente
+boa performance (resistência, aderência).<br />
+</li>
+<li><strong>product_entity[“turn0product10”,“Cola/Veda Especial Tiras
+LED”]</strong> — produto mais específico, para vedações externas de
+tiras LED; ideal se precisares de algo para proteção ou uso exterior
+intensivo.<br />
+</li>
+<li><strong>product_entity[“turn0product1”,“Soudasil SAN
+Transparente”]</strong> — embora seja Soudal, já que falaste de outra
+marca, mas este é uma alternativa da própria marca já boa.</li>
+</ul>
+<hr />
+<p>Se quiser, posso ver quais destas marcas ou similares existem
+<strong>na tua loja Leroy Merlin de Lisboa</strong> ou numa loja
+próxima, para poderes ir ver pessoalmente. Queres isso?</p>
+<hr />
+<h3 data-number="1.12.1" id="utilizador-2025-09-22-103306-chatgpt"><span class="header-section-number">1.12.1</span> 👤 Utilizador
+<em>(2025-09-22 10:33:06)</em> <em>[ChatGPT]</em></h3>
+<p>E que seja transparente</p>
+<hr />
+<h3 data-number="1.12.2" id="chatgpt-2025-09-22-103309-chatgpt"><span class="header-section-number">1.12.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:33:09)</em> <em>[ChatGPT]</em></h3>
+<p>Sim — encontrei várias opções transparentes / incolores boas para
+fita LED, tanto da marca Axton como da própria Soudal, e também outras
+marcas. Aqui ficam:</p>
+<hr />
+<h2 data-number="1.13" id="produtos-transparentes-que-achei-na-leroy-merlin-pt-portugal"><span class="header-section-number">1.13</span> 🛒 Produtos transparentes que
+achei na Leroy Merlin PT / Portugal</h2>
+<ul>
+<li><em>Silicone caixilharia neutro 300 ml transparente Soudal</em> —
+neutro, translúcido, bom para vidro, metal, PVC.
+citeturn0search3<br />
+</li>
+<li><em>Silicone cozinha casa banho neutro antifungos 280 ml
+transparente Axton</em> — ideal para ambiente húmido, resistência ao
+bolor. citeturn0search4<br />
+</li>
+<li><em>Silicone sanitário neutro 290 ml transparente Soudal</em> —
+neutro, para juntas sanitárias, etc. citeturn0search5<br />
+</li>
+<li><em>Silicone cozinhas e banhos Axton neutro 280 ml transparente</em>
+— para uso interior, junta de azulejos, etc. citeturn0search7<br />
+</li>
+<li><em>Silicone Axton neutro 60 ml transparente</em> — versão pequena,
+útil para retoques ou aplicações mais precisas.
+citeturn0search9turn0search10</li>
+</ul>
+<hr />
+<h2 data-number="1.14" id="outras-boas-alternativas-transparentes-de-várias-marcas-que-podes-considerar"><span class="header-section-number">1.14</span> ✅ Outras boas alternativas
+transparentes (de várias marcas) que podes considerar</h2>
+<p>Aqui vão algumas opções de produtos com características boas para
+fita LED — transparentes, boa aderência, geralmente neutros:</p>
+<p>products{“selections”:[[“turn0product1”,“Silicone Soudasil San
+Transparente 280 ml”],[“turn0product3”,“Soudal Silirub-S Sanitário 290
+ml Transparente”],[“turn0product7”,“Quilosa Aklesil
+Transparente”],[“turn0product9”,“Soudal Cola e Veda Cristal T-Rex 290
+ml”],[“turn0product10”,“Silicone Fischer 300 ml
+Transparente”],[“turn0product11”,“Chemitool Chemisil Neutro Transparente
+300 ml”],[“turn0product13”,“Axton Neutro Anti-fungos 280 ml
+Transparente”],[“turn0product17”,“Silicone Sanitário Neutro Soudal 290
+ml Transparente”]],“tags”:[“marca Soudal”,“sanitário”,“barato”,“premium
+cristal”,“alta qualidade”,“outdoor”,“anti-fungos”,“uso sanitário”]}</p>
+<p>Aqui vão os destaques:</p>
+<ul>
+<li><strong>product_entity[“turn0product1”,“Silicone Soudasil San
+Transparente 280 ml”]</strong> — transparente da linha Soudal, boa
+opção mais económica.<br />
+</li>
+<li><strong>product_entity[“turn0product3”,“Soudal Silirub-S Sanitário
+290 ml Transparente”]</strong> — neutro, sanitário; bom se precisares
+de vedar em zonas húmidas ou perto da fita LED.<br />
+</li>
+<li><strong>product_entity[“turn0product7”,“Quilosa Aklesil
+Transparente”]</strong> — alternativa de marca diferente, transparente,
+bom valor para pequenas áreas.<br />
+</li>
+<li><strong>product_entity[“turn0product9”,“Soudal Cola e Veda Cristal
+T-Rex 290 ml”]</strong> — cristalinamente transparente, pode servir
+para vedar juntas exteriores ou acabamentos visíveis.<br />
+</li>
+<li><strong>product_entity[“turn0product10”,“Silicone Fischer 300 ml
+Transparente”]</strong> — de volume maior, útil se for para muitas
+aplicações.<br />
+</li>
+<li><strong>product_entity[“turn0product11”,“Chemitool Chemisil Neutro
+Transparente 300 ml”]</strong> — neutro, buena aderência, alternativa
+para uso interior/exterior.<br />
+</li>
+<li><strong>product_entity[“turn0product13”,“Axton Neutro Anti-fungos
+280 ml Transparente”]</strong> — ideal para ambientes húmidos, se a
+fita LED vai em local que possa molhar ou gerar vapor.<br />
+</li>
+<li><strong>product_entity[“turn0product17”,“Silicone Sanitário Neutro
+Soudal 290 ml Transparente”]</strong> — bom para juntas sanitárias ou
+vedação entre perfis LED.</li>
+</ul>
+<hr />
+<p>Se quiseres, posso confirmar quais destas estão no stock da tua loja
+Leroy Merlin em Lisboa, para poderes ir lá buscar. Queres que faça
+isso?</p>
+<hr />
+<h3 data-number="1.14.1" id="utilizador-2025-09-22-103429-chatgpt"><span class="header-section-number">1.14.1</span> 👤 Utilizador
+<em>(2025-09-22 10:34:29)</em> <em>[ChatGPT]</em></h3>
+<p>Sim</p>
+<hr />
+<h3 data-number="1.14.2" id="chatgpt-2025-09-22-103432-chatgpt"><span class="header-section-number">1.14.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:34:32)</em> <em>[ChatGPT]</em></h3>
+<p>Encontrei algumas opções transparentes ou quase-transparentes no site
+da Leroy Merlin que podem servir bem para fita LED, e também vários
+produtos concretos que poderão estar disponíveis na tua loja. Não posso
+garantir 100 % que haja stock na tua loja específica, mas posso indicar
+como verificar e quais os mais promissores.</p>
+<hr />
+<h2 data-number="1.15" id="verificado-no-site-da-leroy-merlin"><span class="header-section-number">1.15</span> 🔎 Verificado no site da Leroy
+Merlin</h2>
+<p>Aqui vão dois produtos transparentes bons que vi no site:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Produto</th>
+<th>Transparente / Incolor?</th>
+<th>Características úteis</th>
+<th>Estado no site</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Silirub 2 — Selante de Silicone Neutro Soudal, 290 ml
+Transparente</strong></td>
+<td>Sim, transparente/incolor. citeturn0search0turn0search2</td>
+<td>Neutro, resistente a UV, boa aderência, excelente resistência à
+humidade (características ideais para LED). citeturn0search0</td>
+<td>Aparece listado, mas <em>não está disponível</em> (no momento) para
+alguns formatos ou lojas. citeturn0search2</td>
+</tr>
+<tr>
+<td><strong>Silicone Cozinhas e Banhos Neutro Antifungos Axton 280 ml
+Transparente</strong></td>
+<td>Sim</td>
+<td>Neutro, resistente ao bolor, boa para juntas de banho/cozinha,
+aderente a vários materiais. citeturn0search3</td>
+<td>Está listado “ver disponibilidade em loja”. citeturn0search3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.16" id="exemplos-de-produtos-transparentes-do-stock-leroy-merlin"><span class="header-section-number">1.16</span> 🛒 Exemplos de Produtos
+Transparentes do stock Leroy Merlin</h2>
+<p>Aqui vão alguns produtos transparentes / quase transparentes que
+achei que já aparecem online (alguns podem estar ou não na tua
+loja):</p>
+<p>products{“selections”:[[“turn0product6”,“Soudal Soudasil San 280 ml
+Transparente”],[“turn0product10”,“Silicone Soudal 290 ml Transparente
+Genérico”],[“turn0product3”,“Soudal T-Rex Cristal 125
+ml”],[“turn0product13”,“Axton Neutro Antifungos 280 ml
+Transparente”],[“turn0product12”,“UHU Casa de Banho Transparente 150
+ml”],[“turn0product14”,“Silicone Ceys
+Transparente”],[“turn0product5”,“Cola e Veda Cristal T-Rex 290 ml
+Soudal”],[“turn0product18”,“Axton Neutro Universal
+Transparente”]],“tags”:[“Sanitário”,“Uso
+geral”,“Cristal”,“Antifungos”,“Mini”,“Marcas alternativas”,“Vedação
+forte”,“Universal”]}</p>
+<p>Aqui estão alguns bons candidatos:</p>
+<ul>
+<li><strong>product_entity[“turn0product6”,“Soudal Soudasil San 280 ml
+Transparente”]</strong> — boa opção sanitária/uso interior,
+transparente.</li>
+<li><strong>product_entity[“turn0product10”,“Silicone Soudal 290 ml
+Transparente Genérico”]</strong> — versão “transparente” genérica
+Soudal, bom para usos gerais.</li>
+<li><strong>product_entity[“turn0product3”,“Soudal T-Rex Cristal 125
+ml”]</strong> — “Cristal”, ideal para acabamentos visíveis ou menor
+quantidade.</li>
+<li><strong>product_entity[“turn0product13”,“Axton Neutro Antifungos
+280 ml Transparente”]</strong> — excelente se fores instalar em local
+húmido ou sujeito a vapor.</li>
+<li><strong>product_entity[“turn0product12”,“UHU Casa de Banho
+Transparente 150 ml”]</strong> — versão de volume menor, útil para
+retoques ou pequenas áreas.</li>
+<li><strong>product_entity[“turn0product14”,“Silicone Ceys
+Transparente”]</strong> — marca alternativa, pode variar em função da
+elasticidade ou neutralidade.</li>
+<li><strong>product_entity[“turn0product5”,“Cola e Veda Cristal T-Rex
+290 ml Soudal”]</strong> — cristal, bom para acabamentos visíveis,
+vedação forte.</li>
+<li><strong>product_entity[“turn0product18”,“Axton Neutro Universal
+Transparente”]</strong> — opção univeral, transparente, pode servir
+para muitas superfícies.</li>
+</ul>
+<hr />
+<h2 data-number="1.17" id="o-que-fazer-para-confirmar-stock-na-tua-loja-em-lisboa"><span class="header-section-number">1.17</span> 🔧 O que fazer para confirmar
+stock na tua loja em Lisboa</h2>
+<p>Para teres certeza de que a loja perto de ti tem o produto,
+podes:</p>
+<ol type="1">
+<li><p>No site da Leroy Merlin, quando vires o produto, clicar em
+<strong>“Ver disponibilidade em loja”</strong> e inserir o código-postal
+ou selecionar a loja de Lisboa que te fique mais conveniente.</p></li>
+<li><p>Se não permitir ver stock online, liga para a loja ou visita
+pessoalmente e mostra o nome do produto ou o código. Exemplos de nomes:
+<em>Silirub 2 Transparente Soudal</em>, <em>Silicone Neutro Antifungos
+Axton Transparente 280 ml</em>.</p></li>
+<li><p>Verifica se diz “disponível hoje” ou “disponível para retirada em
+loja”.</p></li>
+</ol>
+<hr />
+<p>Se quiser, posso dizer-te quais desses específicos (dos produtos da
+lista acima) estão confirmados com stock <strong>na Leroy Merlin da tua
+zona de Lisboa</strong>, com morada / loja exata, para evitares perder
+tempo. Queres que faça isso?</p>
+<hr />
+<h3 data-number="1.17.1" id="utilizador-2025-09-22-103730-chatgpt"><span class="header-section-number">1.17.1</span> 👤 Utilizador
+<em>(2025-09-22 10:37:30)</em> <em>[ChatGPT]</em></h3>
+<p>E que seja bom para fita led</p>
+<hr />
+<h3 data-number="1.17.2" id="chatgpt-2025-09-22-103734-chatgpt"><span class="header-section-number">1.17.2</span> 🤖 ChatGPT <em>(2025-09-22
+10:37:34)</em> <em>[ChatGPT]</em></h3>
+<p>Sim — achei algumas opções <strong>transparentes</strong> no Leroy
+Merlin que têm boas características para fita LED (neutro, boa
+aderência, flexível, etc.). Aqui vão algumas sugestões + o que deves
+confirmar para garantir que fica bom:</p>
+<hr />
+<h2 data-number="1.18" id="boas-opções-transparentes-no-leroy-merlin-para-fita-led"><span class="header-section-number">1.18</span> ✅ Boas opções transparentes
+no Leroy Merlin para fita LED</h2>
+<p>products{“selections”:[[“turn0product4”,“Silicone Caixilharia
+Neutro Soudal 290-300 ml Transparente”],[“turn0product2”,“Silicone
+Cozinha/Banho Neutro Antifungos Axton 280
+ml”],[“turn0product6”,“Silicone Sanitário Neutro Soudal 290 ml
+Transparente”],[“turn0product5”,“Silicone Quilosa Transparente 290
+ml”],[“turn0product0”,“Silicone Soudasil San Transparente 280
+ml”],[“turn0product13”,“Silicone Mármore &amp; Pedra Quilosa
+Transparente 290 ml”],[“turn0product12”,“UHU Super Cozinha Transparente
+150 ml”],[“turn0product17”,“Quilosa Perfect Finish Neutro 280 ml
+Transparente”]],“tags”:[“perfil/caixilharia”,“anti-fungos”,“use
+sanitário”,“marca local”,“linha SAN”,“pedras”,“pequena dose”,“acabamento
+top”]}</p>
+<p>Aqui tens os destaques:</p>
+<ul>
+<li><p><strong>product_entity[“turn0product4”,“Silicone Caixilharia
+Neutro Soudal 290-300 ml Transparente”]</strong>: selante Soudal
+neutro, transparente, para caixilharia. Excelente porque mantém a cor da
+fita LED, aderência forte a alumínio, vidro, perfis
+metálicos/plásticos.</p></li>
+<li><p><strong>product_entity[“turn0product2”,“Silicone Cozinha/Banho
+Neutro Antifungos Axton 280 ml”]</strong>: transparente, neutro,
+resistente ao bolor, bom para ambientes húmidos (caso a fita LED esteja
+em local suscetível a vapor ou água).</p></li>
+<li><p><strong>product_entity[“turn0product6”,“Silicone Sanitário
+Neutro Soudal 290 ml Transparente”]</strong>: versão sanitária, neutro
+e transparente. Boa opção para juntas entre perfis, bordas de fita,
+etc.</p></li>
+<li><p><strong>product_entity[“turn0product5”,“Silicone Quilosa
+Transparente 290 ml”]</strong>: marca nacional, transparente, também
+com boas avaliações.</p></li>
+<li><p><strong>product_entity[“turn0product0”,“Silicone Soudasil San
+Transparente 280 ml”]</strong>: “linha SAN” da Soudal, transparente;
+geralmente bons acabamentos e compatível com superfícies lisas de
+LED.</p></li>
+<li><p><strong>product_entity[“turn0product13”,“Silicone Mármore &amp;
+Pedra Quilosa Transparente 290 ml”]</strong>: se a fita LED estiver
+numa pedra natural ou mármore, esta é uma boa opção específica (mas
+atenção: pode haver compatibilidade de aderência com pedra; confirmas a
+etiqueta).</p></li>
+<li><p><strong>product_entity[“turn0product12”,“UHU Super Cozinha
+Transparente 150 ml”]</strong>: frasco mais pequeno, útil para retoques
+ou se só precisares de pouco.</p></li>
+<li><p><strong>product_entity[“turn0product17”,“Quilosa Perfect Finish
+Neutro 280 ml Transparente”]</strong>: acabamento “premium”,
+transparente, neutro.</p></li>
+</ul>
+<hr />
+<h2 data-number="1.19" id="o-que-confirmar-para-que-fique-bom-numa-instalação-de-fita-led"><span class="header-section-number">1.19</span> 🛠 O que confirmar para que
+fique bom numa instalação de fita LED</h2>
+<p>Antes de escolher, certifica-te:</p>
+<ol type="1">
+<li><p><strong>Silicone neutro (base oxima ou outro neutro)</strong> —
+evita corrosão de metais ou PCB da fita.</p></li>
+<li><p><strong>Totalmente transparente / incolor</strong> — para que a
+luz passe sem distorção, sombras ou alteração da cor.</p></li>
+<li><p><strong>Resistência ao UV, água e humidade</strong> —
+especialmente se for ao ar livre, em perfil de alumínio exposto ou junto
+de janelas.</p></li>
+<li><p><strong>Boa elasticidade / movimentação</strong> — para que com
+dilatações (temperatura) o silicone não rache.</p></li>
+<li><p><strong>Compatibilidade com os materiais da fita LED</strong> — o
+substrato da fita, perfil, vidro/poliestireno ou plástico que esteja em
+volta; algumas superfícies plásticas têm dificuldade de aderência com
+certos silicones.</p></li>
+<li><p><strong>Acabamento limpo</strong> — usar fita de mascarar, alisar
+bem o selante para que não fique rebarbas ou rugas que interfiram na luz
+ou fiquem visíveis.</p></li>
+</ol>
+<hr />
+<p>Se quiser, posso ver <strong>quais destas opções estão confirmadas
+com stock</strong> na loja da Leroy Merlin que fores usar em Lisboa,
+para garantir que encontras um bom silicone sem ter de andar muito.
+Queres fazer isso?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

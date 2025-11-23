@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>178_ChatGPT_Usar_Noto_Emoji_Pandoc</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#usar-noto-emoji-pandoc" id="toc-usar-noto-emoji-pandoc"><span class="toc-section-number">1</span> Usar Noto Emoji Pandoc</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#weasyprint-recomendado-open-source" id="toc-weasyprint-recomendado-open-source"><span class="toc-section-number">1.3</span> 🟢 1. WeasyPrint (recomendado,
+open source)</a></li>
+<li><a href="#wkhtmltopdf-baseado-em-webkit" id="toc-wkhtmltopdf-baseado-em-webkit"><span class="toc-section-number">1.4</span> 🟢 2. wkhtmltopdf (baseado em
+WebKit)</a></li>
+<li><a href="#princexml-pago-mas-profissional" id="toc-princexml-pago-mas-profissional"><span class="toc-section-number">1.5</span> 🟢 3. PrinceXML (pago, mas
+profissional)</a></li>
+<li><a href="#chrome-edge-atalho-manual" id="toc-chrome-edge-atalho-manual"><span class="toc-section-number">1.6</span> 🟢 4. Chrome / Edge (atalho
+manual)</a></li>
+<li><a href="#arquivo-markdown-guia.md" id="toc-arquivo-markdown-guia.md"><span class="toc-section-number">1.7</span> 📄 1. Arquivo Markdown
+(<code>guia.md</code>)</a></li>
+<li><a href="#arquivo-css-emoji.css" id="toc-arquivo-css-emoji.css"><span class="toc-section-number">1.8</span> 🎨 2. Arquivo CSS
+(<code>emoji.css</code>)</a></li>
+<li><a href="#comando-pandoc-weasyprint" id="toc-comando-pandoc-weasyprint"><span class="toc-section-number">1.9</span> ⚙️ 3. Comando Pandoc +
+WeasyPrint</a></li>
+<li><a href="#resultado" id="toc-resultado"><span class="toc-section-number">1.10</span> ✅ Resultado</a></li>
+<li><a href="#erros-mais-comuns-do-weasyprint-no-windows" id="toc-erros-mais-comuns-do-weasyprint-no-windows"><span class="toc-section-number">1.11</span> 🔎 Erros mais comuns do
+WeasyPrint no Windows</a></li>
+<li><a href="#como-corrigir-windows" id="toc-como-corrigir-windows"><span class="toc-section-number">1.12</span> ✅ Como corrigir
+(Windows)</a></li>
+<li><a href="#causas-comuns" id="toc-causas-comuns"><span class="toc-section-number">1.13</span> 🔎 Causas comuns</a></li>
+<li><a href="#soluções-possíveis" id="toc-soluções-possíveis"><span class="toc-section-number">1.14</span> ✅ Soluções possíveis</a></li>
+<li><a href="#resumindo-1" id="toc-resumindo-1"><span class="toc-section-number">1.15</span> 📌 Resumindo</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="usar-noto-emoji-pandoc"><span class="header-section-number">1</span> Usar Noto Emoji Pandoc</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #178</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 68cb2065-e8e8-832b-acfc-6989aa36667a</li>
+<li><strong>Criada em:</strong> 2025-09-17 21:56:13</li>
+<li><strong>Atualizada em:</strong> 2025-09-17 22:20:16</li>
+<li><strong>Total de mensagens:</strong> 20</li>
+<li><strong>Resumo:</strong> Noto Color Emoji como usar esta fonte no
+pandoc windows…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-17-215613-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-17
+21:56:13)</em> <em>[ChatGPT]</em></h3>
+<p>Noto Color Emoji como usar esta fonte no pandoc windows</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-17-215613-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-17
+21:56:13)</em> <em>[ChatGPT]</em></h3>
+<p>No <strong>Windows</strong>, usar a fonte <strong>Noto Color
+Emoji</strong> com o <strong>Pandoc</strong> pode ser um pouco
+complicado porque:</p>
+<ol type="1">
+<li>O Windows não renderiza <strong>emoji coloridos</strong> via fontes
+OpenType-SVG/OT-COLR v1 no PDF de forma nativa.<br />
+</li>
+<li>O <strong>Pandoc</strong>, quando gera <strong>PDF</strong>,
+normalmente usa o LaTeX (via <code>xelatex</code> ou
+<code>lualatex</code>) ou então o
+<strong>wkhtmltopdf</strong>/WeasyPrint (HTML → PDF).<br />
+</li>
+<li>O suporte a emoji colorido depende do mecanismo de saída que você
+escolher.</li>
+</ol>
+<p>Aqui vai um guia prático:</p>
+<hr />
+<h3 data-number="1.2.3" id="instalar-a-fonte"><span class="header-section-number">1.2.3</span> 1. Instalar a fonte</h3>
+<ul>
+<li>Baixe a fonte <a href="https://github.com/googlefonts/noto-emoji">Noto Color
+Emoji</a>.<br />
+</li>
+<li>Clique com o botão direito no arquivo <code>.ttf</code> ou
+<code>.otf</code> → <strong>Instalar</strong>.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.4" id="usar-com-pandoc-pdf-via-xelatex"><span class="header-section-number">1.2.4</span> 2. Usar com Pandoc → PDF via
+XeLaTeX</h3>
+<p>Você precisa do <strong>xelatex</strong> ou <strong>lualatex</strong>
+(vem com TeX Live ou MikTeX).</p>
+<p>Exemplo de comando Pandoc:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>xelatex <span class="op">^</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>V mainfont<span class="op">=</span><span class="st">&quot;Times New Roman&quot;</span> <span class="op">^</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>V monofont<span class="op">=</span><span class="st">&quot;Consolas&quot;</span> <span class="op">^</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>V CJKmainfont<span class="op">=</span><span class="st">&quot;Noto Color Emoji&quot;</span></span></code></pre></div>
+<p>No LaTeX template, você pode forçar o uso da fonte para emoji:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\emoji</span>{Noto Color Emoji}</span></code></pre></div>
+<p>E no Markdown usar algo como:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="an">Aqui vai um emoji:</span><span class="co"> {\emoji 😀}</span></span></code></pre></div>
+<p>⚠️ Problema: O <strong>Noto Color Emoji</strong> não renderiza em
+<strong>cores</strong> no LaTeX/XeLaTeX — só em escala de cinza (ou
+blocos). Isso é limitação do motor de PDF.</p>
+<hr />
+<h3 data-number="1.2.5" id="usar-com-pandoc-pdf-via-html-wkhtmltopdf-ou-weasyprint"><span class="header-section-number">1.2.5</span> 3. Usar com Pandoc → PDF via
+HTML (wkhtmltopdf ou weasyprint)</h3>
+<p>Esse caminho preserva o <strong>color emoji</strong>.</p>
+<p>Exemplo:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint</span></code></pre></div>
+<p>E no CSS adicione:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Crie um arquivo <code>custom.css</code> e passe no Pandoc:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>css<span class="op">=</span>custom<span class="op">.</span><span class="fu">css</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint</span></code></pre></div>
+<p>👉 Esse é o método que realmente mantém <strong>emoji
+coloridos</strong> no PDF.</p>
+<hr />
+<h3 data-number="1.2.6" id="alternativa-rápida"><span class="header-section-number">1.2.6</span> 4. Alternativa rápida</h3>
+<p>Se quiser apenas gerar <strong>HTML com emoji colorido</strong> e
+depois imprimir em PDF (via navegador):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">html</span> <span class="op">--</span>css<span class="op">=</span>custom<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Depois abra no <strong>Chrome/Edge</strong> → <strong>Imprimir →
+Salvar como PDF</strong>.</p>
+<hr />
+<p>📌 Resumindo:<br />
+- <code>xelatex</code> / <code>lualatex</code> = suporta a fonte, mas
+<strong>não renderiza cor</strong>.<br />
+- <code>weasyprint</code> ou <code>wkhtmltopdf</code> (HTML → PDF) =
+mantém os <strong>emoji coloridos</strong>.<br />
+- Para melhor resultado, use <code>--pdf-engine=weasyprint</code> + CSS
+com <code>&quot;Noto Color Emoji&quot;</code>.</p>
+<hr />
+<p>Quer que eu prepare um <strong>exemplo mínimo completo</strong> (um
+<code>.md</code> + <code>.css</code>) que você só roda no Windows com
+Pandoc para sair com emoji colorido no PDF?</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-09-17-215750-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-09-17
+21:57:50)</em> <em>[ChatGPT]</em></h3>
+<p>error: (file C:/Program
+Files/MiKTeX/fonts/truetype/public/noto-emoji/notocol oremoji.ttf)
+(ttf): loca table not found</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-09-17-215750-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-09-17
+21:57:50)</em> <em>[ChatGPT]</em></h3>
+<p>Ótimo, você me mostrou o erro real do
+<strong>MiKTeX/XeLaTeX</strong>:</p>
+<pre><code>(file C:/Program Files/MiKTeX/fonts/truetype/public/noto-emoji/notocoloremoji.ttf) (ttf): loca table not found</code></pre>
+<hr />
+<h3 data-number="1.2.9" id="o-que-significa"><span class="header-section-number">1.2.9</span> 🔎 O que significa</h3>
+<p>O <strong>XeLaTeX/LuaLaTeX</strong> não consegue usar a <strong>Noto
+Color Emoji</strong> porque: - Essa fonte é um <strong>COLR/CPAL ou
+OpenType-SVG font</strong> (multi-camada/colorida).<br />
+- O motor de PDF do TeX não entende esse tipo de fonte → por isso
+aparece <code>loca table not found</code>.<br />
+- Isso <strong>não é bug do MiKTeX</strong>, é limitação do LaTeX +
+FreeType.</p>
+<hr />
+<h3 data-number="1.2.10" id="como-resolver-alternativas"><span class="header-section-number">1.2.10</span> ✅ Como resolver /
+alternativas</h3>
+<h4 data-number="1.2.10.1" id="usar-um-motor-baseado-em-html-weasyprint-ou-wkhtmltopdf"><span class="header-section-number">1.2.10.1</span> 1. Usar um motor baseado
+em <strong>HTML</strong> (WeasyPrint ou wkhtmltopdf)</h4>
+<p>Esse é o jeito mais fácil de <strong>ter emoji colorido</strong>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>custom<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p><code>custom.css</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<blockquote>
+<p>WeasyPrint usa Cairo/FreeType e consegue lidar com a
+<code>Noto Color Emoji</code>.</p>
+</blockquote>
+<hr />
+<h4 data-number="1.2.10.2" id="usar-segoe-ui-emoji-nativa-do-windows"><span class="header-section-number">1.2.10.2</span> 2. Usar <strong>Segoe UI
+Emoji</strong> (nativa do Windows)</h4>
+<p>Se você insiste no caminho
+<code>xelatex</code>/<code>lualatex</code>, pode usar a fonte
+<strong>Segoe UI Emoji</strong>, que o Windows já suporta (embora também
+não seja colorida no PDF, mas pelo menos não dá erro):</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pandoc input<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o output<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>xelatex <span class="op">-</span>V mainfont<span class="op">=</span><span class="st">&quot;Segoe UI Emoji&quot;</span></span></code></pre></div>
+<hr />
+<h4 data-number="1.2.10.3" id="gerar-pdf-via-navegador-garantia-de-cor"><span class="header-section-number">1.2.10.3</span> 3. Gerar PDF via navegador
+(garantia de cor)</h4>
+<ol type="1">
+<li><code>pandoc input.md -o output.html --css=custom.css</code></li>
+<li>Abra no <strong>Edge/Chrome</strong></li>
+<li><code>Ctrl+P → Salvar como PDF</code></li>
+</ol>
+<hr />
+<h4 data-number="1.2.10.4" id="conversão-mista"><span class="header-section-number">1.2.10.4</span> 4. Conversão mista</h4>
+<p>Se você precisa usar LaTeX mas quer emoji, pode: - Usar pacotes como
+<a href="https://ctan.org/pkg/emoji"><code>emoji</code></a> do LaTeX,
+que convertem emoji em <strong>imagens PNG</strong> inseridas no PDF. -
+Ou usar scripts que substituem <code>😀</code> por
+<code>\includegraphics{emoji_u1f600.png}</code> (complicado, mas
+funciona).</p>
+<hr />
+<p>📌 <strong>Conclusão:</strong> - <strong>Noto Color Emoji</strong>
+não funciona no MiKTeX/XeLaTeX → erro inevitável.<br />
+- Para emoji colorido em PDF no Windows → use <code>weasyprint</code> ou
+exporte via navegador.<br />
+- Se aceitar emoji preto e branco → use <code>Segoe UI Emoji</code> no
+XeLaTeX.</p>
+<hr />
+<p>Quer que eu monte um <strong>exemplo funcional</strong> de
+<code>input.md</code> + <code>custom.css</code> + comando
+<code>pandoc</code> que gera um PDF com <strong>emoji colorido</strong>
+via <code>weasyprint</code> no Windows?</p>
+<hr />
+<h3 data-number="1.2.11" id="utilizador-2025-09-17-215839-chatgpt"><span class="header-section-number">1.2.11</span> 👤 Utilizador
+<em>(2025-09-17 21:58:39)</em> <em>[ChatGPT]</em></h3>
+<p>posso usar: pandoc guia-congelamento.md -o out35.pdf
+–pdf-engine=lualatex -V mainfont=“Noto Color Emoji”</p>
+<hr />
+<h3 data-number="1.2.12" id="chatgpt-2025-09-17-215839-chatgpt"><span class="header-section-number">1.2.12</span> 🤖 ChatGPT <em>(2025-09-17
+21:58:39)</em> <em>[ChatGPT]</em></h3>
+<p>Você até <strong>pode rodar</strong> esse comando:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pandoc guia-congelamento<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out35<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>lualatex <span class="op">-</span>V mainfont<span class="op">=</span><span class="st">&quot;Noto Color Emoji&quot;</span></span></code></pre></div>
+<p>mas dois pontos importantes:</p>
+<hr />
+<h3 data-number="1.2.13" id="o-que-vai-acontecer"><span class="header-section-number">1.2.13</span> 🔴 O que vai acontecer</h3>
+<ul>
+<li>O <strong>LuaLaTeX</strong> (assim como o XeLaTeX) <strong>não
+entende a fonte Noto Color Emoji</strong>, porque ela é
+<strong>COLR/CPAL ou OpenType-SVG</strong>.<br />
+</li>
+<li>Resultado:
+<ul>
+<li>Muitas vezes dá o mesmo erro
+(<code>loca table not found</code>)<br />
+</li>
+<li>Ou o PDF sai com <strong>caixinhas quadradas</strong>/símbolos em
+vez de emoji.<br />
+</li>
+<li>Mesmo que “funcione”, os emoji vão sair <strong>preto e
+branco</strong>, nunca coloridos.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.14" id="alternativas"><span class="header-section-number">1.2.14</span> ✅ Alternativas</h3>
+<p>Se você precisa <strong>emoji colorido no PDF</strong>:</p>
+<ol type="1">
+<li><p><strong>HTML → PDF via WeasyPrint (recomendado)</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pandoc guia-congelamento<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out35<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>custom<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p><code>custom.css</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>→ Esse fluxo mantém os emoji em <strong>cores</strong>.</p></li>
+<li><p><strong>Usar Segoe UI Emoji no LuaLaTeX</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pandoc guia-congelamento<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out35<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>lualatex <span class="op">-</span>V mainfont<span class="op">=</span><span class="st">&quot;Segoe UI Emoji&quot;</span></span></code></pre></div>
+<p>→ Funciona, mas só em <strong>preto e branco</strong>.</p></li>
+<li><p><strong>Via navegador</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pandoc guia-congelamento<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out35<span class="op">.</span><span class="fu">html</span> <span class="op">--</span>css<span class="op">=</span>custom<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Depois abrir no <strong>Chrome/Edge</strong> → Imprimir → Salvar como
+PDF.<br />
+→ Mantém os emoji coloridos.</p></li>
+</ol>
+<hr />
+<p>👉 Ou seja: <strong>o comando que você sugeriu vai rodar, mas nunca
+te dará emoji colorido no PDF</strong>.<br />
+Se a sua prioridade é <strong>emoji colorido</strong>, você precisa
+trocar o motor (<code>weasyprint</code> ou navegador).</p>
+<hr />
+<p>Quer que eu te mostre um exemplo <strong>mínimo pronto para copiar e
+colar</strong> (<code>.md</code> + <code>.css</code>) que já sai com
+emoji colorido no PDF usando <code>weasyprint</code> no Windows?</p>
+<hr />
+<h3 data-number="1.2.15" id="utilizador-2025-09-17-215943-chatgpt"><span class="header-section-number">1.2.15</span> 👤 Utilizador
+<em>(2025-09-17 21:59:43)</em> <em>[ChatGPT]</em></h3>
+<p>então como usar: mainfont=“Noto Color Emoji”</p>
+<hr />
+<h3 data-number="1.2.16" id="chatgpt-2025-09-17-215943-chatgpt"><span class="header-section-number">1.2.16</span> 🤖 ChatGPT <em>(2025-09-17
+21:59:43)</em> <em>[ChatGPT]</em></h3>
+<p>Boa pergunta 👍</p>
+<p>No <strong>Pandoc + LaTeX (XeLaTeX / LuaLaTeX)</strong>, a opção</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">-V</span> mainfont=<span class="st">&quot;Noto Color Emoji&quot;</span></span></code></pre></div>
+<p>significa: <em>“defina a fonte principal do documento para Noto Color
+Emoji”</em>.</p>
+<hr />
+<h3 data-number="1.2.17" id="mas-o-problema"><span class="header-section-number">1.2.17</span> 🔎 Mas o problema</h3>
+<ul>
+<li>O motor do LaTeX (XeLaTeX/LuaLaTeX) <strong>não consegue usar fontes
+coloridas</strong> como <code>Noto Color Emoji</code> (formato COLR/CPAL
+ou SVG-in-OT).<br />
+</li>
+<li>Por isso, você recebe erro (<code>loca table not found</code>) ou,
+quando não dá erro, os emoji aparecem <strong>em preto e branco</strong>
+ou como <strong>caixas</strong>.</li>
+</ul>
+<p>Ou seja: <strong>não dá para usar
+<code>mainfont=&quot;Noto Color Emoji&quot;</code> com LaTeX para ter emoji
+colorido.</strong></p>
+<hr />
+<h3 data-number="1.2.18" id="o-que-dá-para-fazer"><span class="header-section-number">1.2.18</span> ✅ O que dá para fazer</h3>
+<h4 data-number="1.2.18.1" id="se-você-só-quer-testar-a-sintaxe"><span class="header-section-number">1.2.18.1</span> 1. Se você só quer testar
+a sintaxe</h4>
+<p>Esse comando é válido (mas não terá cor):</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>lualatex <span class="op">-</span>V mainfont<span class="op">=</span><span class="st">&quot;Segoe UI Emoji&quot;</span></span></code></pre></div>
+<p>(<code>Segoe UI Emoji</code> é mais estável no Windows; mas também só
+mostra emoji em preto e branco no PDF).</p>
+<hr />
+<h4 data-number="1.2.18.2" id="se-realmente-precisa-de-emoji-colorido"><span class="header-section-number">1.2.18.2</span> 2. Se realmente precisa de
+<strong>emoji colorido</strong></h4>
+<p>Use um motor baseado em <strong>HTML/CSS</strong>, não LaTeX:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Arquivo <code>emoji.css</code>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Esse sim vai usar <code>Noto Color Emoji</code> de verdade, mantendo
+cor.</p>
+<hr />
+<h4 data-number="1.2.18.3" id="alternativa-via-navegador"><span class="header-section-number">1.2.18.3</span> 3. Alternativa via
+navegador</h4>
+<div class="sourceCode" id="cb21"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o out<span class="op">.</span><span class="fu">html</span> <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Depois abra no <strong>Chrome/Edge</strong> → Imprimir → PDF.<br />
+Funciona igual, e preserva cor.</p>
+<hr />
+<p>📌 <strong>Resumo</strong>:<br />
+- <code>mainfont=&quot;Noto Color Emoji&quot;</code> funciona <em>só como
+instrução de fonte</em> em LaTeX, mas o motor <strong>não sabe
+renderizar fontes coloridas</strong> → sem cor ou erro.<br />
+- Para <strong>emoji colorido</strong>, você precisa mudar para
+<code>weasyprint</code> (ou navegador).</p>
+<hr />
+<p>Quer que eu te monte um exemplo <strong>mínimo completo</strong> (um
+<code>.md</code> com emoji + <code>.css</code>) para você rodar no
+Windows com Pandoc e sair direto com emoji colorido no PDF?</p>
+<hr />
+<h3 data-number="1.2.19" id="utilizador-2025-09-17-220034-chatgpt"><span class="header-section-number">1.2.19</span> 👤 Utilizador
+<em>(2025-09-17 22:00:34)</em> <em>[ChatGPT]</em></h3>
+<p>e não é possivel usar outra pdf-engine</p>
+<hr />
+<h3 data-number="1.2.20" id="chatgpt-2025-09-17-220034-chatgpt"><span class="header-section-number">1.2.20</span> 🤖 ChatGPT <em>(2025-09-17
+22:00:34)</em> <em>[ChatGPT]</em></h3>
+<p>Boa! 👍<br />
+Depende do que você entende por <em>“outra pdf-engine”</em>.</p>
+<p>O <strong>Pandoc</strong> aceita alguns motores de PDF diferentes,
+mas cada grupo tem limitações:</p>
+<hr />
+<h3 data-number="1.2.21" id="engines-latex-xelatex-lualatex-pdflatex"><span class="header-section-number">1.2.21</span> 1. <strong>Engines
+LaTeX</strong> (xelatex, lualatex, pdflatex)</h3>
+<ul>
+<li><strong>pdflatex</strong> → não suporta Unicode/emoji de jeito
+nenhum.<br />
+</li>
+<li><strong>xelatex / lualatex</strong> → até aceitam Unicode + troca de
+fonte (<code>mainfont</code>), mas <strong>não renderizam emoji
+colorido</strong>.
+<ul>
+<li>Se você indicar <code>mainfont=&quot;Noto Color Emoji&quot;</code>, ou dá erro
+(<code>loca table not found</code>) ou sai em <strong>preto e
+branco</strong>.<br />
+👉 Não existe motor LaTeX que renderize emoji colorido no PDF.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.22" id="engines-baseados-em-htmlcss-weasyprint-wkhtmltopdf-prince"><span class="header-section-number">1.2.22</span> 2. <strong>Engines baseados
+em HTML/CSS</strong> (WeasyPrint, wkhtmltopdf, prince)</h3>
+<p>Esses usam navegador ou motor de renderização web:<br />
+- <strong>weasyprint</strong> (Python, fácil de instalar via
+<code>pip install weasyprint</code>)<br />
+- <strong>wkhtmltopdf</strong> (baseado no WebKit, às vezes com falhas
+em fontes coloridas)<br />
+- <strong>PrinceXML</strong> (pago, mas excelente suporte a fontes).</p>
+<p>Com eles você consegue usar:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>👉 Aqui o <code>emoji.css</code> pode forçar
+<code>font-family: &quot;Noto Color Emoji&quot;</code> e os emoji saem
+<strong>coloridos de verdade</strong>.</p>
+<hr />
+<h3 data-number="1.2.23" id="truques-híbridos"><span class="header-section-number">1.2.23</span> 3. <strong>Truques
+híbridos</strong></h3>
+<ul>
+<li>Gerar <strong>HTML</strong> com Pandoc (<code>-o guia.html</code>) →
+abrir no <strong>Chrome/Edge</strong> → “Imprimir em PDF”.
+<ul>
+<li>Também preserva cor.<br />
+</li>
+</ul></li>
+<li>Usar pacotes LaTeX como <a href="https://ctan.org/pkg/emoji"><code>emoji</code></a> que convertem
+emoji em <strong>imagens PNG</strong> inseridas no PDF (funciona, mas dá
+trabalho).</li>
+</ul>
+<hr />
+<p>✅ <strong>Conclusão:</strong><br />
+Não existe “pdf-engine milagrosa” dentro do mundo LaTeX que faça o
+<code>Noto Color Emoji</code> funcionar em cor.<br />
+Se você quer PDF com emoji colorido, precisa usar <strong>engine baseada
+em HTML/CSS</strong> (<code>weasyprint</code>, <code>wkhtmltopdf</code>,
+ou navegador).</p>
+<hr />
+<p>Quer que eu te mostre como instalar o <strong>WeasyPrint no
+Windows</strong> e configurar o Pandoc para usá-lo direto?</p>
+<hr />
+<h3 data-number="1.2.24" id="utilizador-2025-09-17-220711-chatgpt"><span class="header-section-number">1.2.24</span> 👤 Utilizador
+<em>(2025-09-17 22:07:11)</em> <em>[ChatGPT]</em></h3>
+<p>qual é a melhor font para usar emojis coloridos e qual pdf-engine
+usar</p>
+<hr />
+<h3 data-number="1.2.25" id="chatgpt-2025-09-17-220710-chatgpt"><span class="header-section-number">1.2.25</span> 🤖 ChatGPT <em>(2025-09-17
+22:07:10)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente pergunta 👌</p>
+<h3 data-number="1.2.26" id="melhor-fonte-para-emojis-coloridos"><span class="header-section-number">1.2.26</span> 🎨 Melhor fonte para emojis
+coloridos</h3>
+<p>No Windows e no ecossistema Pandoc, as fontes mais estáveis são:</p>
+<ul>
+<li><strong>Segoe UI Emoji</strong> → já vem com o Windows.
+<ul>
+<li>Mostra emoji colorido em navegadores e apps modernos.<br />
+</li>
+<li>Em LaTeX (<code>xelatex</code>/<code>lualatex</code>) fica
+<strong>preto e branco</strong>, mas pelo menos não quebra.</li>
+</ul></li>
+<li><strong>Noto Color Emoji</strong> (do Google) → padrão
+Android/Linux.
+<ul>
+<li>Muito completa, mas <strong>não funciona em LaTeX engines</strong>
+(erro ou quadrados).<br />
+</li>
+<li>Funciona bem em engines baseadas em HTML/CSS.</li>
+</ul></li>
+</ul>
+<p>👉 Para <strong>PDF com emoji colorido</strong>, tanto
+<code>Segoe UI Emoji</code> quanto <code>Noto Color Emoji</code>
+funcionam — desde que você use um motor baseado em
+<strong>HTML/CSS</strong>.</p>
+<hr />
+<h3 data-number="1.2.27" id="melhor-pdf-engine"><span class="header-section-number">1.2.27</span> ⚙️ Melhor PDF engine</h3>
+<ul>
+<li><strong>LaTeX engines (xelatex, lualatex, pdflatex)</strong>
+<ul>
+<li>Confiáveis para textos científicos e fórmulas.<br />
+</li>
+<li>❌ Nenhuma delas renderiza emoji colorido.</li>
+</ul></li>
+<li><strong>HTML-based engines</strong> (✅ recomendadas para emoji
+colorido):
+<ol type="1">
+<li><p><strong>WeasyPrint</strong> (recomendado — software livre, fácil
+de instalar com <code>pip install weasyprint</code>)</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div></li>
+<li><p><strong>wkhtmltopdf</strong> (baseado no WebKit, mas às vezes
+falha em CSS moderno).<br />
+</p></li>
+<li><p><strong>PrinceXML</strong> (pago, mas altíssima qualidade
+tipográfica).<br />
+</p></li>
+<li><p><strong>Chrome/Edge “imprimir em PDF”</strong> (alternativa
+manual, mas funciona muito bem).</p></li>
+</ol></li>
+</ul>
+<hr />
+<h3 data-number="1.2.28" id="resumindo"><span class="header-section-number">1.2.28</span> 📌 Resumindo</h3>
+<ul>
+<li><strong>Fonte recomendada</strong>:
+<ul>
+<li><code>Segoe UI Emoji</code> (Windows nativa)<br />
+</li>
+<li>ou <code>Noto Color Emoji</code> (se você instalou e preferir o
+estilo Android).</li>
+</ul></li>
+<li><strong>PDF-engine recomendada</strong>:
+<ul>
+<li><strong>WeasyPrint</strong> (para emoji colorido).<br />
+</li>
+<li>Use <code>xelatex</code>/<code>lualatex</code> <strong>apenas se não
+precisar de cor nos emoji</strong>.</li>
+</ul></li>
+</ul>
+<hr />
+<p>Quer que eu prepare um exemplo <strong>mínimo</strong>
+(<code>.md</code> + <code>.css</code>) que você pode rodar no Windows
+com <code>pandoc + weasyprint</code> e já sai um PDF com emoji
+colorido?</p>
+<hr />
+<h3 data-number="1.2.29" id="utilizador-2025-09-17-220928-chatgpt"><span class="header-section-number">1.2.29</span> 👤 Utilizador
+<em>(2025-09-17 22:09:28)</em> <em>[ChatGPT]</em></h3>
+<p>Exemplos HTML-based engines</p>
+<hr />
+<h3 data-number="1.2.30" id="chatgpt-2025-09-17-220928-chatgpt"><span class="header-section-number">1.2.30</span> 🤖 ChatGPT <em>(2025-09-17
+22:09:28)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 Vamos organizar exemplos práticos usando <strong>Pandoc
+com engines baseadas em HTML/CSS</strong> — que são as únicas que
+preservam <strong>emoji colorido</strong> no PDF.</p>
+<hr />
+<h2 data-number="1.3" id="weasyprint-recomendado-open-source"><span class="header-section-number">1.3</span> 🟢 1. WeasyPrint (recomendado,
+open source)</h2>
+<h3 data-number="1.3.1" id="instalação"><span class="header-section-number">1.3.1</span> Instalação</h3>
+<div class="sourceCode" id="cb24"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>pip install weasyprint</span></code></pre></div>
+<h3 data-number="1.3.2" id="uso-com-pandoc"><span class="header-section-number">1.3.2</span> Uso com Pandoc</h3>
+<p>Arquivo <code>guia.md</code>:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Guia com Emoji</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>Este é um teste 😀 🍕 🚀</span></code></pre></div>
+<p>Arquivo <code>emoji.css</code>:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">14</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Comando:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>✅ Emojis saem <strong>coloridos</strong> no PDF.</p>
+<hr />
+<h2 data-number="1.4" id="wkhtmltopdf-baseado-em-webkit"><span class="header-section-number">1.4</span> 🟢 2. wkhtmltopdf (baseado em
+WebKit)</h2>
+<h3 data-number="1.4.1" id="instalação-1"><span class="header-section-number">1.4.1</span> Instalação</h3>
+<p>Baixar de: <a href="https://wkhtmltopdf.org/downloads.html">https://wkhtmltopdf.org/downloads.html</a><br />
+(Precisa adicionar ao PATH).</p>
+<h3 data-number="1.4.2" id="uso-com-pandoc-1"><span class="header-section-number">1.4.2</span> Uso com Pandoc</h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>wkhtmltopdf <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>⚠️ Limitações: - Suporte parcial a CSS moderno. - Emojis funcionam,
+mas alguns estilos podem quebrar.</p>
+<hr />
+<h2 data-number="1.5" id="princexml-pago-mas-profissional"><span class="header-section-number">1.5</span> 🟢 3. PrinceXML (pago, mas
+profissional)</h2>
+<h3 data-number="1.5.1" id="instalação-2"><span class="header-section-number">1.5.1</span> Instalação</h3>
+<p><a href="https://www.princexml.com/download/">https://www.princexml.com/download/</a><br />
+(licença comercial, mas tem versão gratuita de teste com marca
+d’água).</p>
+<h3 data-number="1.5.2" id="uso-com-pandoc-2"><span class="header-section-number">1.5.2</span> Uso com Pandoc</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>prince <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>✅ Qualidade tipográfica de nível editorial.<br />
+💰 Mas exige licença para uso sério.</p>
+<hr />
+<h2 data-number="1.6" id="chrome-edge-atalho-manual"><span class="header-section-number">1.6</span> 🟢 4. Chrome / Edge (atalho
+manual)</h2>
+<p>Gerar HTML:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">html</span> <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Abrir <code>guia.html</code> no navegador → <strong>Ctrl+P → Salvar
+como PDF</strong>.</p>
+<p>✅ Suporte completo a emoji colorido.<br />
+❌ Processo manual (a não ser que use Puppeteer/Playwright para
+automatizar).</p>
+<hr />
+<h3 data-number="1.6.1" id="resumo"><span class="header-section-number">1.6.1</span> 📌 Resumo</h3>
+<ul>
+<li>Melhor engine livre → <strong>WeasyPrint</strong>.<br />
+</li>
+<li>Simples de instalar, funciona no Windows, suporta emoji colorido com
+<code>Noto Color Emoji</code> ou <code>Segoe UI Emoji</code>.<br />
+</li>
+<li>Para profissional/editorial → <strong>PrinceXML</strong>.<br />
+</li>
+<li>Atalho rápido → <strong>Chrome/Edge salvar como PDF</strong>.</li>
+</ul>
+<hr />
+<p>Quer que eu prepare um <strong>pacotinho de exemplo pronto</strong>
+(um <code>.md</code> e um <code>.css</code>) que você só roda com Pandoc
++ WeasyPrint no Windows e já sai um PDF com emojis coloridos?</p>
+<hr />
+<h3 data-number="1.6.2" id="utilizador-2025-09-17-221146-chatgpt"><span class="header-section-number">1.6.2</span> 👤 Utilizador <em>(2025-09-17
+22:11:46)</em> <em>[ChatGPT]</em></h3>
+<p>sim (pacotinho de exemplo pronto (um .md e um .css)) WeasyPrint</p>
+<hr />
+<h3 data-number="1.6.3" id="chatgpt-2025-09-17-221147-chatgpt"><span class="header-section-number">1.6.3</span> 🤖 ChatGPT <em>(2025-09-17
+22:11:47)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 🚀 Vou te montar um <strong>exemplo mínimo</strong> para
+rodar no <strong>Windows</strong> com <strong>Pandoc +
+WeasyPrint</strong> e sair direto com PDF cheio de emoji colorido.</p>
+<hr />
+<h2 data-number="1.7" id="arquivo-markdown-guia.md"><span class="header-section-number">1.7</span> 📄 1. Arquivo Markdown
+(<code>guia.md</code>)</h2>
+<p>Salve como <code>guia.md</code>:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Guia com Emoji 😎</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>Este é um teste de PDF com **emoji colorido**.</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Comida: 🍕 🍔 🍩</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Transportes: 🚗 🚲 🚀</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Natureza: 🌳 🌻 🌞</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>Misturando texto e emoji:  </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>Eu adoro programar com Pandoc 🤓🔥</span></code></pre></div>
+<hr />
+<h2 data-number="1.8" id="arquivo-css-emoji.css"><span class="header-section-number">1.8</span> 🎨 2. Arquivo CSS
+(<code>emoji.css</code>)</h2>
+<p>Salve como <code>emoji.css</code>:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">14</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span><span class="ch">:</span> <span class="dv">1.6</span><span class="op">;</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span><span class="ch">:</span> <span class="dv">2</span><span class="dt">cm</span><span class="op">;</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>h1 {</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#2c3e50</span><span class="op">;</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">24</span><span class="dt">pt</span><span class="op">;</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">text-align</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin-bottom</span><span class="ch">:</span> <span class="dv">20</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>ul {</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">list-style-type</span><span class="ch">:</span> <span class="st">&quot;👉 &quot;</span><span class="op">;</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Esse CSS força o uso da <strong>Noto Color Emoji</strong> (se
+instalada) ou <strong>Segoe UI Emoji</strong> (já vem no Windows).</p>
+<hr />
+<h2 data-number="1.9" id="comando-pandoc-weasyprint"><span class="header-section-number">1.9</span> ⚙️ 3. Comando Pandoc +
+WeasyPrint</h2>
+<p>Depois de instalar o WeasyPrint
+(<code>pip install weasyprint</code>), rode no PowerShell:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">pdf</span> <span class="op">--</span>pdf-engine<span class="op">=</span>weasyprint <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.10" id="resultado"><span class="header-section-number">1.10</span> ✅ Resultado</h2>
+<ul>
+<li>O <code>guia.pdf</code> vai ter <strong>emoji colorido</strong>,
+renderizado com a fonte definida.<br />
+</li>
+<li>Funciona no Windows, Linux e macOS.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu te ensine também a deixar esse comando ainda mais
+fácil (por exemplo, criando um script <code>.bat</code> no Windows para
+converter Markdown → PDF com um clique)?</p>
+<hr />
+<h3 data-number="1.10.1" id="utilizador-2025-09-17-221850-chatgpt"><span class="header-section-number">1.10.1</span> 👤 Utilizador
+<em>(2025-09-17 22:18:50)</em> <em>[ChatGPT]</em></h3>
+<p>weasyprint dá erros</p>
+<hr />
+<h3 data-number="1.10.2" id="chatgpt-2025-09-17-221849-chatgpt"><span class="header-section-number">1.10.2</span> 🤖 ChatGPT <em>(2025-09-17
+22:18:49)</em> <em>[ChatGPT]</em></h3>
+<p>Entendi 👍 — no Windows o <strong>WeasyPrint</strong> às vezes dá dor
+de cabeça porque depende de bibliotecas nativas do <strong>Cairo, Pango
+e GDK-PixBuf</strong>.<br />
+Se você rodou <code>pip install weasyprint</code> e ao gerar PDF
+aparecem erros, geralmente é por <strong>dependências
+faltando</strong>.</p>
+<hr />
+<h2 data-number="1.11" id="erros-mais-comuns-do-weasyprint-no-windows"><span class="header-section-number">1.11</span> 🔎 Erros mais comuns do
+WeasyPrint no Windows</h2>
+<ol type="1">
+<li><p><code>ImportError: cannot import name &#39;cairo&#39;</code><br />
+→ Cairo não instalado.</p></li>
+<li><p><code>OSError: no library called &quot;cairo&quot;</code> ou
+<code>&quot;pango&quot;</code><br />
+→ faltam DLLs de renderização.</p></li>
+<li><p>PDF sai em branco ou não abre<br />
+→ versão quebrada de uma dependência.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.12" id="como-corrigir-windows"><span class="header-section-number">1.12</span> ✅ Como corrigir
+(Windows)</h2>
+<h3 data-number="1.12.1" id="usar-o-pacote-pronto-recomendado"><span class="header-section-number">1.12.1</span> 1. Usar o pacote pronto
+(recomendado)</h3>
+<p>A equipe do WeasyPrint mantém builds portáteis no <strong>Gohlke
+wheels</strong> (não precisa compilar nada).<br />
+- Acesse: <a href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#weasyprint">https://www.lfd.uci.edu/~gohlke/pythonlibs/#weasyprint</a><br />
+- Baixe o <code>.whl</code> compatível com sua versão do Python (ex:
+<code>weasyprint-60.2-cp310-cp310-win_amd64.whl</code> para Python 3.10
+64-bit).<br />
+- Instale:<br />
+<code>powershell   pip install caminho\do\arquivo.whl</code></p>
+<p>Isso já inclui as dependências.</p>
+<hr />
+<h3 data-number="1.12.2" id="alternativa-instalar-dependências-manualmente"><span class="header-section-number">1.12.2</span> 2. Alternativa: instalar
+dependências manualmente</h3>
+<p>Se você quiser continuar com <code>pip install weasyprint</code>: 1.
+Instale bibliotecas gráficas via Chocolatey:
+<code>powershell    choco install gtk3</code> ou use <a href="https://www.msys2.org/">MSYS2</a> e rode:
+<code>bash    pacman -S mingw-w64-x86_64-gtk3</code> 2. Garanta que
+<code>cairo.dll</code>, <code>pango.dll</code> e
+<code>gdk-pixbuf-2.0.dll</code> estejam no PATH do Windows.</p>
+<hr />
+<h3 data-number="1.12.3" id="usar-chromeedge-como-pdf-engine-mais-simples"><span class="header-section-number">1.12.3</span> 3. Usar
+<strong>Chrome/Edge</strong> como PDF-engine (mais simples)</h3>
+<p>Se o objetivo principal é <strong>emoji colorido</strong> e o
+WeasyPrint está difícil de configurar, dá para usar o navegador:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pandoc guia<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>o guia<span class="op">.</span><span class="fu">html</span> <span class="op">--</span>css<span class="op">=</span>emoji<span class="op">.</span><span class="fu">css</span></span></code></pre></div>
+<p>Depois abra <code>guia.html</code> → <strong>Ctrl+P → Salvar como
+PDF</strong>.<br />
+👉 Sai com emoji colorido sem depender do Cairo/Pango.</p>
+<p>(Se quiser automatizar, dá pra usar <strong>Puppeteer</strong> ou
+<strong>Playwright</strong>).</p>
+<hr />
+<p>📌 <strong>Resumo</strong>: - O WeasyPrint funciona, mas no Windows é
+chato instalar.<br />
+- Alternativa fácil e estável: gerar <strong>HTML</strong> e converter
+para PDF com o navegador.<br />
+- Se quiser insistir no WeasyPrint → recomendo instalar via
+<strong>wheel do Gohlke</strong>, que já vem pronto.</p>
+<hr />
+<p>Quer que eu monte um <strong>passo a passo só com
+Chrome/Edge</strong> (sem WeasyPrint), mas automatizado, para que o
+Pandoc já saia direto em PDF com emoji colorido?</p>
+<hr />
+<h3 data-number="1.12.4" id="utilizador-2025-09-17-222007-chatgpt"><span class="header-section-number">1.12.4</span> 👤 Utilizador
+<em>(2025-09-17 22:20:07)</em> <em>[ChatGPT]</em></h3>
+<p>easyPrint could not import some external libraries</p>
+<hr />
+<h3 data-number="1.12.5" id="chatgpt-2025-09-17-222007-chatgpt"><span class="header-section-number">1.12.5</span> 🤖 ChatGPT <em>(2025-09-17
+22:20:07)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito — essa mensagem <strong>“WeasyPrint could not import some
+external libraries”</strong> é clássica no <strong>Windows</strong>
+🪟.<br />
+Ela aparece porque o WeasyPrint depende de <strong>Cairo, Pango e
+GDK-PixBuf</strong>, mas no Windows essas libs não vêm junto.</p>
+<hr />
+<h2 data-number="1.13" id="causas-comuns"><span class="header-section-number">1.13</span> 🔎 Causas comuns</h2>
+<ul>
+<li>Instalou com <code>pip install weasyprint</code> mas <strong>faltam
+DLLs</strong>.<br />
+</li>
+<li>PATH do Windows não contém as libs gráficas.<br />
+</li>
+<li>Usando Python “puro” sem GTK/Pango.</li>
+</ul>
+<hr />
+<h2 data-number="1.14" id="soluções-possíveis"><span class="header-section-number">1.14</span> ✅ Soluções possíveis</h2>
+<h3 data-number="1.14.1" id="instalar-versão-pronta-recomendado-no-windows"><span class="header-section-number">1.14.1</span> 1. Instalar versão pronta
+(recomendado no Windows)</h3>
+<p>Baixe o <code>.whl</code> compilado que já inclui tudo:<br />
+👉 <a href="https://www.lfd.uci.edu/~gohlke/pythonlibs/#weasyprint">Gohlke
+wheels – weasyprint</a></p>
+<p>Exemplo (para Python 3.10, 64-bit):</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pip install weasyprint-60<span class="op">.</span><span class="dv">2</span><span class="op">-</span>cp310-cp310-win_amd64<span class="op">.</span><span class="fu">whl</span></span></code></pre></div>
+<p>Isso instala junto <strong>cairo + pango</strong>, sem dor de
+cabeça.</p>
+<hr />
+<h3 data-number="1.14.2" id="instalar-dependências-via-msys2-opção-avançada"><span class="header-section-number">1.14.2</span> 2. Instalar dependências via
+MSYS2 (opção avançada)</h3>
+<p>Se quiser usar o pacote oficial do PyPI: 1. Instale <a href="https://www.msys2.org/">MSYS2</a>.<br />
+2. No terminal MSYS2:
+<code>bash    pacman -S mingw-w64-x86_64-cairo mingw-w64-x86_64-pango mingw-w64-x86_64-gdk-pixbuf2</code>
+3. Adicione os diretórios de binários
+(<code>C:\msys64\mingw64\bin</code>) ao PATH do Windows.</p>
+<hr />
+<h3 data-number="1.14.3" id="evitar-weasyprint-no-windows"><span class="header-section-number">1.14.3</span> 3. Evitar WeasyPrint no
+Windows</h3>
+<p>Se o problema é <strong>só usar emoji colorido</strong>, há caminhos
+bem mais fáceis: - <strong>Chrome/Edge</strong>:<br />
+<code>powershell   pandoc guia.md -o guia.html --css=emoji.css</code>
+Depois abra no navegador → <strong>Ctrl+P → Salvar PDF</strong> (emoji
+colorido garantido). - <strong>wkhtmltopdf</strong>: funciona no Windows
+sem dependências complicadas, embora o suporte a CSS moderno seja menor:
+<code>powershell   pandoc guia.md -o guia.pdf --pdf-engine=wkhtmltopdf --css=emoji.css</code></p>
+<hr />
+<h2 data-number="1.15" id="resumindo-1"><span class="header-section-number">1.15</span> 📌 Resumindo</h2>
+<ul>
+<li>Esse erro significa: <em>WeasyPrint não achou
+Cairo/Pango</em>.<br />
+</li>
+<li>Melhor solução no Windows: instalar o <code>.whl</code> pronto do
+Gohlke.<br />
+</li>
+<li>Alternativa prática: usar <code>wkhtmltopdf</code> ou navegador para
+PDF com emoji colorido.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu te monte um <strong>tutorial de instalação “sem dor”
+do wkhtmltopdf no Windows</strong>, para você usar direto como
+<code>--pdf-engine=wkhtmltopdf</code> no Pandoc?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 15/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>
