@@ -32,7 +32,6 @@
             display: flex;
             border-bottom: 2px solid #eee;
             margin-bottom: 20px;
-            gap: 10px;
         }
         .tab-button {
             padding: 12px 24px;
@@ -61,12 +60,10 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            overflow-x: auto;
         }
         .users-table table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 800px;
         }
         .users-table th,
         .users-table td {
@@ -77,8 +74,6 @@
         .users-table th {
             background: #f8f9fa;
             font-weight: 600;
-            position: sticky;
-            top: 0;
         }
         .status-pending {
             color: #e67e22;
@@ -100,34 +95,19 @@
             border-radius: 4px;
             cursor: pointer;
             margin-right: 5px;
-            font-size: 0.9rem;
         }
         .btn-reject {
-            background: #e67e22;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
-            font-size: 0.9rem;
-        }
-        .btn-delete {
             background: #e74c3c;
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
         }
         .btn-approve:hover {
             background: #219653;
         }
         .btn-reject:hover {
-            background: #d35400;
-        }
-        .btn-delete:hover {
             background: #c0392b;
         }
         .loading {
@@ -143,98 +123,27 @@
             color: #e74c3c;
             margin-bottom: 20px;
         }
-        .actions-cell {
-            white-space: nowrap;
-        }
-        .user-admin-badge {
-            background: #ff6b6b;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.75em;
-            margin-left: 5px;
-        }
-        
-        /* Modal de Confirmação */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-overlay.show {
-            display: flex;
-        }
-        .modal-box {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        .modal-box h3 {
-            color: #e74c3c;
-            margin-bottom: 15px;
-        }
-        .modal-box p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-        .btn-cancel {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn-cancel:hover {
-            background: #5a6268;
-        }
-        .btn-confirm-delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn-confirm-delete:hover {
-            background: #c0392b;
-        }
     </style>
 </head>
 <body class="dashboard-page">
-    <!-- Tela de Acesso Negado -->
+    <!-- Tela de Acesso Negado (inicialmente oculta) -->
     <div id="accessDenied" class="access-denied" style="display:none;">
         <div class="container">
             <h2>🚫 Acesso Negado</h2>
             <p>Você não tem permissão para acessar esta área.</p>
             <p>Apenas administradores podem acessar o painel administrativo.</p>
-            <button onclick="window.location.href='index.html'" class="btn-primary" style="margin-top: 20px;">Voltar ao Dashboard</button>
+            <button onclick="window.location.href='dashboard.html'" class="btn-primary" style="margin-top: 20px;">Voltar ao Dashboard</button>
         </div>
     </div>
     
-    <!-- Conteúdo Admin -->
+    <!-- Conteúdo Admin (inicialmente oculto) -->
     <div id="adminContent" style="display:none;">
         <div class="container">
             <header class="header">
                 <h1>⚙️ Painel Administrativo</h1>
                 <div class="user-info">
                     <span id="userWelcome">Carregando...</span>
-                    <button onclick="window.location.href='index.html'" class="btn-secondary">Voltar ao Dashboard</button>
+                    <button onclick="window.location.href='dashboard.html'" class="btn-secondary">Voltar ao Dashboard</button>
                     <button onclick="logout()" class="btn-secondary">Sair</button>
                 </div>
             </header>
@@ -264,10 +173,10 @@
                 <div class="tab-container">
                     <div class="tab-buttons">
                         <button class="tab-button active" onclick="switchTab('pending')">
-                            📋 Pendentes de Aprovação
+                            Pendentes de Aprovação
                         </button>
                         <button class="tab-button" onclick="switchTab('all')">
-                            👥 Todos os Utilizadores
+                            Todos os Utilizadores
                         </button>
                     </div>
                     
@@ -285,27 +194,13 @@
         </div>
     </div>
     
-    <!-- Modal de Confirmação de Remoção -->
-    <div id="deleteModal" class="modal-overlay">
-        <div class="modal-box">
-            <h3>⚠️ Confirmar Remoção</h3>
-            <p id="deleteMessage">Tem certeza que deseja remover este utilizador?</p>
-            <p><strong>Esta ação não pode ser desfeita!</strong></p>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeDeleteModal()">Cancelar</button>
-                <button class="btn-confirm-delete" onclick="confirmDelete()">Remover Utilizador</button>
-            </div>
-        </div>
-    </div>
-    
     <script>
         const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
         let currentUser = null;
         let allUsersData = [];
         let pendingUsersData = [];
-        let userToDelete = null; // Armazena o ID do usuário a ser removido
         
-        // Verificar autenticação e role de admin
+        // ✅ PROTEÇÃO: Verificar autenticação E role de admin
         document.addEventListener('DOMContentLoaded', async function() {
             const token = localStorage.getItem('jwt');
             
@@ -315,17 +210,20 @@
                 return;
             }
             
+            // Verificar se é admin
             await checkAdminAccess(token);
         });
         
-        // Verificação de Admin
+        // ✅ VERIFICAÇÃO DE ADMIN
         async function checkAdminAccess(token) {
             try {
+                // Verificar dados do localStorage primeiro
                 const storedUser = localStorage.getItem('user');
                 
                 if (storedUser) {
                     currentUser = JSON.parse(storedUser);
                     
+                    // Verificar role
                     if (currentUser.role !== 'admin') {
                         console.log('Acesso negado: usuário não é admin');
                         showAccessDenied();
@@ -333,6 +231,7 @@
                     }
                 }
                 
+                // Validar token com API
                 const response = await fetch(`${WORKER_URL}/api/profile`, {
                     method: 'GET',
                     headers: {
@@ -345,19 +244,24 @@
                     const data = await response.json();
                     currentUser = data.user;
                     
+                    // Verificar role novamente
                     if (currentUser.role !== 'admin') {
                         console.log('Acesso negado: role não é admin');
                         showAccessDenied();
                         return;
                     }
                     
+                    // Atualizar localStorage
                     localStorage.setItem('user', JSON.stringify(currentUser));
+                    
+                    // Usuário é admin - mostrar conteúdo
                     showAdminContent();
                     
                 } else if (response.status === 401) {
                     console.log('Token inválido - fazendo logout');
                     logout();
                 } else {
+                    // Verificar localStorage como fallback
                     if (currentUser && currentUser.role === 'admin') {
                         showAdminContent();
                     } else {
@@ -368,6 +272,7 @@
             } catch (error) {
                 console.error('Erro ao verificar acesso admin:', error);
                 
+                // Fallback para localStorage
                 if (currentUser && currentUser.role === 'admin') {
                     console.warn('Usando dados do localStorage devido a erro de rede');
                     showAdminContent();
@@ -377,20 +282,26 @@
             }
         }
         
+        // Mostrar tela de acesso negado
         function showAccessDenied() {
             document.getElementById('accessDenied').style.display = 'block';
             document.getElementById('adminContent').style.display = 'none';
         }
         
+        // Mostrar conteúdo admin
         function showAdminContent() {
             document.getElementById('accessDenied').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
+            
+            // Atualizar UI
             document.getElementById('userWelcome').textContent = `Admin: ${currentUser.username}`;
             
+            // Carregar dados
             loadPendingUsers();
             loadAllUsers();
         }
         
+        // ✅ FUNÇÃO DE LOGOUT
         function logout() {
             localStorage.removeItem('jwt');
             localStorage.removeItem('user');
@@ -443,6 +354,7 @@
                     const data = await response.json();
                     allUsersData = data.users || [];
                     
+                    // Atualizar estatísticas
                     document.getElementById('totalUsers').textContent = allUsersData.length;
                     document.getElementById('activeUsers').textContent = allUsersData.filter(u => u.is_active).length;
                     document.getElementById('adminUsers').textContent = allUsersData.filter(u => u.role === 'admin').length;
@@ -464,7 +376,7 @@
             const container = document.getElementById('pendingContent');
             
             if (pendingUsersData.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">✅ Nenhum usuário aguardando aprovação</p>';
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">Nenhum usuário aguardando aprovação</p>';
                 return;
             }
             
@@ -477,10 +389,9 @@
                     <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td>${new Date(user.created_at).toLocaleDateString('pt-PT')}</td>
-                    <td class="actions-cell">
-                        <button class="btn-approve" onclick="approveUser(${user.id}, true)" title="Aprovar usuário">✅ Aprovar</button>
-                        <button class="btn-reject" onclick="approveUser(${user.id}, false)" title="Rejeitar usuário">❌ Rejeitar</button>
-                        <button class="btn-delete" onclick="openDeleteModal(${user.id}, '${user.username}')" title="Remover usuário">🗑️ Remover</button>
+                    <td>
+                        <button class="btn-approve" onclick="approveUser(${user.id}, true)">✅ Aprovar</button>
+                        <button class="btn-reject" onclick="approveUser(${user.id}, false)">❌ Rejeitar</button>
                     </td>
                 </tr>`;
             });
@@ -499,33 +410,22 @@
             }
             
             let html = '<div class="users-table"><table>';
-            html += '<thead><tr><th>ID</th><th>Usuário</th><th>Email</th><th>Role</th><th>Status</th><th>Aprovado</th><th>Email Verificado</th><th>Ações</th></tr></thead><tbody>';
+            html += '<thead><tr><th>ID</th><th>Usuário</th><th>Email</th><th>Role</th><th>Status</th><th>Aprovado</th><th>Email Verificado</th></tr></thead><tbody>';
             
             allUsersData.forEach(user => {
                 const statusClass = user.is_approved ? 'status-approved' : (user.is_active ? 'status-pending' : 'status-rejected');
                 const approvedText = user.is_approved ? '✅ Sim' : '❌ Não';
                 const activeText = user.is_active ? '✅ Ativo' : '❌ Inativo';
                 const verifiedText = user.is_email_verified ? '✅ Sim' : '❌ Não';
-                const isCurrentUser = user.id === currentUser.id;
-                const adminBadge = user.role === 'admin' ? '<span class="user-admin-badge">ADMIN</span>' : '';
                 
                 html += `<tr>
                     <td>${user.id}</td>
-                    <td>${user.username}${adminBadge}</td>
+                    <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td>${user.role}</td>
                     <td class="${statusClass}">${activeText}</td>
                     <td>${approvedText}</td>
                     <td>${verifiedText}</td>
-                    <td class="actions-cell">`;
-                
-                if (isCurrentUser) {
-                    html += `<span style="color:#666; font-style:italic;">Você</span>`;
-                } else {
-                    html += `<button class="btn-delete" onclick="openDeleteModal(${user.id}, '${user.username}')" title="Remover usuário">🗑️ Remover</button>`;
-                }
-                
-                html += `</td>
                 </tr>`;
             });
             
@@ -553,70 +453,26 @@
                 });
                 
                 if (response.ok) {
-                    alert(`✅ Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso!`);
+                    alert(`Usuário ${approve ? 'aprovado' : 'rejeitado'} com sucesso!`);
                     loadPendingUsers();
                     loadAllUsers();
                 } else {
                     const data = await response.json();
-                    alert(`❌ Erro: ${data.error || 'Erro ao processar'}`);
+                    alert(`Erro: ${data.error || 'Erro ao processar'}`);
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert('❌ Erro de conexão');
-            }
-        }
-        
-        // Abrir modal de confirmação de remoção
-        function openDeleteModal(userId, username) {
-            userToDelete = userId;
-            document.getElementById('deleteMessage').innerHTML = 
-                `Tem certeza que deseja remover o utilizador <strong>"${username}"</strong>?`;
-            document.getElementById('deleteModal').classList.add('show');
-        }
-        
-        // Fechar modal de remoção
-        function closeDeleteModal() {
-            userToDelete = null;
-            document.getElementById('deleteModal').classList.remove('show');
-        }
-        
-        // Confirmar e executar remoção
-        async function confirmDelete() {
-            if (!userToDelete) return;
-            
-            const token = localStorage.getItem('jwt');
-            
-            try {
-                const response = await fetch(`${WORKER_URL}/api/admin/users/delete`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ userId: userToDelete })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    alert('✅ Utilizador removido com sucesso!');
-                    closeDeleteModal();
-                    loadPendingUsers();
-                    loadAllUsers();
-                } else {
-                    alert(`❌ Erro: ${data.error || 'Erro ao remover utilizador'}`);
-                }
-            } catch (error) {
-                console.error('Erro ao remover usuário:', error);
-                alert('❌ Erro de conexão ao tentar remover o utilizador');
+                alert('Erro de conexão');
             }
         }
         
         // Trocar tabs
         function switchTab(tab) {
+            // Atualizar botões
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
+            // Atualizar conteúdo
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             if (tab === 'pending') {
@@ -626,20 +482,13 @@
             }
         }
         
-        // Fechar modal ao clicar fora
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeDeleteModal();
-            }
-        });
-        
-        // Verificação periódica
+        // ✅ VERIFICAÇÃO PERIÓDICA
         setInterval(() => {
             const token = localStorage.getItem('jwt');
             if (!token) {
                 logout();
             }
-        }, 5 * 60 * 1000);
+        }, 5 * 60 * 1000); // 5 minutos
     </script>
 </body>
 </html>
