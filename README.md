@@ -23,12 +23,12 @@ Este projeto implementa uma aplicação web completa utilizando:
 - **Autenticação**: JWT tokens seguros
 
 ## 🏗️ Arquitetura
-
+```bash
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │ GitHub Pages    │ ←→ │ Cloudflare Worker│ ←→ │ D1 Database     │
 │ (Frontend)      │    │ (Backend)        │    │ (SQLite)        │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
-
+```
 
 ## ✨ Funcionalidades
 
@@ -45,6 +45,36 @@ Este projeto implementa uma aplicação web completa utilizando:
 - [x] Validação de formulários
 - [x] Mensagens de feedback
 - [x] Dados protegidos por JWT
+
+### Estrutura de Pastas
+```bash
+Pesquisas_DS/
+├──  assets/
+│   ├──  css/
+│   │   ├──  site.css
+│   │   └──  style.css
+│   ├──  images/
+│   └──  js/
+├──  docs/
+│   ├──  Pesquisas_/
+│   │   └──  index.html
+│   ├──  app/
+│   │   ├──  admin.html
+│   │   ├──  confirm-email.html
+│   │   ├──  dashboard.html
+│   │   ├──  forgot-password.html
+│   │   ├──  login.html
+│   │   ├──  register.html
+│   │   └──  reset-password.html
+│   ├──  assets/
+│   ├──  .gitignore
+│   ├──  .nojekyll
+│   └──  index.html
+├──  worker-ds/
+├──  .gitignore
+├──  .nojekyll
+└──  README.md
+```
 
 
 ## ⚙️ Configuração
