@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>222_DeepSeek_Yandex_Browser_vs_firefox</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#yandex-browser-vs-firefox" id="toc-yandex-browser-vs-firefox"><span class="toc-section-number">1</span> Yandex Browser vs firefox</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="yandex-browser-vs-firefox"><span class="header-section-number">1</span> Yandex Browser vs firefox</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #222</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Tecnologia</li>
+<li><strong>ID:</strong> 6bb3db4d-5bbf-4f65-a4cd-c16c12edd905</li>
+<li><strong>Criada em:</strong> 2025-02-09 01:10:06</li>
+<li><strong>Atualizada em:</strong> 2025-02-09 01:12:15</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Yandex Browser vs firefox…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-02-09-011006-deepseek-chat"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-02-09
+01:10:06)</em> <em>[deepseek-chat]</em></h3>
+<p>Yandex Browser vs firefox</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-02-09-011006-deepseek-chat"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-02-09
+01:10:06)</em> <em>[deepseek-chat]</em></h3>
+<p>Yandex Browser and Firefox are both popular web browsers, but they
+cater to different user needs and preferences. Here’s a comparison to
+help you decide which might be better for you:</p>
+<hr />
+<h3 data-number="1.2.3" id="developer-and-ecosystem"><span class="header-section-number">1.2.3</span> <strong>1. Developer and
+Ecosystem</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Developed by Yandex, a Russian
+multinational company. It is based on the Chromium engine (the same as
+Google Chrome) and integrates tightly with Yandex’s ecosystem, including
+its search engine, email, and cloud services.</li>
+<li><strong>Firefox</strong>: Developed by Mozilla, a non-profit
+organization. Firefox uses its own Quantum engine and is known for its
+commitment to privacy, open-source development, and customization.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.4" id="privacy-and-security"><span class="header-section-number">1.2.4</span> <strong>2. Privacy and
+Security</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: While it offers some privacy
+features, Yandex is based in Russia, which may raise concerns for users
+wary of data collection and government surveillance. It does, however,
+include a built-in VPN and Turbo mode for faster browsing on slow
+connections.</li>
+<li><strong>Firefox</strong>: Strong focus on privacy and security.
+Firefox includes features like Enhanced Tracking Protection, DNS over
+HTTPS, and regular updates to block trackers. It is also open-source,
+meaning its code can be audited by anyone.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.5" id="performance"><span class="header-section-number">1.2.5</span> <strong>3.
+Performance</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Being Chromium-based, it is fast
+and compatible with most websites and Chrome extensions. It also
+includes a Turbo mode to optimize browsing on slow connections.</li>
+<li><strong>Firefox</strong>: Known for its efficient memory usage and
+fast performance, especially with its Quantum engine. It may not be as
+fast as Chromium-based browsers in some cases but is highly optimized
+for modern web standards.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.6" id="customization"><span class="header-section-number">1.2.6</span> <strong>4.
+Customization</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Offers a customizable interface
+with themes and a smart homepage that adapts to your browsing habits.
+However, it is less flexible compared to Firefox.</li>
+<li><strong>Firefox</strong>: Highly customizable with a wide range of
+themes, extensions, and <a href="about:config" class="uri">about:config</a> settings for advanced users. Firefox also
+supports userChrome.css for deep interface customization.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.7" id="cross-platform-support"><span class="header-section-number">1.2.7</span> <strong>5. Cross-Platform
+Support</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Available on Windows, macOS, Linux,
+Android, and iOS. It syncs data across devices using a Yandex
+account.</li>
+<li><strong>Firefox</strong>: Available on the same platforms as Yandex
+Browser and also supports syncing across devices with a Firefox
+account.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.8" id="extensions-and-add-ons"><span class="header-section-number">1.2.8</span> <strong>6. Extensions and
+Add-ons</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Supports Chrome extensions via the
+Chrome Web Store, giving it access to a vast library of add-ons.</li>
+<li><strong>Firefox</strong>: Has its own extensive library of add-ons
+and extensions, many of which are privacy-focused. Firefox also allows
+more advanced extensions compared to Chromium-based browsers.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.9" id="unique-features"><span class="header-section-number">1.2.9</span> <strong>7. Unique
+Features</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li>Turbo mode for faster browsing on slow connections.</li>
+<li>Built-in VPN (limited free tier).</li>
+<li>Integration with Yandex services like search, mail, and cloud
+storage.</li>
+</ul></li>
+<li><strong>Firefox</strong>:
+<ul>
+<li>Enhanced Tracking Protection.</li>
+<li>Pocket integration for saving articles.</li>
+<li>Multi-Account Containers for separating browsing sessions (e.g.,
+work and personal).</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.10" id="target-audience"><span class="header-section-number">1.2.10</span> <strong>8. Target
+Audience</strong></h3>
+<ul>
+<li><strong>Yandex Browser</strong>: Best for users in Russia or those
+who rely on Yandex services. It’s also a good choice for users who want
+a Chromium-based browser with additional features like Turbo mode.</li>
+<li><strong>Firefox</strong>: Ideal for privacy-conscious users,
+open-source advocates, and those who value customization and control
+over their browsing experience.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.11" id="conclusion"><span class="header-section-number">1.2.11</span>
+<strong>Conclusion</strong></h3>
+<ul>
+<li>Choose <strong>Yandex Browser</strong> if:
+<ul>
+<li>You prefer a Chromium-based browser with unique features like Turbo
+mode.</li>
+<li>You use Yandex services frequently.</li>
+<li>You’re okay with potential privacy concerns related to its Russian
+origins.</li>
+</ul></li>
+<li>Choose <strong>Firefox</strong> if:
+<ul>
+<li>Privacy and security are your top priorities.</li>
+<li>You want a highly customizable browser.</li>
+<li>You prefer supporting open-source software.</li>
+</ul></li>
+</ul>
+<p>Both browsers are solid choices, but your decision will depend on
+your specific needs and priorities.</p>
+<hr />
+<h3 data-number="1.2.12" id="utilizador-2025-02-09-011126-deepseek-chat"><span class="header-section-number">1.2.12</span> 👤 Utilizador
+<em>(2025-02-09 01:11:26)</em> <em>[deepseek-chat]</em></h3>
+<p>Yandex Browser vs firefox qual é melhor em termos de segurança</p>
+<hr />
+<h3 data-number="1.2.13" id="deepseek-2025-02-09-011126-deepseek-chat"><span class="header-section-number">1.2.13</span> 🤖 DeepSeek <em>(2025-02-09
+01:11:26)</em> <em>[deepseek-chat]</em></h3>
+<p>Em termos de segurança, <strong>Firefox</strong> geralmente é
+considerado superior ao <strong>Yandex Browser</strong>. Vamos detalhar
+os motivos:</p>
+<hr />
+<h3 data-number="1.2.14" id="privacidade-e-transparência"><span class="header-section-number">1.2.14</span> <strong>1. Privacidade e
+Transparência</strong></h3>
+<ul>
+<li><strong>Firefox</strong>:
+<ul>
+<li>Desenvolvido pela Mozilla, uma organização sem fins lucrativos com
+um forte compromisso com a privacidade do usuário.</li>
+<li>Código aberto, o que significa que qualquer pessoa pode auditar o
+código para verificar se há vulnerabilidades ou práticas
+questionáveis.</li>
+<li>Inclui recursos como <strong>Enhanced Tracking Protection</strong>,
+que bloqueia rastreadores de terceiros por padrão, e <strong>DNS over
+HTTPS</strong>, que criptografa suas consultas de DNS.</li>
+<li>Não está vinculado a governos ou corporações que possam coletar
+dados dos usuários.</li>
+</ul></li>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li>Desenvolvido pela Yandex, uma empresa russa que está sujeita às leis
+de vigilância do governo russo.</li>
+<li>Embora tenha recursos de segurança, como proteção contra phishing e
+malware, há preocupações sobre a coleta de dados e a possibilidade de
+compartilhamento com terceiros, incluindo o governo russo.</li>
+<li>Não é totalmente transparente em relação às práticas de coleta de
+dados.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.15" id="atualizações-de-segurança"><span class="header-section-number">1.2.15</span> <strong>2. Atualizações de
+Segurança</strong></h3>
+<ul>
+<li><strong>Firefox</strong>:
+<ul>
+<li>Recebe atualizações frequentes para corrigir vulnerabilidades e
+melhorar a segurança.</li>
+<li>A Mozilla tem um histórico rápido de resposta a falhas de
+segurança.</li>
+</ul></li>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li>Também recebe atualizações regulares, mas pode não ser tão ágil
+quanto o Firefox em corrigir vulnerabilidades.</li>
+<li>Depende do Chromium, então algumas correções de segurança podem
+demorar mais para serem implementadas.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.16" id="recursos-de-segurança"><span class="header-section-number">1.2.16</span> <strong>3. Recursos de
+Segurança</strong></h3>
+<ul>
+<li><strong>Firefox</strong>:
+<ul>
+<li><strong>Enhanced Tracking Protection</strong>: Bloqueia rastreadores
+de anúncios, scripts de mineração de criptomoedas e impressões digitais
+(fingerprinting).</li>
+<li><strong>Proteção contra phishing e malware</strong>: Integrado com o
+Google Safe Browsing.</li>
+<li><strong>Multi-Account Containers</strong>: Permite separar sessões
+de navegação para evitar rastreamento entre sites.</li>
+<li><strong>Modo de Navegação Anônima</strong>: Exclui automaticamente
+cookies e histórico após o uso.</li>
+</ul></li>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li><strong>Proteção ativa</strong>: Bloqueia sites maliciosos e
+downloads perigosos.</li>
+<li><strong>Modo Turbo</strong>: Acelera a navegação em conexões lentas,
+mas não é um recurso de segurança.</li>
+<li><strong>VPN integrada</strong>: Oferece uma camada adicional de
+privacidade, mas a versão gratuita tem limitações.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.17" id="coleta-de-dados"><span class="header-section-number">1.2.17</span> <strong>4. Coleta de
+Dados</strong></h3>
+<ul>
+<li><strong>Firefox</strong>:
+<ul>
+<li>Coleta mínima de dados e permite que os usuários optem por não
+participar da coleta de dados de telemetria.</li>
+<li>Focado em proteger a privacidade do usuário.</li>
+</ul></li>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li>Coleta dados para personalizar anúncios e melhorar seus
+serviços.</li>
+<li>Há preocupações sobre o compartilhamento de dados com o governo
+russo, o que pode ser um problema para usuários que valorizam a
+privacidade.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.18" id="reputação"><span class="header-section-number">1.2.18</span> <strong>5.
+Reputação</strong></h3>
+<ul>
+<li><strong>Firefox</strong>:
+<ul>
+<li>Tem uma reputação sólida como um navegador seguro e confiável,
+especialmente entre defensores da privacidade.</li>
+<li>Amplamente recomendado por especialistas em segurança.</li>
+</ul></li>
+<li><strong>Yandex Browser</strong>:
+<ul>
+<li>Embora seja considerado seguro em termos de proteção contra malware
+e phishing, sua reputação é manchada por preocupações relacionadas à
+privacidade e à coleta de dados.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="1.2.19" id="conclusão"><span class="header-section-number">1.2.19</span>
+<strong>Conclusão</strong></h3>
+<p>Se a <strong>segurança</strong> e a <strong>privacidade</strong> são
+suas principais preocupações, o <strong>Firefox</strong> é a escolha
+superior. Ele oferece mais transparência, recursos avançados de proteção
+e um compromisso comprovado com a privacidade do usuário. O Yandex
+Browser, por outro lado, pode ser adequado para usuários que desejam um
+navegador Chromium com alguns recursos extras, mas não é a melhor opção
+para quem prioriza a segurança e a privacidade.</p>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

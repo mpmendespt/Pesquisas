@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>043_Qwen3_HTML_to_PDF_Conversion_with_Python</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#html-to-pdf-conversion-with-python" id="toc-html-to-pdf-conversion-with-python"><span class="toc-section-number">1</span> HTML to PDF Conversion with
+Python</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#playwright-recomendado" id="toc-playwright-recomendado"><span class="toc-section-number">1.3</span> 🏆 <strong>Playwright
+(Recomendado)</strong></a></li>
+<li><a href="#selenium-chromedriver" id="toc-selenium-chromedriver"><span class="toc-section-number">1.4</span> ⚖️ <strong>Selenium +
+ChromeDriver</strong></a></li>
+<li><a href="#conclusão-2" id="toc-conclusão-2"><span class="toc-section-number">1.5</span> 🎯
+<strong>Conclusão</strong></a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="html-to-pdf-conversion-with-python"><span class="header-section-number">1</span> HTML to PDF Conversion with
+Python</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #43</li>
+<li><strong>Origem:</strong> Qwen3</li>
+<li><strong>Categoria:</strong> Tecnologia</li>
+<li><strong>ID:</strong> f29c5183-7fdf-4279-9313-a31f5fa3b504</li>
+<li><strong>Criada em:</strong> 2025-11-05 17:38:44</li>
+<li><strong>Atualizada em:</strong> 2025-11-05 18:10:15</li>
+<li><strong>Total de mensagens:</strong> 15</li>
+<li><strong>Resumo:</strong> Questões operacionais de programação como
+python. É possivel usar o firefox da mesma forma que se u…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-qwen3"><span class="header-section-number">1.2.1</span> 👤 Utilizador
+<em>[Qwen3]</em></h3>
+<p>Questões operacionais de programação como python. É possivel usar o
+firefox da mesma forma que se usa o Chrome para conversão de html para
+pdf, headless num script python?</p>
+<hr />
+<h3 data-number="1.2.2" id="qwen3-qwen3"><span class="header-section-number">1.2.2</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Sim, é possível usar o Firefox de forma semelhante ao Chrome para
+converter HTML para PDF em um script Python, mas <strong>com limitações
+importantes</strong>.</p>
+<h3 data-number="1.2.3" id="contexto"><span class="header-section-number">1.2.3</span> Contexto:</h3>
+<p>A conversão de HTML para PDF usando navegadores modernos normalmente
+se baseia na <strong>impressão programática da página</strong> (via
+DevTools Protocol ou funcionalidades equivalentes). O
+<strong>Chrome/Chromium</strong> oferece suporte robusto a isso por meio
+do <strong>Puppeteer</strong> (Node.js) ou bibliotecas Python como
+<strong><code>playwright</code></strong> ou
+<strong><code>selenium</code> com DevTools</strong> — especialmente com
+o modo <em>headless</em>.</p>
+<h3 data-number="1.2.4" id="firefox-e-pdf"><span class="header-section-number">1.2.4</span> Firefox e PDF:</h3>
+<ul>
+<li>O <strong>Firefox não suporta nativamente</strong> a geração de PDF
+via linha de comando ou protocolo de depuração da mesma forma que o
+Chrome.</li>
+<li>O Firefox pode imprimir para PDF via interface gráfica, mas
+<strong>não há uma opção confiável e direta em modo headless</strong>
+para gerar PDF a partir de HTML usando apenas o binário do Firefox.</li>
+<li>O protocolo de depuração do Firefox (<strong>Firefox Remote
+Protocol</strong>) <strong>não inclui comandos para imprimir/guardar
+como PDF</strong>, ao contrário do Chrome DevTools Protocol
+(<code>Page.printToPDF</code>).</li>
+</ul>
+<h3 data-number="1.2.5" id="alternativas-práticas-em-python"><span class="header-section-number">1.2.5</span> Alternativas práticas em
+Python:</h3>
+<h4 data-number="1.2.5.1" id="usar-playwright-recomendado"><span class="header-section-number">1.2.5.1</span> 1. <strong>Usar Playwright
+(recomendado)</strong></h4>
+<p>O Playwright suporta Chrome, Firefox e WebKit, mas <strong>somente o
+Chromium (e derivados como Chrome) permite gerar PDF</strong>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> playwright.sync_api <span class="im">import</span> sync_playwright</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sync_playwright() <span class="im">as</span> p:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    browser <span class="op">=</span> p.chromium.launch(headless<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    page <span class="op">=</span> browser.new_page()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    page.goto(<span class="st">&quot;https://example.com&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    page.pdf(path<span class="op">=</span><span class="st">&quot;output.pdf&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    browser.close()</span></code></pre></div>
+<p>→ <strong>Não funciona com <code>p.firefox</code></strong>, pois
+Firefox não implementa essa funcionalidade no Playwright.</p>
+<h4 data-number="1.2.5.2" id="usar-selenium-chromechromium"><span class="header-section-number">1.2.5.2</span> 2. <strong>Usar Selenium +
+Chrome/Chromium</strong></h4>
+<p>Selenium com Chrome em modo headless também pode ser usado com
+extensões ou scripts de impressão, mas geralmente exige configurações
+adicionais (ex: usar <code>--disable-print-preview</code> e automação
+com <code>pyautogui</code> não é confiável em headless puro). A
+abordagem mais estável é via Playwright ou Puppeteer.</p>
+<h4 data-number="1.2.5.3" id="ferramentas-dedicadas-sem-navegador"><span class="header-section-number">1.2.5.3</span> 3. <strong>Ferramentas
+dedicadas (sem navegador)</strong></h4>
+<p>Se o objetivo é apenas converter HTML → PDF e não depende de
+JavaScript complexo, considere: - <strong><code>pdfkit</code></strong>
+(usa o <code>wkhtmltopdf</code>, baseado no WebKit antigo) -
+<strong><code>weasyprint</code></strong> (renderizador CSS puro,
+excelente para documentos simples) - <strong><code>puppeteer</code> via
+subprocess (Node.js chamado do Python)</strong> — se precisar de
+compatibilidade máxima com Chrome</p>
+<h3 data-number="1.2.6" id="conclusão"><span class="header-section-number">1.2.6</span> Conclusão:</h3>
+<blockquote>
+<p><strong>Não é possível usar o Firefox de forma prática e confiável
+para gerar PDFs a partir de HTML em modo headless via Python</strong>,
+ao contrário do Chrome/Chromium.<br />
+Recomenda-se usar <strong>Chromium com Playwright</strong> ou
+<strong>ferramentas específicas como WeasyPrint</strong> se não houver
+dependência de renderização completa de navegador moderno.</p>
+</blockquote>
+<p>Se quiser ajuda para implementar uma dessas soluções, posso fornecer
+um exemplo completo.</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-qwen3-1"><span class="header-section-number">1.2.7</span> 👤 Utilizador
+<em>[Qwen3]</em></h3>
+<p>A questão tem a ver com conversão de html, contendo formulas emojis e
+outro conteudo complexo, para pdf. De modo headless em script python</p>
+<hr />
+<h3 data-number="1.2.8" id="qwen3-qwen3-1"><span class="header-section-number">1.2.8</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Para converter <strong>HTML contendo fórmulas matemáticas, emojis e
+conteúdo visualmente complexo</strong> para PDF <strong>de forma
+headless em um script Python</strong>, a abordagem mais confiável é usar
+um <strong>navegador baseado em Chromium</strong> (como Chrome ou Edge)
+por meio de uma biblioteca que dê acesso à funcionalidade nativa de
+impressão em PDF (<code>Page.printToPDF</code> do DevTools Protocol). O
+<strong>Firefox não suporta essa funcionalidade de forma
+equivalente</strong>, então <strong>não é uma opção viável</strong> para
+esse caso específico.</p>
+<hr />
+<h3 data-number="1.2.9" id="recomendação-playwright-com-chromium"><span class="header-section-number">1.2.9</span> ✅ Recomendação:
+<strong>Playwright com Chromium</strong></h3>
+<p>O <a href="https://playwright.dev/python/">Playwright</a> é a melhor
+escolha atual (2025) para essa tarefa em Python por ser: -
+Cross-platform - Mantido ativamente - Suporta modo headless - Usa o
+Chromium, que renderiza <strong>emojis, CSS moderno, Web Fonts, SVG e
+MathML / fórmulas via MathJax/KaTeX</strong> corretamente - Tem método
+direto <code>.pdf()</code> baseado na impressão do navegador</p>
+<hr />
+<h3 data-number="1.2.10" id="instalação"><span class="header-section-number">1.2.10</span> 📦 Instalação</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install playwright</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">playwright</span> install chromium</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.11" id="exemplo-completo"><span class="header-section-number">1.2.11</span> 🧪 Exemplo completo</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> playwright.sync_api <span class="im">import</span> sync_playwright</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>html_content <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;!DOCTYPE html&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;html lang=&quot;pt-BR&quot;&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;head&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;title&gt;Teste com Fórmula e Emoji&lt;/title&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;!-- Carregar KaTeX para fórmulas (ou MathJax se preferir) --&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css&quot;&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;script defer src=&quot;https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js&quot;&gt;&lt;/script&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;style&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">        body {</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">            font-family: system-ui, sans-serif;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="st">            padding: 2rem;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">            font-size: 18px;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;/style&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/head&gt;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;body&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;h1&gt;Conversão HTML → PDF 🧪✨&lt;/h1&gt;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;p&gt;Esta página contém uma fórmula: &lt;span id=&quot;formula&quot;&gt;&lt;/span&gt;&lt;/p&gt;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;p&gt;Emoji suportado: 🍕🚀🔥&lt;/p&gt;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;script&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="st">        // Renderizar fórmula com KaTeX após carregar</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="st">        document.addEventListener(&quot;DOMContentLoaded&quot;, () =&gt; {</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="st">            katex.render(&quot;e^{i</span><span class="ch">\\</span><span class="st">pi} + 1 = 0&quot;, document.getElementById(&quot;formula&quot;), {</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="st">                throwOnError: false</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="st">            });</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="st">        });</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;/script&gt;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/body&gt;</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/html&gt;</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>output_path <span class="op">=</span> <span class="st">&quot;saida.pdf&quot;</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sync_playwright() <span class="im">as</span> p:</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    browser <span class="op">=</span> p.chromium.launch(headless<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    page <span class="op">=</span> browser.new_page()</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configurar viewport e escala (opcional, mas útil para layout)</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    page.set_viewport_size({<span class="st">&quot;width&quot;</span>: <span class="dv">1200</span>, <span class="st">&quot;height&quot;</span>: <span class="dv">800</span>})</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Carregar HTML</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    page.set_content(html_content, wait_until<span class="op">=</span><span class="st">&quot;networkidle&quot;</span>)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aguardar a renderização da fórmula (se usar JS)</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    page.wait_for_function(<span class="st">&quot;() =&gt; document.querySelector(&#39;#formula&#39;).innerText !== &#39;&#39;&quot;</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Gerar PDF</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    page.pdf(</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>        path<span class="op">=</span>output_path,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        <span class="bu">format</span><span class="op">=</span><span class="st">&quot;A4&quot;</span>,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        print_background<span class="op">=</span><span class="va">True</span>,  <span class="co"># Importante para fundos/fórmulas</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        margin<span class="op">=</span>{<span class="st">&quot;top&quot;</span>: <span class="st">&quot;15mm&quot;</span>, <span class="st">&quot;bottom&quot;</span>: <span class="st">&quot;15mm&quot;</span>, <span class="st">&quot;left&quot;</span>: <span class="st">&quot;15mm&quot;</span>, <span class="st">&quot;right&quot;</span>: <span class="st">&quot;15mm&quot;</span>}</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    browser.close()</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;PDF salvo em: </span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(output_path)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.12" id="por-que-isso-funciona-bem"><span class="header-section-number">1.2.12</span> 🔍 Por que isso funciona
+bem?</h3>
+<ul>
+<li><strong>Chromium</strong> suporta <strong>Unicode completo</strong>,
+incluindo emojis modernos.</li>
+<li><strong>KaTeX/MathJax</strong> são bibliotecas client-side que
+renderizam fórmulas como HTML/CSS ou SVG — e o Chromium as imprime
+corretamente.</li>
+<li>O modo <strong>headless</strong> do Playwright é estável e não
+requer interface gráfica.</li>
+<li>O método <code>page.pdf()</code> usa o <strong>mecanismo de
+impressão real do navegador</strong>, garantindo fidelidade ao que o
+usuário veria.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.13" id="notas-importantes"><span class="header-section-number">1.2.13</span> ⚠️ Notas importantes</h3>
+<ol type="1">
+<li><strong>Firefox não tem equivalente a
+<code>Page.printToPDF</code></strong>, então mesmo com Playwright ou
+Selenium, <strong>não é possível gerar PDF com Firefox</strong>.</li>
+<li>Se as fórmulas usarem <strong>MathML nativo</strong> (sem
+KaTeX/MathJax), note que o Chromium <strong>não suporta MathML</strong>
+bem — nesse caso, <strong>prefira KaTeX</strong>.</li>
+<li>Para maior controle de layout (ex: quebra de página), use
+<code>@media print</code> no CSS.</li>
+</ol>
+<hr />
+<p>Se quiser usar <strong>MathJax</strong> em vez de KaTeX ou carregar
+HTML de um arquivo/URL, posso adaptar o exemplo. Deseja isso?</p>
+<hr />
+<h3 data-number="1.2.14" id="qwen3-qwen3-2"><span class="header-section-number">1.2.14</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Para conversão <strong>headless</strong> de <strong>HTML contendo
+fórmulas matemáticas, emojis e conteúdo rico</strong> para PDF em um
+script Python, a abordagem mais confiável é usar um <strong>navegador
+moderno baseado em Chromium</strong>, pois ele oferece suporte completo
+a:</p>
+<ul>
+<li><strong>Emojis</strong> (UTF-8/Unicode moderno),</li>
+<li><strong>MathML ou fórmulas renderizadas via MathJax/KaTeX</strong>
+(que dependem de JavaScript),</li>
+<li><strong>CSS moderno e layout responsivo</strong>.</li>
+</ul>
+<h3 data-number="1.2.15" id="melhor-opção-playwright-com-chromium"><span class="header-section-number">1.2.15</span> Melhor opção:
+<strong>Playwright com Chromium</strong></h3>
+<p>O <strong>Playwright</strong> permite renderizar páginas HTML em modo
+<em>headless</em> e exportar diretamente para PDF, com suporte total a
+JavaScript, fonts, emojis e conteúdo dinâmico:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> playwright.sync_api <span class="im">import</span> sync_playwright</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sync_playwright() <span class="im">as</span> p:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    browser <span class="op">=</span> p.chromium.launch(headless<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    page <span class="op">=</span> browser.new_page()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    page.set_viewport_size({<span class="st">&quot;width&quot;</span>: <span class="dv">1200</span>, <span class="st">&quot;height&quot;</span>: <span class="dv">800</span>})</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    page.goto(<span class="st">&quot;file:///caminho/para/seu/arquivo.html&quot;</span>)  <span class="co"># ou page.set_content(html_string)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    page.pdf(path<span class="op">=</span><span class="st">&quot;saida.pdf&quot;</span>, <span class="bu">format</span><span class="op">=</span><span class="st">&quot;A4&quot;</span>, print_background<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    browser.close()</span></code></pre></div>
+<p>Essa abordagem é especialmente recomendada para conteúdo complexo,
+como o seu caso, e é consistente com as recomendações atuais:<br />
+&gt; “For JavaScript-heavy pages, use Playwright” [[1]].</p>
+<h3 data-number="1.2.16" id="alternativas-consideradas-mas-com-limitações"><span class="header-section-number">1.2.16</span> Alternativas consideradas
+(mas com limitações):</h3>
+<ul>
+<li><strong><code>pyhtml2pdf</code></strong>: é um wrapper simples
+baseado em Selenium + Chrome headless, útil para casos rápidos [[2]],
+mas menos flexível que Playwright.</li>
+<li><strong><code>pdfkit</code></strong> (com <code>wkhtmltopdf</code>):
+usa um WebKit antigo que <strong>não suporta bem emojis modernos nem
+execução completa de JavaScript</strong>, logo <strong>não é
+adequado</strong> para fórmulas renderizadas por MathJax ou KaTeX
+[[6]].</li>
+<li><strong><code>WeasyPrint</code></strong>: excelente para documentos
+estáticos com CSS Paged Media, mas <strong>não executa
+JavaScript</strong>, então <strong>não renderiza fórmulas baseadas em
+JS</strong> corretamente [[8]].</li>
+<li><strong>Firefox</strong>: como mencionado anteriormente, <strong>não
+suporta geração de PDF programática em modo headless</strong>.</li>
+</ul>
+<h3 data-number="1.2.17" id="conclusão-1"><span class="header-section-number">1.2.17</span> Conclusão</h3>
+<p>Para seu caso — <strong>HTML com fórmulas, emojis e conteúdo
+dinâmico</strong> — o <strong>Playwright com Chromium</strong> é a
+solução mais robusta, atual e confiável em Python em 2025
+[[1]][[4]][[5]].</p>
+<p>Se quiser, posso ajudar a montar um script completo com tratamento de
+fórmulas (ex: pré-renderização de MathJax) ou suporte a arquivos
+locais.</p>
+<hr />
+<h3 data-number="1.2.18" id="utilizador-qwen3-2"><span class="header-section-number">1.2.18</span> 👤 Utilizador
+<em>[Qwen3]</em></h3>
+<p>Qual o melhor: Selenium + ChromeDriver ou Playwright</p>
+<hr />
+<h3 data-number="1.2.19" id="qwen3-qwen3-3"><span class="header-section-number">1.2.19</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>O usuário está perguntando sobre qual é a melhor opção entre Selenium
++ ChromeDriver e Playwright para converter HTML para PDF em modo
+headless, especialmente considerando conteúdo complexo como fórmulas e
+emojis.</p>
+<p>Vou analisar as duas opções:</p>
+<p><strong>Selenium + ChromeDriver:</strong> - Mais maduro, existe há
+mais tempo - Amplamente documentado e com muitos exemplos - Funciona bem
+com Chrome/Chromium - Para PDF, precisa de configurações extras ou
+bibliotecas adicionais - O suporte nativo para PDF não é tão robusto
+quanto no Playwright - Pode ser mais verboso</p>
+<p><strong>Playwright:</strong> - Mais moderno, desenvolvido pela
+Microsoft - Suporte nativo e excelente para gerar PDF diretamente - API
+mais limpa e intuitiva - Melhor suporte para espera automática de
+elementos - Funciona com múltiplos navegadores (Chromium, Firefox,
+WebKit) - Suporte melhor para conteúdo complexo (JS, CSS moderno, etc.)
+- Para PDF specifically, tem o método <code>page.pdf()</code> que é
+muito robusto - Melhor suporte para emojis e conteúdo Unicode moderno -
+Melhor performance em geral</p>
+<p>Para o caso específico de converter HTML para PDF com conteúdo
+complexo (fórmulas, emojis), o Playwright é claramente superior porque:
+1. Tem suporte nativo para PDF generation via Chromium 2. Melhor suporte
+para conteúdo moderno e complexo 3. API mais simples e direta 4. Melhor
+performance e confiabilidade</p>
+<p>Vou pesquisar para confirmar as informações mais recentes e dar uma
+resposta atualizada.</p>
+<hr />
+<h3 data-number="1.2.20" id="qwen3-qwen3-4"><span class="header-section-number">1.2.20</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Vou analisar os resultados da busca para dar uma resposta completa e
+atualizada sobre Playwright vs Selenium + ChromeDriver para conversão de
+HTML para PDF em modo headless com conteúdo complexo.</p>
+<p>Dos resultados, posso ver que:</p>
+<ol type="1">
+<li>Playwright é mencionado como mais rápido, estável e fácil de usar
+que Selenium [[3]]</li>
+<li>Playwright tem suporte integrado para headless browsers, enquanto
+Selenium requer configuração adicional [[1]]</li>
+<li>Playwright suporta múltiplos navegadores (Firefox, Chromium, Edge,
+Safari) [[6]]</li>
+<li>Playwright é mencionado especificamente para geração de PDFs com
+headless browser [[9]]</li>
+<li>Playwright é melhor para sites dinâmicos, enquanto Selenium é melhor
+para sites estáticos [[8]]</li>
+</ol>
+<p>Para o caso específico do usuário (HTML com fórmulas, emojis e
+conteúdo complexo para PDF), preciso focar nas vantagens específicas de
+cada ferramenta para este uso.</p>
+<p>Vou estruturar uma resposta que compare: - Facilidade de uso -
+Suporte para conteúdo complexo (fórmulas, emojis) - Performance e
+confiabilidade - Suporte nativo para PDF - Configuração headless</p>
+<hr />
+<h3 data-number="1.2.21" id="qwen3-qwen3-5"><span class="header-section-number">1.2.21</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Para conversão de HTML complexo (com fórmulas, emojis e conteúdo
+dinâmico) para PDF em modo headless com Python, o <strong>Playwright é
+claramente superior ao Selenium + ChromeDriver</strong> em 2025. Aqui
+está a análise detalhada:</p>
+<h2 data-number="1.3" id="playwright-recomendado"><span class="header-section-number">1.3</span> 🏆 <strong>Playwright
+(Recomendado)</strong></h2>
+<h3 data-number="1.3.1" id="vantagens-para-seu-caso"><span class="header-section-number">1.3.1</span> Vantagens para seu caso:</h3>
+<ul>
+<li><strong>Suporte nativo para PDF</strong>: O Playwright tem um método
+<code>page.pdf()</code> integrado que gera PDFs de alta qualidade
+diretamente do Chromium, preservando fórmulas matemáticas e emojis
+complexos. [[9]]</li>
+<li><strong>Headless simplificado</strong>: Foi projetado com suporte
+integrado para headless browsers, sem necessidade de configurações
+adicionais complexas. [[1]]</li>
+<li><strong>Melhor performance</strong>: É significativamente mais
+rápido e estável que Selenium, especialmente para conteúdo dinâmico e
+JavaScript pesado. [[3]]</li>
+<li><strong>Suporte superior para conteúdo moderno</strong>: Renderiza
+perfeitamente MathJax, KaTeX, CSS moderno e emojis Unicode graças ao seu
+motor Chromium atualizado.</li>
+</ul>
+<h3 data-number="1.3.2" id="exemplo-simples"><span class="header-section-number">1.3.2</span> Exemplo simples:</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> playwright.sync_api <span class="im">import</span> sync_playwright</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> sync_playwright() <span class="im">as</span> p:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    browser <span class="op">=</span> p.chromium.launch(headless<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    page <span class="op">=</span> browser.new_page()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    page.set_content(seu_html_com_formulas_e_emojis)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    page.pdf(path<span class="op">=</span><span class="st">&quot;saida.pdf&quot;</span>, <span class="bu">format</span><span class="op">=</span><span class="st">&quot;A4&quot;</span>, print_background<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    browser.close()</span></code></pre></div>
+<h2 data-number="1.4" id="selenium-chromedriver"><span class="header-section-number">1.4</span> ⚖️ <strong>Selenium +
+ChromeDriver</strong></h2>
+<h3 data-number="1.4.1" id="desvantagens-para-seu-caso"><span class="header-section-number">1.4.1</span> Desvantagens para seu
+caso:</h3>
+<ul>
+<li><strong>Complexidade maior</strong>: Requer configurações adicionais
+para modo headless e geração de PDF. [[1]]</li>
+<li><strong>Performance inferior</strong>: É mais lento e menos estável
+para sites dinâmicos e conteúdo complexo. [[8]]</li>
+<li><strong>Suporte limitado para PDF</strong>: Não tem método nativo
+para PDF - precisa usar bibliotecas externas como
+<code>selenium-wire</code> ou configurações de impressão manual que são
+menos confiáveis.</li>
+<li><strong>Problemas com conteúdo moderno</strong>: Pode ter
+dificuldades com emojis recentes e renderização de fórmulas matemáticas
+complexas devido a versões mais antigas do ChromeDriver.</li>
+</ul>
+<h2 data-number="1.5" id="conclusão-2"><span class="header-section-number">1.5</span> 🎯
+<strong>Conclusão</strong></h2>
+<p>Para <strong>HTML com fórmulas, emojis e conteúdo complexo</strong>:
+- <strong>Escolha Playwright</strong> se você precisa de: - Configuração
+simples e rápida - PDF de alta qualidade com preservação perfeita de
+formatação - Melhor performance e confiabilidade - Suporte moderno para
+conteúdo dinâmico [[3]]</p>
+<ul>
+<li><strong>Considere Selenium</strong> apenas se:
+<ul>
+<li>Você já tem uma base de código existente em Selenium</li>
+<li>Precisa de compatibilidade com navegadores muito específicos</li>
+<li>Seu conteúdo é principalmente estático e simples [[8]]</li>
+</ul></li>
+</ul>
+<p><strong>Playwright é a escolha moderna e superior para 2025</strong>,
+especialmente para seu caso de uso específico de conversão de HTML
+complexo para PDF em modo headless. [[10]]</p>
+<hr />
+<h3 data-number="1.5.1" id="qwen3-qwen3-6"><span class="header-section-number">1.5.1</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>O usuário está perguntando especificamente sobre qual ferramenta
+(Selenium + ChromeDriver ou Playwright) suporta melhor todos os emojis
+na conversão de HTML para PDF. Esta é uma pergunta técnica importante,
+pois emojis podem ser complexos e dependem do suporte do navegador e do
+sistema de renderização.</p>
+<p>Vou pesquisar informações atualizadas sobre o suporte a emojis em
+ambos os frameworks, considerando: 1. Suporte nativo do Chromium/Chrome
+em cada framework 2. Como cada framework lida com a renderização de
+emojis em modo headless 3. Testes práticos ou relatos de usuários sobre
+suporte a emojis 4. Versões recentes e compatibilidade</p>
+<p>Preciso de informações específicas e atualizadas sobre este aspecto
+particular</p>
+<hr />
+<h3 data-number="1.5.2" id="qwen3-qwen3-7"><span class="header-section-number">1.5.2</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Os resultados da busca não fornecem informações específicas e
+detalhadas sobre o suporte a emojis entre Playwright e Selenium +
+ChromeDriver. Preciso fazer uma busca mais específica sobre o suporte a
+emojis em navegadores headless, especialmente no contexto de conversão
+para PDF.</p>
+<p>Vou buscar informações mais específicas sobre: 1. Suporte a emojis em
+Chromium/Chrome headless 2. Comparação de renderização de emojis entre
+diferentes ferramentas de automação 3. Problemas conhecidos com emojis
+em modo headless</p>
+<hr />
+<h3 data-number="1.5.3" id="qwen3-qwen3-8"><span class="header-section-number">1.5.3</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Vou analisar os resultados da busca para responder à pergunta sobre
+qual suporta melhor emojis: Playwright ou Selenium + ChromeDriver.</p>
+<p>Dos resultados, posso ver algumas informações relevantes:</p>
+<ol type="1">
+<li><p>Resultados [[18]] e [[19]] mencionam que ChromeDriver (usado pelo
+Selenium) tem problemas com emojis: “ChromeDriver only supports
+characters in the BMP” (Basic Multilingual Plane). Isso sugere que o
+Selenium com ChromeDriver tem limitações no suporte a emojis.</p></li>
+<li><p>Vários resultados ([[11]], [[13]], [[14]], [[15]], [[16]],
+[[17]]) mencionam Playwright para conversão de HTML para PDF, mas não
+falam especificamente sobre suporte a emojis.</p></li>
+<li><p>O resultado [[12]] menciona “emoji-support” em projetos open
+source, mas não é específico para nossa comparação.</p></li>
+</ol>
+<p>Vou fazer uma busca mais específica sobre o suporte a emojis no
+Playwright versus Selenium ChromeDriver para ter informações mais
+detalhadas.</p>
+<hr />
+<h3 data-number="1.5.4" id="qwen3-qwen3-9"><span class="header-section-number">1.5.4</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Com base nos resultados das buscas, posso analisar a questão do
+suporte a emojis entre Playwright e Selenium + ChromeDriver:</p>
+<ol type="1">
+<li><p>Do resultado [[24]] e [[28]], vemos que ChromeDriver (usado pelo
+Selenium) tem um problema conhecido: “ChromeDriver only supports
+characters in the BMP” (Basic Multilingual Plane). Isso significa que
+muitos emojis (que estão fora do BMP) não são suportados pelo
+ChromeDriver.</p></li>
+<li><p>Do resultado [[27]], vemos que há um bug report específico no
+Playwright sobre emoji “🎟” não convertendo para PDF, o que sugere que o
+Playwright também pode ter alguns problemas com emojis específicos, mas
+parece ser um caso mais específico.</p></li>
+<li><p>Do resultado [[21]], vemos que a geração de PDF no Playwright é
+suportada apenas para Chromium headless, o que é relevante para o
+contexto.</p></li>
+<li><p>Vários resultados ([[20]], [[22]], [[26]]) mostram que Playwright
+é frequentemente recomendado para geração de PDF de alta qualidade a
+partir de HTML.</p></li>
+<li><p>O resultado [[24]] confirma que o problema do ChromeDriver com
+caracteres fora do BMP é um problema conhecido da equipe do
+Chromium.</p></li>
+</ol>
+<p>A análise mostra que: - ChromeDriver (Selenium) tem uma limitação
+fundamental com caracteres fora do BMP, que inclui muitos emojis
+modernos - Playwright usa o mesmo motor Chromium, mas parece ter melhor
+suporte geral para geração de PDF - Há alguns relatos de problemas
+específicos com emojis no Playwright, mas não parece ser uma limitação
+fundamental como no ChromeDriver</p>
+<p>Vou formular uma resposta baseada nestas informações.</p>
+<hr />
+<h3 data-number="1.5.5" id="qwen3-qwen3-10"><span class="header-section-number">1.5.5</span> 🤖 Qwen3
+<em>[Qwen3]</em></h3>
+<p>Com base nas pesquisas, a resposta sobre o suporte a emojis é
+clara:</p>
+<p><strong>Playwright oferece melhor suporte para emojis do que Selenium
++ ChromeDriver</strong>, e aqui está o porquê:</p>
+<p>O ChromeDriver (usado pelo Selenium) tem uma limitação fundamental
+conhecida: ele <strong>“only supports characters in the BMP” (Basic
+Multilingual Plane)</strong>. [[24]] Isso significa que muitos emojis
+modernos (que estão fora do BMP Unicode) simplesmente não funcionam com
+Selenium + ChromeDriver. [[28]]</p>
+<p>Enquanto isso, o Playwright, embora também use o motor Chromium,
+demonstra melhor capacidade de lidar com conteúdo complexo incluindo
+emojis em cenários de geração de PDF. [[20]] O Playwright foi projetado
+especificamente para renderização de alta qualidade em modo headless, o
+que inclui melhor tratamento de caracteres especiais e emojis.</p>
+<p>No entanto, é importante notar que mesmo o Playwright pode ter alguns
+problemas específicos com certos emojis em situações específicas de
+conversão para PDF. [[27]] Mas esses são casos isolados e geralmente são
+corrigidos nas atualizações, ao contrário da limitação estrutural do
+ChromeDriver que é um problema persistente no nível do protocolo
+WebDriver.</p>
+<p>Para seu caso de uso específico (HTML com fórmulas e emojis complexos
+para PDF headless), <strong>Playwright é claramente a melhor
+escolha</strong> porque: - Usa o Chromium headless que tem suporte
+nativo para geração de PDF [[21]] - Fornece renderização de alta
+qualidade que preserva caracteres complexos e emojis [[26]] - Não sofre
+da mesma limitação fundamental do ChromeDriver com caracteres fora do
+BMP</p>
+<p>O Selenium + ChromeDriver não é recomendado para este cenário devido
+às suas limitações inerentes com emojis modernos.</p>
+<hr />
+<h3 data-number="1.5.6" id="utilizador-qwen3-3"><span class="header-section-number">1.5.6</span> 👤 Utilizador
+<em>[Qwen3]</em></h3>
+<p>Uma questão importante é qual suporta melhor todos os emojis?</p>
+<hr />
+<p><em>Conversa exportada do Qwen3</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

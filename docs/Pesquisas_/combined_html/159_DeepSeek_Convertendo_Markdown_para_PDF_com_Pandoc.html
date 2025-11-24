@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>159_DeepSeek_Convertendo_Markdown_para_PDF_com_Pandoc</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#convertendo-markdown-para-pdf-com-pandoc" id="toc-convertendo-markdown-para-pdf-com-pandoc"><span class="toc-section-number">1</span> Convertendo Markdown para PDF com
+Pandoc</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#solução-1-usar-fontes-mais-comunsdisponíveis" id="toc-solução-1-usar-fontes-mais-comunsdisponíveis"><span class="toc-section-number">1.3</span> Solução 1: Usar fontes mais
+comuns/disponíveis</a></li>
+<li><a href="#solução-2-instalar-as-fontes-tex-gyre-recomendado" id="toc-solução-2-instalar-as-fontes-tex-gyre-recomendado"><span class="toc-section-number">1.4</span> Solução 2: Instalar as fontes TeX
+Gyre (recomendado)</a></li>
+<li><a href="#solução-3-usar-header.tex-mais-simples-e-compatível" id="toc-solução-3-usar-header.tex-mais-simples-e-compatível"><span class="toc-section-number">1.5</span> Solução 3: Usar header.tex mais
+simples e compatível</a></li>
+<li><a href="#solução-4-comando-alternativo-sem-header.tex" id="toc-solução-4-comando-alternativo-sem-header.tex"><span class="toc-section-number">1.6</span> Solução 4: Comando alternativo sem
+header.tex</a></li>
+<li><a href="#solução-5-verificar-se-as-fontes-estão-disponíveis" id="toc-solução-5-verificar-se-as-fontes-estão-disponíveis"><span class="toc-section-number">1.7</span> Solução 5: Verificar se as fontes
+estão disponíveis</a></li>
+<li><a href="#comando-final-recomendado-para-teste" id="toc-comando-final-recomendado-para-teste"><span class="toc-section-number">1.8</span> Comando final recomendado para
+teste:</a></li>
+<li><a href="#solução-1-usar-fonte-com-suporte-a-emojis-segoe-ui-emoji-no-windows" id="toc-solução-1-usar-fonte-com-suporte-a-emojis-segoe-ui-emoji-no-windows"><span class="toc-section-number">1.9</span> Solução 1: Usar fonte com suporte
+a emojis (Segoe UI Emoji no Windows)</a></li>
+<li><a href="#solução-2-usar-fonte-noto-color-emoji-mais-universal" id="toc-solução-2-usar-fonte-noto-color-emoji-mais-universal"><span class="toc-section-number">1.10</span> Solução 2: Usar fonte Noto Color
+Emoji (mais universal)</a></li>
+<li><a href="#solução-3-instalar-fontes-de-emoji" id="toc-solução-3-instalar-fontes-de-emoji"><span class="toc-section-number">1.11</span> Solução 3: Instalar fontes de
+emoji</a></li>
+<li><a href="#solução-4-usar-uma-abordagem-mais-simples" id="toc-solução-4-usar-uma-abordagem-mais-simples"><span class="toc-section-number">1.12</span> Solução 4: Usar uma abordagem
+mais simples</a></li>
+<li><a href="#solução-5-remover-os-emojis-fallback" id="toc-solução-5-remover-os-emojis-fallback"><span class="toc-section-number">1.13</span> Solução 5: Remover os emojis
+(fallback)</a></li>
+<li><a href="#comando-para-testar" id="toc-comando-para-testar"><span class="toc-section-number">1.14</span> Comando para testar:</a></li>
+<li><a href="#solução-2.1-forçar-renderização-colorida-do-noto-color-emoji" id="toc-solução-2.1-forçar-renderização-colorida-do-noto-color-emoji"><span class="toc-section-number">1.15</span> Solução 2.1: Forçar renderização
+colorida do Noto Color Emoji</a></li>
+<li><a href="#solução-2.2-tentar-fontes-de-emoji-alternativas" id="toc-solução-2.2-tentar-fontes-de-emoji-alternativas"><span class="toc-section-number">1.16</span> Solução 2.2: Tentar fontes de
+emoji alternativas</a></li>
+<li><a href="#solução-2.3-configuração-específica-para-lualatex-harfbuzz" id="toc-solução-2.3-configuração-específica-para-lualatex-harfbuzz"><span class="toc-section-number">1.17</span> Solução 2.3: Configuração
+específica para LuaLaTeX + HarfBuzz</a></li>
+<li><a href="#solução-2.4-verificar-o-leitor-de-pdf" id="toc-solução-2.4-verificar-o-leitor-de-pdf"><span class="toc-section-number">1.18</span> Solução 2.4: Verificar o leitor
+de PDF</a></li>
+<li><a href="#solução-2.5-comando-final-otimizado" id="toc-solução-2.5-comando-final-otimizado"><span class="toc-section-number">1.19</span> Solução 2.5: Comando final
+otimizado</a></li>
+<li><a href="#solução-2.2-corrigida-usar-apenas-fontes-disponíveis-no-windows" id="toc-solução-2.2-corrigida-usar-apenas-fontes-disponíveis-no-windows"><span class="toc-section-number">1.20</span> Solução 2.2 Corrigida: Usar
+apenas fontes disponíveis no Windows</a></li>
+<li><a href="#solução-3-verificar-e-instalar-fontes-de-emoji" id="toc-solução-3-verificar-e-instalar-fontes-de-emoji"><span class="toc-section-number">1.21</span> Solução 3: Verificar e instalar
+fontes de emoji</a></li>
+<li><a href="#solução-4-configuração-específica-para-windows-miktex" id="toc-solução-4-configuração-específica-para-windows-miktex"><span class="toc-section-number">1.22</span> Solução 4: Configuração
+específica para Windows + MiKTeX</a></li>
+<li><a href="#solução-5-abordagem-mais-compatível-sem-cores" id="toc-solução-5-abordagem-mais-compatível-sem-cores"><span class="toc-section-number">1.23</span> Solução 5: Abordagem mais
+compatível (sem cores)</a></li>
+<li><a href="#comando-para-testar-1" id="toc-comando-para-testar-1"><span class="toc-section-number">1.24</span> Comando para testar:</a></li>
+<li><a href="#solução-final-header.tex-otimizado-para-windows" id="toc-solução-final-header.tex-otimizado-para-windows"><span class="toc-section-number">1.25</span> Solução Final: Header.tex
+otimizado para Windows</a></li>
+<li><a href="#comando-final" id="toc-comando-final"><span class="toc-section-number">1.26</span> Comando final:</a></li>
+<li><a href="#versão-alternativa-se-quiser-testar-noto-color-emoji" id="toc-versão-alternativa-se-quiser-testar-noto-color-emoji"><span class="toc-section-number">1.27</span> Versão alternativa se quiser
+testar Noto Color Emoji:</a></li>
+<li><a href="#resumo-do-que-funcionou" id="toc-resumo-do-que-funcionou"><span class="toc-section-number">1.28</span> Resumo do que funcionou:</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="convertendo-markdown-para-pdf-com-pandoc"><span class="header-section-number">1</span> Convertendo Markdown para PDF com
+Pandoc</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #159</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 01a0bb6b-a8a9-44b9-8400-fcaa42cfc7fa</li>
+<li><strong>Criada em:</strong> 2025-09-26 02:06:37</li>
+<li><strong>Atualizada em:</strong> 2025-09-26 03:32:49</li>
+<li><strong>Total de mensagens:</strong> 12</li>
+<li><strong>Resumo:</strong> Converter md para pdf, com conda. Com
+MiKTeX with lualatex. HarfBuzz. Com comando semelhante a pando…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-26-020638-deepseek-chat"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-26
+02:06:38)</em> <em>[deepseek-chat]</em></h3>
+<p>Converter md para pdf, com conda. Com MiKTeX with lualatex. HarfBuzz.
+Com comando semelhante a pandoc exemplo.md -o exemplo.pdf
+–pdf-engine=lualatex -include-in-header=header.tex</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-09-26-020638-deepseek-chat"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-09-26
+02:06:38)</em> <em>[deepseek-chat]</em></h3>
+<p>Para converter o arquivo Markdown para PDF usando
+<strong>Conda</strong>, <strong>MiKTeX</strong> com
+<strong>LuaLaTeX</strong> e <strong>HarfBuzz</strong>, siga os passos
+abaixo:</p>
+<hr />
+<h3 data-number="1.2.3" id="configurar-o-ambiente-conda"><span class="header-section-number">1.2.3</span> 1. Configurar o ambiente
+Conda</h3>
+<p>Se você ainda não tem um ambiente com Pandoc e MiKTeX, pode criar
+um:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">-n</span> pandoc-lualatex pandoc miktex <span class="at">-c</span> conda-forge</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate pandoc-lualatex</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.4" id="instalar-pacotes-latex-necessários-via-miktex"><span class="header-section-number">1.2.4</span> 2. Instalar pacotes LaTeX
+necessários via MiKTeX</h3>
+<p>Após ativar o ambiente, execute o MiKTeX Console para instalar os
+pacotes necessários (como <code>unicode-math</code>,
+<code>fontspec</code>, etc.), ou use o comando:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">miktex</span> packages install fontspec unicode-math luacode luatexbase</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.5" id="criar-um-arquivo-header.tex-opcional-mas-recomendado"><span class="header-section-number">1.2.5</span> 3. Criar um arquivo
+<code>header.tex</code> (opcional, mas recomendado)</h3>
+<p>Crie um arquivo <code>header.tex</code> para configurar fontes e
+suporte a Unicode:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{TeX Gyre Termes}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{TeX Gyre Heros}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{TeX Gyre Cursor}[Scale=MatchLowercase]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmathfont</span>{TeX Gyre Termes Math}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.6" id="executar-o-comando-pandoc"><span class="header-section-number">1.2.6</span> 4. Executar o comando
+Pandoc</h3>
+<p>Use o comando abaixo para gerar o PDF:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.7" id="verificar-o-resultado"><span class="header-section-number">1.2.7</span> 5. Verificar o resultado</h3>
+<p>O PDF <code>exemplo.pdf</code> será gerado com:</p>
+<ul>
+<li>Acentos e emojis</li>
+<li>Destaque de sintaxe em blocos de código</li>
+<li>Fórmulas matemáticas</li>
+<li>Tabelas e citações formatadas</li>
+</ul>
+<hr />
+<p>Se encontrar erros de fontes ou codificação, verifique se as fontes
+usadas no <code>header.tex</code> estão instaladas no sistema ou ajuste
+para fontes disponíveis (ex: <code>DejaVu Sans</code>,
+<code>Liberation Sans</code>, etc.).</p>
+<hr />
+<h3 data-number="1.2.8" id="utilizador-2025-09-26-021443-deepseek-chat"><span class="header-section-number">1.2.8</span> 👤 Utilizador <em>(2025-09-26
+02:14:43)</em> <em>[deepseek-chat]</em></h3>
+<p>Error producing PDF. ! Package fontspec Error: (fontspec) The font
+“TeX Gyre Termes” cannot be found; this (fontspec) may be but usually is
+not a fontspec bug. Either (fontspec) there is a typo in the font
+name/file, the font is (fontspec) not installed (correctly), or there is
+a bug in (fontspec) the underlying font loading engine (fontspec)
+(XeTeX/luaotfload).</p>
+<p>For immediate help type H <return>. …</p>
+<p>l.93 </p>
+<hr />
+<h3 data-number="1.2.9" id="deepseek-2025-09-26-021443-deepseek-chat"><span class="header-section-number">1.2.9</span> 🤖 DeepSeek <em>(2025-09-26
+02:14:43)</em> <em>[deepseek-chat]</em></h3>
+<p>O erro indica que a fonte “TeX Gyre Termes” não está instalada no
+sistema. Vamos corrigir isso de algumas formas:</p>
+<h2 data-number="1.3" id="solução-1-usar-fontes-mais-comunsdisponíveis"><span class="header-section-number">1.3</span> Solução 1: Usar fontes mais
+comuns/disponíveis</h2>
+<p>Substitua o conteúdo do <code>header.tex</code> por:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmathfont</span>{DejaVu Math TeX Gyre}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.4" id="solução-2-instalar-as-fontes-tex-gyre-recomendado"><span class="header-section-number">1.4</span> Solução 2: Instalar as fontes
+TeX Gyre (recomendado)</h2>
+<h3 data-number="1.4.1" id="no-windowsmiktex"><span class="header-section-number">1.4.1</span> No Windows/MiKTeX:</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Via MiKTeX Console (GUI) ou linha de comando:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">miktex</span> packages install tex-gyre</span></code></pre></div>
+<h3 data-number="1.4.2" id="ou-via-tlmgr-se-disponível"><span class="header-section-number">1.4.2</span> Ou via tlmgr (se
+disponível):</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">tlmgr</span> install collection-fontsrecommended</span></code></pre></div>
+<h2 data-number="1.5" id="solução-3-usar-header.tex-mais-simples-e-compatível"><span class="header-section-number">1.5</span> Solução 3: Usar header.tex mais
+simples e compatível</h2>
+<p>Crie um <code>header.tex</code> mais básico:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">% Usar fontes do sistema que são mais comuns</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">% Configurações para melhor suporte a português</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">polyglossia</span>}</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">\setdefaultlanguage</span>{portuguese}</span></code></pre></div>
+<h2 data-number="1.6" id="solução-4-comando-alternativo-sem-header.tex"><span class="header-section-number">1.6</span> Solução 4: Comando alternativo
+sem header.tex</h2>
+<p>Tente primeiro sem o header para testar:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">-V</span> mainfont=<span class="st">&quot;DejaVu Serif&quot;</span></span></code></pre></div>
+<h2 data-number="1.7" id="solução-5-verificar-se-as-fontes-estão-disponíveis"><span class="header-section-number">1.7</span> Solução 5: Verificar se as
+fontes estão disponíveis</h2>
+<p>Para listar fontes disponíveis:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fc-list</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> <span class="st">&quot;dejavu\|texgyre&quot;</span></span></code></pre></div>
+<h2 data-number="1.8" id="comando-final-recomendado-para-teste"><span class="header-section-number">1.8</span> Comando final recomendado para
+teste:</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">-V</span> mainfont=<span class="st">&quot;DejaVu Serif&quot;</span> <span class="at">-V</span> sansfont=<span class="st">&quot;DejaVu Sans&quot;</span> <span class="at">-V</span> monofont=<span class="st">&quot;DejaVu Sans Mono&quot;</span></span></code></pre></div>
+<p>Experimente a <strong>Solução 4</strong> primeiro, pois é a mais
+simples. Se funcionar, então o problema era apenas a fonte especificada
+no header.tex.</p>
+<p>Qual resultado você obtém com o comando da Solução 4?</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-2025-09-26-030539-deepseek-chat"><span class="header-section-number">1.8.1</span> 👤 Utilizador <em>(2025-09-26
+03:05:39)</em> <em>[deepseek-chat]</em></h3>
+<p>Em todas as soluções ( 1 2 3 4) o resultado é o pdf tem emojis só com
+rectangulos sem cores e [WARNING] Missing character: There is no ≡ƒÿÇ
+(U+1F600) (U+1F600) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÿÄ (U+1F60E) (U+1F60E) in font”name:DejaVu
+Serif:mode=no [WARNING] Missing character: There is no ≡ƒÜÇ (U+1F680)
+(U+1F680) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÉº (U+1F427) (U+1F427) in font”name:DejaVu
+Serif:mode=no [WARNING] Missing character: There is no ≡ƒÿÇ (U+1F600)
+(U+1F600) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÿÄ (U+1F60E) (U+1F60E) in font”name:DejaVu
+Serif:mode=no [WARNING] Missing character: There is no ≡ƒÜÇ (U+1F680)
+(U+1F680) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÉº (U+1F427) (U+1F427) in font”name:DejaVu
+Serif:mode=no [WARNING] Missing character: There is no ≡ƒÿÇ (U+1F600)
+(U+1F600) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÿÄ (U+1F60E) (U+1F60E) in font”name:DejaVu
+Serif:mode=no [WARNING] Missing character: There is no ≡ƒÜÇ (U+1F680)
+(U+1F680) in font “name:DejaVu Serif:mode=no [WARNING] Missing
+character: There is no ≡ƒÉº (U+1F427) (U+1F427) in font”name:DejaVu
+Serif:mode=no</p>
+<hr />
+<h3 data-number="1.8.2" id="deepseek-2025-09-26-030539-deepseek-chat"><span class="header-section-number">1.8.2</span> 🤖 DeepSeek <em>(2025-09-26
+03:05:39)</em> <em>[deepseek-chat]</em></h3>
+<p>O problema é que as fontes DejaVu e TeX Gyre não suportam emojis.
+Precisamos usar uma fonte que inclua emojis coloridos. Vamos tentar
+algumas soluções:</p>
+<h2 data-number="1.9" id="solução-1-usar-fonte-com-suporte-a-emojis-segoe-ui-emoji-no-windows"><span class="header-section-number">1.9</span> Solução 1: Usar fonte com
+suporte a emojis (Segoe UI Emoji no Windows)</h2>
+<p>Crie um <code>header.tex</code> com:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte específica para emojis</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Segoe UI Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">% Comando para usar emojis</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.10" id="solução-2-usar-fonte-noto-color-emoji-mais-universal"><span class="header-section-number">1.10</span> Solução 2: Usar fonte Noto
+Color Emoji (mais universal)</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte de emojis coloridos</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Noto Color Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis específicos</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.11" id="solução-3-instalar-fontes-de-emoji"><span class="header-section-number">1.11</span> Solução 3: Instalar fontes de
+emoji</h2>
+<h3 data-number="1.11.1" id="no-windows-com-miktex"><span class="header-section-number">1.11.1</span> No Windows (com
+MiKTeX):</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar pacote de fontes de emoji</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">miktex</span> packages install noto</span></code></pre></div>
+<h3 data-number="1.11.2" id="ou-via-conda"><span class="header-section-number">1.11.2</span> Ou via Conda:</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge noto-fonts-emoji</span></code></pre></div>
+<h2 data-number="1.12" id="solução-4-usar-uma-abordagem-mais-simples"><span class="header-section-number">1.12</span> Solução 4: Usar uma abordagem
+mais simples</h2>
+<p>Se as soluções acima não funcionarem, tente este header mais
+básico:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Usar uma fonte que tenha amplo suporte Unicode</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{Arial Unicode MS}  <span class="co">% Se disponível no Windows</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{Arial}</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{Consolas}[Scale=MatchLowercase]</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.13" id="solução-5-remover-os-emojis-fallback"><span class="header-section-number">1.13</span> Solução 5: Remover os emojis
+(fallback)</h2>
+<p>Se nada funcionar, você pode pré-processar o arquivo para remover os
+emojis:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar uma versão sem emojis</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="st">&#39;s/[\x{1F300}-\x{1F9FF}]//g&#39;</span> exemplo.md <span class="op">&gt;</span> exemplo_sem_emoji.md</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_sem_emoji.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex</span></code></pre></div>
+<h2 data-number="1.14" id="comando-para-testar"><span class="header-section-number">1.14</span> Comando para testar:</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<p><strong>Recomendo tentar a Solução 1 primeiro</strong>, pois o Segoe
+UI Emoji geralmente está disponível no Windows. Se não funcionar, tente
+a Solução 2 instalando as fontes Noto.</p>
+<p>Qual é o resultado com a Solução 1?</p>
+<hr />
+<h3 data-number="1.14.1" id="utilizador-2025-09-26-031415-deepseek-chat"><span class="header-section-number">1.14.1</span> 👤 Utilizador
+<em>(2025-09-26 03:14:15)</em> <em>[deepseek-chat]</em></h3>
+<p>Solução 1: o pdf tem emojis só com rectangulos sem cores e com
+WARNINGs Missing character: There is no ≡ƒÿÇ (U+1F600) (U+1F600) in font
+“name:DejaVu Serif:mode=no. Mas a Solução 2 o pdf tem emojis correctos
+mas sem cores e sem WARNINGs</p>
+<hr />
+<h3 data-number="1.14.2" id="deepseek-2025-09-26-031415-deepseek-chat"><span class="header-section-number">1.14.2</span> 🤖 DeepSeek <em>(2025-09-26
+03:14:15)</em> <em>[deepseek-chat]</em></h3>
+<p>Excelente! A Solução 2 funcionou parcialmente - os emojis estão sendo
+renderizados, mas sem cores. Isso é um progresso. Vamos melhorar para
+obter emojis coloridos:</p>
+<h2 data-number="1.15" id="solução-2.1-forçar-renderização-colorida-do-noto-color-emoji"><span class="header-section-number">1.15</span> Solução 2.1: Forçar
+renderização colorida do Noto Color Emoji</h2>
+<p>Atualize o <code>header.tex</code> para:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte de emojis coloridos com configurações específicas</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Noto Color Emoji}[</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    Renderer=Harfbuzz,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    Color=000000,  <span class="co">% Tenta forçar cores (pode não funcionar em todos os PDF readers)</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    Scale=1.1</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis específicos</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">% Tentativa alternativa: usar fonte Twitter Color Emoji (se disponível)</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFontAlt{Twitter Color Emoji}[Renderer=Harfbuzz]</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.16" id="solução-2.2-tentar-fontes-de-emoji-alternativas"><span class="header-section-number">1.16</span> Solução 2.2: Tentar fontes de
+emoji alternativas</h2>
+<p>Se o Noto Color Emoji não renderiza cores, tente estas
+alternativas:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Tentar diferentes fontes de emoji (teste uma por uma)</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Apple Color Emoji}[Renderer=Harfbuzz]  <span class="co">% Para macOS</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFont{Segoe UI Emoji}[Renderer=Harfbuzz]    % Windows</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFont{Twitter Color Emoji}[Renderer=Harfbuzz]</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFont{Noto Color Emoji}[Renderer=Harfbuzz]</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.17" id="solução-2.3-configuração-específica-para-lualatex-harfbuzz"><span class="header-section-number">1.17</span> Solução 2.3: Configuração
+específica para LuaLaTeX + HarfBuzz</h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">luacode</span>}</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">% Configuração do LuaLaTeX para melhor suporte a emojis</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">luacode</span>}</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> enable_emoji<span class="op">()</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">fonts</span><span class="op">.</span><span class="va">handlers</span><span class="op">.</span><span class="va">otf</span><span class="op">.</span>addfeature <span class="op">{</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">name</span> <span class="op">=</span> <span class="st">&quot;emoji&quot;</span><span class="op">,</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">type</span> <span class="op">=</span> <span class="st">&quot;colors&quot;</span><span class="op">,</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">data</span> <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="dv">0x1F600</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0.8</span><span class="op">,</span> <span class="dv">0</span> <span class="op">},</span>  <span class="co">-- 😀 amarelo</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="dv">0x1F60E</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0.5</span><span class="op">,</span> <span class="dv">1</span> <span class="op">},</span>  <span class="co">-- 😎 azul</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="dv">0x1F680</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span> <span class="op">},</span>    <span class="co">-- 🚀 vermelho</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="dv">0x1F427</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0.6</span><span class="op">,</span> <span class="dv">0</span> <span class="op">},</span>  <span class="co">-- 🐧 verde</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">},</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">luacode</span>}</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="fu">\directlua</span>{enable_emoji()}</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Noto Color Emoji}[</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    Renderer=Harfbuzz,</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    RawFeature=+emoji</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.18" id="solução-2.4-verificar-o-leitor-de-pdf"><span class="header-section-number">1.18</span> Solução 2.4: Verificar o
+leitor de PDF</h2>
+<p>As cores dos emojis podem depender do leitor de PDF: - <strong>Adobe
+Acrobat Reader</strong>: Melhor suporte - <strong>Foxit Reader</strong>:
+Bom suporte<br />
+- <strong>SumatraPDF</strong>: Suporte limitado -
+<strong>Navegadores</strong>: Variável</p>
+<h2 data-number="1.19" id="solução-2.5-comando-final-otimizado"><span class="header-section-number">1.19</span> Solução 2.5: Comando final
+otimizado</h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">-V</span> colorlinks=true</span></code></pre></div>
+<p><strong>Recomendo tentar a Solução 2.1 primeiro</strong>, pois é a
+mais simples. Se não der cores, experimente a Solução 2.2 testando
+fontes alternativas.</p>
+<p>Qual é o seu leitor de PDF atual? Isso pode ajudar a diagnosticar o
+problema das cores.</p>
+<hr />
+<h3 data-number="1.19.1" id="utilizador-2025-09-26-031903-deepseek-chat"><span class="header-section-number">1.19.1</span> 👤 Utilizador
+<em>(2025-09-26 03:19:03)</em> <em>[deepseek-chat]</em></h3>
+<p>Solução 2.2 Error producing PDF. ! Package fontspec Error: (fontspec)
+The font “Apple Color Emoji” cannot be found; this (fontspec) may be but
+usually is not a fontspec bug. Either (fontspec) there is a typo in the
+font name/file, the font is (fontspec) not installed (correctly), or
+there is a bug in (fontspec) the underlying font loading engine
+(fontspec) (XeTeX/luaotfload).</p>
+<p>For immediate help type H <return>. …</p>
+<p>l.101 …ont{Apple Color Emoji}[Renderer=Harfbuzz]</p>
+<hr />
+<h3 data-number="1.19.2" id="deepseek-2025-09-26-031903-deepseek-chat"><span class="header-section-number">1.19.2</span> 🤖 DeepSeek <em>(2025-09-26
+03:19:03)</em> <em>[deepseek-chat]</em></h3>
+<p>Vamos voltar ao que funcionou (Noto Color Emoji) e tentar melhorar as
+cores. O erro ocorre porque “Apple Color Emoji” não está disponível no
+Windows.</p>
+<h2 data-number="1.20" id="solução-2.2-corrigida-usar-apenas-fontes-disponíveis-no-windows"><span class="header-section-number">1.20</span> Solução 2.2 Corrigida: Usar
+apenas fontes disponíveis no Windows</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte de emoji - testar nesta ordem (comente as outras)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Segoe UI Emoji}[Renderer=Harfbuzz]      <span class="co">% Windows</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFont{Noto Color Emoji}[Renderer=Harfbuzz]   % Se instalado</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">%\newfontfamily\EmojiFont{Twitter Color Emoji}[Renderer=Harfbuzz]% Alternativa</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.21" id="solução-3-verificar-e-instalar-fontes-de-emoji"><span class="header-section-number">1.21</span> Solução 3: Verificar e
+instalar fontes de emoji</h2>
+<h3 data-number="1.21.1" id="verificar-quais-fontes-de-emoji-estão-disponíveis"><span class="header-section-number">1.21.1</span> Verificar quais fontes de
+emoji estão disponíveis:</h3>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fc-list</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> emoji</span></code></pre></div>
+<h3 data-number="1.21.2" id="instalar-noto-color-emoji-via-conda"><span class="header-section-number">1.21.2</span> Instalar Noto Color Emoji
+via Conda:</h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge noto-fonts-emoji</span></code></pre></div>
+<h3 data-number="1.21.3" id="ou-baixar-e-instalar-manualmente"><span class="header-section-number">1.21.3</span> Ou baixar e instalar
+manualmente:</h3>
+<ol type="1">
+<li>Baixe: <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a></li>
+<li>Instale as fontes no Windows</li>
+</ol>
+<h2 data-number="1.22" id="solução-4-configuração-específica-para-windows-miktex"><span class="header-section-number">1.22</span> Solução 4: Configuração
+específica para Windows + MiKTeX</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Configuração para Windows</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Tentar detectar automaticamente a fonte de emoji</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\IfFontExistsTF</span>{Segoe UI Emoji}{</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\newfontfamily\EmojiFont</span>{Segoe UI Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>}{</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">\IfFontExistsTF</span>{Noto Color Emoji}{</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">\newfontfamily\EmojiFont</span>{Noto Color Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    }{</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">\newfontfamily\EmojiFont</span>{Segoe UI Symbol}[Renderer=Harfbuzz]</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.23" id="solução-5-abordagem-mais-compatível-sem-cores"><span class="header-section-number">1.23</span> Solução 5: Abordagem mais
+compatível (sem cores)</h2>
+<p>Se as cores não forem essenciais, use esta versão que funciona
+bem:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes com melhor suporte Unicode</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte fallback para símbolos</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\SymbolFont</span>{DejaVu Sans}</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir emojis como símbolos (versão monocromática)</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\SymbolFont</span> ☺}}  <span class="co">% Smiley como fallback</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\SymbolFont</span> ☻}}  <span class="co">% Smiley com óculos</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\SymbolFont</span> ↑}}   <span class="co">% Seta para cima</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\SymbolFont</span> 🐧}}  <span class="co">% Pinguim Unicode</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span></code></pre></div>
+<h2 data-number="1.24" id="comando-para-testar-1"><span class="header-section-number">1.24</span> Comando para testar:</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Primeiro verifique quais fontes estão disponíveis</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">fc-list</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> emoji</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Depois execute o pandoc</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<p><strong>Execute primeiro o comando <code>fc-list</code> para ver
+quais fontes de emoji você tem disponíveis</strong>, então ajuste o
+header.tex conforme o resultado.</p>
+<p>Qual é a saída do comando <code>fc-list | grep -i emoji</code>? Isso
+nos dirá quais fontes de emoji estão realmente instaladas.</p>
+<hr />
+<h3 data-number="1.24.1" id="utilizador-2025-09-26-033213-deepseek-chat"><span class="header-section-number">1.24.1</span> 👤 Utilizador
+<em>(2025-09-26 03:32:13)</em> <em>[deepseek-chat]</em></h3>
+<p>Solução 4 o pdf tem emojis correctos e com cores (pandoc-env)
+D:_DOCS__DOCS__md_to_pdf-lualatex-project-clean-final&gt;fc-list | grep
+-i emoji C:/WINDOWS/fonts.Mozilla.ttf: Twemoji Mozilla:style=Regular
+C:/WINDOWS/fonts.ttf: Segoe UI
+Emoji:style=Regular,Normal,obyÄ?ejnAc,Standard,IsI±I½I¿I½I1IºI¬,Normaali,NormA¡l,Normale,Standaard,Normalny,DzD±Ñ&lt;Ñ╪D½Ñ&lt;D1,NormA¡lne,Navadno,Arrunta
+C:/WINDOWS/fonts_Win10.ttf: Noto Color Emoji:style=Regular
+C:/Users/mpmen/AppData/Local/Microsoft/Windows/Fonts-SVGinOT.ttf: Noto
+Color Emoji:style=Regular C:/WINDOWS/fonts-SVGinOT.ttf: EmojiOne
+Color:style=Regular C:/WINDOWS/fonts.ttf: Twemoji
+Mozilla:style=Regular</p>
+<hr />
+<h3 data-number="1.24.2" id="deepseek-2025-09-26-033213-deepseek-chat"><span class="header-section-number">1.24.2</span> 🤖 DeepSeek <em>(2025-09-26
+03:32:13)</em> <em>[deepseek-chat]</em></h3>
+<p>Excelente! Agora sabemos que você tem várias fontes de emoji
+disponíveis, incluindo <strong>Segoe UI Emoji</strong> (Windows) e
+<strong>Noto Color Emoji</strong>. Vamos criar um header.tex
+otimizado:</p>
+<h2 data-number="1.25" id="solução-final-header.tex-otimizado-para-windows"><span class="header-section-number">1.25</span> Solução Final: Header.tex
+otimizado para Windows</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">% Fontes principais para texto</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">% Fonte de emoji - usar Segoe UI Emoji (nativa do Windows) que funciona com cores</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Segoe UI Emoji}[</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    Renderer=Harfbuzz,</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    Scale=1.1  <span class="co">% Ajuste opcional para tamanho</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co">% Definir todos os caracteres Unicode de emoji para usar a fonte correta</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="co">% Emojis específicos do seu documento</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="co">% Configuração adicional para melhor suporte</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>    Scale=MatchLowercase,</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>    Contextuals=Alternate  <span class="co">% Melhor renderização de código</span></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a><span class="co">% Melhor suporte para português</span></span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">polyglossia</span>}</span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="fu">\setdefaultlanguage</span>{portuguese}</span></code></pre></div>
+<h2 data-number="1.26" id="comando-final"><span class="header-section-number">1.26</span> Comando final:</h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<h2 data-number="1.27" id="versão-alternativa-se-quiser-testar-noto-color-emoji"><span class="header-section-number">1.27</span> Versão alternativa se quiser
+testar Noto Color Emoji:</h2>
+<div class="sourceCode" id="cb31"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">% header.tex (alternativa com Noto)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">fontspec</span>}</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">unicode-math</span>}</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">microtype</span>}</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmainfont</span>{DejaVu Serif}</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\setsansfont</span>{DejaVu Sans}</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\setmonofont</span>{DejaVu Sans Mono}[Scale=MatchLowercase]</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">% Usar Noto Color Emoji (pode ter cores mais vibrantes)</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">\newfontfamily\EmojiFont</span>{Noto Color Emoji}[Renderer=Harfbuzz]</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">newunicodechar</span>}</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😀}{{<span class="fu">\EmojiFont</span> 😀}}</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{😎}{{<span class="fu">\EmojiFont</span> 😎}}</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🚀}{{<span class="fu">\EmojiFont</span> 🚀}}</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="fu">\newunicodechar</span>{🐧}{{<span class="fu">\EmojiFont</span> 🐧}}</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">polyglossia</span>}</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\setdefaultlanguage</span>{portuguese}</span></code></pre></div>
+<h2 data-number="1.28" id="resumo-do-que-funcionou"><span class="header-section-number">1.28</span> Resumo do que funcionou:</h2>
+<p>✅ <strong>Solução 4</strong>: Emojis corretos e com cores usando
+Segoe UI Emoji<br />
+✅ <strong>Fontes disponíveis</strong>: Segoe UI Emoji, Noto Color
+Emoji, Twemoji, EmojiOne<br />
+✅ <strong>Windows + MiKTeX + LuaLaTeX</strong>: Configurado
+corretamente</p>
+<p>Agora você tem um template funcional para converter Markdown para PDF
+com: - ✅ Acentos portugueses - ✅ Emojis coloridos - ✅ Syntax
+highlighting - ✅ Fórmulas matemáticas - ✅ Tabelas e formatação</p>
+<p>O comando final que funciona é:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

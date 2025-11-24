@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>027_Grok_Thunderbird_Configurar_Mensagens_Não_Lidas</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#thunderbird-configurar-mensagens-não-lidas" id="toc-thunderbird-configurar-mensagens-não-lidas"><span class="toc-section-number">1</span> Thunderbird Configurar Mensagens Não
+Lidas</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="thunderbird-configurar-mensagens-não-lidas"><span class="header-section-number">1</span> Thunderbird Configurar Mensagens
+Não Lidas</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #27</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> dbe3f10c-b511-4d88-b9d8-b8660385a9e6</li>
+<li><strong>Criada em:</strong> 2025-11-07 14:32:44Z</li>
+<li><strong>Atualizada em:</strong> 2025-11-07 14:45:04Z</li>
+<li><strong>Total de mensagens:</strong> 6</li>
+<li><strong>Resumo:</strong> No Thunderbird como configurar para que as
+mensagem não lidas apareção, como não lidas, só na pasta …</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-11-07-143244-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-11-07
+14:32:44)</em> <em>[Grok]</em></h3>
+<p>No Thunderbird como configurar para que as mensagem não lidas
+apareção, como não lidas, só na pasta Inbox. Nas outras pastas devem
+aparecer como lidas?</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-11-07-143257-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-11-07
+14:32:57)</em> <em>[Grok]</em></h3>
+<p>Para configurar o Mozilla Thunderbird de forma que as mensagens não
+lidas apareçam como não lidas <strong>apenas na pasta Inbox</strong> e
+sejam exibidas como lidas nas outras pastas, você precisará usar uma
+extensão (add-on) específica, pois o Thunderbird não tem uma opção
+nativa para isso por pasta de maneira seletiva. Isso é comum em contas
+IMAP (como Gmail ou Outlook), onde o status de “lido/não lido” é
+sincronizado entre pastas, mas a extensão pode automatizar a marcação
+como lida em pastas específicas.</p>
+<h3 data-number="1.2.3" id="passo-1-instale-a-extensão-auto-mark-as-read"><span class="header-section-number">1.2.3</span> Passo 1: Instale a extensão
+“Auto Mark As Read”</h3>
+<p>Essa extensão permite selecionar pastas específicas (exceto a Inbox)
+para marcar automaticamente as mensagens como lidas ao recebê-las ou ao
+iniciar o Thunderbird.</p>
+<ol type="1">
+<li>Abra o Thunderbird.</li>
+<li>Vá em <strong>Ferramentas &gt; Complementos e temas</strong> (ou
+pressione <code>Ctrl + Shift + A</code>).</li>
+<li>Na barra de pesquisa, digite <strong>“Auto Mark As
+Read”</strong>.</li>
+<li>Encontre a extensão <strong>Auto Mark As Read</strong> (desenvolvida
+por memeller, disponível na loja oficial de add-ons do Thunderbird).
+Clique em <strong>Adicionar à extensão</strong> e confirme a
+instalação.</li>
+<li>Reinicie o Thunderbird após a instalação.</li>
+</ol>
+<h3 data-number="1.2.4" id="passo-2-configure-a-extensão"><span class="header-section-number">1.2.4</span> Passo 2: Configure a
+extensão</h3>
+<ol type="1">
+<li>Após a instalação, vá em <strong>Ferramentas &gt; Complementos e
+temas</strong>, clique em <strong>Extensões</strong> e encontre “Auto
+Mark As Read”. Clique em <strong>Opções</strong> (ou
+<strong>Configurações</strong>).</li>
+<li>Na janela de configurações:
+<ul>
+<li>Selecione as pastas que você quer que as mensagens sejam marcadas
+como lidas automaticamente (ex: Enviados, Arquivados, Spam, Lixo, ou
+pastas personalizadas). <strong>Não selecione a Inbox</strong>.</li>
+<li>Ative a opção para marcar mensagens novas ao recebê-las e também ao
+iniciar o Thunderbird (para limpar qualquer resíduo).</li>
+<li>Salve as alterações.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.5" id="como-isso-funciona"><span class="header-section-number">1.2.5</span> Como isso funciona</h3>
+<ul>
+<li><strong>Na Inbox</strong>: As mensagens chegam como não lidas e
+permanecem assim até você abri-las ou marcá-las manualmente (o
+comportamento padrão do Thunderbird).</li>
+<li><strong>Nas outras pastas</strong>: Quando uma mensagem é movida
+para uma pasta selecionada (via filtros ou manualmente), a extensão a
+marca como lida automaticamente. Se houver mensagens não lidas antigas
+nessas pastas, elas serão marcadas na próxima inicialização do
+Thunderbird.</li>
+<li>Dica: Se você usa filtros para mover mensagens da Inbox para outras
+pastas, certifique-se de que os filtros <strong>não</strong> marquem
+como lida (opção “Marcar como lida” desativada no filtro). Assim, a
+extensão cuida disso só nas pastas alvo.</li>
+</ul>
+<h3 data-number="1.2.6" id="dicas-adicionais"><span class="header-section-number">1.2.6</span> Dicas adicionais</h3>
+<ul>
+<li><strong>Filtros para automação</strong>: Para mover mensagens
+automaticamente da Inbox para outras pastas, vá em <strong>Ferramentas
+&gt; Filtros de Mensagens</strong> e crie regras. Exemplo: Se o
+remetente for X, mover para pasta Y (sem marcar como lida).</li>
+<li><strong>Visualizar só não lidas na Inbox</strong>: Para focar em não
+lidas, ative a Barra de Filtro Rápido: Vá em <strong>Exibir &gt; Barra
+de Ferramentas &gt; Personalizar</strong>, arraste o ícone “Filtro
+Rápido” para a barra superior. Clique nele e selecione <strong>Não
+lidas</strong>.</li>
+<li><strong>Sincronização IMAP</strong>: Se as mensagens ainda
+aparecerem como não lidas em pastas (devido a cache), force uma
+sincronização: <strong>Arquivo &gt; Offline &gt; Baixar/Sincronizar
+Agora</strong>.</li>
+<li><strong>Alternativa sem extensão</strong>: Se preferir não instalar
+add-ons, você pode marcar pastas manualmente como lidas (clique direito
+na pasta &gt; <strong>Marcar &gt; Pasta como lida</strong>), mas isso
+não é automático para novas mensagens.</li>
+</ul>
+<p>Se isso não resolver exatamente o que você quer (ex: pastas
+específicas ou tipo de conta), forneça mais detalhes sobre sua
+configuração (IMAP/POP, versão do Thunderbird) para refinar! A extensão
+é segura e compatível com versões recentes do Thunderbird (até
+2025).</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-11-07-143622-grok"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-11-07
+14:36:22)</em> <em>[Grok]</em></h3>
+<p>thunderbird 140.4.0esr Ctrl+shift+A, não faz nada</p>
+<hr />
+<h3 data-number="1.2.8" id="grok-2025-11-07-143700-grok"><span class="header-section-number">1.2.8</span> 🤖 Grok <em>(2025-11-07
+14:37:00)</em> <em>[Grok]</em></h3>
+<h3 data-number="1.2.9" id="problema-com-ctrlshifta-no-thunderbird-140.4.0esr"><span class="header-section-number">1.2.9</span> Problema com Ctrl+Shift+A no
+Thunderbird 140.4.0esr</h3>
+<p>O atalho <strong>Ctrl+Shift+A</strong> é o padrão para abrir o
+<strong>Gerenciador de Complementos e Temas</strong> (Add-ons Manager)
+no Thunderbird, e ele continua válido na versão 140.4.0esr (a versão ESR
+mais recente, lançada em outubro de 2025, com foco em estabilidade e
+suporte estendido). No entanto, se ele não está funcionando (não abre
+nada), isso pode ser causado por conflitos de teclado, configurações do
+sistema, extensões problemáticas ou até mesmo um bug isolado. Vamos
+resolver isso passo a passo.</p>
+<h4 data-number="1.2.9.1" id="verificações-básicas"><span class="header-section-number">1.2.9.1</span> 1. <strong>Verificações
+Básicas</strong></h4>
+<ul>
+<li><strong>Confirme o foco na janela principal</strong>: O atalho só
+funciona na janela principal do Thunderbird (não em janelas de
+composição de e-mail ou pop-ups). Clique em uma mensagem na Inbox ou no
+painel de pastas para garantir que a janela principal esteja ativa.</li>
+<li><strong>Teste o teclado</strong>: Pressione
+<strong>Ctrl+Shift+A</strong> devagar e certifique-se de que está usando
+as teclas corretas (às vezes, teclados numéricos ou layouts
+internacionais interferem). Tente com a tecla Ctrl direita ou esquerda
+separadamente.</li>
+<li><strong>Reinicie o Thunderbird</strong>: Feche completamente o app
+(use o Gerenciador de Tarefas se necessário) e reabra. Às vezes, um
+“hang” temporário bloqueia atalhos.</li>
+</ul>
+<h4 data-number="1.2.9.2" id="abra-o-gerenciador-de-complementos-de-forma-alternativa"><span class="header-section-number">1.2.9.2</span> 2. <strong>Abra o
+Gerenciador de Complementos de Forma Alternativa</strong></h4>
+<p>Como o atalho não funciona, use o menu para acessar: - Vá em
+<strong>Menu (três linhas no canto superior direito) &gt; Complementos e
+temas</strong> (ou <strong>Ferramentas &gt; Complementos e
+temas</strong> se o menu clássico estiver ativado). - Se o menu não
+aparecer, ative a barra de menu: Pressione <strong>Alt</strong> (isso
+mostra temporariamente a barra superior com “Arquivo”, “Editar”, etc.).
+Então, <strong>Exibir &gt; Barra de Menu</strong> para fixá-la. - Outra
+opção: Digite <code>about:addons</code> na barra de URL do Thunderbird
+(se você tiver a barra de URL visível; ative em <strong>Exibir &gt;
+Barra de Ferramentas &gt; Barra de URL</strong>).</p>
+<p>Isso deve abrir a janela de add-ons. Se não abrir, há um problema
+maior (veja abaixo).</p>
+<h4 data-number="1.2.9.3" id="soluções-para-corrigir-o-atalho"><span class="header-section-number">1.2.9.3</span> 3. <strong>Soluções para
+Corrigir o Atalho</strong></h4>
+<ul>
+<li><strong>Desative extensões temporariamente</strong>:
+<ul>
+<li>Inicie o Thunderbird em <strong>modo de segurança</strong> (sem
+extensões): Feche o Thunderbird, segure <strong>Shift</strong> ao
+reiniciar (no Windows/Linux) ou use o terminal:
+<code>thunderbird.exe -safe-mode</code>.</li>
+<li>Teste o Ctrl+Shift+A no modo de segurança. Se funcionar, uma
+extensão está conflitando (ex: add-ons de teclado ou produtividade).
+Desative-as uma por uma no gerenciador.</li>
+</ul></li>
+<li><strong>Redefina atalhos personalizados</strong> (se você os alterou
+antes):
+<ul>
+<li>No gerenciador de add-ons, procure por extensões como “Keyconfig” ou
+“Shortkeys” e desinstale se necessário.</li>
+<li>Para restaurar padrões: Vá em <strong>Menu &gt; Ajuda &gt; Mais
+Solução de Problemas &gt; Redefinir Preferências</strong> (isso reseta
+configurações, mas preserva e-mails).</li>
+</ul></li>
+<li><strong>Verifique conflitos de software</strong>:
+<ul>
+<li><strong>Antivírus/Firewall</strong>: Programas como Avast ou Norton
+às vezes capturam atalhos globais. Desative temporariamente e
+teste.</li>
+<li><strong>Teclado externo ou software de remapeamento</strong>: Se
+usar AutoHotkey, SharpKeys ou similar, desative regras para
+Ctrl+Shift.</li>
+<li><strong>Ambiente virtualizado</strong>: Se o Thunderbird roda em VM
+(ex: VMware, VirtualBox), atalhos com Shift/Ctrl podem falhar devido a
+“captura” de teclas. Tente Ctrl direito ou configure o “map mode” na
+VM.<grok:render card_id="f1e075" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">14</argument> </grok:render></li>
+<li><strong>Sistema operacional</strong>: No Windows, verifique se o
+teclado está em layout PT-BR correto (Painel de Controle &gt; Região
+&gt; Teclado). No Linux, teste com <code>xev</code> no terminal para ver
+se as teclas são detectadas.</li>
+</ul></li>
+<li><strong>Atualize o Thunderbird</strong>:
+<ul>
+<li>Vá em <strong>Ajuda &gt; Sobre o Thunderbird</strong> para verificar
+atualizações. A 140.4.0esr é atual, mas bugs de teclado podem ser
+corrigidos em patches menores (ex: 140.4.1).</li>
+<li>Baixe a versão mais recente em <a href="https://www.thunderbird.net">thunderbird.net</a>.<grok:render card_id="1ff4a6" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">3</argument> </grok:render></li>
+</ul></li>
+</ul>
+<h4 data-number="1.2.9.4" id="se-nada-resolver"><span class="header-section-number">1.2.9.4</span> 4. <strong>Se Nada
+Resolver</strong></h4>
+<ul>
+<li>Consulte o suporte oficial: Vá em <strong>Ajuda &gt; Solução de
+Problemas de Informações</strong> (Ctrl+Shift+J para abrir o console de
+erros) e procure por mensagens de erro ao pressionar o atalho. Copie e
+cole em um fórum como <a href="https://support.mozilla.org/pt-BR/questions/new">support.mozilla.org</a>
+(selecione
+Thunderbird).<grok:render card_id="7a6255" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">8</argument> </grok:render></li>
+<li>Relate o bug: Em <strong>Ajuda &gt; Enviar Feedback</strong> ou no
+Bugzilla da Mozilla (busque “thunderbird keyboard shortcut ctrl shift
+a”).</li>
+<li>Alternativa temporária: Use o menu sempre, ou instale uma extensão
+como “Menu Wizard” para adicionar botões rápidos.</li>
+</ul>
+<p>Isso deve resolver na maioria dos casos – o atalho é estável há anos
+e não mudou na
+v140.<grok:render card_id="1f0881" card_type="citation_card" type="render_inline_citation">
+<argument name="citation_id">13</argument> </grok:render> Se fornecer
+mais detalhes (SO, extensões instaladas, erro exato), posso ajudar
+mais!</p>
+<hr />
+<h3 data-number="1.2.10" id="utilizador-2025-11-07-144501-grok"><span class="header-section-number">1.2.10</span> 👤 Utilizador
+<em>(2025-11-07 14:45:01)</em> <em>[Grok]</em></h3>
+<p>ok resolvido</p>
+<hr />
+<h3 data-number="1.2.11" id="grok-2025-11-07-144504-grok"><span class="header-section-number">1.2.11</span> 🤖 Grok <em>(2025-11-07
+14:45:04)</em> <em>[Grok]</em></h3>
+<p>Ótimo! Fico feliz que deu certo. Se precisar de ajuda com mais
+configurações no Thunderbird (ou qualquer outra coisa), é só chamar.
+😊</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

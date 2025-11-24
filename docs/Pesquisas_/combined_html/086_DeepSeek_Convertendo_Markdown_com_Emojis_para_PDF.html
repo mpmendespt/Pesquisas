@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>086_DeepSeek_Convertendo_Markdown_com_Emojis_para_PDF</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#convertendo-markdown-com-emojis-para-pdf" id="toc-convertendo-markdown-com-emojis-para-pdf"><span class="toc-section-number">1</span> Convertendo Markdown com Emojis para
+PDF</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#métodos-recomendados" id="toc-métodos-recomendados"><span class="toc-section-number">1.3</span> 🛠️ Métodos Recomendados:</a></li>
+<li><a href="#recomendação-principal" id="toc-recomendação-principal"><span class="toc-section-number">1.4</span> 📋 <strong>Recomendação
+Principal:</strong></a></li>
+<li><a href="#instalação-rápida-no-windows" id="toc-instalação-rápida-no-windows"><span class="toc-section-number">1.5</span> 🔧 Instalação Rápida no
+Windows:</a></li>
+<li><a href="#soluções-para-o-erro-do-fontconfig" id="toc-soluções-para-o-erro-do-fontconfig"><span class="toc-section-number">1.6</span> 🔧 <strong>Soluções para o erro do
+Fontconfig:</strong></a></li>
+<li><a href="#recomendação-imediata" id="toc-recomendação-imediata"><span class="toc-section-number">1.7</span> 🚀 <strong>Recomendação
+Imediata:</strong></a></li>
+<li><a href="#soluções-alternativas-sem-weasyprint" id="toc-soluções-alternativas-sem-weasyprint"><span class="toc-section-number">1.8</span> 🔧 <strong>Soluções Alternativas
+Sem WeasyPrint:</strong></a></li>
+<li><a href="#recomendação-imediata-1" id="toc-recomendação-imediata-1"><span class="toc-section-number">1.9</span> 🚀 <strong>Recomendação
+Imediata:</strong></a></li>
+<li><a href="#método-1-usando-o-google-chrome-mais-simples" id="toc-método-1-usando-o-google-chrome-mais-simples"><span class="toc-section-number">1.10</span> 🖨️ <strong>Método 1: Usando o
+Google Chrome (Mais Simples)</strong></a></li>
+<li><a href="#método-2-python-com-pdfkit" id="toc-método-2-python-com-pdfkit"><span class="toc-section-number">1.11</span> 🐍 <strong>Método 2: Python com
+pdfkit</strong></a></li>
+<li><a href="#método-3-usando-powershell" id="toc-método-3-usando-powershell"><span class="toc-section-number">1.12</span> 🌐 <strong>Método 3: Usando
+PowerShell</strong></a></li>
+<li><a href="#método-4-usando-microsoft-edge" id="toc-método-4-usando-microsoft-edge"><span class="toc-section-number">1.13</span> 📄 <strong>Método 4: Usando
+Microsoft Edge</strong></a></li>
+<li><a href="#método-5-script-python-completo-com-wkhtmltopdf" id="toc-método-5-script-python-completo-com-wkhtmltopdf"><span class="toc-section-number">1.14</span> 🔧 <strong>Método 5: Script
+Python Completo com wkhtmltopdf</strong></a></li>
+<li><a href="#método-6-usando-pandoc-diretamente-se-funcionar" id="toc-método-6-usando-pandoc-diretamente-se-funcionar"><span class="toc-section-number">1.15</span> 🎯 <strong>Método 6: Usando
+Pandoc Diretamente (se funcionar)</strong></a></li>
+<li><a href="#recomendações" id="toc-recomendações"><span class="toc-section-number">1.16</span> 🚀
+<strong>Recomendações:</strong></a></li>
+<li><a href="#instalação-com-chocolatey" id="toc-instalação-com-chocolatey"><span class="toc-section-number">1.17</span> 🍫 <strong>Instalação com
+Chocolatey</strong></a></li>
+<li><a href="#configuração-pós-instalação" id="toc-configuração-pós-instalação"><span class="toc-section-number">1.18</span> 🔧 <strong>Configuração
+Pós-Instalação</strong></a></li>
+<li><a href="#usar-com-python-pdfkit" id="toc-usar-com-python-pdfkit"><span class="toc-section-number">1.19</span> 🐍 <strong>Usar com Python
+(pdfkit):</strong></a></li>
+<li><a href="#comandos-úteis-do-chocolatey" id="toc-comandos-úteis-do-chocolatey"><span class="toc-section-number">1.20</span> 📋 <strong>Comandos Úteis do
+Chocolatey:</strong></a></li>
+<li><a href="#script-completo-de-conversão" id="toc-script-completo-de-conversão"><span class="toc-section-number">1.21</span> 🚀 <strong>Script Completo de
+Conversão:</strong></a></li>
+<li><a href="#dica-importante" id="toc-dica-importante"><span class="toc-section-number">1.22</span> 💡 <strong>Dica
+Importante:</strong></a></li>
+<li><a href="#soluções-para-emojis-coloridos" id="toc-soluções-para-emojis-coloridos"><span class="toc-section-number">1.23</span> 🎨 <strong>Soluções para Emojis
+Coloridos:</strong></a></li>
+<li><a href="#método-mais-simples-e-eficaz" id="toc-método-mais-simples-e-eficaz"><span class="toc-section-number">1.24</span> 🚀 <strong>Método Mais Simples e
+Eficaz:</strong></a></li>
+<li><a href="#por-que-wkhtmltopdf-não-mostra-cores" id="toc-por-que-wkhtmltopdf-não-mostra-cores"><span class="toc-section-number">1.25</span> 💡 <strong>Por que wkhtmltopdf
+não mostra cores:</strong></a></li>
+<li><a href="#para-controlar-onde-o-pdf-é-salvo" id="toc-para-controlar-onde-o-pdf-é-salvo"><span class="toc-section-number">1.26</span> 📍 <strong>Para controlar onde o
+PDF é salvo:</strong></a></li>
+<li><a href="#o-pdf-deve-ser-gerado-na-mesma-pasta-do-seu-script" id="toc-o-pdf-deve-ser-gerado-na-mesma-pasta-do-seu-script"><span class="toc-section-number">1.27</span> 📂 <strong>O PDF deve ser gerado
+na mesma pasta do seu script:</strong></a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="convertendo-markdown-com-emojis-para-pdf"><span class="header-section-number">1</span> Convertendo Markdown com Emojis
+para PDF</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #86</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Sistemas</li>
+<li><strong>ID:</strong> 045d63db-0022-44e0-9863-4ac28838d053</li>
+<li><strong>Criada em:</strong> 2025-10-28 04:39:27</li>
+<li><strong>Atualizada em:</strong> 2025-10-28 05:10:37</li>
+<li><strong>Total de mensagens:</strong> 14</li>
+<li><strong>Resumo:</strong> Converter md contendo emojis para pdf (no
+windows). Pretende-se que o pdf gerado contenha os emojis …</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-28-043928-deepseek-chat"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-28
+04:39:28)</em> <em>[deepseek-chat]</em></h3>
+<p>Converter md contendo emojis para pdf (no windows). Pretende-se que o
+pdf gerado contenha os emojis coloridos. (Pesquisas)
+D:_DOCS__DOCS__emojis&gt;</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-10-28-043928-deepseek-chat"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-10-28
+04:39:28)</em> <em>[deepseek-chat]</em></h3>
+<p>Para converter seu arquivo Markdown com emojis para PDF no Windows
+mantendo os emojis coloridos, existem várias opções:</p>
+<h2 data-number="1.3" id="métodos-recomendados"><span class="header-section-number">1.3</span> 🛠️ Métodos Recomendados:</h2>
+<h3 data-number="1.3.1" id="pandoc-weasyprint-melhor-qualidade"><span class="header-section-number">1.3.1</span> 1. <strong>Pandoc +
+WeasyPrint</strong> (Melhor qualidade)</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar Pandoc e WeasyPrint</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pandoc</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.pdf <span class="at">--pdf-engine</span><span class="op">=</span>weasyprint</span></code></pre></div>
+<h3 data-number="1.3.2" id="visual-studio-code-mais-simples"><span class="header-section-number">1.3.2</span> 2. <strong>Visual Studio
+Code</strong> (Mais simples)</h3>
+<ul>
+<li>Instale a extensão “Markdown PDF” no VS Code</li>
+<li>Abra o arquivo <code>.md</code> e use <code>Ctrl+Shift+P</code> →
+“Markdown PDF: Export (pdf)”</li>
+<li>Mantém os emojis coloridos nativamente</li>
+</ul>
+<h3 data-number="1.3.3" id="pandoc-wkhtmltopdf"><span class="header-section-number">1.3.3</span> 3. <strong>Pandoc +
+wkhtmltopdf</strong></h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Baixar wkhtmltopdf e adicionar ao PATH</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.pdf <span class="at">--pdf-engine</span><span class="op">=</span>wkhtmltopdf</span></code></pre></div>
+<h3 data-number="1.3.4" id="usando-python-com-weasyprint"><span class="header-section-number">1.3.4</span> 4. <strong>Usando Python com
+WeasyPrint</strong></h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> markdown <span class="im">import</span> markdown</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;teste_emojis.md&#39;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    md_content <span class="op">=</span> f.read()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>html_content <span class="op">=</span> markdown(md_content, extensions<span class="op">=</span>[<span class="st">&#39;extra&#39;</span>])</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>HTML(string<span class="op">=</span>html_content).write_pdf(<span class="st">&#39;teste_emojis.pdf&#39;</span>)</span></code></pre></div>
+<h2 data-number="1.4" id="recomendação-principal"><span class="header-section-number">1.4</span> 📋 <strong>Recomendação
+Principal:</strong></h2>
+<p>Use o <strong>Visual Studio Code com a extensão Markdown PDF</strong>
+- é a opção mais direta e que geralmente preserva melhor os emojis
+coloridos sem necessidade de configuração complexa.</p>
+<h2 data-number="1.5" id="instalação-rápida-no-windows"><span class="header-section-number">1.5</span> 🔧 Instalação Rápida no
+Windows:</h2>
+<ol type="1">
+<li><p><strong>Instale o Python</strong> (se não tiver)</p></li>
+<li><p><strong>Instale via pip</strong>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pip install weasyprint pandoc</span></code></pre></div></li>
+<li><p><strong>Execute</strong>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.md <span class="at">-o</span> teste_emojis.pdf -<span class="at">-pdf-engine</span>=weasyprint</span></code></pre></div></li>
+</ol>
+<p>O <strong>WeasyPrint</strong> geralmente oferece os melhores
+resultados para emojis coloridos em PDF. Se encontrar problemas com
+fontes, o VS Code é a alternativa mais confiável.</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-10-28-044032-deepseek-chat"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-10-28
+04:40:32)</em> <em>[deepseek-chat]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;pandoc teste_emojis.md -o
+teste_emojis.pdf –pdf-engine=weasyprint Fontconfig error: Cannot load
+default config file: No such file: (null) Fontconfig error: Cannot load
+default config file: No such file: (null) Error producing PDF.</p>
+<hr />
+<h3 data-number="1.5.2" id="deepseek-2025-10-28-044032-deepseek-chat"><span class="header-section-number">1.5.2</span> 🤖 DeepSeek <em>(2025-10-28
+04:40:32)</em> <em>[deepseek-chat]</em></h3>
+<p>O erro do Fontconfig indica problemas com as fontes do sistema. Vamos
+resolver isso:</p>
+<h2 data-number="1.6" id="soluções-para-o-erro-do-fontconfig"><span class="header-section-number">1.6</span> 🔧 <strong>Soluções para o erro
+do Fontconfig:</strong></h2>
+<h3 data-number="1.6.1" id="solução-1-instalar-o-weasyprint-corretamente-no-windows"><span class="header-section-number">1.6.1</span> <strong>Solução 1: Instalar o
+WeasyPrint corretamente no Windows</strong></h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a># Desinstalar e reinstalar com dependências</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pip uninstall weasyprint</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pip install weasyprint</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a># Ou instalar com o conda (melhor para Windows<span class="kw">)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>conda install <span class="at">-c</span> conda<span class="at">-forge</span> weasyprint</span></code></pre></div>
+<h3 data-number="1.6.2" id="solução-2-usar-uma-abordagem-alternativa"><span class="header-section-number">1.6.2</span> <strong>Solução 2: Usar uma
+abordagem alternativa</strong></h3>
+<p><strong>Método A: Usar o wkhtmltopdf</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a># Baixar wkhtmltopdf de: https:/<span class="at">/wkhtmltopdf</span>.org<span class="at">/downloads</span>.html</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a># Adicionar ao PATH e depois:</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.md <span class="at">-o</span> teste_emojis.pdf -<span class="at">-pdf-engine</span>=wkhtmltopdf</span></code></pre></div>
+<p><strong>Método B: Converter via HTML primeiro</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a># Converter para HTML</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.md <span class="at">-o</span> teste_emojis.html</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a># Abra o HTML no Chrome e imprima como PDF</span></code></pre></div>
+<h3 data-number="1.6.3" id="solução-3-usar-o-visual-studio-code-recomendado"><span class="header-section-number">1.6.3</span> <strong>Solução 3: Usar o
+Visual Studio Code (Recomendado)</strong></h3>
+<ol type="1">
+<li>Instale o VS Code</li>
+<li>Instale a extensão <strong>“Markdown PDF”</strong> de Yoshinori
+Hirasawa</li>
+<li>Abra seu arquivo <code>.md</code></li>
+<li><code>Ctrl+Shift+P</code> → “Markdown PDF: Export (pdf)”</li>
+</ol>
+<h3 data-number="1.6.4" id="solução-4-script-python-alternativo"><span class="header-section-number">1.6.4</span> <strong>Solução 4: Script
+Python alternativo</strong></h3>
+<p>Crie um arquivo <code>converter.py</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> markdown</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> weasyprint <span class="im">import</span> HTML</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler o arquivo markdown</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;teste_emojis.md&#39;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    md_content <span class="op">=</span> f.read()</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter para HTML</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>html_content <span class="op">=</span> markdown.markdown(md_content, extensions<span class="op">=</span>[<span class="st">&#39;extra&#39;</span>])</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar estilo básico</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>html_with_style <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;!DOCTYPE html&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;html&gt;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;head&gt;</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;style&gt;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="ss">        body </span><span class="ch">{{</span><span class="ss"> font-family: &quot;Segoe UI Emoji&quot;, &quot;Apple Color Emoji&quot;, sans-serif; </span><span class="ch">}}</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;/style&gt;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/head&gt;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;body&gt;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="sc">{</span>html_content<span class="sc">}</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/body&gt;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/html&gt;</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Gerar PDF</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>HTML(string<span class="op">=</span>html_with_style).write_pdf(<span class="st">&#39;teste_emojis.pdf&#39;</span>)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;PDF gerado com sucesso!&quot;</span>)</span></code></pre></div>
+<p>Execute:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>python converter.py</span></code></pre></div>
+<h3 data-number="1.6.5" id="solução-5-usar-o-google-chrome"><span class="header-section-number">1.6.5</span> <strong>Solução 5: Usar o
+Google Chrome</strong></h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a># Converter para HTML</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.md <span class="at">-o</span> teste_emojis.html</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a># Abra teste_emojis.html no Chrome e use Ctrl+P → Salvar como PDF</span></code></pre></div>
+<h2 data-number="1.7" id="recomendação-imediata"><span class="header-section-number">1.7</span> 🚀 <strong>Recomendação
+Imediata:</strong></h2>
+<p>Use o <strong>Visual Studio Code com a extensão Markdown PDF</strong>
+- é a forma mais simples e confiável no Windows, sem dependências
+externas problemáticas.</p>
+<p>Qual método você gostaria de tentar primeiro?</p>
+<hr />
+<h3 data-number="1.7.1" id="utilizador-2025-10-28-044845-deepseek-chat"><span class="header-section-number">1.7.1</span> 👤 Utilizador <em>(2025-10-28
+04:48:45)</em> <em>[deepseek-chat]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;python converter.py Fontconfig
+error: Cannot load default config file: No such file: (null) Fontconfig
+error: Cannot load default config file: No such file: (null)</p>
+<hr />
+<h3 data-number="1.7.2" id="deepseek-2025-10-28-044845-deepseek-chat"><span class="header-section-number">1.7.2</span> 🤖 DeepSeek <em>(2025-10-28
+04:48:45)</em> <em>[deepseek-chat]</em></h3>
+<p>O problema persiste com o Fontconfig no Windows. Vamos usar
+abordagens alternativas que não dependem do WeasyPrint:</p>
+<h2 data-number="1.8" id="soluções-alternativas-sem-weasyprint"><span class="header-section-number">1.8</span> 🔧 <strong>Soluções
+Alternativas Sem WeasyPrint:</strong></h2>
+<h3 data-number="1.8.1" id="método-1-usar-o-powershell-com-.net-funciona-bem-no-windows"><span class="header-section-number">1.8.1</span> <strong>Método 1: Usar o
+PowerShell com .NET (Funciona bem no Windows)</strong></h3>
+<p>Crie <code>converter.ps1</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter Markdown para HTML primeiro</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="va">$mdContent</span> <span class="op">=</span> <span class="fu">Get-Content</span> <span class="op">-</span>Path <span class="st">&quot;teste_emojis.md&quot;</span> <span class="op">-</span>Encoding UTF8 <span class="op">-</span>Raw</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter Markdown para HTML básico</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="va">$htmlContent</span> <span class="op">=</span> <span class="vs">@&quot;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;!DOCTYPE html&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;html&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;head&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;title&gt;Teste de Emojis&lt;/title&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;style&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="vs">        body { </span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="vs">            font-family: &quot;Segoe UI Emoji&quot;, &quot;Apple Color Emoji&quot;, &quot;Noto Color Emoji&quot;, sans-serif;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="vs">            line-height: 1.6;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="vs">            margin: 40px;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="vs">        }</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="vs">        h1 { color: #333; }</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="vs">        h2 { color: #666; }</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="vs">    &lt;/style&gt;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/head&gt;</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;body&gt;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="op">$(</span><span class="va">$mdContent</span> <span class="op">-replace</span> <span class="st">&quot;</span><span class="ch">`n</span><span class="st">&quot;</span><span class="op">,</span> <span class="st">&quot;&lt;br&gt;&quot;</span><span class="op">)</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/body&gt;</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="vs">&lt;/html&gt;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="vs">&quot;@</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="va">$htmlContent</span> <span class="op">|</span> <span class="fu">Out-File</span> <span class="op">-</span>FilePath <span class="st">&quot;teste_emojis.html&quot;</span> <span class="op">-</span>Encoding UTF8</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;HTML gerado: teste_emojis.html&quot;</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;Abrindo no navegador para salvar como PDF...&quot;</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="fu">Start-Process</span> <span class="st">&quot;teste_emojis.html&quot;</span></span></code></pre></div>
+<p>Execute no PowerShell:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\converter<span class="op">.</span><span class="fu">ps1</span></span></code></pre></div>
+<h3 data-number="1.8.2" id="método-2-usar-python-com-selenium-chrome"><span class="header-section-number">1.8.2</span> <strong>Método 2: Usar Python
+com Selenium + Chrome</strong></h3>
+<p>Crie <code>converter_selenium.py</code>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> markdown <span class="im">import</span> markdown</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.chrome.options <span class="im">import</span> Options</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Ler o arquivo markdown</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;teste_emojis.md&#39;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    md_content <span class="op">=</span> f.read()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter para HTML</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>html_content <span class="op">=</span> markdown(md_content, extensions<span class="op">=</span>[<span class="st">&#39;extra&#39;</span>])</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># HTML completo com estilos</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>full_html <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;!DOCTYPE html&gt;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;html&gt;</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;head&gt;</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;style&gt;</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="ss">        body </span><span class="ch">{{</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="ss">            font-family: &quot;Segoe UI Emoji&quot;, &quot;Apple Color Emoji&quot;, &quot;Noto Color Emoji&quot;, sans-serif;</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="ss">            line-height: 1.6;</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="ss">            margin: 40px;</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="ss">            max-width: 800px;</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="ss">        </span><span class="ch">}}</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="ss">        h1 </span><span class="ch">{{</span><span class="ss"> color: #333; border-bottom: 2px solid #eee; </span><span class="ch">}}</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="ss">        h2 </span><span class="ch">{{</span><span class="ss"> color: #666; margin-top: 30px; </span><span class="ch">}}</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="ss">    &lt;/style&gt;</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/head&gt;</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;body&gt;</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="sc">{</span>html_content<span class="sc">}</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/body&gt;</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/html&gt;</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="ss">&quot;&quot;&quot;</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Salvar HTML</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;teste_emojis.html&#39;</span>, <span class="st">&#39;w&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    f.write(full_html)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;HTML gerado: teste_emojis.html&quot;</span>)</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Abra este arquivo no Chrome e use Ctrl+P → Salvar como PDF&quot;</span>)</span></code></pre></div>
+<h3 data-number="1.8.3" id="método-3-usar-o-pandoc-com-output-html-e-depois-converter-manualmente"><span class="header-section-number">1.8.3</span> <strong>Método 3: Usar o
+Pandoc com output HTML e depois converter manualmente</strong></h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a># Converter para HTML com pandoc</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.md <span class="at">-o</span> teste_emojis.html -<span class="at">-self-contained</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a># Abrir o HTML no Chrome e salvar como PDF</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">start</span> teste_emojis.html</span></code></pre></div>
+<h3 data-number="1.8.4" id="método-4-usar-ferramenta-online-mais-fácil"><span class="header-section-number">1.8.4</span> <strong>Método 4: Usar
+ferramenta online (Mais fácil)</strong></h3>
+<ol type="1">
+<li>Acesse: <a href="https://markdown-pdf.com/" class="uri">https://markdown-pdf.com/</a></li>
+<li>Cole o conteúdo do seu arquivo MD</li>
+<li>Faça download do PDF</li>
+</ol>
+<h3 data-number="1.8.5" id="método-5-extensão-para-vs-code-mais-confiável"><span class="header-section-number">1.8.5</span> <strong>Método 5: Extensão
+para VS Code (Mais confiável)</strong></h3>
+<p>Se você tem o VS Code instalado:</p>
+<ol type="1">
+<li>Abra o arquivo <code>teste_emojis.md</code></li>
+<li>Instale a extensão <strong>“Markdown PDF”</strong></li>
+<li>Pressione <code>Ctrl+Shift+P</code></li>
+<li>Digite: <code>Markdown PDF: Export (pdf)</code></li>
+</ol>
+<h2 data-number="1.9" id="recomendação-imediata-1"><span class="header-section-number">1.9</span> 🚀 <strong>Recomendação
+Imediata:</strong></h2>
+<p><strong>Use o Método 1 (PowerShell)</strong> ou <strong>Método 4
+(site online)</strong> para resultados rápidos.</p>
+<p>Se preferir uma solução local permanente, instale o <strong>VS
+Code</strong> com a extensão Markdown PDF.</p>
+<p>Qual método você gostaria de tentar?</p>
+<hr />
+<h3 data-number="1.9.1" id="utilizador-2025-10-28-045231-deepseek-chat"><span class="header-section-number">1.9.1</span> 👤 Utilizador <em>(2025-10-28
+04:52:31)</em> <em>[deepseek-chat]</em></h3>
+<p>converter output HTML para pdf</p>
+<hr />
+<h3 data-number="1.9.2" id="deepseek-2025-10-28-045231-deepseek-chat"><span class="header-section-number">1.9.2</span> 🤖 DeepSeek <em>(2025-10-28
+04:52:31)</em> <em>[deepseek-chat]</em></h3>
+<p>Aqui estão várias maneiras de converter HTML para PDF no Windows:</p>
+<h2 data-number="1.10" id="método-1-usando-o-google-chrome-mais-simples"><span class="header-section-number">1.10</span> 🖨️ <strong>Método 1: Usando o
+Google Chrome (Mais Simples)</strong></h2>
+<h3 data-number="1.10.1" id="via-interface-gráfica"><span class="header-section-number">1.10.1</span> Via Interface Gráfica:</h3>
+<ol type="1">
+<li>Abra <code>teste_emojis.html</code> no Chrome</li>
+<li><code>Ctrl + P</code> ou clique nos 3 pontos → Imprimir</li>
+<li>Altere “Destino” para “Salvar como PDF”</li>
+<li>Clique em “Salvar”</li>
+</ol>
+<h3 data-number="1.10.2" id="via-linha-de-comando"><span class="header-section-number">1.10.2</span> Via Linha de Comando:</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a># Navegar até a pasta do Chrome (ajuste o caminho<span class="kw">)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="st">&quot;C:\Program Files\Google\Chrome\Application&quot;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a># Converter HTML para PDF</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>chrome.exe -<span class="at">-headless</span> -<span class="at">-disable-gpu</span> -<span class="at">-print-to-pdf</span>=<span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.pdf&quot;</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis.html&quot;</span></span></code></pre></div>
+<h2 data-number="1.11" id="método-2-python-com-pdfkit"><span class="header-section-number">1.11</span> 🐍 <strong>Método 2: Python
+com pdfkit</strong></h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pdfkit</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Configurar o caminho do wkhtmltopdf (baixe em: https://wkhtmltopdf.org/downloads.html)</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>config <span class="op">=</span> pdfkit.configuration(wkhtmltopdf<span class="op">=</span><span class="vs">r&#39;C:</span><span class="er">\</span><span class="vs">Program Files</span><span class="dv">\w</span><span class="vs">khtmltopdf</span><span class="dv">\b</span><span class="vs">in</span><span class="dv">\w</span><span class="vs">khtmltopdf</span><span class="dv">.</span><span class="vs">exe&#39;</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Converter HTML para PDF</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>pdfkit.from_file(<span class="st">&#39;teste_emojis.html&#39;</span>, <span class="st">&#39;teste_emojis.pdf&#39;</span>, configuration<span class="op">=</span>config)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;PDF gerado com sucesso!&quot;</span>)</span></code></pre></div>
+<p><strong>Instalação:</strong></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pip install pdfkit</span></code></pre></div>
+<h2 data-number="1.12" id="método-3-usando-powershell"><span class="header-section-number">1.12</span> 🌐 <strong>Método 3: Usando
+PowerShell</strong></h2>
+<p>Crie <code>html_to_pdf.ps1</code>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configurações</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="va">$htmlFile</span> <span class="op">=</span> <span class="st">&quot;teste_emojis.html&quot;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="va">$pdfFile</span> <span class="op">=</span> <span class="st">&quot;teste_emojis.pdf&quot;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar objeto COM do Internet Explorer (funciona mesmo descontinuado)</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="va">$ie</span> <span class="op">=</span> <span class="fu">New-Object</span> <span class="op">-</span>ComObject InternetExplorer<span class="op">.</span><span class="fu">Application</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="va">$ie</span><span class="op">.</span><span class="fu">Visible</span> <span class="op">=</span> <span class="va">$false</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="va">$ie</span><span class="op">.</span><span class="fu">Navigate</span><span class="op">(</span><span class="st">&quot;file:///</span><span class="va">$PWD</span><span class="st">/</span><span class="va">$htmlFile</span><span class="st">&quot;</span><span class="op">)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="op">(</span><span class="va">$ie</span><span class="op">.</span><span class="fu">Busy</span> <span class="op">-eq</span> <span class="va">$true</span><span class="op">)</span> <span class="op">{</span> <span class="fu">Start-Sleep</span> <span class="op">-</span>Milliseconds <span class="dv">100</span> <span class="op">}</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar a funcionalidade de impressão para PDF</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="va">$ie</span><span class="op">.</span><span class="fu">ExecWB</span><span class="op">(</span><span class="dv">6</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="va">$null</span><span class="op">,</span> <span class="va">$null</span><span class="op">)</span>  <span class="co"># 6 = PRINT, 2 = PROMPT_USER</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Fechar o IE</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="va">$ie</span><span class="op">.</span><span class="fu">Quit</span><span class="op">()</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>System<span class="op">.</span><span class="fu">Runtime</span><span class="op">.</span><span class="fu">Interopservices</span><span class="op">.</span><span class="fu">Marshal</span><span class="op">]::</span>ReleaseComObject<span class="op">(</span><span class="va">$ie</span><span class="op">)</span> <span class="op">|</span> <span class="fu">Out-Null</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">&quot;PDF salvo como: </span><span class="va">$pdfFile</span><span class="st">&quot;</span></span></code></pre></div>
+<h2 data-number="1.13" id="método-4-usando-microsoft-edge"><span class="header-section-number">1.13</span> 📄 <strong>Método 4: Usando
+Microsoft Edge</strong></h2>
+<h3 data-number="1.13.1" id="linha-de-comando"><span class="header-section-number">1.13.1</span> Linha de Comando:</h3>
+<div class="sourceCode" id="cb20"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a># Converter com Edge</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>msedge.exe -<span class="at">-headless</span> -<span class="at">-disable-gpu</span> -<span class="at">-print-to-pdf</span>=<span class="st">&quot;teste_emojis.pdf&quot;</span> <span class="st">&quot;teste_emojis.html&quot;</span></span></code></pre></div>
+<h2 data-number="1.14" id="método-5-script-python-completo-com-wkhtmltopdf"><span class="header-section-number">1.14</span> 🔧 <strong>Método 5: Script
+Python Completo com wkhtmltopdf</strong></h2>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf(html_file, pdf_file):</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verificar se wkhtmltopdf está instalado</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Tentar executar wkhtmltopdf</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        subprocess.run([<span class="st">&#39;wkhtmltopdf&#39;</span>, <span class="st">&#39;--version&#39;</span>], capture_output<span class="op">=</span><span class="va">True</span>, check<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span>:</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&quot;wkhtmltopdf não encontrado. Baixe em: https://wkhtmltopdf.org/downloads.html&quot;</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Converter HTML para PDF</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> [<span class="st">&#39;wkhtmltopdf&#39;</span>, <span class="st">&#39;--enable-local-file-access&#39;</span>, html_file, pdf_file]</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        subprocess.run(cmd, check<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;PDF gerado com sucesso: </span><span class="sc">{</span>pdf_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> subprocess.CalledProcessError <span class="im">as</span> e:</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Erro ao gerar PDF: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar a função</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>html_to_pdf(<span class="st">&#39;teste_emojis.html&#39;</span>, <span class="st">&#39;teste_emojis.pdf&#39;</span>)</span></code></pre></div>
+<h2 data-number="1.15" id="método-6-usando-pandoc-diretamente-se-funcionar"><span class="header-section-number">1.15</span> 🎯 <strong>Método 6: Usando
+Pandoc Diretamente (se funcionar)</strong></h2>
+<div class="sourceCode" id="cb22"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis.html <span class="at">-o</span> teste_emojis.pdf -<span class="at">-pdf-engine</span>=wkhtmltopdf</span></code></pre></div>
+<h2 data-number="1.16" id="recomendações"><span class="header-section-number">1.16</span> 🚀
+<strong>Recomendações:</strong></h2>
+<p><strong>Para simplicidade:</strong> Use o <strong>Método 1
+(Chrome)</strong> - abra o HTML e salve como PDF.</p>
+<p><strong>Para automação:</strong> Use o <strong>Método 2
+(pdfkit)</strong> com wkhtmltopdf.</p>
+<p><strong>Para linha de comando:</strong> Use o <strong>Método 1
+(Chrome headless)</strong>.</p>
+<p>Qual método você gostaria de tentar primeiro?</p>
+<hr />
+<h3 data-number="1.16.1" id="utilizador-2025-10-28-050218-deepseek-chat"><span class="header-section-number">1.16.1</span> 👤 Utilizador
+<em>(2025-10-28 05:02:18)</em> <em>[deepseek-chat]</em></h3>
+<p>como instalar wkhtmltopdf com choco</p>
+<hr />
+<h3 data-number="1.16.2" id="deepseek-2025-10-28-050218-deepseek-chat"><span class="header-section-number">1.16.2</span> 🤖 DeepSeek <em>(2025-10-28
+05:02:18)</em> <em>[deepseek-chat]</em></h3>
+<p>Aqui está como instalar o wkhtmltopdf usando Chocolatey:</p>
+<h2 data-number="1.17" id="instalação-com-chocolatey"><span class="header-section-number">1.17</span> 🍫 <strong>Instalação com
+Chocolatey</strong></h2>
+<h3 data-number="1.17.1" id="primeiro-verifique-se-o-chocolatey-está-instalado"><span class="header-section-number">1.17.1</span> <strong>1. Primeiro,
+verifique se o Chocolatey está instalado:</strong></h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>choco -<span class="at">-version</span></span></code></pre></div>
+<p>Se não estiver instalado, instale o Chocolatey como
+<strong>Administrador</strong>:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a># Abra o PowerShell como Administrador e execute:</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="er">-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(&#39;https://community.chocolatey.org/install.ps1&#39;))</span></span></code></pre></div>
+<h3 data-number="1.17.2" id="instale-o-wkhtmltopdf"><span class="header-section-number">1.17.2</span> <strong>2. Instale o
+wkhtmltopdf:</strong></h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a># Como Administrador</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>choco install wkhtmltopdf <span class="at">-y</span></span></code></pre></div>
+<h3 data-number="1.17.3" id="verifique-a-instalação"><span class="header-section-number">1.17.3</span> <strong>3. Verifique a
+instalação:</strong></h3>
+<div class="sourceCode" id="cb26"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>wkhtmltopdf -<span class="at">-version</span></span></code></pre></div>
+<h2 data-number="1.18" id="configuração-pós-instalação"><span class="header-section-number">1.18</span> 🔧 <strong>Configuração
+Pós-Instalação</strong></h2>
+<h3 data-number="1.18.1" id="adicionar-ao-path-se-necessário"><span class="header-section-number">1.18.1</span> <strong>Adicionar ao PATH
+(se necessário):</strong></h3>
+<p>O Chocolatey geralmente adiciona automaticamente ao PATH, mas se não
+funcionar:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a># Verificar se está no PATH</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>where wkhtmltopdf</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a># Se não encontrar, adicione manualmente</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>setx PATH <span class="st">&quot;</span><span class="pp">%</span><span class="va">PATH</span><span class="pp">%</span><span class="st">;C:\Program Files\wkhtmltopdf\bin&quot;</span></span></code></pre></div>
+<h3 data-number="1.18.2" id="testar-a-conversão"><span class="header-section-number">1.18.2</span> <strong>Testar a
+conversão:</strong></h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>wkhtmltopdf teste_emojis.html teste_emojis.pdf</span></code></pre></div>
+<h2 data-number="1.19" id="usar-com-python-pdfkit"><span class="header-section-number">1.19</span> 🐍 <strong>Usar com Python
+(pdfkit):</strong></h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pdfkit</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Configurar o caminho (geralmente automático com Chocolatey)</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tentar detectar automaticamente</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    pdfkit.from_file(<span class="st">&#39;teste_emojis.html&#39;</span>, <span class="st">&#39;teste_emojis.pdf&#39;</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;PDF gerado com sucesso!&quot;</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span>:</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Se falhar, especificar o caminho manualmente</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    config <span class="op">=</span> pdfkit.configuration(wkhtmltopdf<span class="op">=</span><span class="vs">r&#39;C:</span><span class="er">\</span><span class="vs">ProgramData</span><span class="er">\</span><span class="vs">chocolatey</span><span class="dv">\b</span><span class="vs">in</span><span class="dv">\w</span><span class="vs">khtmltopdf</span><span class="dv">.</span><span class="vs">exe&#39;</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    pdfkit.from_file(<span class="st">&#39;teste_emojis.html&#39;</span>, <span class="st">&#39;teste_emojis.pdf&#39;</span>, configuration<span class="op">=</span>config)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;PDF gerado com sucesso!&quot;</span>)</span></code></pre></div>
+<h2 data-number="1.20" id="comandos-úteis-do-chocolatey"><span class="header-section-number">1.20</span> 📋 <strong>Comandos Úteis do
+Chocolatey:</strong></h2>
+<div class="sourceCode" id="cb30"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a># Atualizar wkhtmltopdf</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>choco upgrade wkhtmltopdf <span class="at">-y</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a># Listar pacotes instalados</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>choco list -<span class="at">-local-only</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a># Desinstalar</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>choco uninstall wkhtmltopdf <span class="at">-y</span></span></code></pre></div>
+<h2 data-number="1.21" id="script-completo-de-conversão"><span class="header-section-number">1.21</span> 🚀 <strong>Script Completo de
+Conversão:</strong></h2>
+<p>Crie <code>converter_final.py</code>:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pdfkit</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> convert_md_to_pdf():</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Configurar wkhtmltopdf (Chocolatey install)</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>        config <span class="op">=</span> pdfkit.configuration(wkhtmltopdf<span class="op">=</span><span class="vs">r&#39;C:</span><span class="er">\</span><span class="vs">ProgramData</span><span class="er">\</span><span class="vs">chocolatey</span><span class="dv">\b</span><span class="vs">in</span><span class="dv">\w</span><span class="vs">khtmltopdf</span><span class="dv">.</span><span class="vs">exe&#39;</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Primeiro converter MD para HTML</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;teste_emojis.md&#39;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>            md_content <span class="op">=</span> f.read()</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># HTML com suporte a emojis</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>        html_content <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;!DOCTYPE html&gt;</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;html&gt;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;head&gt;</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;meta charset=&quot;UTF-8&quot;&gt;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;style&gt;</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="ss">                body </span><span class="ch">{{</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="ss">                    font-family: &quot;Segoe UI Emoji&quot;, &quot;Apple Color Emoji&quot;, &quot;Noto Color Emoji&quot;, sans-serif;</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="ss">                    line-height: 1.6;</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a><span class="ss">                    margin: 40px;</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="ss">                    max-width: 800px;</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a><span class="ss">                </span><span class="ch">}}</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="ss">                h1 </span><span class="ch">{{</span><span class="ss"> color: #333; border-bottom: 2px solid #eee; </span><span class="ch">}}</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a><span class="ss">                h2 </span><span class="ch">{{</span><span class="ss"> color: #666; margin-top: 30px; </span><span class="ch">}}</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a><span class="ss">            &lt;/style&gt;</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/head&gt;</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;body&gt;</span></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a><span class="ss">            </span><span class="sc">{</span>md_content<span class="sc">.</span>replace(<span class="bu">chr</span>(<span class="dv">10</span>), <span class="st">&#39;&lt;br&gt;&#39;</span>)<span class="sc">.</span>replace(<span class="st">&#39;# &#39;</span>, <span class="st">&#39;&lt;h1&gt;&#39;</span>)<span class="sc">.</span>replace(<span class="st">&#39;## &#39;</span>, <span class="st">&#39;&lt;h2&gt;&#39;</span>)<span class="sc">}</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/body&gt;</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a><span class="ss">        &lt;/html&gt;</span></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a><span class="ss">        &quot;&quot;&quot;</span></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Salvar HTML temporário</span></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&#39;temp_emojis.html&#39;</span>, <span class="st">&#39;w&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;utf-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>            f.write(html_content)</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Converter para PDF</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>        pdfkit.from_file(<span class="st">&#39;temp_emojis.html&#39;</span>, <span class="st">&#39;teste_emojis.pdf&#39;</span>, configuration<span class="op">=</span>config)</span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Limpar arquivo temporário</span></span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>        os.remove(<span class="st">&#39;temp_emojis.html&#39;</span>)</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&quot;✅ PDF gerado com sucesso: teste_emojis.pdf&quot;</span>)</span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;❌ Erro: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>    convert_md_to_pdf()</span></code></pre></div>
+<h2 data-number="1.22" id="dica-importante"><span class="header-section-number">1.22</span> 💡 <strong>Dica
+Importante:</strong></h2>
+<p>Execute o PowerShell ou Prompt de Comando <strong>como
+Administrador</strong> para instalar via Chocolatey.</p>
+<p>O Chocolatey é a maneira mais limpa de instalar o wkhtmltopdf no
+Windows, pois cuida das dependências e da configuração do PATH
+automaticamente.</p>
+<hr />
+<h3 data-number="1.22.1" id="utilizador-2025-10-28-050509-deepseek-chat"><span class="header-section-number">1.22.1</span> 👤 Utilizador
+<em>(2025-10-28 05:05:09)</em> <em>[deepseek-chat]</em></h3>
+<p>com wkhtmltopdf teste_emojis.html teste_emojis.pdf os emojis são a
+preto e branco</p>
+<hr />
+<h3 data-number="1.22.2" id="deepseek-2025-10-28-050509-deepseek-chat"><span class="header-section-number">1.22.2</span> 🤖 DeepSeek <em>(2025-10-28
+05:05:09)</em> <em>[deepseek-chat]</em></h3>
+<p>O problema é que o wkhtmltopdf não suporta emojis coloridos
+nativamente. Vamos usar alternativas que mantêm as cores:</p>
+<h2 data-number="1.23" id="soluções-para-emojis-coloridos"><span class="header-section-number">1.23</span> 🎨 <strong>Soluções para
+Emojis Coloridos:</strong></h2>
+<h3 data-number="1.23.1" id="método-1-usar-chromeedge-recomendado"><span class="header-section-number">1.23.1</span> <strong>Método 1: Usar
+Chrome/Edge (Recomendado)</strong></h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a># Com Google Chrome</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> --headless -<span class="at">-disable-gpu</span> -<span class="at">-print-to-pdf</span>=<span class="st">&quot;teste_emojis.pdf&quot;</span> <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a># Com Microsoft Edge</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;</span> --headless -<span class="at">-disable-gpu</span> -<span class="at">-print-to-pdf</span>=<span class="st">&quot;teste_emojis.pdf&quot;</span> <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span></code></pre></div>
+<h3 data-number="1.23.2" id="método-2-script-python-com-selenium-chrome"><span class="header-section-number">1.23.2</span> <strong>Método 2: Script
+Python com Selenium + Chrome</strong></h3>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.chrome.options <span class="im">import</span> Options</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_color(html_file, pdf_file):</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    chrome_options <span class="op">=</span> Options()</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--headless&#39;</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--disable-gpu&#39;</span>)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--no-sandbox&#39;</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--disable-dev-shm-usage&#39;</span>)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configurar para imprimir como PDF</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_experimental_option(<span class="st">&#39;prefs&#39;</span>, {</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;printing.print_preview_sticky_settings.appState&#39;</span>: <span class="st">&#39;{&quot;recentDestinations&quot;:[{&quot;id&quot;:&quot;Save as PDF&quot;,&quot;origin&quot;:&quot;local&quot;,&quot;account&quot;:&quot;&quot;}],&quot;selectedDestinationId&quot;:&quot;Save as PDF&quot;,&quot;version&quot;:2}&#39;</span>,</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;download.default_directory&#39;</span>: <span class="vs">r&#39;D:</span><span class="dv">\D</span><span class="vs">ownloads</span><span class="ch">\_</span><span class="vs">DOCS_</span><span class="ch">\_</span><span class="vs">DOCS_</span><span class="er">\</span><span class="vs">Teste_emojis&#39;</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>    driver <span class="op">=</span> webdriver.Chrome(options<span class="op">=</span>chrome_options)</span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Abrir arquivo local</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>        driver.get(<span class="ss">f&quot;file:///</span><span class="sc">{</span>html_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>        time.sleep(<span class="dv">2</span>)  <span class="co"># Esperar carregar</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Executar comando de impressão para PDF</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>        pdf_script <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="st">        window.print();</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;&quot;&quot;</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>        driver.execute_script(pdf_script)</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;PDF com emojis coloridos gerado: </span><span class="sc">{</span>pdf_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>        driver.quit()</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar</span></span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a>html_to_pdf_color(<span class="vs">r&quot;D:</span><span class="dv">\D</span><span class="vs">ownloads</span><span class="ch">\_</span><span class="vs">DOCS_</span><span class="ch">\_</span><span class="vs">DOCS_</span><span class="er">\</span><span class="vs">Teste_emojis</span><span class="ch">\t</span><span class="vs">este_emojis</span><span class="dv">.</span><span class="vs">html&quot;</span>, <span class="st">&quot;teste_emojis_colorido.pdf&quot;</span>)</span></code></pre></div>
+<h3 data-number="1.23.3" id="método-3-usar-puppeteer-node.js"><span class="header-section-number">1.23.3</span> <strong>Método 3: Usar
+Puppeteer (Node.js)</strong></h3>
+<p>Se você tem Node.js instalado:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> puppeteer <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;puppeteer&#39;</span>)<span class="op">;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> path <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;path&#39;</span>)<span class="op">;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>(<span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> puppeteer<span class="op">.</span><span class="fu">launch</span>()<span class="op">;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> page <span class="op">=</span> <span class="cf">await</span> browser<span class="op">.</span><span class="fu">newPage</span>()<span class="op">;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Abrir o arquivo HTML</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> htmlPath <span class="op">=</span> path<span class="op">.</span><span class="fu">join</span>(<span class="bu">__dirname</span><span class="op">,</span> <span class="st">&#39;teste_emojis.html&#39;</span>)<span class="op">;</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="vs">`file://</span><span class="sc">${</span>htmlPath<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> { <span class="dt">waitUntil</span><span class="op">:</span> <span class="st">&#39;networkidle0&#39;</span> })<span class="op">;</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Gerar PDF</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">pdf</span>({</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">path</span><span class="op">:</span> <span class="st">&#39;teste_emojis_colorido.pdf&#39;</span><span class="op">,</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">format</span><span class="op">:</span> <span class="st">&#39;A4&#39;</span><span class="op">,</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">printBackground</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">margin</span><span class="op">:</span> { <span class="dt">top</span><span class="op">:</span> <span class="st">&#39;1cm&#39;</span><span class="op">,</span> <span class="dt">right</span><span class="op">:</span> <span class="st">&#39;1cm&#39;</span><span class="op">,</span> <span class="dt">bottom</span><span class="op">:</span> <span class="st">&#39;1cm&#39;</span><span class="op">,</span> <span class="dt">left</span><span class="op">:</span> <span class="st">&#39;1cm&#39;</span> }</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> browser<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;PDF com emojis coloridos gerado!&#39;</span>)<span class="op">;</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>})()<span class="op">;</span></span></code></pre></div>
+<p><strong>Instalação:</strong></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>npm install puppeteer</span></code></pre></div>
+<h3 data-number="1.23.4" id="método-4-converter-via-interface-gráfica-garantido"><span class="header-section-number">1.23.4</span> <strong>Método 4: Converter
+via Interface Gráfica (Garantido)</strong></h3>
+<ol type="1">
+<li>Abra <code>teste_emojis.html</code> no <strong>Google
+Chrome</strong></li>
+<li>Pressione <code>Ctrl + P</code></li>
+<li>Em “Destino”, selecione <strong>“Salvar como PDF”</strong></li>
+<li>Em “Mais configurações”, marque <strong>“Imprimir planos de
+fundo”</strong></li>
+<li>Clique em <strong>“Salvar”</strong></li>
+</ol>
+<h3 data-number="1.23.5" id="método-5-usar-weasyprint-com-docker-contorna-problemas-do-windows"><span class="header-section-number">1.23.5</span> <strong>Método 5: Usar
+WeasyPrint com Docker (Contorna problemas do Windows)</strong></h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a># Se você tem Docker instalado</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>docker run <span class="at">-v</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis:/workspace&quot;</span> weasyprint weasyprint <span class="at">/workspace/teste_emojis</span>.html <span class="at">/workspace/teste_emojis_colorido</span>.pdf</span></code></pre></div>
+<h2 data-number="1.24" id="método-mais-simples-e-eficaz"><span class="header-section-number">1.24</span> 🚀 <strong>Método Mais Simples
+e Eficaz:</strong></h2>
+<p>Crie um arquivo <code>gerar_pdf_colorido.bat</code>:</p>
+<pre class="batch"><code>@echo off
+echo Abrindo HTML no Chrome para conversao com emojis coloridos...
+echo Por favor, use Ctrl+P e selecione &quot;Salvar como PDF&quot;
+
+&quot;c:\Program Files\Google\Chrome\Application\chrome.exe&quot; &quot;%~dp0teste_emojis.html&quot;
+
+echo.
+echo Se o PDF nao foi gerado automaticamente:
+echo 1. Pressione Ctrl+P
+echo 2. Selecione &#39;Salvar como PDF&#39; 
+echo 3. Clique em &#39;Salvar&#39;
+echo 4. Nomeie como &#39;teste_emojis.pdf&#39;
+pause</code></pre>
+<h2 data-number="1.25" id="por-que-wkhtmltopdf-não-mostra-cores"><span class="header-section-number">1.25</span> 💡 <strong>Por que wkhtmltopdf
+não mostra cores:</strong></h2>
+<ul>
+<li><strong>wkhtmltopdf</strong> usa o motor WebKit antigo</li>
+<li><strong>Não suporta</strong> emojis coloridos modernos</li>
+<li><strong>Chrome/Edge</strong> usam Blink que tem suporte completo a
+emojis</li>
+</ul>
+<p><strong>Recomendo o Método 4 (Interface Gráfica do Chrome)</strong> -
+é garantido que funciona e mantém todos os emojis coloridos!</p>
+<hr />
+<h3 data-number="1.25.1" id="utilizador-2025-10-28-050953-deepseek-chat"><span class="header-section-number">1.25.1</span> 👤 Utilizador
+<em>(2025-10-28 05:09:53)</em> <em>[deepseek-chat]</em></h3>
+<p>Metodo 2 (Pesquisas) D:_DOCS__DOCS__emojis&gt;python
+deepseek_convert2.py PDF com emojis coloridos gerado:
+teste_emojis_colorido.pdf ; onde é gerado o pdf</p>
+<hr />
+<h3 data-number="1.25.2" id="deepseek-2025-10-28-050953-deepseek-chat"><span class="header-section-number">1.25.2</span> 🤖 DeepSeek <em>(2025-10-28
+05:09:53)</em> <em>[deepseek-chat]</em></h3>
+<p>No método com Selenium, o PDF é gerado no <strong>diretório de
+download padrão do Chrome</strong>, não necessariamente na pasta do seu
+script.</p>
+<h2 data-number="1.26" id="para-controlar-onde-o-pdf-é-salvo"><span class="header-section-number">1.26</span> 📍 <strong>Para controlar onde
+o PDF é salvo:</strong></h2>
+<h3 data-number="1.26.1" id="opção-1-modificar-o-script-para-salvar-na-pasta-atual"><span class="header-section-number">1.26.1</span> <strong>Opção 1: Modificar o
+script para salvar na pasta atual</strong></h3>
+<p>Atualize <code>deepseek_convert2.py</code>:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.chrome.options <span class="im">import</span> Options</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_color(html_file, pdf_file):</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Obter o diretório atual</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    current_dir <span class="op">=</span> os.getcwd()</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    pdf_path <span class="op">=</span> os.path.join(current_dir, pdf_file)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    chrome_options <span class="op">=</span> Options()</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--headless&#39;</span>)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--disable-gpu&#39;</span>)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--no-sandbox&#39;</span>)</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--disable-dev-shm-usage&#39;</span>)</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configurar diretório de download explícito</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_experimental_option(<span class="st">&#39;prefs&#39;</span>, {</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;download.default_directory&#39;</span>: current_dir,</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;printing.print_preview_sticky_settings.appState&#39;</span>: <span class="st">&#39;{&quot;recentDestinations&quot;:[{&quot;id&quot;:&quot;Save as PDF&quot;,&quot;origin&quot;:&quot;local&quot;,&quot;account&quot;:&quot;&quot;}],&quot;selectedDestinationId&quot;:&quot;Save as PDF&quot;,&quot;version&quot;:2}&#39;</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Configurar para salvar automaticamente como PDF</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_experimental_option(<span class="st">&#39;excludeSwitches&#39;</span>, [<span class="st">&#39;enable-logging&#39;</span>])</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>    driver <span class="op">=</span> webdriver.Chrome(options<span class="op">=</span>chrome_options)</span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Abrir arquivo local (caminho completo)</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>        full_html_path <span class="op">=</span> <span class="ss">f&quot;file:///</span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(html_file)<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;Abrindo: </span><span class="sc">{</span>full_html_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>        driver.get(full_html_path)</span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>        time.sleep(<span class="dv">3</span>)  <span class="co"># Esperar carregar completamente</span></span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Executar comando de impressão para PDF</span></span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>        print_script <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a><span class="st">        window.print();</span></span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a><span class="st">        return true;</span></span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;&quot;&quot;</span></span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> driver.execute_script(print_script)</span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;✅ PDF gerado em: </span><span class="sc">{</span>pdf_path<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;❌ Erro: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a>        driver.quit()</span>
+<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&quot;Navegador fechado.&quot;</span>)</span>
+<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar caminhos absolutos</span></span>
+<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a>html_file <span class="op">=</span> <span class="st">&quot;teste_emojis.html&quot;</span></span>
+<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a>pdf_file <span class="op">=</span> <span class="st">&quot;teste_emojis_colorido.pdf&quot;</span></span>
+<span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar se o arquivo HTML existe</span></span>
+<span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(html_file):</span>
+<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Arquivo HTML encontrado: </span><span class="sc">{</span>html_file<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a>    html_to_pdf_color(html_file, pdf_file)</span>
+<span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verificar se o PDF foi criado</span></span>
+<span id="cb38-60"><a href="#cb38-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> os.path.exists(pdf_file):</span>
+<span id="cb38-61"><a href="#cb38-61" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;✅ PDF criado com sucesso em: </span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(pdf_file)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb38-62"><a href="#cb38-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb38-63"><a href="#cb38-63" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">&quot;❌ PDF não foi criado. Verifique as permissões.&quot;</span>)</span>
+<span id="cb38-64"><a href="#cb38-64" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb38-65"><a href="#cb38-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;❌ Arquivo HTML não encontrado: </span><span class="sc">{</span>html_file<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 data-number="1.26.2" id="opção-2-método-mais-confiável-com-chrome-devtools-protocol"><span class="header-section-number">1.26.2</span> <strong>Opção 2: Método mais
+confiável com Chrome DevTools Protocol</strong></h3>
+<p>Crie <code>deepseek_convert3.py</code>:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.chrome.options <span class="im">import</span> Options</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> html_to_pdf_direct(html_file, pdf_file):</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    chrome_options <span class="op">=</span> Options()</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--headless&#39;</span>)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--disable-gpu&#39;</span>)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    chrome_options.add_argument(<span class="st">&#39;--no-sandbox&#39;</span>)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    driver <span class="op">=</span> webdriver.Chrome(options<span class="op">=</span>chrome_options)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Abrir arquivo HTML</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>        full_path <span class="op">=</span> <span class="ss">f&quot;file:///</span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(html_file)<span class="sc">}</span><span class="ss">&quot;</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>        driver.get(full_path)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Executar comando do Chrome DevTools para gerar PDF</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>        pdf_params <span class="op">=</span> {</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;landscape&#39;</span>: <span class="va">False</span>,</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;displayHeaderFooter&#39;</span>: <span class="va">False</span>,</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;printBackground&#39;</span>: <span class="va">True</span>,</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;preferCSSPageSize&#39;</span>: <span class="va">True</span>,</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gerar PDF diretamente</span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> driver.execute_cdp_cmd(<span class="st">&#39;Page.printToPDF&#39;</span>, pdf_params)</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>        pdf_data <span class="op">=</span> base64.b64decode(result[<span class="st">&#39;data&#39;</span>])</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Salvar PDF</span></span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(pdf_file, <span class="st">&#39;wb&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>            f.write(pdf_data)</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;✅ PDF gerado diretamente em: </span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(pdf_file)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;❌ Erro: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a>        driver.quit()</span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar</span></span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a>html_to_pdf_direct(<span class="st">&quot;teste_emojis.html&quot;</span>, <span class="st">&quot;teste_emojis_colorido.pdf&quot;</span>)</span></code></pre></div>
+<h3 data-number="1.26.3" id="opção-3-verificar-onde-está-o-pdf-atual"><span class="header-section-number">1.26.3</span> <strong>Opção 3: Verificar
+onde está o PDF atual</strong></h3>
+<p>Execute este comando para encontrar o PDF:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a># No Prompt de Comando, procure pelo arquivo</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span> <span class="at">/s</span> teste_emojis_colorido.pdf</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a># Ou no PowerShell</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>Get-ChildItem <span class="at">-Path</span> C:\ <span class="at">-Name</span> <span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> <span class="at">-Recurse</span> <span class="at">-ErrorAction</span> SilentlyContinue</span></code></pre></div>
+<h3 data-number="1.26.4" id="opção-4-método-mais-simples-com-chrome-headless"><span class="header-section-number">1.26.4</span> <strong>Opção 4: Método mais
+simples com Chrome headless</strong></h3>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> chrome_html_to_pdf(html_file, pdf_file):</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    chrome_path <span class="op">=</span> <span class="vs">r&quot;C:</span><span class="er">\</span><span class="vs">Program Files</span><span class="dv">\G</span><span class="vs">oogle</span><span class="er">\</span><span class="vs">Chrome</span><span class="dv">\A</span><span class="vs">pplication</span><span class="er">\</span><span class="vs">chrome</span><span class="dv">.</span><span class="vs">exe&quot;</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> os.path.exists(chrome_path):</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>        chrome_path <span class="op">=</span> <span class="vs">r&quot;C:</span><span class="er">\</span><span class="vs">Program Files </span><span class="kw">(</span><span class="vs">x86</span><span class="kw">)</span><span class="dv">\G</span><span class="vs">oogle</span><span class="er">\</span><span class="vs">Chrome</span><span class="dv">\A</span><span class="vs">pplication</span><span class="er">\</span><span class="vs">chrome</span><span class="dv">.</span><span class="vs">exe&quot;</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    cmd <span class="op">=</span> [</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>        chrome_path,</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;--headless&#39;</span>,</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;--disable-gpu&#39;</span>,</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;--print-to-pdf=&#39;</span> <span class="op">+</span> os.path.abspath(pdf_file),</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;file:///&#39;</span> <span class="op">+</span> os.path.abspath(html_file)</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> subprocess.run(cmd, capture_output<span class="op">=</span><span class="va">True</span>, text<span class="op">=</span><span class="va">True</span>, timeout<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> result.returncode <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;✅ PDF gerado em: </span><span class="sc">{</span>os<span class="sc">.</span>path<span class="sc">.</span>abspath(pdf_file)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f&quot;❌ Erro: </span><span class="sc">{</span>result<span class="sc">.</span>stderr<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f&quot;❌ Erro: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Usar</span></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>chrome_html_to_pdf(<span class="st">&quot;teste_emojis.html&quot;</span>, <span class="st">&quot;teste_emojis_colorido.pdf&quot;</span>)</span></code></pre></div>
+<h2 data-number="1.27" id="o-pdf-deve-ser-gerado-na-mesma-pasta-do-seu-script"><span class="header-section-number">1.27</span> 📂 <strong>O PDF deve ser
+gerado na mesma pasta do seu script:</strong></h2>
+<pre><code>D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\
+├── deepseek_convert2.py
+├── teste_emojis.html
+├── teste_emojis.md
+└── teste_emojis_colorido.pdf  ← AQUI!</code></pre>
+<p><strong>Recomendo usar a Opção 4</strong> - é a mais direta e
+confiável para controlar onde o PDF é salvo!</p>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

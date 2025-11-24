@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>188_Grok_Instalando_Pandoc_no_Windows_com_Chocolatey</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#instalando-pandoc-no-windows-com-chocolatey" id="toc-instalando-pandoc-no-windows-com-chocolatey"><span class="toc-section-number">1</span> Instalando Pandoc no Windows com
+Chocolatey</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="instalando-pandoc-no-windows-com-chocolatey"><span class="header-section-number">1</span> Instalando Pandoc no Windows com
+Chocolatey</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #188</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> efe5cab7-3af2-47b7-ab55-9f01c75fb7a1</li>
+<li><strong>Criada em:</strong> 2025-09-15 11:48:36Z</li>
+<li><strong>Atualizada em:</strong> 2025-09-15 11:50:45Z</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Como instalar pandoc no Windows com
+choco…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-15-124836-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-15
+12:48:36)</em> <em>[Grok]</em></h3>
+<p>Como instalar pandoc no Windows com choco</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-09-15-124844-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-09-15
+12:48:44)</em> <em>[Grok]</em></h3>
+<p>Para instalar o Pandoc no Windows usando o Chocolatey (choco), siga
+estes passos:</p>
+<ol type="1">
+<li><strong>Certifique-se de que o Chocolatey está instalado</strong>:
+<ul>
+<li><p>Abra o PowerShell como administrador (pressione
+<code>Win + X</code> e selecione “Windows PowerShell (Admin)”).</p></li>
+<li><p>Verifique se o Chocolatey está instalado com o comando:</p>
+<pre><code>choco --version</code></pre></li>
+<li><p>Se não estiver instalado, instale-o com:</p>
+<pre><code>Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString(&#39;https://community.chocolatey.org/install.ps1&#39;))</code></pre></li>
+</ul></li>
+<li><strong>Instale o Pandoc</strong>:
+<ul>
+<li><p>No PowerShell (como administrador), execute:</p>
+<pre><code>choco install pandoc</code></pre></li>
+<li><p>Confirme a instalação pressionando <code>Y</code> (se
+solicitado).</p></li>
+</ul></li>
+<li><strong>Verifique a instalação</strong>:
+<ul>
+<li><p>Após a instalação, verifique se o Pandoc foi instalado
+corretamente:</p>
+<pre><code>pandoc --version</code></pre></li>
+<li><p>Isso deve exibir a versão do Pandoc instalada.</p></li>
+</ul></li>
+</ol>
+<p><strong>Notas</strong>: - Certifique-se de que o PowerShell está
+sendo executado como administrador para evitar problemas de permissão. -
+Se você encontrar erros, verifique sua conexão com a internet ou se o
+repositório do Chocolatey está acessível. - Para atualizar o Pandoc no
+futuro, use: <code>choco upgrade pandoc</code></p>
+<p>Pronto! O Pandoc estará instalado e pronto para uso.</p>
+<hr />
+<h3 data-number="1.2.3" id="utilizador-2025-09-15-125024-grok"><span class="header-section-number">1.2.3</span> 👤 Utilizador <em>(2025-09-15
+12:50:24)</em> <em>[Grok]</em></h3>
+<p>Ao converter md para pdf dá erro</p>
+<hr />
+<h3 data-number="1.2.4" id="grok-2025-09-15-125045-grok"><span class="header-section-number">1.2.4</span> 🤖 Grok <em>(2025-09-15
+12:50:45)</em> <em>[Grok]</em></h3>
+<p>O erro ao converter um arquivo Markdown (.md) para PDF usando o
+Pandoc no Windows geralmente está relacionado à falta de um compilador
+LaTeX, como o MiKTeX ou TeX Live, que é necessário para renderizar PDFs.
+Vou guiá-lo pelos passos para resolver o problema:</p>
+<h3 data-number="1.2.5" id="passos-para-corrigir-o-erro"><span class="header-section-number">1.2.5</span> Passos para corrigir o
+erro:</h3>
+<ol type="1">
+<li><strong>Verifique a mensagem de erro</strong>:
+<ul>
+<li>Quando você executa o comando (por exemplo,
+<code>pandoc input.md -o output.pdf</code>), observe a mensagem de erro.
+Um erro comum é algo como <code>&quot;pandoc: pdflatex not found&quot;</code>,
+indicando que o Pandoc não encontrou um compilador LaTeX.</li>
+</ul></li>
+<li><strong>Instale um compilador LaTeX</strong>:
+<ul>
+<li><p>O Pandoc usa LaTeX para gerar PDFs. Você precisa instalar o
+MiKTeX (ou TeX Live) no Windows.</p></li>
+<li><p><strong>Usando Chocolatey</strong> (recomendado para
+consistência):</p>
+<pre><code>choco install miktex</code></pre></li>
+<li><p>Confirme a instalação pressionando <code>Y</code> quando
+solicitado.</p></li>
+<li><p><strong>Alternativa</strong>: Baixe e instale o MiKTeX
+manualmente em <a href="https://miktex.org/download">miktex.org</a>.</p></li>
+</ul></li>
+<li><strong>Teste o comando novamente</strong>:
+<ul>
+<li><p>Após instalar o MiKTeX, tente converter o arquivo Markdown
+novamente:</p>
+<pre><code>pandoc input.md -o output.pdf</code></pre></li>
+<li><p>Substitua <code>input.md</code> pelo nome do seu arquivo
+Markdown.</p></li>
+</ul></li>
+<li><strong>Possíveis problemas adicionais</strong>:
+<ul>
+<li><p><strong>Erro de codificação (UTF-8)</strong>: Se o arquivo
+Markdown contiver caracteres especiais (como acentos), certifique-se de
+que ele está salvo em UTF-8. Você pode especificar a codificação no
+comando:</p>
+<pre><code>pandoc input.md -o output.pdf --pdf-engine=pdflatex</code></pre></li>
+<li><p><strong>Falta de dependências LaTeX</strong>: O MiKTeX pode
+instalar pacotes automaticamente, mas, se houver erro relacionado a
+pacotes LaTeX, abra o MiKTeX Console (instalado com o MiKTeX) e instale
+os pacotes faltantes.</p></li>
+<li><p><strong>Caminho do Pandoc ou MiKTeX</strong>: Verifique se ambos
+estão no PATH do sistema. Teste com:</p>
+<pre><code>pandoc --version
+pdflatex --version</code></pre>
+<p>Se <code>pdflatex</code> não for encontrado, reinstale o MiKTeX ou
+adicione seu diretório ao PATH manualmente.</p></li>
+</ul></li>
+<li><strong>Outras opções para evitar LaTeX</strong>:
+<ul>
+<li>Se você não quiser instalar o LaTeX, pode converter o Markdown para
+HTML e depois usar uma ferramenta como wkhtmltopdf para gerar o PDF:
+<ul>
+<li><p>Instale o wkhtmltopdf com:</p>
+<pre><code>choco install wkhtmltopdf</code></pre></li>
+<li><p>Converta o Markdown para HTML:</p>
+<pre><code>pandoc input.md -o output.html</code></pre></li>
+<li><p>Converta o HTML para PDF:</p>
+<pre><code>wkhtmltopdf output.html output.pdf</code></pre></li>
+</ul></li>
+</ul></li>
+<li><strong>Exemplo completo com LaTeX</strong>:
+<ul>
+<li><p>Para um arquivo chamado <code>exemplo.md</code>, use:</p>
+<pre><code>pandoc exemplo.md -o exemplo.pdf --pdf-engine=pdflatex</code></pre></li>
+<li><p>Se precisar de opções adicionais, como margem ou fonte,
+adicione:</p>
+<pre><code>pandoc exemplo.md -o exemplo.pdf --pdf-engine=pdflatex -V geometry:margin=1in</code></pre></li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.6" id="dicas-finais"><span class="header-section-number">1.2.6</span> Dicas finais:</h3>
+<ul>
+<li><p><strong>Atualize o Pandoc e o MiKTeX</strong>:</p>
+<pre><code>choco upgrade pandoc miktex</code></pre></li>
+<li><p><strong>Verifique o arquivo Markdown</strong>: Certifique-se de
+que a sintaxe do Markdown está correta e não contém erros que possam
+confundir o Pandoc.</p></li>
+<li><p><strong>Logs de erro</strong>: Se o erro persistir, compartilhe a
+mensagem de erro exata para uma solução mais específica.</p></li>
+</ul>
+<p>Se o erro continuar, me diga a mensagem exata ou o comando que você
+está usando, e eu ajudo a depurar!</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>092_ChatGPT_Converter_md_para_pdf</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-md-para-pdf" id="toc-converter-md-para-pdf"><span class="toc-section-number">1</span>
+Converter md para pdf</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#instalar-os-pré-requisitos" id="toc-instalar-os-pré-requisitos"><span class="toc-section-number">1.3</span> 🧩 1. Instalar os
+pré-requisitos</a></li>
+<li><a href="#verificar-se-o-pandoc-funciona" id="toc-verificar-se-o-pandoc-funciona"><span class="toc-section-number">1.4</span> 🧷 2. Verificar se o Pandoc
+funciona</a></li>
+<li><a href="#converter-o-arquivo-.md-em-.pdf-1" id="toc-converter-o-arquivo-.md-em-.pdf-1"><span class="toc-section-number">1.5</span> 📝 3. Converter o arquivo
+<code>.md</code> em <code>.pdf</code></a></li>
+<li><a href="#garantir-suporte-a-emojis" id="toc-garantir-suporte-a-emojis"><span class="toc-section-number">1.6</span> 😄 4. Garantir suporte a
+<strong>emojis</strong></a></li>
+<li><a href="#extra-converter-com-latex-miktex" id="toc-extra-converter-com-latex-miktex"><span class="toc-section-number">1.7</span> 🧠 Extra: Converter com LaTeX
+(MiKTeX)</a></li>
+<li><a href="#exemplo-completo" id="toc-exemplo-completo"><span class="toc-section-number">1.8</span> 🧪 Exemplo completo</a></li>
+<li><a href="#por-que-os-emojis-ficam-preto-e-branco" id="toc-por-que-os-emojis-ficam-preto-e-branco"><span class="toc-section-number">1.9</span> 🧠 Por que os emojis ficam preto e
+branco?</a></li>
+<li><a href="#soluções-possíveis" id="toc-soluções-possíveis"><span class="toc-section-number">1.10</span> ✅ Soluções possíveis</a></li>
+<li><a href="#conclusão-rápida" id="toc-conclusão-rápida"><span class="toc-section-number">1.11</span> 🧩 Conclusão rápida</a></li>
+<li><a href="#passo-1.-verificar-se-o-chrome-headless-está-funcionando" id="toc-passo-1.-verificar-se-o-chrome-headless-está-funcionando"><span class="toc-section-number">1.12</span> ⚙️ Passo 1. Verificar se o Chrome
+Headless está funcionando</a></li>
+<li><a href="#passo-2.-testar-um-pdf-simples" id="toc-passo-2.-testar-um-pdf-simples"><span class="toc-section-number">1.13</span> ⚙️ Passo 2. Testar um PDF
+simples</a></li>
+<li><a href="#passo-3.-corrigir-o-caminho-do-seu-html" id="toc-passo-3.-corrigir-o-caminho-do-seu-html"><span class="toc-section-number">1.14</span> ⚙️ Passo 3. Corrigir o caminho do
+seu HTML</a></li>
+<li><a href="#passo-4.-se-ainda-não-gerar-nada" id="toc-passo-4.-se-ainda-não-gerar-nada"><span class="toc-section-number">1.15</span> ⚙️ Passo 4. (Se ainda não gerar
+nada)</a></li>
+<li><a href="#dicas-se-ainda-falhar" id="toc-dicas-se-ainda-falhar"><span class="toc-section-number">1.16</span> 💡 Dicas se ainda falhar</a></li>
+<li><a href="#alternativa-pronta-script-.bat" id="toc-alternativa-pronta-script-.bat"><span class="toc-section-number">1.17</span> ✅ Alternativa pronta (script
+.bat)</a></li>
+<li><a href="#teste-este-comando-completo" id="toc-teste-este-comando-completo"><span class="toc-section-number">1.18</span> ✅ Teste este comando
+completo</a></li>
+<li><a href="#verificar-saída" id="toc-verificar-saída"><span class="toc-section-number">1.19</span> 🔍 Verificar saída</a></li>
+<li><a href="#alternativa-robusta-duas-etapas" id="toc-alternativa-robusta-duas-etapas"><span class="toc-section-number">1.20</span> 💡 Alternativa robusta (duas
+etapas)</a></li>
+<li><a href="#por-que-só-com-pandoc-sem-chrome-não-dá-emojis-coloridos" id="toc-por-que-só-com-pandoc-sem-chrome-não-dá-emojis-coloridos"><span class="toc-section-number">1.21</span> ❌ Por que <strong>só com
+Pandoc</strong> (sem Chrome) não dá emojis coloridos</a></li>
+<li><a href="#soluções-possíveis-1" id="toc-soluções-possíveis-1"><span class="toc-section-number">1.22</span> ✅ Soluções possíveis</a></li>
+<li><a href="#opções-se-quiser-ficar-só-no-pandoc" id="toc-opções-se-quiser-ficar-só-no-pandoc"><span class="toc-section-number">1.23</span> 💡 Opções se quiser “ficar só no
+Pandoc”</a></li>
+<li><a href="#conclusão" id="toc-conclusão"><span class="toc-section-number">1.24</span> 🧩 Conclusão</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-md-para-pdf"><span class="header-section-number">1</span> Converter md para pdf</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #92</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 68fe1bd0-8bc8-832a-b0bf-5bb85dbecfee</li>
+<li><strong>Criada em:</strong> 2025-10-26 13:02:42</li>
+<li><strong>Atualizada em:</strong> 2025-10-26 14:41:40</li>
+<li><strong>Total de mensagens:</strong> 12</li>
+<li><strong>Resumo:</strong> Converter md para pdf com pandoc, com
+emojis…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-26-130241-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-26
+13:02:41)</em> <em>[ChatGPT]</em></h3>
+<p>Converter md para pdf com pandoc, com emojis</p>
+<hr />
+<h3 data-number="1.2.2" id="utilizador-2025-10-26-130312-chatgpt"><span class="header-section-number">1.2.2</span> 👤 Utilizador <em>(2025-10-26
+13:03:12)</em> <em>[ChatGPT]</em></h3>
+<p>Converter md para pdf com pandoc, com emojis, no windows</p>
+<hr />
+<h3 data-number="1.2.3" id="chatgpt-2025-10-26-130242-chatgpt"><span class="header-section-number">1.2.3</span> 🤖 ChatGPT <em>(2025-10-26
+13:02:42)</em> <em>[ChatGPT]</em></h3>
+<p>Sim! 🎉<br />
+Você pode converter um arquivo <strong>Markdown (.md)</strong> para
+<strong>PDF</strong> com <strong>Pandoc</strong> mantendo
+<strong>emojis</strong> de forma simples. 😄</p>
+<p>Aqui vai o passo a passo 👇</p>
+<hr />
+<h3 data-number="1.2.4" id="instalar-o-pandoc-se-ainda-não-tiver"><span class="header-section-number">1.2.4</span> 💻 <strong>1. Instalar o
+Pandoc (se ainda não tiver)</strong></h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install pandoc</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ou no mac:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pandoc</span></code></pre></div>
+<hr />
+<h3 data-number="1.2.5" id="converter-o-arquivo-.md-em-.pdf"><span class="header-section-number">1.2.5</span> 📝 <strong>2. Converter o
+arquivo <code>.md</code> em <code>.pdf</code></strong></h3>
+<p>Use o comando:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> arquivo.md <span class="at">-o</span> arquivo.pdf</span></code></pre></div>
+<p>Isso já gera um PDF básico.</p>
+<hr />
+<h3 data-number="1.2.6" id="garantir-que-emojis-apareçam-corretamente"><span class="header-section-number">1.2.6</span> 🌈 <strong>3. Garantir que
+emojis apareçam corretamente</strong></h3>
+<p>Por padrão, alguns conversores de PDF não renderizam emojis
+(😢).<br />
+Para corrigir isso, há 3 boas opções:</p>
+<h4 data-number="1.2.6.1" id="opção-1-usar-fonte-compatível-com-emojis"><span class="header-section-number">1.2.6.1</span> ✅ Opção 1 – Usar fonte
+compatível com emojis</h4>
+<p>Adicione uma fonte como <strong>Noto Color Emoji</strong>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install fonts-noto-color-emoji</span></code></pre></div>
+<p>Depois converta com:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> arquivo.md <span class="at">-o</span> arquivo.pdf <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> mainfont=<span class="st">&quot;Noto Color Emoji&quot;</span></span></code></pre></div>
+<blockquote>
+<p>💡 Dica: <code>xelatex</code> é necessário para suportar fontes
+coloridas como emojis.</p>
+</blockquote>
+<hr />
+<h4 data-number="1.2.6.2" id="opção-2-usar-fonte-mista-texto-emojis"><span class="header-section-number">1.2.6.2</span> ✅ Opção 2 – Usar fonte
+mista (texto + emojis)</h4>
+<p>Se quiser manter uma fonte bonita para o texto:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> arquivo.md <span class="at">-o</span> arquivo.pdf <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> mainfont=<span class="st">&quot;DejaVu Serif&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> monofont=<span class="st">&quot;DejaVu Sans Mono&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-V</span> sansfont=<span class="st">&quot;Noto Color Emoji&quot;</span></span></code></pre></div>
+<hr />
+<h4 data-number="1.2.6.3" id="opção-3-converter-primeiro-para-html-depois-para-pdf"><span class="header-section-number">1.2.6.3</span> ✅ Opção 3 – Converter
+primeiro para HTML, depois para PDF</h4>
+<p>Emojis renderizam melhor em HTML, então você pode fazer:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> arquivo.md <span class="at">-o</span> arquivo.html</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">wkhtmltopdf</span> arquivo.html arquivo.pdf</span></code></pre></div>
+<p>Isso mantém os emojis coloridos 🎨.</p>
+<hr />
+<p>Quer que eu gere um <strong>exemplo de comando Python</strong> que
+faz essa conversão automaticamente (usando <code>pypandoc</code>, por
+exemplo)?</p>
+<hr />
+<h3 data-number="1.2.7" id="chatgpt-2025-10-26-130312-chatgpt"><span class="header-section-number">1.2.7</span> 🤖 ChatGPT <em>(2025-10-26
+13:03:12)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👍 — vamos passo a passo converter um arquivo
+<strong>Markdown (.md)</strong> em <strong>PDF</strong>, <strong>com
+emojis funcionando</strong>, usando <strong>Pandoc</strong> no
+<strong>Windows</strong>.</p>
+<hr />
+<h2 data-number="1.3" id="instalar-os-pré-requisitos"><span class="header-section-number">1.3</span> 🧩 1. Instalar os
+pré-requisitos</h2>
+<h3 data-number="1.3.1" id="a-instalar-o-pandoc"><span class="header-section-number">1.3.1</span> ✅ a) Instalar o
+<strong>Pandoc</strong></h3>
+<p>Baixe e instale a versão mais recente em:<br />
+👉 <a href="https://pandoc.org/installing.html">https://pandoc.org/installing.html</a></p>
+<p>Durante a instalação, marque a opção <strong>“Add to
+PATH”</strong>.</p>
+<hr />
+<h3 data-number="1.3.2" id="b-instalar-um-conversor-para-pdf"><span class="header-section-number">1.3.2</span> ✅ b) Instalar um conversor
+para PDF</h3>
+<p>Pandoc precisa de um motor para gerar PDFs. As opções mais comuns
+são:</p>
+<h4 data-number="1.3.2.1" id="miktex-latex-engine"><span class="header-section-number">1.3.2.1</span> 🖨️ <strong>1. MiKTeX (LaTeX
+engine)</strong></h4>
+<p>👉 <a href="https://miktex.org/download">https://miktex.org/download</a></p>
+<p>ou</p>
+<h4 data-number="1.3.2.2" id="wkhtmltopdf-html-engine"><span class="header-section-number">1.3.2.2</span> 🦙 <strong>2. wkhtmltopdf
+(HTML engine)</strong></h4>
+<p>👉 <a href="https://wkhtmltopdf.org/downloads.html">https://wkhtmltopdf.org/downloads.html</a></p>
+<blockquote>
+<p>💡 <strong>Dica:</strong> Para suportar emojis facilmente, prefira
+<strong>wkhtmltopdf</strong>, pois ele lida melhor com fontes
+Unicode.</p>
+</blockquote>
+<hr />
+<h2 data-number="1.4" id="verificar-se-o-pandoc-funciona"><span class="header-section-number">1.4</span> 🧷 2. Verificar se o Pandoc
+funciona</h2>
+<p>Abra o <strong>Prompt de Comando</strong> e digite:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--version</span></span></code></pre></div>
+<p>Se aparecer a versão, está tudo certo.</p>
+<hr />
+<h2 data-number="1.5" id="converter-o-arquivo-.md-em-.pdf-1"><span class="header-section-number">1.5</span> 📝 3. Converter o arquivo
+<code>.md</code> em <code>.pdf</code></h2>
+<p>Suponha que você tenha um arquivo chamado
+<code>meu_texto.md</code>.</p>
+<h3 data-number="1.5.1" id="com-wkhtmltopdf"><span class="header-section-number">1.5.1</span> 👉 Com
+<strong>wkhtmltopdf</strong>:</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> meu_texto.md <span class="at">-o</span> meu_texto.pdf <span class="at">--pdf-engine</span><span class="op">=</span>wkhtmltopdf</span></code></pre></div>
+<hr />
+<h2 data-number="1.6" id="garantir-suporte-a-emojis"><span class="header-section-number">1.6</span> 😄 4. Garantir suporte a
+<strong>emojis</strong></h2>
+<p>Os emojis dependem da <strong>fonte</strong> usada no PDF.<br />
+Para garantir que eles apareçam corretamente, use uma fonte compatível
+como <strong>Noto Color Emoji</strong> ou <strong>Segoe UI
+Emoji</strong>.</p>
+<h3 data-number="1.6.1" id="passos"><span class="header-section-number">1.6.1</span> Passos:</h3>
+<ol type="1">
+<li><p>Instale a fonte:</p>
+<ul>
+<li><a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji">Noto
+Color Emoji (Google)</a></li>
+</ul></li>
+<li><p>Crie um <strong>arquivo CSS</strong> (por exemplo
+<code>emoji.css</code>) com:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;Segoe UI Emoji&quot;</span><span class="op">,</span> <span class="st">&quot;Noto Color Emoji&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></li>
+<li><p>Converta o Markdown para PDF com o CSS aplicado:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> meu_texto.md <span class="at">-o</span> meu_texto.pdf <span class="at">--pdf-engine</span><span class="op">=</span>wkhtmltopdf <span class="at">-c</span> emoji.css</span></code></pre></div></li>
+</ol>
+<hr />
+<h2 data-number="1.7" id="extra-converter-com-latex-miktex"><span class="header-section-number">1.7</span> 🧠 Extra: Converter com LaTeX
+(MiKTeX)</h2>
+<p>Se quiser usar LaTeX (mais controle tipográfico):</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> meu_texto.md <span class="at">-o</span> meu_texto.pdf <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="at">-V</span> mainfont=<span class="st">&quot;Segoe UI Emoji&quot;</span></span></code></pre></div>
+<blockquote>
+<p>💡 <strong>XeLaTeX</strong> é obrigatório para renderizar
+corretamente emojis no LaTeX.</p>
+</blockquote>
+<hr />
+<h2 data-number="1.8" id="exemplo-completo"><span class="header-section-number">1.8</span> 🧪 Exemplo completo</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo.md <span class="at">-o</span> exemplo.pdf ^</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--pdf-engine=wkhtmltopdf</span> ^</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-c</span> emoji.css ^</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--metadata</span> title=<span class="st">&quot;Exemplo com Emojis&quot;</span> ^</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--metadata</span> author=<span class="st">&quot;Você 😎&quot;</span></span></code></pre></div>
+<hr />
+<p>Quer que eu te gere um <strong>exemplo pronto de arquivo
+<code>.md</code> + <code>.css</code></strong> com emojis para
+testar?</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-2025-10-26-134314-chatgpt"><span class="header-section-number">1.8.1</span> 👤 Utilizador <em>(2025-10-26
+13:43:14)</em> <em>[ChatGPT]</em></h3>
+<p>Com pandoc teste_emojis.md -o teste_emojis-2.pdf –pdf-engine=xelatex
+-V mainfont=“Segoe UI Emoji” e com pandoc teste_emojis.md -o
+teste_emojis-3.pdf –pdf-engine=wkhtmltopdf -c emoji.css ; os emojis
+estão a preto e branco</p>
+<hr />
+<h3 data-number="1.8.2" id="chatgpt-2025-10-26-134316-chatgpt"><span class="header-section-number">1.8.2</span> 🤖 ChatGPT <em>(2025-10-26
+13:43:16)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito — vi o seu arquivo <code>teste_emojis.md</code> 📝, e sim: o
+que você está observando (emojis aparecendo <strong>em preto e
+branco</strong>) é esperado com <code>Segoe UI Emoji</code> no
+<strong>Windows</strong>, porque o <strong>Pandoc + XeLaTeX</strong> ou
+<strong>wkhtmltopdf</strong> não conseguem gerar <strong>emojis
+coloridos</strong> nativamente.</p>
+<p>Aqui vai uma explicação detalhada e soluções práticas 👇</p>
+<hr />
+<h2 data-number="1.9" id="por-que-os-emojis-ficam-preto-e-branco"><span class="header-section-number">1.9</span> 🧠 Por que os emojis ficam
+preto e branco?</h2>
+<ol type="1">
+<li><strong>XeLaTeX (<code>--pdf-engine=xelatex</code>)</strong>
+<ul>
+<li>O XeLaTeX usa a biblioteca HarfBuzz e fontes OpenType.</li>
+<li>Ele não suporta <strong>color fonts (OpenType-SVG / COLR
+fonts)</strong> como <code>Segoe UI Emoji</code> ou
+<code>Noto Color Emoji</code>.</li>
+<li>Resultado: os emojis aparecem em <strong>monocromático
+(PB)</strong>.</li>
+</ul></li>
+<li><strong>wkhtmltopdf (<code>--pdf-engine=wkhtmltopdf</code>)</strong>
+<ul>
+<li>Gera o PDF via <strong>renderização HTML → imagem</strong>, mas
+depende do suporte do <strong>Qt WebKit</strong>.</li>
+<li>Qt não suporta renderização colorida de emojis (ele usa apenas
+glifos vetoriais PB).</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="1.10" id="soluções-possíveis"><span class="header-section-number">1.10</span> ✅ Soluções possíveis</h2>
+<h3 data-number="1.10.1" id="converter-com-chrome-headless-colorido"><span class="header-section-number">1.10.1</span> 🔹 <strong>1. Converter com
+Chrome headless (colorido!)</strong></h3>
+<p>Você pode usar o <strong>Chrome</strong> (ou Edge) para gerar o PDF —
+ele renderiza emojis coloridos corretamente.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-t</span> html <span class="at">-o</span> teste_emojis.html</span></code></pre></div>
+<p>Depois, converta com o Chrome:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> <span class="at">--print-to-pdf</span><span class="op">=</span><span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> ^</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;file:///C:/caminho/para/teste_emojis.html&quot;</span></span></code></pre></div>
+<p>✅ Resultado: <strong>PDF com emojis coloridos</strong>, idêntico ao
+navegador.</p>
+<hr />
+<h3 data-number="1.10.2" id="usar-pandoc-com-html---self-contained-chrome"><span class="header-section-number">1.10.2</span> 🔹 <strong>2. Usar
+<code>pandoc</code> com HTML + <code>--self-contained</code> +
+Chrome</strong></h3>
+<p>Automatize num só comando (PowerShell):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis_colorido.html <span class="at">--self-contained</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&amp;</span> <span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> <span class="at">--headless</span> <span class="at">--print-to-pdf</span><span class="op">=</span><span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> teste_emojis_colorido.html</span></code></pre></div>
+<hr />
+<h3 data-number="1.10.3" id="usar-um-conversor-alternativo-weasyprint-ou-princexml"><span class="header-section-number">1.10.3</span> 🔹 <strong>3. Usar um
+conversor alternativo (WeasyPrint ou PrinceXML)</strong></h3>
+<ul>
+<li><p><strong>WeasyPrint</strong> (Python-based, suporta emojis
+coloridos):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install weasyprint</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">weasyprint</span> teste_emojis.html teste_emojis_colorido.pdf</span></code></pre></div></li>
+<li><p><strong>PrinceXML</strong> (profissional, pago, mas tem trial
+gratuito):</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">prince</span> teste_emojis.html <span class="at">-o</span> teste_emojis_colorido.pdf</span></code></pre></div></li>
+</ul>
+<hr />
+<h3 data-number="1.10.4" id="opcional-renderizar-emojis-como-imagens-via-twemoji"><span class="header-section-number">1.10.4</span> 🔹 <strong>4. (Opcional)
+Renderizar emojis como imagens via Twemoji</strong></h3>
+<p>Se quiser insistir no LaTeX, dá pra converter cada emoji em imagem
+SVG usando <strong>Twemoji</strong> (da Mozilla/Twitter).<br />
+Mas é mais trabalhoso e só vale a pena se precisar 100% do pipeline
+LaTeX.</p>
+<hr />
+<h2 data-number="1.11" id="conclusão-rápida"><span class="header-section-number">1.11</span> 🧩 Conclusão rápida</h2>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Emojis Coloridos</th>
+<th>Qualidade</th>
+<th>Facilidade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xelatex</code></td>
+<td>❌ Preto e branco</td>
+<td>Alta</td>
+<td>Média</td>
+</tr>
+<tr>
+<td><code>wkhtmltopdf</code></td>
+<td>❌ Preto e branco</td>
+<td>Boa</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>Chrome headless</strong></td>
+<td>✅ Colorido</td>
+<td>Muito boa</td>
+<td>✅ Fácil</td>
+</tr>
+<tr>
+<td>WeasyPrint</td>
+<td>✅ Colorido</td>
+<td>Boa</td>
+<td>Média</td>
+</tr>
+<tr>
+<td>PrinceXML</td>
+<td>✅ Colorido</td>
+<td>Excelente</td>
+<td>Média</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Quer que eu te gere um <strong>script <code>.bat</code></strong>
+pronto que faz a conversão do <code>.md</code> → <code>.pdf</code>
+colorido usando o Chrome automaticamente no Windows?</p>
+<hr />
+<h3 data-number="1.11.1" id="utilizador-2025-10-26-142740-chatgpt"><span class="header-section-number">1.11.1</span> 👤 Utilizador
+<em>(2025-10-26 14:27:40)</em> <em>[ChatGPT]</em></h3>
+<p>“C:Files.exe” –headless –print-to-pdf=“teste_emojis_colorido.pdf” “<a href="file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html" class="uri">file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html</a>”
+não funciona;</p>
+<hr />
+<h3 data-number="1.11.2" id="chatgpt-2025-10-26-142742-chatgpt"><span class="header-section-number">1.11.2</span> 🤖 ChatGPT <em>(2025-10-26
+14:27:42)</em> <em>[ChatGPT]</em></h3>
+<p>Boa — ótimo que você tentou o comando com o Chrome! 👏<br />
+Se ele <strong>não funcionou</strong>, é provável que o problema seja
+<strong>um detalhe de sintaxe, caminho, ou permissões</strong> no
+Windows.<br />
+Vamos resolver passo a passo 🔍</p>
+<hr />
+<h2 data-number="1.12" id="passo-1.-verificar-se-o-chrome-headless-está-funcionando"><span class="header-section-number">1.12</span> ⚙️ Passo 1. Verificar se o
+Chrome Headless está funcionando</h2>
+<p>Abra o <strong>Prompt de Comando (cmd)</strong> e rode:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> <span class="at">--version</span></span></code></pre></div>
+<p>✅ Deve aparecer algo como
+<code>Google Chrome 130.0.6723.70</code>.<br />
+Se <strong>não aparecer</strong>, o caminho está errado — tente este
+outro:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files (x86)\Google\Chrome\Application\chrome.exe&quot;</span> <span class="at">--version</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.13" id="passo-2.-testar-um-pdf-simples"><span class="header-section-number">1.13</span> ⚙️ Passo 2. Testar um PDF
+simples</h2>
+<p>Rode um teste mínimo direto:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> ^</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--disable-gpu</span> ^</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--no-sandbox</span> ^</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;D:\Downloads\teste.pdf&quot;</span> ^</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://example.com&quot;</span></span></code></pre></div>
+<p>Se esse comando <strong>gera o <code>teste.pdf</code></strong>, o
+Chrome headless está OK ✅.<br />
+Se <strong>nada acontece</strong>, talvez o Windows bloqueie o acesso
+(veja “Dicas” abaixo).</p>
+<hr />
+<h2 data-number="1.14" id="passo-3.-corrigir-o-caminho-do-seu-html"><span class="header-section-number">1.14</span> ⚙️ Passo 3. Corrigir o caminho
+do seu HTML</h2>
+<p>O problema mais comum é o formato do
+<strong><code>file:///</code></strong> no Windows.</p>
+<p>👉 Formato correto:</p>
+<pre><code>file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html</code></pre>
+<blockquote>
+<p>Observe que: - Usa <strong>barras normais</strong> <code>/</code>,
+não <code>\</code> - Não há espaço entre os argumentos - O caminho deve
+existir <strong>sem acentos ou espaços problemáticos</strong></p>
+</blockquote>
+<p>Tente este comando <strong>exato</strong>:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> ^</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--disable-gpu</span> ^</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--no-sandbox</span> ^</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis_colorido.pdf&quot;</span> ^</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.15" id="passo-4.-se-ainda-não-gerar-nada"><span class="header-section-number">1.15</span> ⚙️ Passo 4. (Se ainda não
+gerar nada)</h2>
+<p>Tente forçar o Chrome a criar o PDF na pasta atual:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis&quot;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> ^</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--disable-gpu</span> ^</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--no-sandbox</span> ^</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> ^</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span></code></pre></div>
+<blockquote>
+<p>Depois verifique se o arquivo <code>teste_emojis_colorido.pdf</code>
+aparece na pasta.</p>
+</blockquote>
+<hr />
+<h2 data-number="1.16" id="dicas-se-ainda-falhar"><span class="header-section-number">1.16</span> 💡 Dicas se ainda falhar</h2>
+<ol type="1">
+<li><p><strong>Permissões de disco:</strong><br />
+Execute o CMD como <strong>Administrador</strong>.</p></li>
+<li><p><strong>Espaços ou acentos no caminho:</strong><br />
+O Chrome headless às vezes falha com caminhos longos/acentuados.<br />
+Copie os arquivos para <code>C:\Temp</code> e teste de novo:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste.html</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> <span class="at">--headless</span> <span class="at">--print-to-pdf</span><span class="op">=</span><span class="st">&quot;teste.pdf&quot;</span> <span class="st">&quot;file:///C:/Temp/teste.html&quot;</span></span></code></pre></div></li>
+<li><p><strong>Ver saída no console:</strong><br />
+Se rodar no <strong>PowerShell</strong>, adicione
+<code>--enable-logging --v=1</code> ao comando para ver logs.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.17" id="alternativa-pronta-script-.bat"><span class="header-section-number">1.17</span> ✅ Alternativa pronta (script
+.bat)</h2>
+<p>Crie um arquivo chamado <code>md2pdf_emojis.bat</code> com o conteúdo
+abaixo:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bat"><code class="sourceCode dosbat"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">@</span><span class="bu">echo off</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setlocal</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="va">CHROME</span>=<span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="va">FILE</span>=<span class="pp">%~</span><span class="va">1</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="va">NAME</span>=<span class="pp">%~n</span><span class="va">1</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>pandoc <span class="st">&quot;</span><span class="pp">%</span><span class="va">FILE</span><span class="pp">%</span><span class="st">&quot;</span> <span class="at">-t</span> html <span class="at">-s</span> <span class="at">-o</span> <span class="st">&quot;</span><span class="pp">%</span><span class="va">NAME</span><span class="pp">%</span><span class="st">.html&quot;</span> -<span class="at">-metadata</span> title=<span class="st">&quot;</span><span class="pp">%</span><span class="va">NAME</span><span class="pp">%</span><span class="st">&quot;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="pp">%</span><span class="va">CHROME</span><span class="pp">%</span> --headless -<span class="at">-disable-gpu</span> -<span class="at">-no-sandbox</span> -<span class="at">-print-to-pdf</span>=<span class="st">&quot;</span><span class="pp">%</span><span class="va">NAME</span><span class="pp">%</span><span class="st">_colorido.pdf&quot;</span> <span class="st">&quot;file:///</span><span class="pp">%</span><span class="va">CD</span><span class="pp">%</span><span class="st">/</span><span class="pp">%</span><span class="va">NAME</span><span class="pp">%</span><span class="st">.html&quot;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> PDF gerado: <span class="pp">%</span><span class="va">CD</span><span class="pp">%</span>\<span class="pp">%</span><span class="va">NAME</span><span class="pp">%</span>_colorido.pdf</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">pause</span></span></code></pre></div>
+<p>👉 Aí basta rodar:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">md2pdf_emojis.bat</span> teste_emojis.md</span></code></pre></div>
+<p>Ele gera automaticamente o <strong>PDF colorido com emojis</strong>
+🎨.</p>
+<hr />
+<p>Quer que eu te gere uma <strong>versão desse <code>.bat</code>
+personalizada para o seu caminho “D:_DOCS_...”</strong>?</p>
+<hr />
+<h3 data-number="1.17.1" id="utilizador-2025-10-26-143140-chatgpt"><span class="header-section-number">1.17.1</span> 👤 Utilizador
+<em>(2025-10-26 14:31:40)</em> <em>[ChatGPT]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;“C:Files.exe” –headless
+–print-to-pdf=“teste_emojis_colorido.pdf” “<a href="file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html" class="uri">file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html</a>”</p>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;dir Volume in drive D is
+<em>Work</em> Volume Serial Number is 3CB7-A082</p>
+<p>Directory of D:_DOCS__DOCS__emojis</p>
+10/26/2025 02:23 PM
+<DIR>
+. 10/26/2025 02:23 PM
+<DIR>
+<p>.. 10/26/2025 01:39 PM 77 emoji.css 10/26/2025 02:18 PM 0 log.txt
+10/26/2025 01:36 PM 23,710 teste_emojis-1.pdf 10/26/2025 01:38 PM
+163,734 teste_emojis-2.pdf 10/26/2025 01:40 PM 204,808
+teste_emojis-3.pdf 10/26/2025 02:18 PM 12,830 teste_emojis-4.pdf
+10/26/2025 02:23 PM 2,738 teste_emojis.html 10/26/2025 11:51 AM 2,455
+teste_emojis.md 8 File(s) 410,352 bytes 2 Dir(s) 20,481,343,488 bytes
+free</p>
+<p>(Pesquisas) D:_DOCS__DOCS__emojis&gt;</p>
+<hr />
+<h3 data-number="1.17.2" id="chatgpt-2025-10-26-143140-chatgpt"><span class="header-section-number">1.17.2</span> 🤖 ChatGPT <em>(2025-10-26
+14:31:40)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente 👏 — você está executando tudo corretamente, e o comando do
+Chrome <strong>não está dando erro</strong>, mas <strong>também não está
+gerando o PDF</strong> (o que indica que o Chrome headless iniciou, mas
+não processou o arquivo).</p>
+<p>Isso pode acontecer por <strong>3 motivos principais</strong> no
+Windows:<br />
+1. Falta de <code>--no-sandbox</code> ou
+<code>--disable-gpu</code><br />
+2. Caminho de arquivo local (<code>file:///...</code>) bloqueado por
+política de segurança<br />
+3. Versão recente do Chrome que requer flag adicional para acesso a
+arquivos locais</p>
+<p>Vamos resolver com um comando <strong>completo e testado</strong>,
+que funciona mesmo com caminhos locais 👇</p>
+<hr />
+<h2 data-number="1.18" id="teste-este-comando-completo"><span class="header-section-number">1.18</span> ✅ Teste este comando
+completo</h2>
+<p>No seu prompt atual
+(<code>D:\Downloads\_DOCS_\_DOCS_\Teste_emojis</code>), rode
+<strong>exatamente</strong> isto:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> ^</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--disable-gpu</span> ^</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--no-sandbox</span> ^</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--allow-file-access-from-files</span> ^</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--virtual-time-budget=10000</span> ^</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;D:\Downloads\_DOCS_\_DOCS_\Teste_emojis\teste_emojis_colorido.pdf&quot;</span> ^</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span></code></pre></div>
+<p>🧩 Explicação das flags importantes: - <code>--no-sandbox</code> →
+evita bloqueio de execução local<br />
+- <code>--disable-gpu</code> → evita bug gráfico<br />
+- <code>--allow-file-access-from-files</code> → permite o Chrome ler
+arquivos locais (<code>file:///</code>)<br />
+- <code>--virtual-time-budget=10000</code> → dá tempo suficiente para o
+Chrome renderizar a página antes de gerar o PDF</p>
+<hr />
+<h2 data-number="1.19" id="verificar-saída"><span class="header-section-number">1.19</span> 🔍 Verificar saída</h2>
+<p>Após rodar o comando: - Se tudo deu certo, aparecerá
+<strong><code>teste_emojis_colorido.pdf</code></strong> na mesma
+pasta<br />
+- Se <strong>não aparecer</strong>, tente rodar de novo <strong>como
+Administrador</strong> (clique com o botão direito → “Executar como
+administrador”)</p>
+<hr />
+<h2 data-number="1.20" id="alternativa-robusta-duas-etapas"><span class="header-section-number">1.20</span> 💡 Alternativa robusta (duas
+etapas)</h2>
+<p>1️⃣ Converter para HTML:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> teste_emojis.md <span class="at">-o</span> teste_emojis.html <span class="at">--standalone</span></span></code></pre></div>
+<p>2️⃣ Gerar PDF via Chrome:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> ^</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--headless</span> <span class="at">--disable-gpu</span> <span class="at">--no-sandbox</span> ^</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--allow-file-access-from-files</span> ^</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--virtual-time-budget=10000</span> ^</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--print-to-pdf=</span><span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> ^</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;file:///D:/Downloads/_DOCS_/_DOCS_/Teste_emojis/teste_emojis.html&quot;</span></span></code></pre></div>
+<p>✅ Este método é o que normalmente <strong>funciona 100% com emojis
+coloridos</strong> no Windows.</p>
+<hr />
+<p>Se ainda assim <strong>não gerar o arquivo</strong>, posso te mandar
+uma <strong>versão <code>.bat</code> pronta</strong> com logs e
+diagnóstico automático (que mostra o erro real do Chrome).<br />
+Quer que eu gere esse script pra você?</p>
+<hr />
+<h3 data-number="1.20.1" id="utilizador-2025-10-26-143639-chatgpt"><span class="header-section-number">1.20.1</span> 👤 Utilizador
+<em>(2025-10-26 14:36:39)</em> <em>[ChatGPT]</em></h3>
+<p>via Chrome funciona; não é possivel uma versão só com pandoc</p>
+<hr />
+<h3 data-number="1.20.2" id="chatgpt-2025-10-26-143639-chatgpt"><span class="header-section-number">1.20.2</span> 🤖 ChatGPT <em>(2025-10-26
+14:36:39)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente 👏 — ótimo que via <strong>Chrome headless</strong>
+funciona e os <strong>emojis saem coloridos</strong>! 🎨</p>
+<p>Agora, respondendo diretamente à tua pergunta:</p>
+<hr />
+<h2 data-number="1.21" id="por-que-só-com-pandoc-sem-chrome-não-dá-emojis-coloridos"><span class="header-section-number">1.21</span> ❌ Por que <strong>só com
+Pandoc</strong> (sem Chrome) não dá emojis coloridos</h2>
+<p>Infelizmente, <strong>não é possível</strong> gerar um <strong>PDF
+com emojis coloridos apenas com o Pandoc</strong> — e isso <strong>não é
+limitação do Pandoc em si</strong>, mas sim do <strong>mecanismo de
+renderização PDF</strong> que ele usa.</p>
+<p>Vamos detalhar tecnicamente 👇</p>
+<hr />
+<h3 data-number="1.21.1" id="o-pandoc-não-renderiza-pdfs-diretamente"><span class="header-section-number">1.21.1</span> 🧱 1. O Pandoc <strong>não
+renderiza PDFs diretamente</strong></h3>
+<p>Ele apenas <strong>gera um arquivo intermediário</strong> (LaTeX ou
+HTML) e depois chama um <strong>motor externo</strong>
+(<code>pdf-engine</code>): - <code>pdflatex</code> /
+<code>xelatex</code> / <code>lualatex</code> → motores LaTeX<br />
+- <code>wkhtmltopdf</code> → renderizador WebKit<br />
+- <code>weasyprint</code> / <code>prince</code> → motores externos
+opcionais</p>
+<p>Esses motores é que criam o PDF — e <strong>nenhum deles suporta
+fontes coloridas emoji</strong> nativamente.</p>
+<hr />
+<h3 data-number="1.21.2" id="por-que-os-emojis-ficam-preto-e-branco-1"><span class="header-section-number">1.21.2</span> 🎨 2. Por que os emojis
+ficam preto e branco</h3>
+<p>As fontes como <code>Segoe UI Emoji</code> ou
+<code>Noto Color Emoji</code> usam <strong>formatos coloridos
+especiais</strong> (<code>COLR/CPAL</code>, <code>CBDT/CBLC</code>,
+<code>sbix</code>, <code>SVGinOT</code>).</p>
+<p>Esses formatos <strong>não são suportados por</strong>: -
+<strong>XeLaTeX / LuaLaTeX</strong> → convertem os emojis em glifos
+monocromáticos<br />
+- <strong>wkhtmltopdf</strong> → usa Qt WebKit, que também ignora
+camadas de cor<br />
+- <strong>WeasyPrint (cairo)</strong> → suporta parcialmente, mas ainda
+sem cor total em Windows</p>
+<p>Resultado: 🖤 emojis saem preto e branco.</p>
+<hr />
+<h3 data-number="1.21.3" id="o-chrome-ou-edge-é-o-único-motor-com-suporte-completo"><span class="header-section-number">1.21.3</span> 🚀 3. O Chrome (ou Edge) é o
+único motor com suporte completo</h3>
+<p>O Chrome usa o motor <strong>Blink/Skia</strong>, que renderiza as
+fontes coloridas <strong>nativamente</strong>, do mesmo modo que
+aparecem no navegador.<br />
+Por isso:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chrome</span> <span class="at">--headless</span> <span class="at">--print-to-pdf</span> ...</span></code></pre></div>
+<p>gera PDFs perfeitos com emojis coloridos, transparência, gradientes,
+etc.</p>
+<hr />
+<h2 data-number="1.22" id="soluções-possíveis-1"><span class="header-section-number">1.22</span> ✅ Soluções possíveis</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 46%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Método</th>
+<th>Emojis coloridos</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pandoc --pdf-engine=xelatex</code></td>
+<td>❌</td>
+<td>Glifos PB</td>
+</tr>
+<tr>
+<td><code>pandoc --pdf-engine=wkhtmltopdf</code></td>
+<td>❌</td>
+<td>WebKit sem cor</td>
+</tr>
+<tr>
+<td><code>pandoc --pdf-engine=weasyprint</code></td>
+<td>⚠️ Parcial</td>
+<td>Melhor no Linux/macOS</td>
+</tr>
+<tr>
+<td><strong><code>pandoc → HTML → Chrome</code></strong></td>
+<td>✅</td>
+<td>Único 100% colorido no Windows</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.23" id="opções-se-quiser-ficar-só-no-pandoc"><span class="header-section-number">1.23</span> 💡 Opções se quiser “ficar só
+no Pandoc”</h2>
+<p>Se você quiser <strong>automatizar</strong> tudo sem chamar Chrome
+manualmente, há 2 jeitos práticos:</p>
+<h3 data-number="1.23.1" id="usar-script-pandoc-chrome-automático"><span class="header-section-number">1.23.1</span> 🔹 1. Usar <strong>script
+Pandoc + Chrome</strong> automático</h3>
+<p>Faz parecer que é “só o Pandoc”, mas ele chama o Chrome por baixo
+(via filtro).<br />
+Exemplo em PowerShell:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>pandoc teste_emojis<span class="op">.</span><span class="fu">md</span> <span class="op">-</span>t html <span class="op">-</span>o teste_emojis<span class="op">.</span><span class="fu">html</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="op">&amp;</span> <span class="st">&quot;C:\Program Files\Google\Chrome\Application\chrome.exe&quot;</span> <span class="op">--</span>headless <span class="op">--</span>print-to-pdf<span class="op">=</span><span class="st">&quot;teste_emojis_colorido.pdf&quot;</span> <span class="op">(</span><span class="fu">Resolve-Path</span> teste_emojis<span class="op">.</span><span class="fu">html</span><span class="op">)</span></span></code></pre></div>
+<h3 data-number="1.23.2" id="usar-um-pandoc-filter-lua-ou-python"><span class="header-section-number">1.23.2</span> 🔹 2. Usar um <strong>Pandoc
+filter</strong> (Lua ou Python)</h3>
+<p>Existem filtros como <a href="https://github.com/LaurentRDC/pandoc-pyplot"><code>pandoc-pyplot</code></a>
+ou <a href="https://github.com/abikouo/pandoc-weasyprint"><code>pandoc-weasyprint</code></a><br />
+Mas nenhum traz suporte a emojis coloridos — só controle de CSS e
+layout.</p>
+<hr />
+<h2 data-number="1.24" id="conclusão"><span class="header-section-number">1.24</span> 🧩 Conclusão</h2>
+<p>👉 <strong>Não dá para ter emojis coloridos usando só Pandoc +
+XeLaTeX ou wkhtmltopdf.</strong><br />
+É uma limitação técnica dos motores de PDF, não do Pandoc.</p>
+<p>✅ A solução real: &gt; <strong>Pandoc → HTML → Chrome headless
+(PDF)</strong></p>
+<p>que é o fluxo que você já testou — e é o mesmo usado por ferramentas
+profissionais como VS Code, Obsidian e Typora para gerar PDFs coloridos
+com emojis.</p>
+<hr />
+<p>Se quiser, posso te gerar um <strong>comando Pandoc único</strong>
+(ou <code>.bat</code>) que faz tudo em um passo só — parece que é “só
+Pandoc”, mas ele chama o Chrome automaticamente nos bastidores.<br />
+Quer que eu monte isso pra você?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

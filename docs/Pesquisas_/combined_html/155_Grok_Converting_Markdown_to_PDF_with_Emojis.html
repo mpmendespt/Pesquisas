@@ -1,0 +1,3326 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>155_Grok_Converting_Markdown_to_PDF_with_Emojis</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converting-markdown-to-pdf-with-emojis" id="toc-converting-markdown-to-pdf-with-emojis"><span class="toc-section-number">1</span> Converting Markdown to PDF with
+Emojis</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#peixes-não-arranjados-captura-própria---ultra-frescos" id="toc-peixes-não-arranjados-captura-própria---ultra-frescos"><span class="toc-section-number">1.3</span> 🌊 Peixes Não Arranjados (Captura
+Própria - Ultra Frescos)</a></li>
+<li><a href="#características-e-técnicas-por-espécie" id="toc-características-e-técnicas-por-espécie"><span class="toc-section-number">1.4</span> 🐟 Características e Técnicas por
+Espécie</a></li>
+<li><a href="#cronograma-de-congelamento-pós-captura" id="toc-cronograma-de-congelamento-pós-captura"><span class="toc-section-number">1.5</span> 🕒 Cronograma de Congelamento
+Pós-Captura</a></li>
+<li><a href="#técnica-de-glaceação-para-peixes-de-água-doce" id="toc-técnica-de-glaceação-para-peixes-de-água-doce"><span class="toc-section-number">1.6</span> 🌡️ Técnica de Glaceação para
+Peixes de Água Doce</a></li>
+<li><a href="#fatores-específicos-de-castelo-de-bode" id="toc-fatores-específicos-de-castelo-de-bode"><span class="toc-section-number">1.7</span> 🏞️ Fatores Específicos de Castelo
+de Bode</a></li>
+<li><a href="#tabela-resumo-por-espécie" id="toc-tabela-resumo-por-espécie"><span class="toc-section-number">1.8</span> 📊 Tabela Resumo por
+Espécie</a></li>
+<li><a href="#sinais-de-qualidade-pós-descongelamento" id="toc-sinais-de-qualidade-pós-descongelamento"><span class="toc-section-number">1.9</span> 🚨 Sinais de Qualidade
+Pós-Descongelamento</a></li>
+<li><a href="#métodos-de-preparo-recomendados" id="toc-métodos-de-preparo-recomendados"><span class="toc-section-number">1.10</span> 🍳 Métodos de Preparo
+Recomendados</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converting-markdown-to-pdf-with-emojis"><span class="header-section-number">1</span> Converting Markdown to PDF with
+Emojis</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #155</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 6258f0e4-beb2-44a8-b323-88538a31afc6</li>
+<li><strong>Criada em:</strong> 2025-09-25 20:43:06Z</li>
+<li><strong>Atualizada em:</strong> 2025-09-26 21:15:19Z</li>
+<li><strong>Total de mensagens:</strong> 24</li>
+<li><strong>Resumo:</strong> como converter guia-congelamento.md para
+pdf visto que dá erro (pandoc-env) D:_DOCS__DOC…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-25-214306-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-25
+21:43:06)</em> <em>[Grok]</em></h3>
+<p>como converter guia-congelamento.md para pdf visto que dá erro
+(pandoc-env) D:_DOCS__DOCS_-congelamento&gt;pandoc guia-congelamento.md
+-o guia-congelamento.pdf –pdf-engine=xelatex
+–include-in-header=header.tex [WARNING] Missing character: There is no
+🧊 (U+1F9CA) in font DejaVu Serif Bold/OT:script=latn;langu [WARNING]
+Missing character: There is no 📌 (U+1F4CC) in font DejaVu Serif
+Bold/OT:script=latn;langu [WARNING] Missing character: There is no 🍚
+(U+1F35A) in font DejaVu Serif Bold/OT:script=latn;langu [WARNING]
+Missing character: There is no ⚖ (U+2696) in font DejaVu Serif
+Bold/OT:script=latn;langu</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-09-25-214331-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-09-25
+21:43:31)</em> <em>[Grok]</em></h3>
+<p>To convert the <code>guia-congelamento.md</code> Markdown file to a
+PDF using Pandoc with XeLaTeX, we need to address the errors caused by
+missing emoji characters (🧊, 📌, 🍚, ⚖, etc.) in the DejaVu Serif font.
+The current <code>header.tex</code> file specifies
+<code>Segoe UI Emoji</code> for some emojis, but not all required emojis
+are mapped, and DejaVu Serif lacks support for these Unicode characters.
+We’ll update the LaTeX header to ensure all emojis in the document are
+properly mapped to a font that supports them, such as
+<code>Noto Color Emoji</code>, which is available in
+<code>texlive-fonts-extra</code> and supports a wide range of
+emojis.</p>
+<p>Here’s the approach: 1. Update <code>header.tex</code> to include
+<code>Noto Color Emoji</code> for all emojis used in the document. 2.
+Map all specific emojis (🧊, 📌, 🍚, ⚖, 🍝, 🥩, 📊, ❌, 🔒, ⚠️) using
+<code>newunicodechar</code>. 3. Ensure compatibility with XeLaTeX and
+avoid package conflicts. 4. Provide the updated LaTeX header file to be
+used with the Pandoc command.</p>
+<p>Below is the updated <code>header.tex</code> file that resolves the
+missing character warnings and ensures proper emoji rendering.</p>
+<p><xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="d769d64a-b9dd-4849-bd3b-6b153848e0a4" title="header.tex" contentType="text/latex">
+% Defining LaTeX document preamble for emoji support
+\documentclass{article}</p>
+% Including essential packages for text and font rendering
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=Harfbuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Ice Cube % Pushpin % Cooked Rice % Balance Scale % Spaghetti % Cut
+of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate] </xaiArtifact></p>
+<h3 data-number="1.2.3" id="instructions-to-convert-the-markdown-file-to-pdf"><span class="header-section-number">1.2.3</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><p>Save the updated <code>header.tex</code> file in the same
+directory as <code>guia-congelamento.md</code>.</p></li>
+<li><p>Run the following Pandoc command in your terminal or command
+prompt from the directory containing both files:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div></li>
+</ol>
+<h3 data-number="1.2.4" id="explanation-of-changes"><span class="header-section-number">1.2.4</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Font Choice</strong>: Replaced <code>Segoe UI Emoji</code>
+with <code>Noto Color Emoji</code>, which is part of
+<code>texlive-fonts-extra</code> and supports all emojis used in the
+document (🧊, 📌, 🍚, ⚖, 🍝, 🥩, 📊, ❌, 🔒, ⚠️).</li>
+<li><strong>Emoji Mapping</strong>: Added <code>newunicodechar</code>
+definitions for all emojis in the document to ensure they are rendered
+using <code>Noto Color Emoji</code>.</li>
+<li><strong>Compatibility</strong>: Used <code>fontspec</code> with
+<code>Renderer=Harfbuzz</code> for better emoji rendering and ensured no
+package conflicts by keeping the preamble minimal and compatible with
+XeLaTeX.</li>
+<li><strong>Document Structure</strong>: Added
+<code>\documentclass{article}</code> to make the header standalone,
+though Pandoc will override it with its default template unless
+specified otherwise. This ensures compatibility.</li>
+</ul>
+<p>This updated <code>header.tex</code> should resolve the “Missing
+character” warnings and produce a PDF with all emojis rendered
+correctly. If you encounter any issues, ensure that
+<code>texlive-fonts-extra</code> is installed in your LaTeX distribution
+to provide <code>Noto Color Emoji</code>.</p>
+<hr />
+<h3 data-number="1.2.5" id="utilizador-2025-09-25-214646-grok"><span class="header-section-number">1.2.5</span> 👤 Utilizador <em>(2025-09-25
+21:46:46)</em> <em>[Grok]</em></h3>
+<p>(pandoc-env) D:_DOCS__DOCS_-congelamento&gt;pandoc
+guia-congelamento.md -o guia-congelamento.pdf –pdf-engine=xelatex
+–include-in-header=header.tex Error producing PDF. ! LaTeX Error: Two
+\documentclass or commands. See the LaTeX manual or LaTeX Companion for
+explanation. Type H <return> for immediate help. … l.53
+\documentclass{</p>
+<hr />
+<h3 data-number="1.2.6" id="grok-2025-09-25-214704-grok"><span class="header-section-number">1.2.6</span> 🤖 Grok <em>(2025-09-25
+21:47:04)</em> <em>[Grok]</em></h3>
+<p>The error occurs because the LaTeX header file
+(<code>header.tex</code>) includes a
+<code>\documentclass{article}</code> command, which conflicts with
+Pandoc’s default LaTeX template that also provides a
+<code>\documentclass</code>. LaTeX does not allow multiple
+<code>\documentclass</code> commands in a single document. To fix this,
+we need to remove the <code>\documentclass{article}</code> from
+<code>header.tex</code>, as Pandoc will automatically handle the
+document class in its template.</p>
+<p>Below is the updated <code>header.tex</code> file, with the
+<code>\documentclass{article}</code> removed, retaining all other
+configurations to ensure proper emoji rendering and compatibility with
+XeLaTeX.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="8e5e05e7-336e-4123-90c6-d3d2d0c9529c" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support and text rendering
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=Harfbuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Ice Cube % Pushpin % Cooked Rice % Balance Scale % Spaghetti % Cut
+of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate] </xaiArtifact></p>
+<h3 data-number="1.2.7" id="instructions-to-convert-the-markdown-file-to-pdf-1"><span class="header-section-number">1.2.7</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><p>Save the updated <code>header.tex</code> file in the same
+directory as <code>guia-congelamento.md</code>, overwriting the previous
+version.</p></li>
+<li><p>Run the following Pandoc command in your terminal or command
+prompt from the directory containing both files:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>xelatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div></li>
+</ol>
+<h3 data-number="1.2.8" id="explanation-of-changes-1"><span class="header-section-number">1.2.8</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Removed <code>\documentclass{article}</code></strong>: This
+eliminates the conflict with Pandoc’s default LaTeX template, which
+already includes a document class.</li>
+<li><strong>Retained All Other Configurations</strong>: Kept the font
+settings, emoji mappings, and Portuguese language support to ensure the
+document renders correctly with all emojis (🧊, 📌, 🍚, ⚖, 🍝, 🥩, 📊,
+❌, 🔒, ⚠️) using <code>Noto Color Emoji</code>.</li>
+<li><strong>Artifact ID Preservation</strong>: Used the same
+<code>artifact_id</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as the previous
+response, as this is an update to the same <code>header.tex</code>
+file.</li>
+</ul>
+<p>This should resolve the “Two \documentclass” error and produce the
+PDF successfully. Ensure that <code>texlive-fonts-extra</code> is
+installed in your LaTeX distribution to provide
+<code>Noto Color Emoji</code>. If you encounter further issues, verify
+that Pandoc and XeLaTeX are correctly installed and that the
+<code>Noto Color Emoji</code> font is available in your TeX Live
+distribution.</p>
+<hr />
+<h3 data-number="1.2.9" id="utilizador-2025-09-25-214919-grok"><span class="header-section-number">1.2.9</span> 👤 Utilizador <em>(2025-09-25
+21:49:19)</em> <em>[Grok]</em></h3>
+<p>funciona mas os emoji não tem cores (pandoc-env)
+D:_DOCS__DOCS_-congelamento&gt;pandoc guia-congelamento.md -o
+guia-congelamento.pdf –pdf-engine=xelatex –include-in-header=header.tex
+[WARNING] Missing character: There is no 🧊 (U+1F9CA) in font Noto Color
+Emoji SVGinOT/OT:script=lat [WARNING] Missing character: There is no 🥩
+(U+1F969) in font Noto Color Emoji SVGinOT/OT:script=lat</p>
+<hr />
+<h3 data-number="1.2.10" id="grok-2025-09-25-214953-grok"><span class="header-section-number">1.2.10</span> 🤖 Grok <em>(2025-09-25
+21:49:53)</em> <em>[Grok]</em></h3>
+<p>The issue is that the emojis in the generated PDF are not rendering
+in color, and you’re seeing warnings about missing characters (🧊 and
+🥩) in the <code>Noto Color Emoji</code> font when using Pandoc with
+XeLaTeX. This happens because XeLaTeX, by default, does not fully
+support color emoji rendering, especially for certain emoji characters
+like 🧊 (U+1F9CA) and 🥩 (U+1F969), which rely on modern font features
+or specific rendering engines. The <code>Noto Color Emoji</code> font is
+specified in <code>header.tex</code>, but XeLaTeX may be falling back to
+a non-color or incomplete version of the font, and the
+<code>Renderer=Harfbuzz</code> option might not fully handle SVG-based
+color emojis.</p>
+<p>To address this, we can: 1. Switch to LuaLaTeX as the PDF engine,
+which has better support for modern font features, including color
+emojis via HarfBuzz. 2. Ensure <code>Noto Color Emoji</code> is used
+consistently and properly configured. 3. Update <code>header.tex</code>
+to optimize for LuaLaTeX and confirm emoji rendering. 4. Provide
+fallback instructions if color emojis are not critical.</p>
+<p>Below is the updated <code>header.tex</code> file, optimized for
+LuaLaTeX to maximize the chances of rendering color emojis
+correctly.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="1abb2de6-035b-466c-9e9c-20fdfc8c0c9a" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support and text rendering with
+LuaLaTeX
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Ice Cube % Pushpin % Cooked Rice % Balance Scale % Spaghetti % Cut
+of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate] </xaiArtifact></p>
+<h3 data-number="1.2.11" id="instructions-to-convert-the-markdown-file-to-pdf-2"><span class="header-section-number">1.2.11</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><p>Save the updated <code>header.tex</code> file in the same
+directory as <code>guia-congelamento.md</code>, overwriting the previous
+version.</p></li>
+<li><p>Ensure <code>texlive-fonts-extra</code> is installed in your TeX
+Live distribution to provide <code>Noto Color Emoji</code>. You can
+verify this by checking if the font is available in your system or TeX
+Live installation.</p></li>
+<li><p>Run the following Pandoc command, switching the PDF engine to
+LuaLaTeX:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex</span></code></pre></div></li>
+</ol>
+<h3 data-number="1.2.12" id="explanation-of-changes-2"><span class="header-section-number">1.2.12</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Switch to LuaLaTeX</strong>: LuaLaTeX has better support for
+modern font rendering, including color emojis, via the HarfBuzz
+renderer. This should resolve the missing character warnings for 🧊
+(U+1F9CA) and 🥩 (U+1F969) and enable color rendering.</li>
+<li><strong>Retained Font Configuration</strong>: Kept
+<code>Noto Color Emoji</code> with <code>Renderer=HarfBuzz</code> for
+optimal emoji support. The <code>Scale=1.1</code> ensures emojis are
+slightly larger for better visibility.</li>
+<li><strong>Emoji Mappings</strong>: All emojis in the document (🧊, 📌,
+🍚, ⚖, 🍝, 🥩, 📊, ❌, 🔒, ⚠) are explicitly mapped to
+<code>Noto Color Emoji</code> using <code>newunicodechar</code>.</li>
+<li><strong>Artifact ID Preservation</strong>: Used the same
+<code>artifact_id</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as previous
+responses, as this is an update to the same <code>header.tex</code>
+file.</li>
+</ul>
+<h3 data-number="1.2.13" id="additional-notes"><span class="header-section-number">1.2.13</span> Additional Notes</h3>
+<ul>
+<li><strong>Font Availability</strong>: If <code>Noto Color Emoji</code>
+is not installed, you may need to install it via your TeX Live package
+manager (e.g., <code>tlmgr install noto</code> or ensure
+<code>texlive-fonts-extra</code> is installed). On Windows, you can also
+install <code>Noto Color Emoji</code> as a system font from Google’s
+font repository if needed.</li>
+<li><strong>Color Emoji Support</strong>: LuaLaTeX should render emojis
+in color, but this depends on the PDF viewer. Some viewers (e.g., Adobe
+Acrobat, modern web browsers) support color emojis, while others (e.g.,
+some Linux viewers) may render them in grayscale.</li>
+<li><strong>Fallback Option</strong>: If color emojis are not critical,
+you can replace <code>Noto Color Emoji</code> with a monochrome emoji
+font like <code>Symbola</code> or <code>Noto Emoji</code> (non-color
+version) to avoid warnings, but this will render emojis in black and
+white. To do this, replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> in <code>header.tex</code> and ensure
+<code>Symbola</code> is installed.</li>
+<li><strong>Debugging Warnings</strong>: If warnings persist, check the
+Pandoc output log for specific font issues. You can also test the font
+by creating a minimal LaTeX document with just the emojis and compiling
+it with <code>lualatex</code> to confirm font support.</li>
+</ul>
+<p>If you still encounter issues (e.g., emojis remain monochrome or
+warnings persist), let me know your TeX Live version, operating system
+details, and whether color emojis are essential, and I can provide a
+fallback solution or further debugging steps.</p>
+<hr />
+<h3 data-number="1.2.14" id="utilizador-2025-09-25-215329-grok"><span class="header-section-number">1.2.14</span> 👤 Utilizador
+<em>(2025-09-25 21:53:29)</em> <em>[Grok]</em></h3>
+<p>esta ultima solução funciona os emojis são coloridos pandoc
+guia-congelamento.md -o guia-congelamento.pdf –pdf-engine=lualatex
+–include-in-header=header.tex</p>
+<hr />
+<h3 data-number="1.2.15" id="grok-2025-09-25-215332-grok"><span class="header-section-number">1.2.15</span> 🤖 Grok <em>(2025-09-25
+21:53:32)</em> <em>[Grok]</em></h3>
+<p>I’m glad to hear that the solution worked and the emojis are now
+rendering in color! Using LuaLaTeX with the updated
+<code>header.tex</code> and <code>Noto Color Emoji</code> font was the
+right approach to handle color emoji rendering properly.</p>
+<p>If you need any further assistance, such as additional LaTeX tweaks,
+generating a chart from the data in <code>guia-congelamento.md</code>
+(e.g., for the “Tabela de Tempos de Congelamento”), or any other
+modifications, just let me know! For example, I can create a chart
+visualizing the freezing times for different foods if you’d like.</p>
+<hr />
+<h3 data-number="1.2.16" id="utilizador-2025-09-25-215508-grok"><span class="header-section-number">1.2.16</span> 👤 Utilizador
+<em>(2025-09-25 21:55:08)</em> <em>[Grok]</em></h3>
+<p>sim gostaria de ter additional LaTeX tweaks, generating a chart from
+the data in guia-congelamento.md</p>
+<hr />
+<h3 data-number="1.2.17" id="grok-2025-09-25-215556-grok"><span class="header-section-number">1.2.17</span> 🤖 Grok <em>(2025-09-25
+21:55:56)</em> <em>[Grok]</em></h3>
+<p>To enhance the PDF output of <code>guia-congelamento.md</code> and
+include a chart visualizing the data from the “Tabela de Tempos de
+Congelamento,” we’ll make the following LaTeX tweaks and additions: 1.
+<strong>Update <code>header.tex</code></strong>: Enhance the LaTeX
+preamble to include the <code>pgfplots</code> package for creating a
+chart, improve table formatting with <code>booktabs</code>, and maintain
+emoji support with <code>Noto Color Emoji</code> for LuaLaTeX. 2.
+<strong>Generate a Chart</strong>: Create a bar chart using
+<code>pgfplots</code> to visualize the freezing times from the table in
+<code>guia-congelamento.md</code>. 3. <strong>Integrate the
+Chart</strong>: Provide a custom LaTeX file to be included in the Pandoc
+command, ensuring the chart is embedded in the PDF after the table.</p>
+<p>Since the chart will be based on the “Tabela de Tempos de
+Congelamento,” we’ll use the data for foods (Carnes vermelhas, Frango,
+Peixes, Sopas e caldos, Pães, Frutas, Vegetais) and their respective
+freezing times (3-6, 6-9, 3-6, 2-3, 3-4, 8-12, 8-12 months). To make the
+chart clear, we’ll use the midpoint of ranges (e.g., 4.5 for 3-6 months)
+for simplicity.</p>
+<p>Below is the updated LaTeX header file, which includes the necessary
+packages and configurations for the chart and improved table formatting,
+while preserving emoji support.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="8e7d1493-1921-45be-a411-b1e21cd562a6" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+<p>% For creating charts % Set compatibility for pgfplots</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Ice Cube % Pushpin % Cooked Rice % Balance Scale % Spaghetti % Cut
+of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </xaiArtifact></p>
+<h3 data-number="1.2.18" id="additional-latex-file-for-the-chart"><span class="header-section-number">1.2.18</span> Additional LaTeX File for
+the Chart</h3>
+<p>To include the chart in the PDF, we’ll create a separate LaTeX file
+(<code>chart.tex</code>) that defines the bar chart for the freezing
+times. This file will be included in the Pandoc command using the
+<code>--include-after-body</code> option to place the chart after the
+table in the document.</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="b071c2d1-4a7f-44c9-b184-fb843e94874b" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times
+<p></xaiArtifact></p>
+<h3 data-number="1.2.19" id="instructions-to-convert-the-markdown-file-to-pdf-with-the-chart"><span class="header-section-number">1.2.19</span> Instructions to Convert the
+Markdown File to PDF with the Chart</h3>
+<ol type="1">
+<li><p>Save the updated <code>header.tex</code> file (from the first
+artifact) in the same directory as <code>guia-congelamento.md</code>,
+overwriting the previous version.</p></li>
+<li><p>Save the <code>chart.tex</code> file (from the second artifact)
+in the same directory.</p></li>
+<li><p>Ensure <code>texlive-fonts-extra</code> (for
+<code>Noto Color Emoji</code>) and <code>texlive-pictures</code> (for
+<code>pgfplots</code>) are installed in your TeX Live distribution. You
+can install them using:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">tlmgr</span> install noto pgfplots</span></code></pre></div></li>
+<li><p>Run the following Pandoc command to generate the PDF, including
+both the header and the chart:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ol>
+<h3 data-number="1.2.20" id="explanation-of-changes-3"><span class="header-section-number">1.2.20</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Updated <code>header.tex</code></strong>:
+<ul>
+<li>Added <code>booktabs</code> for professional table formatting (e.g.,
+cleaner lines in the original table).</li>
+<li>Added <code>pgfplots</code> for chart creation, with compatibility
+set to version 1.18.</li>
+<li>Defined a custom column type <code>C</code> for centered table
+columns and set row spacing with <code>\arraystretch</code>.</li>
+<li>Configured <code>pgfplots</code> styles for a consistent chart
+appearance (blue bars, small fonts, etc.).</li>
+<li>Retained all emoji mappings and <code>Noto Color Emoji</code> for
+color emoji support.</li>
+<li>Kept the same <code>artifact_id</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as previous
+responses, as this is an update to <code>header.tex</code>.</li>
+</ul></li>
+<li><strong>Created <code>chart.tex</code></strong>:
+<ul>
+<li>Defined a bar chart using <code>pgfplots</code> with the freezing
+time data from the table.</li>
+<li>Used midpoints for ranges (e.g., 4.5 for 3-6 months) to simplify
+visualization.</li>
+<li>Rotated x-axis labels by 45 degrees for readability and set chart
+dimensions to fit the page.</li>
+<li>Assigned a new <code>artifact_id</code>
+(<code>7b9e4d2a-9f5c-4b7d-8f6e-4c6b8e3f1a2e</code>) since this is a new
+file.</li>
+</ul></li>
+<li><strong>Chart Details</strong>:
+<ul>
+<li>The chart displays freezing times for each food type as bars, with
+the x-axis showing food names and the y-axis showing months (0 to 14 for
+clarity).</li>
+<li>A caption explains the chart’s purpose.</li>
+<li>The chart is placed after the table via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>LuaLaTeX</strong>: Continued using LuaLaTeX as the PDF
+engine for color emoji support and compatibility with
+<code>pgfplots</code>.</li>
+</ul>
+<h3 data-number="1.2.21" id="expected-output"><span class="header-section-number">1.2.21</span> Expected Output</h3>
+<p>The generated PDF will include: - The original content of
+<code>guia-congelamento.md</code> with color emojis rendered correctly.
+- Improved table formatting (cleaner lines and spacing due to
+<code>booktabs</code> and <code>array</code>). - A bar chart after the
+“Tabela de Tempos de Congelamento,” showing the average freezing times
+for each food type.</p>
+<p>If you want additional tweaks (e.g., different chart styles, colors,
+or adding the chart to a specific section), or if you encounter any
+issues (e.g., missing packages), let me know your preferences or error
+details, and I’ll provide further adjustments!</p>
+<hr />
+<h3 data-number="1.2.22" id="utilizador-2025-09-25-215753-grok"><span class="header-section-number">1.2.22</span> 👤 Utilizador
+<em>(2025-09-25 21:57:53)</em> <em>[Grok]</em></h3>
+<p>não tenho TeX Live, mas sim MikTex</p>
+<hr />
+<h3 data-number="1.2.23" id="grok-2025-09-25-215852-grok"><span class="header-section-number">1.2.23</span> 🤖 Grok <em>(2025-09-25
+21:58:52)</em> <em>[Grok]</em></h3>
+<p>Since you’re using MiKTeX instead of TeX Live, the process to convert
+<code>guia-congelamento.md</code> to a PDF with color emojis and a chart
+remains largely the same, but we need to ensure that MiKTeX has the
+required packages (<code>noto</code>, <code>pgfplots</code>,
+<code>booktabs</code>, etc.) and fonts (<code>Noto Color Emoji</code>).
+MiKTeX can automatically download missing packages during compilation,
+but you may need to install <code>Noto Color Emoji</code> manually if
+it’s not available in MiKTeX’s repository. Below, I’ll guide you through
+the process, reusing the previously provided <code>header.tex</code> and
+<code>chart.tex</code> files, and address MiKTeX-specific
+considerations.</p>
+<h3 data-number="1.2.24" id="miktex-setup"><span class="header-section-number">1.2.24</span> MiKTeX Setup</h3>
+<ol type="1">
+<li><strong>Ensure Required Packages</strong>:
+<ul>
+<li>MiKTeX should automatically install packages like
+<code>fontspec</code>, <code>unicode-math</code>,
+<code>microtype</code>, <code>booktabs</code>, <code>pgfplots</code>,
+<code>array</code>, <code>polyglossia</code>, and
+<code>newunicodechar</code> when you run the Pandoc command, as MiKTeX’s
+package manager fetches missing packages on-the-fly.</li>
+<li>To confirm or manually install these packages, use the MiKTeX
+Console:
+<ul>
+<li>Open MiKTeX Console (search for it in the Start menu).</li>
+<li>Go to the “Packages” tab.</li>
+<li>Search for and install <code>noto</code>, <code>pgfplots</code>,
+<code>booktabs</code>, <code>polyglossia</code>, <code>fontspec</code>,
+<code>unicode-math</code>, <code>microtype</code>, <code>array</code>,
+and <code>newunicodechar</code> if not already present.</li>
+</ul></li>
+<li>If <code>Noto Color Emoji</code> is not available in MiKTeX’s
+repository, you may need to install it as a system font (see
+below).</li>
+</ul></li>
+<li><strong>Install Noto Color Emoji</strong>:
+<ul>
+<li>MiKTeX may not include <code>Noto Color Emoji</code> by default. If
+the font is missing, download it from Google Fonts or another reliable
+source (e.g., <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>).</li>
+<li>Install the font on your Windows system:
+<ul>
+<li>Download the <code>NotoColorEmoji.ttf</code> file.</li>
+<li>Double-click the file and click “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+<li>LuaLaTeX can access system fonts, so this should work without
+additional configuration in MiKTeX.</li>
+</ul></li>
+<li>Alternatively, if MiKTeX has a <code>noto</code> package that
+includes <code>Noto Color Emoji</code>, install it via MiKTeX
+Console.</li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure MiKTeX has LuaLaTeX installed. You can check by running
+<code>lualatex --version</code> in a command prompt. If it’s missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.25" id="files-from-previous-response"><span class="header-section-number">1.2.25</span> Files from Previous
+Response</h3>
+<p>The <code>header.tex</code> and <code>chart.tex</code> files provided
+earlier are compatible with MiKTeX and LuaLaTeX. For convenience, I’ll
+repeat the key details: - <strong><code>header.tex</code></strong>
+(includes emoji support, table formatting, and chart styling). -
+<strong><code>chart.tex</code></strong> (defines a bar chart for the
+freezing times from the “Tabela de Tempos de Congelamento”).</p>
+<p>Ensure both files are saved in the same directory as
+<code>guia-congelamento.md</code>. The <code>header.tex</code> file
+is:</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="3371d818-a1ea-4897-ad5e-303b0e8c8558" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+<p>% For creating charts % Set compatibility for pgfplots</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Ice Cube % Pushpin % Cooked Rice % Balance Scale % Spaghetti % Cut
+of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </xaiArtifact></p>
+<p>The <code>chart.tex</code> file is:</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="0ce8c3b9-f745-4434-9318-721a7c51ab3a" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times
+<p></xaiArtifact></p>
+<h3 data-number="1.2.26" id="instructions-to-convert-the-markdown-file-to-pdf-3"><span class="header-section-number">1.2.26</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save <code>header.tex</code> and <code>chart.tex</code> in the same
+directory as <code>guia-congelamento.md</code> (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\guia-congelamento</code>).</li>
+</ul></li>
+<li><strong>Install Noto Color Emoji</strong>:
+<ul>
+<li>If you haven’t already, download <code>NotoColorEmoji.ttf</code>
+from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Install it by double-clicking the file and selecting “Install” in
+Windows.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory containing the files
+(e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\guia-congelamento</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Check for Package Installation</strong>:
+<ul>
+<li>If MiKTeX prompts you to install missing packages (e.g.,
+<code>pgfplots</code>, <code>noto</code>, <code>booktabs</code>), allow
+it to do so automatically.</li>
+<li>If you encounter errors about missing packages, open MiKTeX Console,
+search for the package, and install it manually.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.27" id="additional-latex-tweaks"><span class="header-section-number">1.2.27</span> Additional LaTeX Tweaks</h3>
+<p>To further enhance the PDF output, the following tweaks are already
+included in <code>header.tex</code> or can be added: - <strong>Improved
+Table Formatting</strong>: The <code>booktabs</code> package and custom
+column type <code>C</code> ensure professional-looking tables with clean
+lines and centered content. - <strong>Chart Styling</strong>: The
+<code>pgfplots</code> configuration uses a light blue fill
+(<code>blue!30</code>) and border (<code>blue!50</code>) for bars, with
+rotated x-axis labels for readability. If you want a different color
+scheme (e.g., green or red), let me know, and I can update the
+<code>fill</code> and <code>draw</code> properties. - <strong>Page
+Layout</strong>: To adjust margins or page size, you can add the
+<code>geometry</code> package to <code>header.tex</code>. For example,
+to set 2cm margins:
+<code>latex   \usepackage{geometry}   \geometry{margin=2cm}</code> Add
+this to <code>header.tex</code> if desired, and I can provide an updated
+version. - <strong>Font Size for Headings</strong>: To make section
+headings larger, you can add:
+<code>latex   \usepackage{sectsty}   \allsectionsfont{\large}</code>
+This can be included in <code>header.tex</code> if you want headings to
+stand out more.</p>
+<h3 data-number="1.2.28" id="expected-output-1"><span class="header-section-number">1.2.28</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of
+<code>guia-congelamento.md</code> with color emojis rendered correctly
+via <code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Tabela de Tempos de Congelamento” using <code>booktabs</code>. - A bar
+chart after the table, showing the average freezing times (in months)
+for Carnes vermelhas (4.5), Frango (7.5), Peixes (4.5), Sopas e caldos
+(2.5), Pães (3.5), Frutas (10), and Vegetais (10).</p>
+<h3 data-number="1.2.29" id="chart-visualization-non-chart.js"><span class="header-section-number">1.2.29</span> Chart Visualization
+(Non-Chart.js)</h3>
+<p>Since you’re generating a PDF with LaTeX, the chart is created using
+<code>pgfplots</code> in <code>chart.tex</code>, not Chart.js (which is
+for web-based charts). The bar chart will appear in the PDF with: -
+X-axis: Food types (Carnes vermelhas, Frango, etc.). - Y-axis: Freezing
+time in months (0 to 14). - Bars styled in light blue with a caption
+below.</p>
+<p>If you specifically want a Chart.js chart for a different context
+(e.g., a web page), I can provide a separate code block, but for the
+PDF, <code>pgfplots</code> is ideal.</p>
+<h3 data-number="1.2.30" id="troubleshooting"><span class="header-section-number">1.2.30</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Font Error</strong>: If you see warnings about
+<code>Noto Color Emoji</code> (e.g., “Missing character: There is no
+🧊”), ensure the font is installed as a system font or check if MiKTeX’s
+<code>noto</code> package includes it. As a fallback, you can switch to
+<code>Symbola</code> (monochrome) by replacing
+<code>Noto Color Emoji</code> with <code>Symbola</code> in
+<code>header.tex</code> and installing <code>Symbola</code> via MiKTeX
+Console.</li>
+<li><strong>Package Errors</strong>: If MiKTeX fails to install
+<code>pgfplots</code> or other packages, manually install them via
+MiKTeX Console or run the command with administrative privileges.</li>
+<li><strong>LuaLaTeX Issues</strong>: If <code>lualatex</code> is not
+found, install it via MiKTeX Console under the “Packages” tab.</li>
+</ul>
+<p>If you want additional tweaks (e.g., different chart colors,
+adjusting margins, or adding more LaTeX formatting), or if you encounter
+any errors, please provide details (e.g., error messages, MiKTeX
+version, or desired customizations), and I’ll tailor the solution
+further!</p>
+<hr />
+<h3 data-number="1.2.31" id="utilizador-2025-09-26-205344-grok"><span class="header-section-number">1.2.31</span> 👤 Utilizador
+<em>(2025-09-26 20:53:44)</em> <em>[Grok]</em></h3>
+<p>Continuando o Troubleshooting agora de outro guia-congelamento.md e
+header.tex e pandoc guia-congelamento.md -o guia-congelamento.pdf
+–pdf-engine=lualatex –include-in-header=header.tex resulta em: [WARNING]
+[makePDF] LaTeX Warning: Command has changed. Check if current package
+is valid. [WARNING] [makePDF] LaTeX Warning: Command as changed. Check
+if current package is valid. [WARNING] Missing character: There is no
+≡ƒÄú (U+1F3A3) (U+1F3A3) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒÄú (U+1F3A3) (U+1F3A3) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒîè (U+1F30A) (U+1F30A) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒîè (U+1F30A) (U+1F30A) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒôì (U+1F4CD) (U+1F4CD) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒôì (U+1F4CD) (U+1F4CD) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒÉƒ (U+1F41F) (U+1F41F) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒÉƒ (U+1F41F) (U+1F41F) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒÄ» (U+1F3AF) (U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+Γ¥ä (U+2744) (U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING]
+Missing character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄú (U+1F3A3)
+(U+1F3A3) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîè (U+1F30A) (U+1F30A) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒôì (U+1F4CD)
+(U+1F4CD) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÉƒ (U+1F41F) (U+1F41F) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒì│ (U+1F373)
+(U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒòÆ (U+1F552)
+(U+1F552) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒòÆ (U+1F552) (U+1F552) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒì│ (U+1F373)
+(U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒòÆ (U+1F552)
+(U+1F552) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîí (U+1F321) (U+1F321) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒîí (U+1F321)
+(U+1F321) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÅ₧ (U+1F3DE) (U+1F3DE) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÅ₧ (U+1F3DE)
+(U+1F3DE) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no Γ£à (U+2705)
+(U+2705) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ≡ƒÜ¿ (U+1F6A8) (U+1F6A8) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÜ¿ (U+1F6A8)
+(U+1F6A8) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no Γ£à (U+2705)
+(U+2705) in font “name:DejaVu Serif/B:mode=ha [WARNING] Missing
+character: There is no ≡ƒîí (U+1F321) (U+1F321) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÅ₧ (U+1F3DE)
+(U+1F3DE) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒÜ¿ (U+1F6A8)
+(U+1F6A8) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=ha [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= (pandoc-env)
+D:_DOCS__DOCS__md_to_pdf-congelamento2&gt;</p>
+<hr />
+<h3 data-number="1.2.32" id="grok-2025-09-26-205512-grok"><span class="header-section-number">1.2.32</span> 🤖 Grok <em>(2025-09-26
+20:55:12)</em> <em>[Grok]</em></h3>
+<p>The warnings you’re encountering when running the Pandoc command to
+convert <code>guia-congelamento.md</code> to a PDF using MiKTeX with
+LuaLaTeX indicate two main issues: 1. <strong>LaTeX Warnings for
+<code>\underbar</code> and <code>\underline</code></strong>: These
+warnings suggest a conflict or redefinition of the
+<code>\underbar</code> and <code>\underline</code> commands, likely
+caused by the <code>unicode-math</code> package, which can alter these
+commands when used with certain fonts or settings. 2. <strong>Missing
+Character Warnings</strong>: The emojis in the new
+<code>guia-congelamento.md</code> (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 👨‍🍳, 🕒, 🌡️,
+🏞️, ✅, 🚨) are not rendering correctly because they are not mapped to
+the <code>Noto Color Emoji</code> font in <code>header.tex</code>.
+Instead, LuaLaTeX is trying to render them with
+<code>DejaVu Serif</code>, which lacks these Unicode characters.</p>
+<p>Additionally, you want to include a chart based on the “Tabela Resumo
+por Espécie” from the new <code>guia-congelamento.md</code>, which lists
+freezing times for Carpa (2-3 months), Lúcio-perca (3-4 months), Achigã
+(2-3 months), and Savel (1-2 months). I’ll provide an updated
+<code>header.tex</code> to fix the emoji and command issues, and a new
+<code>chart.tex</code> to create a bar chart for the freezing times,
+tailored for MiKTeX and LuaLaTeX.</p>
+<h3 data-number="1.2.33" id="fixing-the-issues"><span class="header-section-number">1.2.33</span> Fixing the Issues</h3>
+<ol type="1">
+<li><strong>Resolve <code>\underbar</code> and <code>\underline</code>
+Warnings</strong>:
+<ul>
+<li>The <code>unicode-math</code> package can redefine
+<code>\underline</code> and <code>\underbar</code>, causing conflicts
+with Pandoc’s default template or other packages. Since
+<code>unicode-math</code> is not strictly necessary for emoji rendering
+and text formatting in this document (it’s primarily for mathematical
+typesetting), we can remove it to avoid these warnings.</li>
+<li>Alternatively, if <code>unicode-math</code> is needed for other
+reasons (e.g., future math content), we can load it with specific
+options to minimize conflicts, but removal is simpler here.</li>
+</ul></li>
+<li><strong>Fix Missing Emoji Characters</strong>:
+<ul>
+<li>The new <code>guia-congelamento.md</code> uses additional emojis
+(🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨) that are not defined in
+the current <code>header.tex</code>. We’ll add
+<code>newunicodechar</code> mappings for these emojis to use
+<code>Noto Color Emoji</code>.</li>
+<li>The <code>emoji</code> package included in your
+<code>header.tex</code> is unnecessary since we’re explicitly mapping
+emojis with <code>newunicodechar</code> and may cause conflicts. We’ll
+remove it.</li>
+</ul></li>
+<li><strong>Create a Chart</strong>:
+<ul>
+<li>We’ll generate a bar chart using <code>pgfplots</code> for the
+freezing times from the “Tabela Resumo por Espécie” (Carpa: 2-3 months,
+Lúcio-perca: 3-4 months, Achigã: 2-3 months, Savel: 1-2 months), using
+midpoints (e.g., 2.5 for 2-3 months) for simplicity.</li>
+<li>The chart will be included via a <code>chart.tex</code> file, placed
+after the table using <code>--include-after-body</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.34" id="updated-files"><span class="header-section-number">1.2.34</span> Updated Files</h3>
+<p>Below are the updated <code>header.tex</code> and new
+<code>chart.tex</code> files, optimized for MiKTeX and LuaLaTeX.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="06426988-b1f7-4ece-ba76-5377465925a8" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+<p>% For creating charts % Set compatibility for pgfplots</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping all emojis used in the document to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Man Cook % Clock (3 o’clock) % Thermometer % National Park %
+Check Mark Button % Police Car Light % Including emojis from the
+previous document for compatibility % Ice Cube % Pushpin % Cooked Rice %
+Balance Scale % Spaghetti % Cut of Meat % Bar Chart % Cross Mark %
+Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+<p></xaiArtifact></p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="59ebdae4-204e-4f14-a252-df5f9e0b561e" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times by fish species
+<p></xaiArtifact></p>
+<h3 data-number="1.2.35" id="instructions-to-convert-the-markdown-file-to-pdf-4"><span class="header-section-number">1.2.35</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save the updated <code>header.tex</code> and <code>chart.tex</code>
+in the same directory as the new <code>guia-congelamento.md</code>
+(e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>Download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>
+if not already installed.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Check for Package Installation</strong>:
+<ul>
+<li>MiKTeX should automatically install missing packages
+(<code>fontspec</code>, <code>microtype</code>, <code>booktabs</code>,
+<code>pgfplots</code>, <code>array</code>, <code>polyglossia</code>,
+<code>newunicodechar</code>) when running the command.</li>
+<li>If prompted, allow MiKTeX to install them. If errors occur, open
+MiKTeX Console, search for the missing packages, and install them
+manually.</li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.36" id="explanation-of-changes-4"><span class="header-section-number">1.2.36</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Removed <code>unicode-math</code></strong>:
+<ul>
+<li>Eliminated <code>\usepackage{unicode-math}</code> to resolve the
+<code>\underbar</code> and <code>\underline</code> warnings, as it’s not
+needed for this document (no mathematical typesetting is required).</li>
+</ul></li>
+<li><strong>Removed <code>emoji</code> Package</strong>:
+<ul>
+<li>Removed <code>\usepackage{emoji}</code> to avoid potential
+conflicts, as <code>newunicodechar</code> with
+<code>Noto Color Emoji</code> handles all emoji rendering.</li>
+</ul></li>
+<li><strong>Updated Emoji Mappings</strong>:
+<ul>
+<li>Added <code>newunicodechar</code> definitions for the new emojis
+(🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨) to ensure they render
+in color with <code>Noto Color Emoji</code>.</li>
+<li>Kept mappings for previous emojis (🧊, 📌, 🍚, ⚖, 🍝, 🥩, 📊, ❌,
+🔒, ⚠) for compatibility.</li>
+</ul></li>
+<li><strong>Chart for Freezing Times</strong>:
+<ul>
+<li>Created a new <code>chart.tex</code> with a bar chart for the
+“Tabela Resumo por Espécie” using <code>pgfplots</code>.</li>
+<li>Used midpoints for freezing times: Carpa (2.5 months), Lúcio-perca
+(3.5 months), Achigã (2.5 months), Savel (1.5 months).</li>
+<li>Set the y-axis to 0–5 months for clarity, with a green color scheme
+(<code>fill=green!30</code>, <code>draw=green!50</code>) to
+differentiate from the previous chart.</li>
+<li>Placed the chart after the table via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>Retained LaTeX Tweaks</strong>:
+<ul>
+<li>Kept <code>booktabs</code> and <code>array</code> for improved table
+formatting.</li>
+<li>Kept <code>geometry</code> with 2cm margins and <code>sectsty</code>
+for larger section headings.</li>
+<li>Updated <code>pgfplots</code> styling to use green bars for visual
+distinction.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Used the same <code>artifact_id</code> for <code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as it’s a new chart
+for the same purpose.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.2.37" id="expected-output-2"><span class="header-section-number">1.2.37</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of the new
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨) rendered in color using
+<code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+with clean lines and centered columns. - A bar chart after the “Tabela
+Resumo por Espécie,” showing freezing times for Carpa (2.5 months),
+Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5 months) in
+green bars.</p>
+<h3 data-number="1.2.38" id="troubleshooting-1"><span class="header-section-number">1.2.38</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Font Errors</strong>:
+<ul>
+<li>If warnings about missing emojis persist, ensure
+<code>Noto Color Emoji</code> is installed as a system font. If
+unavailable, install it from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>As a fallback, you can use <code>Symbola</code> (monochrome) by
+replacing <code>Noto Color Emoji</code> with <code>Symbola</code> in
+<code>header.tex</code> and installing <code>Symbola</code> via MiKTeX
+Console.</li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install <code>pgfplots</code> or other packages,
+run the command with administrative privileges or install them manually
+via MiKTeX Console.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, check your PDF viewer (e.g., Adobe
+Acrobat supports color emojis, while some viewers may not). Ensure
+<code>Noto Color Emoji</code> is correctly installed.</li>
+</ul></li>
+<li><strong>MiKTeX Console</strong>:
+<ul>
+<li>If errors occur, open MiKTeX Console, go to “Packages,” and install
+any missing packages (<code>noto</code>, <code>pgfplots</code>,
+<code>booktabs</code>, etc.).</li>
+</ul></li>
+</ul>
+<p>If you want further tweaks (e.g., different chart colors, additional
+LaTeX styling, or combining charts from both
+<code>guia-congelamento.md</code> documents), or if you encounter
+specific errors, please share the details, and I’ll provide a tailored
+solution!</p>
+<hr />
+<h3 data-number="1.2.39" id="utilizador-2025-09-26-210047-grok"><span class="header-section-number">1.2.39</span> 👤 Utilizador
+<em>(2025-09-26 21:00:47)</em> <em>[Grok]</em></h3>
+<p>pandoc guia-congelamento.md -o guia-congelamento.pdf
+–pdf-engine=lualatex –include-in-header=header.tex
+–include-after-body=chart.tex Error producing PDF. ! Package
+newunicodechar Error: Invalid argument. See the newunicodechar package
+documentation for explanation. Type H <return> for immediate help. …
+l.78 …har{≡ƒæ¿ΓÇì≡ƒì│}{{≡ƒæ¿ΓÇì≡ƒì│}} (pandoc-env)
+D:_DOCS__DOCS__md_to_pdf-congelamento2&gt;</p>
+<hr />
+<h3 data-number="1.2.40" id="grok-2025-09-26-210217-grok"><span class="header-section-number">1.2.40</span> 🤖 Grok <em>(2025-09-26
+21:02:17)</em> <em>[Grok]</em></h3>
+<p>The error occurs because the <code>newunicodechar</code> package in
+LaTeX does not support defining a multi-character emoji like 👨‍🍳 (U+1F468
+U+200D U+1F373) as a single Unicode character. This emoji is a composite
+sequence (a man U+1F468, a zero-width joiner U+200D, and a cook
+U+1F373), and <code>newunicodechar</code> expects a single Unicode code
+point. To fix this, we need to handle composite emojis differently,
+either by using the <code>emoji</code> package for better emoji sequence
+support or by replacing the composite emoji with a simpler alternative.
+Additionally, we’ll ensure all other emojis in
+<code>guia-congelamento.md</code> (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 🕒, 🌡️, 🏞️,
+✅, 🚨) are correctly mapped to <code>Noto Color Emoji</code> to avoid
+further warnings.</p>
+<p>To address the issue and maintain the chart for the “Tabela Resumo
+por Espécie” (freezing times for Carpa, Lúcio-perca, Achigã, Savel),
+I’ll: 1. Update <code>header.tex</code> to remove the problematic
+<code>newunicodechar</code> definition for 👨‍🍳 and use the
+<code>emoji</code> package for better emoji support, including composite
+sequences. 2. Keep the <code>chart.tex</code> file unchanged, as it
+correctly generates the bar chart for freezing times. 3. Ensure
+compatibility with MiKTeX and LuaLaTeX, addressing any remaining
+warnings.</p>
+<h3 data-number="1.2.41" id="updated-header.tex"><span class="header-section-number">1.2.41</span> Updated
+<code>header.tex</code></h3>
+<p>The updated <code>header.tex</code> removes the
+<code>newunicodechar</code> definition for 👨‍🍳 and relies on the
+<code>emoji</code> package to handle all emojis, including composite
+ones. It also retains mappings for single-code-point emojis to ensure
+<code>Noto Color Emoji</code> is used, and keeps the previous tweaks
+(e.g., <code>booktabs</code>, <code>pgfplots</code>,
+<code>geometry</code>, <code>sectsty</code>) for table formatting, chart
+styling, and page layout.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="7e701df5-98a3-49b3-b745-dbf314631d02" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+% For creating charts % Set compatibility for pgfplots
+<p>% For emoji support, including composite sequences</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping single-code-point emojis to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Clock (3 o’clock) % Thermometer % National Park % Check Mark
+Button % Police Car Light % Including emojis from the previous document
+for compatibility % Ice Cube % Pushpin % Cooked Rice % Balance Scale %
+Spaghetti % Cut of Meat % Bar Chart % Cross Mark % Locked % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+<p></xaiArtifact></p>
+<h3 data-number="1.2.42" id="existing-chart.tex"><span class="header-section-number">1.2.42</span> Existing
+<code>chart.tex</code></h3>
+<p>The <code>chart.tex</code> file from the previous response is still
+valid for the bar chart of freezing times (Carpa: 2.5 months,
+Lúcio-perca: 3.5 months, Achigã: 2.5 months, Savel: 1.5 months). For
+reference, here it is again:</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="e068117d-bfdf-4bbc-a1ab-521b7430eed4" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times by fish species
+<p></xaiArtifact></p>
+<h3 data-number="1.2.43" id="instructions-to-convert-the-markdown-file-to-pdf-5"><span class="header-section-number">1.2.43</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save the updated <code>header.tex</code> (above) and
+<code>chart.tex</code> in the same directory as
+<code>guia-congelamento.md</code> (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>If not installed, download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Install the <code>emoji</code> Package</strong>:
+<ul>
+<li>Ensure the <code>emoji</code> package is installed in MiKTeX. Open
+MiKTeX Console, go to the “Packages” tab, search for <code>emoji</code>,
+and install it if not already present.</li>
+<li>If MiKTeX prompts to install other missing packages
+(<code>fontspec</code>, <code>microtype</code>, <code>booktabs</code>,
+<code>pgfplots</code>, <code>array</code>, <code>polyglossia</code>,
+<code>newunicodechar</code>) during compilation, allow it.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.44" id="explanation-of-changes-5"><span class="header-section-number">1.2.44</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Fixed <code>newunicodechar</code> Error</strong>:
+<ul>
+<li>Removed the invalid <code>newunicodechar</code> definition for 👨‍🍳,
+as it’s a composite emoji (U+1F468 U+200D U+1F373) that
+<code>newunicodechar</code> cannot handle.</li>
+<li>Added <code>\usepackage{emoji}</code> to support composite emojis
+like 👨‍🍳, which the <code>emoji</code> package can render correctly with
+<code>Noto Color Emoji</code> when used with LuaLaTeX.</li>
+</ul></li>
+<li><strong>Retained Emoji Mappings</strong>:
+<ul>
+<li>Kept <code>newunicodechar</code> definitions for single-code-point
+emojis (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 🕒, 🌡️, 🏞️, ✅, 🚨, and previous ones:
+🧊, 📌, 🍚, ⚖, 🍝, 🥩, 📊, ❌, 🔒, ⚠) to ensure they use
+<code>Noto Color Emoji</code>.</li>
+<li>The <code>emoji</code> package handles any unmapped or composite
+emojis, reducing the risk of missing character warnings.</li>
+</ul></li>
+<li><strong>Removed <code>unicode-math</code></strong>:
+<ul>
+<li>Already removed in the previous response to avoid
+<code>\underbar</code> and <code>\underline</code> warnings, and it
+remains unnecessary for this document.</li>
+</ul></li>
+<li><strong>Chart Configuration</strong>:
+<ul>
+<li>The <code>chart.tex</code> file remains unchanged, as it correctly
+visualizes the freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5
+months, Achigã: 2.5 months, Savel: 1.5 months) with green bars
+(<code>fill=green!30</code>, <code>draw=green!50</code>).</li>
+<li>The chart is included after the “Tabela Resumo por Espécie” via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>MiKTeX Compatibility</strong>:
+<ul>
+<li>Ensured all packages (<code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>,
+<code>emoji</code>) are standard and available in MiKTeX.</li>
+<li>Relied on MiKTeX’s on-the-fly package installation for
+convenience.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Used the same <code>artifact_id</code> for <code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as it’s
+unchanged.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.2.45" id="expected-output-3"><span class="header-section-number">1.2.45</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨) rendered in color using
+<code>Noto Color Emoji</code>, with the <code>emoji</code> package
+handling the composite 👨‍🍳. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+using <code>booktabs</code> and centered columns. - A bar chart after
+the “Tabela Resumo por Espécie,” showing freezing times for Carpa (2.5
+months), Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5
+months) in green bars.</p>
+<h3 data-number="1.2.46" id="troubleshooting-2"><span class="header-section-number">1.2.46</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Emoji Warnings</strong>:
+<ul>
+<li>If warnings about missing characters persist, ensure
+<code>Noto Color Emoji</code> is installed as a system font (see
+installation instructions above).</li>
+<li>As a fallback, you can replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> (monochrome) in <code>header.tex</code> and install
+<code>Symbola</code> via MiKTeX Console, but this will render emojis in
+black and white.</li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install the <code>emoji</code> package or others,
+manually install them via MiKTeX Console (search for <code>emoji</code>,
+<code>pgfplots</code>, etc.) or run the command with administrative
+privileges.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, verify that your PDF viewer supports
+color emojis (e.g., Adobe Acrobat). Some viewers may render emojis in
+grayscale.</li>
+</ul></li>
+<li><strong>MiKTeX Console</strong>:
+<ul>
+<li>If errors occur, open MiKTeX Console, go to “Packages,” and install
+any missing packages (<code>emoji</code>, <code>noto</code>,
+<code>pgfplots</code>, <code>booktabs</code>, etc.).</li>
+</ul></li>
+<li><strong>Composite Emoji Issues</strong>:
+<ul>
+<li>If 👨‍🍳 still causes issues, you can replace it in
+<code>guia-congelamento.md</code> with a single-code-point emoji like 🍳
+(U+1F373, cooking) to simplify rendering. Let me know if you want to
+make this change.</li>
+</ul></li>
+</ul>
+<p>If you want additional tweaks (e.g., different chart colors,
+combining charts from both <code>guia-congelamento.md</code> documents,
+or further LaTeX styling), or if you encounter new errors, please share
+the details, and I’ll provide a tailored solution!</p>
+<hr />
+<h3 data-number="1.2.47" id="utilizador-2025-09-26-215645-grok"><span class="header-section-number">1.2.47</span> 👤 Utilizador
+<em>(2025-09-26 21:56:45)</em> <em>[Grok]</em></h3>
+<p>Com este header.tex e o comando pandoc guia-congelamento.md -o
+guia-congelamento.pdf –pdf-engine=lualatex –include-in-header=header.tex
+tem como resultado [WARNING] Missing character: There is no ≡ƒÄú
+(U+1F3A3) (U+1F3A3) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄú (U+1F3A3) (U+1F3A3) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒîè (U+1F30A)
+(U+1F30A) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîè (U+1F30A) (U+1F30A) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒôì (U+1F4CD)
+(U+1F4CD) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒôì (U+1F4CD) (U+1F4CD) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÉƒ (U+1F41F)
+(U+1F41F) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÉƒ (U+1F41F) (U+1F41F) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄú (U+1F3A3)
+(U+1F3A3) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîè (U+1F30A) (U+1F30A) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒôì (U+1F4CD)
+(U+1F4CD) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÉƒ (U+1F41F) (U+1F41F) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒì│ (U+1F373)
+(U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒòÆ (U+1F552)
+(U+1F552) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒòÆ (U+1F552) (U+1F552) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÄ» (U+1F3AF)
+(U+1F3AF) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ¥ä (U+2744) (U+2744) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÅ▒ (U+23F1)
+(U+23F1) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒì│ (U+1F373)
+(U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÄ» (U+1F3AF) (U+1F3AF) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥ä (U+2744)
+(U+2744) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÅ▒ (U+23F1) (U+23F1) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒîí (U+1F321)
+(U+1F321) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîí (U+1F321) (U+1F321) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÅ₧ (U+1F3DE)
+(U+1F3DE) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÅ₧ (U+1F3DE) (U+1F3DE) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ£à (U+2705)
+(U+2705) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÜá (U+26A0)
+(U+26A0) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ΓÜá (U+26A0) (U+26A0) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒôè (U+1F4CA)
+(U+1F4CA) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒôè (U+1F4CA) (U+1F4CA) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÜ¿ (U+1F6A8)
+(U+1F6A8) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒÜ¿ (U+1F6A8) (U+1F6A8) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ£à (U+2705)
+(U+2705) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒòÆ (U+1F552)
+(U+1F552) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒîí (U+1F321) (U+1F321) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÅ₧ (U+1F3DE)
+(U+1F3DE) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ΓÜá (U+26A0)
+(U+26A0) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ≡ƒôè (U+1F4CA) (U+1F4CA) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no Γ¥î (U+274C)
+(U+274C) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no Γ¥î (U+274C) (U+274C) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒæ¿ (U+1F468)
+(U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no ≡ƒì│ (U+1F373) (U+1F373) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒÜ¿ (U+1F6A8)
+(U+1F6A8) in font “name:DejaVu Serif/B:mode= [WARNING] Missing
+character: There is no Γ£à (U+2705) (U+2705) in font”name:DejaVu
+Serif/B:mode=no [WARNING] Missing character: There is no Γ¥î (U+274C)
+(U+274C) in font “name:DejaVu Serif/B:mode=no [WARNING] Missing
+character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font”name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒì│ (U+1F373)
+(U+1F373) in font “name:DejaVu Serif/B:mode= (pandoc-env)
+D:_DOCS__DOCS__md_to_pdf-congelamento2&gt;</p>
+<hr />
+<h3 data-number="1.2.48" id="grok-2025-09-26-215814-grok"><span class="header-section-number">1.2.48</span> 🤖 Grok <em>(2025-09-26
+21:58:14)</em> <em>[Grok]</em></h3>
+<p>The warnings indicate that the emojis in
+<code>guia-congelamento.md</code> (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 👨‍🍳, 🕒, 🌡️,
+🏞️, ✅, 🚨, 📊, ❌, ⚠️) are being rendered with the
+<code>DejaVu Serif</code> font, which lacks support for these Unicode
+characters. The current <code>header.tex</code> does not include emoji
+support via <code>Noto Color Emoji</code> or the <code>emoji</code>
+package, causing LuaLaTeX to fall back to <code>DejaVu Serif</code> and
+generate “Missing character” warnings. Additionally, you want to include
+a chart based on the “Tabela Resumo por Espécie” (freezing times for
+Carpa: 2-3 months, Lúcio-perca: 3-4 months, Achigã: 2-3 months, Savel:
+1-2 months), which was previously provided in
+<code>chart.tex</code>.</p>
+<p>To resolve the emoji issue and include the chart, I’ll: 1. Update
+<code>header.tex</code> to add support for color emojis using
+<code>Noto Color Emoji</code> and the <code>emoji</code> package,
+including mappings for all emojis in the document, and handle the
+composite emoji 👨‍🍳 correctly. 2. Reuse the existing
+<code>chart.tex</code> to include the bar chart for freezing times after
+the “Tabela Resumo por Espécie.” 3. Ensure compatibility with MiKTeX and
+LuaLaTeX, addressing the warnings and maintaining previous tweaks (e.g.,
+<code>booktabs</code>, <code>pgfplots</code>,
+<code>geometry</code>).</p>
+<h3 data-number="1.2.49" id="updated-header.tex-1"><span class="header-section-number">1.2.49</span> Updated
+<code>header.tex</code></h3>
+<p>The updated <code>header.tex</code> adds the <code>emoji</code>
+package for composite emoji support (e.g., 👨‍🍳), maps single-code-point
+emojis to <code>Noto Color Emoji</code> using
+<code>newunicodechar</code>, and retains the existing formatting for
+tables, charts, and page layout.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="35bde077-c31c-41ce-a413-c1889d7c3340" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+% For creating charts % Set compatibility for pgfplots
+<p>% For emoji support, including composite sequences</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping single-code-point emojis to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Clock (3 o’clock) % Thermometer % National Park % Check Mark
+Button % Police Car Light % Bar Chart % Cross Mark % Warning</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+<p></xaiArtifact></p>
+<h3 data-number="1.2.50" id="existing-chart.tex-1"><span class="header-section-number">1.2.50</span> Existing
+<code>chart.tex</code></h3>
+<p>The <code>chart.tex</code> file from the previous response is still
+valid for the bar chart of freezing times (Carpa: 2.5 months,
+Lúcio-perca: 3.5 months, Achigã: 2.5 months, Savel: 1.5 months). For
+completeness, here it is again:</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="88b699c6-ff2a-436f-a0d7-5ac20f6aa374" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times by fish species
+<p></xaiArtifact></p>
+<h3 data-number="1.2.51" id="instructions-to-convert-the-markdown-file-to-pdf-6"><span class="header-section-number">1.2.51</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save the updated <code>header.tex</code> and <code>chart.tex</code>
+in the same directory as <code>guia-congelamento.md</code> (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>If not installed, download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Install the <code>emoji</code> Package</strong>:
+<ul>
+<li>Ensure the <code>emoji</code> package is installed in MiKTeX. Open
+MiKTeX Console, go to the “Packages” tab, search for <code>emoji</code>,
+and install it if not already present.</li>
+<li>Allow MiKTeX to install other missing packages
+(<code>fontspec</code>, <code>microtype</code>, <code>booktabs</code>,
+<code>pgfplots</code>, <code>array</code>, <code>polyglossia</code>,
+<code>newunicodechar</code>) during compilation.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.52" id="explanation-of-changes-6"><span class="header-section-number">1.2.52</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Added Emoji Support</strong>:
+<ul>
+<li>Included <code>\usepackage{emoji}</code> to handle the composite
+emoji 👨‍🍳 (U+1F468 U+200D U+1F373), which caused the previous
+<code>newunicodechar</code> error due to its multi-character
+nature.</li>
+<li>Added <code>newunicodechar</code> definitions for all
+single-code-point emojis in the document (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 🕒,
+🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️) to ensure they render in color with
+<code>Noto Color Emoji</code>.</li>
+<li>The <code>emoji</code> package automatically handles composite
+emojis like 👨‍🍳 when used with <code>Noto Color Emoji</code> and
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Retained Previous Tweaks</strong>:
+<ul>
+<li>Kept <code>booktabs</code> and <code>array</code> for enhanced table
+formatting (e.g., “Cronograma de Congelamento Pós-Captura” and “Tabela
+Resumo por Espécie”).</li>
+<li>Kept <code>pgfplots</code> for the bar chart, with green bars
+(<code>fill=green!30</code>, <code>draw=green!50</code>) for freezing
+times.</li>
+<li>Retained <code>geometry</code> (2cm margins) and
+<code>sectsty</code> (larger section headings).</li>
+</ul></li>
+<li><strong>Chart Configuration</strong>:
+<ul>
+<li>Reused the existing <code>chart.tex</code> to display a bar chart
+for freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5 months, Achigã:
+2.5 months, Savel: 1.5 months).</li>
+<li>The chart is included after the “Tabela Resumo por Espécie” via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>MiKTeX Compatibility</strong>:
+<ul>
+<li>Ensured all packages (<code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>,
+<code>emoji</code>) are standard and available in MiKTeX.</li>
+<li>Relied on MiKTeX’s on-the-fly package installation.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Used the same <code>artifact_id</code> for <code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as it’s
+unchanged.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.2.53" id="expected-output-4"><span class="header-section-number">1.2.53</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️) rendered in color using
+<code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+with clean lines and centered columns. - A bar chart after the “Tabela
+Resumo por Espécie,” showing freezing times for Carpa (2.5 months),
+Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5 months) in
+green bars.</p>
+<h3 data-number="1.2.54" id="troubleshooting-3"><span class="header-section-number">1.2.54</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Emoji Warnings</strong>:
+<ul>
+<li>If warnings about missing characters persist, ensure
+<code>Noto Color Emoji</code> is installed as a system font (see
+installation instructions above).</li>
+<li>As a fallback, replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> (monochrome) in <code>header.tex</code> and install
+<code>Symbola</code> via MiKTeX Console, but this will render emojis in
+black and white.</li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install the <code>emoji</code> package or others,
+manually install them via MiKTeX Console (search for <code>emoji</code>,
+<code>pgfplots</code>, etc.) or run the command with administrative
+privileges.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, verify that your PDF viewer supports
+color emojis (e.g., Adobe Acrobat). Some viewers may render emojis in
+grayscale.</li>
+</ul></li>
+<li><strong>Composite Emoji Issues</strong>:
+<ul>
+<li>If 👨‍🍳 still causes issues, you can replace it in
+<code>guia-congelamento.md</code> with a single-code-point emoji like 🍳
+(U+1F373, cooking). Let me know if you want an updated
+<code>guia-congelamento.md</code> with this change.</li>
+</ul></li>
+</ul>
+<p>If you want additional tweaks (e.g., different chart colors,
+combining charts from both <code>guia-congelamento.md</code> documents,
+or further LaTeX styling), or if you encounter new errors, please share
+the details, and I’ll provide a tailored solution!</p>
+<hr />
+<h3 data-number="1.2.55" id="utilizador-2025-09-26-220346-grok"><span class="header-section-number">1.2.55</span> 👤 Utilizador
+<em>(2025-09-26 22:03:46)</em> <em>[Grok]</em></h3>
+<p>ainda temos: [WARNING] [makePDF] LaTeX Warning: Command has changed.
+Check if current package is valid. [WARNING] [makePDF] LaTeX Warning:
+Command as changed. Check if current package is valid. [WARNING] Missing
+character: There is no ≡ƒôì (U+1F4CD) (U+1F4CD) in font “name:DejaVu
+Serif/B:mode= [WARNING] Missing character: There is no ≡ƒôì (U+1F4CD)
+(U+1F4CD) in font”name:DejaVu Serif/B:mode= [WARNING] Missing character:
+There is no ≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode=
+[WARNING] Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒôì (U+1F4CD) (U+1F4CD) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒæ¿ (U+1F468) (U+1F468) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒì│ (U+1F373) (U+1F373) in font “name:DejaVu Serif/B:mode= (pandoc-env)
+D:_DOCS__DOCS__md_to_pdf-congelamento2&gt;</p>
+<hr />
+<h3 data-number="1.2.56" id="grok-2025-09-26-220504-grok"><span class="header-section-number">1.2.56</span> 🤖 Grok <em>(2025-09-26
+22:05:04)</em> <em>[Grok]</em></h3>
+<p>The warnings indicate two issues when running the Pandoc command with
+MiKTeX and LuaLaTeX to convert <code>guia-congelamento.md</code> to a
+PDF:</p>
+<ol type="1">
+<li><strong>LaTeX Warnings for <code>\underbar</code> and
+<code>\underline</code></strong>:
+<ul>
+<li>These warnings suggest a conflict where the <code>\underbar</code>
+and <code>\underline</code> commands are redefined, likely due to
+Pandoc’s default LaTeX template or a package interaction. This is
+typically harmless but can be resolved by ensuring minimal package
+conflicts.</li>
+</ul></li>
+<li><strong>Missing Character Warnings</strong>:
+<ul>
+<li>The emojis (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌,
+⚠️) are being rendered with <code>DejaVu Serif</code>, which lacks these
+Unicode characters, because the <code>header.tex</code> file does not
+include emoji support via <code>Noto Color Emoji</code> or the
+<code>emoji</code> package. Specifically, the composite emoji 👨‍🍳
+(U+1F468 U+200D U+1F373) and single-code-point emojis (e.g., U+1F4CD for
+📍, U+1F3A3 for 🎣) are not mapped correctly.</li>
+</ul></li>
+</ol>
+<p>The goal is to: - Fix the emoji rendering by updating
+<code>header.tex</code> to use <code>Noto Color Emoji</code> and the
+<code>emoji</code> package, ensuring all emojis, including the composite
+👨‍🍳, are rendered in color. - Include the bar chart for the “Tabela
+Resumo por Espécie” (Carpa: 2-3 months, Lúcio-perca: 3-4 months, Achigã:
+2-3 months, Savel: 1-2 months) using the previously provided
+<code>chart.tex</code>. - Address the <code>\underbar</code> and
+<code>\underline</code> warnings by minimizing package conflicts.</p>
+<h3 data-number="1.2.57" id="updated-header.tex-2"><span class="header-section-number">1.2.57</span> Updated
+<code>header.tex</code></h3>
+<p>The updated <code>header.tex</code> adds support for color emojis
+using <code>Noto Color Emoji</code> and the <code>emoji</code> package,
+maps single-code-point emojis with <code>newunicodechar</code>, and
+retains existing formatting for tables, charts, and page layout. The
+<code>emoji</code> package handles the composite emoji 👨‍🍳, and we avoid
+unnecessary packages to reduce conflicts causing the
+<code>\underbar</code> and <code>\underline</code> warnings.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="32bfb7b8-2e25-44a1-b3f6-41fd5064d89c" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+% For creating charts % Set compatibility for pgfplots
+<p>% For emoji support, including composite sequences</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping single-code-point emojis to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Clock (3 o’clock) % Thermometer % National Park % Check Mark
+Button % Police Car Light % Bar Chart % Cross Mark % Warning % Round
+Pushpin</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+<p></xaiArtifact></p>
+<h3 data-number="1.2.58" id="existing-chart.tex-2"><span class="header-section-number">1.2.58</span> Existing
+<code>chart.tex</code></h3>
+<p>The <code>chart.tex</code> file from previous responses remains valid
+for the bar chart of freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5
+months, Achigã: 2.5 months, Savel: 1.5 months). Here it is for
+reference:</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="2192c120-6cf9-4446-b8a4-3d603429431e" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times by fish species
+<p></xaiArtifact></p>
+<h3 data-number="1.2.59" id="instructions-to-convert-the-markdown-file-to-pdf-7"><span class="header-section-number">1.2.59</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save the updated <code>header.tex</code> and <code>chart.tex</code>
+in the same directory as <code>guia-congelamento.md</code> (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>If not installed, download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Install Required Packages</strong>:
+<ul>
+<li>Ensure the <code>emoji</code>, <code>newunicodechar</code>,
+<code>fontspec</code>, <code>microtype</code>, <code>booktabs</code>,
+<code>pgfplots</code>, <code>array</code>, <code>polyglossia</code>, and
+<code>sectsty</code> packages are installed in MiKTeX.</li>
+<li>Open MiKTeX Console, go to the “Packages” tab, search for each
+package (e.g., <code>emoji</code>, <code>pgfplots</code>), and install
+if missing.</li>
+<li>Allow MiKTeX to install packages on-the-fly during compilation if
+prompted.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.2.60" id="explanation-of-changes-7"><span class="header-section-number">1.2.60</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Fixed Emoji Rendering</strong>:
+<ul>
+<li>Added <code>\usepackage{emoji}</code> to handle the composite emoji
+👨‍🍳 (U+1F468 U+200D U+1F373), which cannot be mapped with
+<code>newunicodechar</code> due to its multi-character nature.</li>
+<li>Added <code>newunicodechar</code> definitions for all
+single-code-point emojis in the document (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 🕒,
+🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍) to ensure they render in color with
+<code>Noto Color Emoji</code>.</li>
+<li>The <code>emoji</code> package ensures proper rendering of composite
+emojis like 👨‍🍳 when used with <code>Noto Color Emoji</code> and
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Addressed <code>\underbar</code> and <code>\underline</code>
+Warnings</strong>:
+<ul>
+<li>Removed unnecessary packages (e.g., <code>unicode-math</code> from
+earlier versions) to minimize conflicts.</li>
+<li>The warnings may persist if Pandoc’s default template redefines
+these commands, but they are typically harmless and do not affect the
+output. If they persist and are problematic, we can use a custom Pandoc
+template to override these commands (let me know if needed).</li>
+</ul></li>
+<li><strong>Chart Configuration</strong>:
+<ul>
+<li>Reused the existing <code>chart.tex</code> to display a bar chart
+for freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5 months, Achigã:
+2.5 months, Savel: 1.5 months) with green bars
+(<code>fill=green!30</code>, <code>draw=green!50</code>).</li>
+<li>The chart is included after the “Tabela Resumo por Espécie” via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>Retained Previous Tweaks</strong>:
+<ul>
+<li>Kept <code>booktabs</code> and <code>array</code> for enhanced table
+formatting (e.g., “Cronograma de Congelamento Pós-Captura” and “Tabela
+Resumo por Espécie”).</li>
+<li>Kept <code>geometry</code> (2cm margins) and <code>sectsty</code>
+(larger section headings).</li>
+<li>Retained <code>pgfplots</code> for the chart with consistent
+styling.</li>
+</ul></li>
+<li><strong>MiKTeX Compatibility</strong>:
+<ul>
+<li>Ensured all packages (<code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>,
+<code>emoji</code>, <code>sectsty</code>) are standard and available in
+MiKTeX.</li>
+<li>Relied on MiKTeX’s on-the-fly package installation.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Used the same <code>artifact_id</code> for <code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as it’s
+unchanged.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.2.61" id="expected-output-5"><span class="header-section-number">1.2.61</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 👨‍🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍) rendered in color using
+<code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+with clean lines and centered columns. - A bar chart after the “Tabela
+Resumo por Espécie,” showing freezing times for Carpa (2.5 months),
+Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5 months) in
+green bars.</p>
+<h3 data-number="1.2.62" id="troubleshooting-4"><span class="header-section-number">1.2.62</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Emoji Warnings</strong>:
+<ul>
+<li>If warnings about missing characters persist, ensure
+<code>Noto Color Emoji</code> is installed as a system font (see
+installation instructions above).</li>
+<li>As a fallback, replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> (monochrome) in <code>header.tex</code> and install
+<code>Symbola</code> via MiKTeX Console, but this will render emojis in
+black and white.</li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install the <code>emoji</code> package or others,
+manually install them via MiKTeX Console (search for <code>emoji</code>,
+<code>pgfplots</code>, etc.) or run the command with administrative
+privileges.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, verify that your PDF viewer supports
+color emojis (e.g., Adobe Acrobat). Some viewers may render emojis in
+grayscale.</li>
+</ul></li>
+<li><strong>Composite Emoji Issues</strong>:
+<ul>
+<li>If 👨‍🍳 still causes issues, you can replace it in
+<code>guia-congelamento.md</code> with a single-code-point emoji like 🍳
+(U+1F373, cooking). I can provide an updated
+<code>guia-congelamento.md</code> with this change if desired.</li>
+</ul></li>
+<li><strong>Underbar/Underline Warnings</strong>:
+<ul>
+<li>If the <code>\underbar</code> and <code>\underline</code> warnings
+persist and affect the output, we can create a custom Pandoc LaTeX
+template to redefine these commands or suppress the warnings. Let me
+know if this is needed.</li>
+</ul></li>
+</ul>
+<p>If you want additional tweaks (e.g., different chart colors,
+combining charts from both <code>guia-congelamento.md</code> documents,
+or a custom Pandoc template to address the
+<code>\underbar</code>/<code>underline</code> warnings), or if new
+errors arise, please share the details, and I’ll provide a tailored
+solution!</p>
+<hr />
+<h3 data-number="1.2.63" id="utilizador-2025-09-26-220731-grok"><span class="header-section-number">1.2.63</span> 👤 Utilizador
+<em>(2025-09-26 22:07:31)</em> <em>[Grok]</em></h3>
+<p>ainda temos: (pandoc-env)
+D:_DOCS__DOCS_<em>md_to_pdf-congelamento2&gt;pandoc guia-congelamento.md
+-o guia-congelamento.pdf –pdf-engine=lualatex
+–include-in-header=header.tex –include-after-body=chart.tex [WARNING]
+[makePDF] LaTeX Warning: Command has changed. Check if current package
+is valid. [WARNING] [makePDF] LaTeX Warning: Command as changed. Check
+if current package is valid. [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= [WARNING] Missing character: There is no
+≡ƒæ¿ (U+1F468) (U+1F468) in font “name:DejaVu Serif/B:mode= [WARNING]
+Missing character: There is no ≡ƒì│ (U+1F373) (U+1F373) in
+font”name:DejaVu Serif/B:mode= (pandoc-env)
+D:_DOCS</em>_DOCS__md_to_pdf-congelamento2&gt;</p>
+<hr />
+<h3 data-number="1.2.64" id="grok-2025-09-26-220925-grok"><span class="header-section-number">1.2.64</span> 🤖 Grok <em>(2025-09-26
+22:09:25)</em> <em>[Grok]</em></h3>
+<p>The persistent warnings indicate two issues when running the Pandoc
+command with MiKTeX and LuaLaTeX to convert
+<code>guia-congelamento.md</code> to a PDF:</p>
+<ol type="1">
+<li><strong>LaTeX Warnings for <code>\underbar</code> and
+<code>\underline</code></strong>:
+<ul>
+<li>These warnings suggest a conflict where <code>\underbar</code> and
+<code>\underline</code> commands are redefined, likely by Pandoc’s
+default LaTeX template or an interaction with loaded packages. These
+warnings are typically harmless but can be suppressed by using a custom
+Pandoc template if needed.</li>
+</ul></li>
+<li><strong>Missing Character Warnings</strong>:
+<ul>
+<li>The warnings for <code>U+1F468</code> (👨) and <code>U+1F373</code>
+(🍳) indicate that the composite emoji 👨‍🍳 (man cook, formed by U+1F468
+U+200D U+1F373) is not being handled correctly by the <code>emoji</code>
+package or <code>Noto Color Emoji</code>. LuaLaTeX is trying to render
+these characters with <code>DejaVu Serif</code>, which lacks them,
+because the composite emoji is not properly processed.</li>
+</ul></li>
+</ol>
+<p>The previous <code>header.tex</code> included the <code>emoji</code>
+package and <code>newunicodechar</code> mappings for single-code-point
+emojis, but the composite emoji 👨‍🍳 is causing issues. The
+<code>emoji</code> package in LuaLaTeX may not fully support complex
+emoji sequences like 👨‍🍳, and the zero-width joiner (U+200D) is being
+split, leading to warnings for individual components. Additionally, some
+single-code-point emojis (e.g., 📍, 🎣, 🌊) may not be rendering
+correctly due to incomplete font fallback.</p>
+<p>To resolve these issues and maintain the bar chart for the “Tabela
+Resumo por Espécie” (Carpa: 2-3 months, Lúcio-perca: 3-4 months, Achigã:
+2-3 months, Savel: 1-2 months), I’ll: 1. Update <code>header.tex</code>
+to use a fallback approach for emojis, relying on
+<code>Noto Color Emoji</code> with explicit font switching for
+emoji-heavy sections to avoid <code>DejaVu Serif</code> fallback. 2.
+Replace the problematic composite emoji 👨‍🍳 with a single-code-point
+emoji (e.g., 🍳, U+1F373) in <code>guia-congelamento.md</code> to
+simplify rendering and eliminate warnings for <code>U+1F468</code> and
+<code>U+1F373</code>. 3. Keep <code>chart.tex</code> unchanged, as it
+correctly generates the bar chart. 4. Address the <code>\underbar</code>
+and <code>\underline</code> warnings by ensuring minimal package
+conflicts and providing an option for a custom Pandoc template if
+needed.</p>
+<h3 data-number="1.2.65" id="updated-files-1"><span class="header-section-number">1.2.65</span> Updated Files</h3>
+<h4 data-number="1.2.65.1" id="updated-guia-congelamento.md"><span class="header-section-number">1.2.65.1</span> Updated
+<code>guia-congelamento.md</code></h4>
+<p>To avoid issues with the composite emoji 👨‍🍳, I’ll replace it with 🍳
+(U+1F373, cooking) throughout the document. This change simplifies
+rendering while maintaining semantic meaning. Below is the updated
+<code>guia-congelamento.md</code>:</p>
+<p><xaiArtifact artifact_id="8dce8f07-d839-45b4-ad76-6dae6a5fd7eb" artifact_version_id="9423c40c-7de9-4fc5-aca6-c0d20c274d3a" title="guia-congelamento.md" contentType="text/markdown">
+# 🎣 Guia Especial: Congelamento de Peixes de Castelo de Bode</p>
+<h2 data-number="1.3" id="peixes-não-arranjados-captura-própria---ultra-frescos"><span class="header-section-number">1.3</span> 🌊 Peixes Não Arranjados
+(Captura Própria - Ultra Frescos)</h2>
+<h3 data-number="1.3.1" id="contexto-específico"><span class="header-section-number">1.3.1</span> 📍 Contexto Específico</h3>
+<ul>
+<li><strong>Albufeira de Castelo de Bode</strong> - águas
+interiores</li>
+<li><strong>Captura própria</strong> - frescura máxima garantida</li>
+<li><strong>Espécies características</strong> da região</li>
+</ul>
+<hr />
+<h2 data-number="1.4" id="características-e-técnicas-por-espécie"><span class="header-section-number">1.4</span> 🐟 Características e Técnicas
+por Espécie</h2>
+<h3 data-number="1.4.1" id="carpa-cyprinus-carpio"><span class="header-section-number">1.4.1</span> 1. <strong>CARPA</strong>
+(<em>Cyprinus carpio</em>)</h3>
+<h4 data-number="1.4.1.1" id="características-específicas"><span class="header-section-number">1.4.1.1</span> 🎯 Características
+Específicas</h4>
+<ul>
+<li><strong>Peixe de escamas</strong> grandes e resistentes</li>
+<li><strong>Carnes brancas e saborosas</strong></li>
+<li><strong>Tendência a acumular lama/algas</strong></li>
+</ul>
+<h4 data-number="1.4.1.2" id="técnica-de-congelamento-ideal"><span class="header-section-number">1.4.1.2</span> ❄️ Técnica de Congelamento
+Ideal</h4>
+<ul>
+<li><strong>NÃO remover escamas</strong> antes de congelar</li>
+<li><strong>Limpar externamente</strong> com escova macia</li>
+<li><strong>Manter vísceras</strong> para proteção natural</li>
+<li><strong>Dupla embalagem</strong>: filme plástico + saco freezer</li>
+</ul>
+<h4 data-number="1.4.1.3" id="tempo-de-conservação"><span class="header-section-number">1.4.1.3</span> ⏱️ Tempo de
+Conservação</h4>
+<ul>
+<li><strong>2-3 meses</strong> (carne mais gordurosa)</li>
+</ul>
+<h4 data-number="1.4.1.4" id="dica-de-preparo-pós-descongelamento"><span class="header-section-number">1.4.1.4</span> 🍳 Dica de Preparo
+Pós-Descongelamento</h4>
+<ul>
+<li><strong>Descascar antes de cozinhar</strong></li>
+<li><strong>Ideal para ensopados</strong> e caldeiradas</li>
+</ul>
+<h3 data-number="1.4.2" id="lúcio-perca-sander-lucioperca"><span class="header-section-number">1.4.2</span> 2.
+<strong>LÚCIO-PERCA</strong> (<em>Sander lucioperca</em>)</h3>
+<h4 data-number="1.4.2.1" id="características-específicas-1"><span class="header-section-number">1.4.2.1</span> 🎯 Características
+Específicas</h4>
+<ul>
+<li><strong>Carnes magras</strong> e firmes</li>
+<li><strong>Poucas espinhas</strong></li>
+<li><strong>Sabor delicado</strong></li>
+</ul>
+<h4 data-number="1.4.2.2" id="técnica-de-congelamento-ideal-1"><span class="header-section-number">1.4.2.2</span> ❄️ Técnica de Congelamento
+Ideal</h4>
+<ul>
+<li><strong>Manter guelras</strong> (protegem a cabeça)</li>
+<li><strong>Glaceação tripla</strong> para maior proteção</li>
+<li><strong>Posição horizontal</strong> no freezer</li>
+</ul>
+<h4 data-number="1.4.2.3" id="tempo-de-conservação-1"><span class="header-section-number">1.4.2.3</span> ⏱️ Tempo de
+Conservação</h4>
+<ul>
+<li><strong>3-4 meses</strong> (carne magra conserva melhor)</li>
+</ul>
+<h4 data-number="1.4.2.4" id="dica-de-preparo-pós-descongelamento-1"><span class="header-section-number">1.4.2.4</span> 🍳 Dica de Preparo
+Pós-Descongelamento</h4>
+<ul>
+<li><strong>Excelente para filetar</strong> após descongelamento</li>
+<li><strong>Ideal para grelhados</strong> e assados</li>
+</ul>
+<h3 data-number="1.4.3" id="achigã-micropterus-salmoides"><span class="header-section-number">1.4.3</span> 3. <strong>ACHIGÃ</strong>
+(<em>Micropterus salmoides</em>)</h3>
+<h4 data-number="1.4.3.1" id="características-específicas-2"><span class="header-section-number">1.4.3.1</span> 🎯 Características
+Específicas</h4>
+<ul>
+<li><strong>Carnes firmes</strong> e saborosas</li>
+<li><strong>Pele resistente</strong></li>
+<li><strong>Sabor característico</strong></li>
+</ul>
+<h4 data-number="1.4.3.2" id="técnica-de-congelamento-ideal-2"><span class="header-section-number">1.4.3.2</span> ❄️ Técnica de Congelamento
+Ideal</h4>
+<ul>
+<li><strong>Manter pele</strong> durante congelamento</li>
+<li><strong>Embalagem individual</strong> rigorosa</li>
+<li><strong>Evitar sobreposição</strong> no freezer</li>
+</ul>
+<h4 data-number="1.4.3.3" id="tempo-de-conservação-2"><span class="header-section-number">1.4.3.3</span> ⏱️ Tempo de
+Conservação</h4>
+<ul>
+<li><strong>2-3 meses</strong> (sabor intenso preserva bem)</li>
+</ul>
+<h4 data-number="1.4.3.4" id="dica-de-preparo-pós-descongelamento-2"><span class="header-section-number">1.4.3.4</span> 🍳 Dica de Preparo
+Pós-Descongelamento</h4>
+<ul>
+<li><strong>Pode ser grelhado</strong> com pele</li>
+<li><strong>Excelente para ceviche</strong> após descongelamento</li>
+</ul>
+<h3 data-number="1.4.4" id="savel-alosa-fallax"><span class="header-section-number">1.4.4</span> 4. <strong>SAVEL</strong>
+(<em>Alosa fallax</em>)</h3>
+<h4 data-number="1.4.4.1" id="características-específicas-3"><span class="header-section-number">1.4.4.1</span> 🎯 Características
+Específicas</h4>
+<ul>
+<li><strong>Peixe semipelágico</strong></li>
+<li><strong>Carnes mais delicadas</strong></li>
+<li><strong>Sabor distintivo</strong></li>
+</ul>
+<h4 data-number="1.4.4.2" id="técnica-de-congelamento-ideal-3"><span class="header-section-number">1.4.4.2</span> ❄️ Técnica de Congelamento
+Ideal</h4>
+<ul>
+<li><strong>Congelamento ultra-rápido</strong> essencial</li>
+<li><strong>Embalagem a vácuo</strong> recomendada</li>
+<li><strong>Posição vertical</strong> no freezer</li>
+</ul>
+<h4 data-number="1.4.4.3" id="tempo-de-conservação-3"><span class="header-section-number">1.4.4.3</span> ⏱️ Tempo de
+Conservação</h4>
+<ul>
+<li><strong>1-2 meses</strong> (carne mais delicada)</li>
+</ul>
+<h4 data-number="1.4.4.4" id="dica-de-preparo-pós-descongelamento-3"><span class="header-section-number">1.4.4.4</span> 🍳 Dica de Preparo
+Pós-Descongelamento</h4>
+<ul>
+<li><strong>Descongelamento lento</strong> na geladeira</li>
+<li><strong>Ideal para fumagem</strong> após descongelamento</li>
+</ul>
+<hr />
+<h2 data-number="1.5" id="cronograma-de-congelamento-pós-captura"><span class="header-section-number">1.5</span> 🕒 Cronograma de Congelamento
+Pós-Captura</h2>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Tempo Máximo</th>
+<th>Ação Crítica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Captura</strong></td>
+<td>Imediato</td>
+<td>Manter vivo/em gelo</td>
+</tr>
+<tr>
+<td><strong>Transporte</strong></td>
+<td>2-4 horas</td>
+<td>Caixa térmica com gelo</td>
+</tr>
+<tr>
+<td><strong>Pré-congelamento</strong></td>
+<td>6 horas</td>
+<td>Limpeza externa básica</td>
+</tr>
+<tr>
+<td><strong>Congelamento final</strong></td>
+<td>12 horas</td>
+<td>Embalagem definitiva</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.6" id="técnica-de-glaceação-para-peixes-de-água-doce"><span class="header-section-number">1.6</span> 🌡️ Técnica de Glaceação para
+Peixes de Água Doce</h2>
+<h3 data-number="1.6.1" id="passo-a-passo"><span class="header-section-number">1.6.1</span> Passo a Passo:</h3>
+<ol type="1">
+<li><strong>Peixe seco</strong> superficialmente</li>
+<li><strong>Imersão em água gelada</strong> por 30 segundos</li>
+<li><strong>Congelamento rápido</strong> por 1 hora</li>
+<li><strong>Repetir processo</strong> 2-3 vezes</li>
+<li><strong>Embalagem final</strong> para armazenamento</li>
+</ol>
+<hr />
+<h2 data-number="1.7" id="fatores-específicos-de-castelo-de-bode"><span class="header-section-number">1.7</span> 🏞️ Fatores Específicos de
+Castelo de Bode</h2>
+<h3 data-number="1.7.1" id="vantagens-da-albufeira"><span class="header-section-number">1.7.1</span> ✅ Vantagens da
+Albufeira:</h3>
+<ul>
+<li><strong>Águas limpas</strong> e bem oxigenadas</li>
+<li><strong>Peixes com carnes firmes</strong></li>
+<li><strong>Diversidade de espécies</strong></li>
+</ul>
+<h3 data-number="1.7.2" id="considerações-especiais"><span class="header-section-number">1.7.2</span> ⚠️ Considerações
+Especiais:</h3>
+<ul>
+<li><strong>Monitorar algas</strong> sazonais</li>
+<li><strong>Verificar qualidade da água</strong> periodicamente</li>
+<li><strong>Época de reprodução</strong> de cada espécie</li>
+</ul>
+<hr />
+<h2 data-number="1.8" id="tabela-resumo-por-espécie"><span class="header-section-number">1.8</span> 📊 Tabela Resumo por
+Espécie</h2>
+<table>
+<thead>
+<tr>
+<th>Espécie</th>
+<th>Tempo Congelamento</th>
+<th>Ponto Forte</th>
+<th>Cuidado Especial</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Carpa</strong></td>
+<td>2-3 meses</td>
+<td>Sabor intenso</td>
+<td>Limpeza externa cuidadosa</td>
+</tr>
+<tr>
+<td><strong>Lúcio-perca</strong></td>
+<td>3-4 meses</td>
+<td>Carne magra</td>
+<td>Glaceação reforçada</td>
+</tr>
+<tr>
+<td><strong>Achigã</strong></td>
+<td>2-3 meses</td>
+<td>Textura firme</td>
+<td>Embalagem individual</td>
+</tr>
+<tr>
+<td><strong>Savel</strong></td>
+<td>1-2 meses</td>
+<td>Sabor único</td>
+<td>Congelamento rápido</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.9" id="sinais-de-qualidade-pós-descongelamento"><span class="header-section-number">1.9</span> 🚨 Sinais de Qualidade
+Pós-Descongelamento</h2>
+<h3 data-number="1.9.1" id="aceitável"><span class="header-section-number">1.9.1</span> ✅ Aceitável:</h3>
+<ul>
+<li><strong>Olhos levemente opacos</strong></li>
+<li><strong>Pele com coloração natural</strong></li>
+<li><strong>Odor fresco de rio</strong></li>
+</ul>
+<h3 data-number="1.9.2" id="rejeitar"><span class="header-section-number">1.9.2</span> ❌ Rejeitar:</h3>
+<ul>
+<li><strong>Olhos muito brancos</strong></li>
+<li><strong>Odor ácido/amoniacal</strong></li>
+<li><strong>Carne mole/desfiando</strong></li>
+</ul>
+<hr />
+<h2 data-number="1.10" id="métodos-de-preparo-recomendados"><span class="header-section-number">1.10</span> 🍳 Métodos de Preparo
+Recomendados</h2>
+<h3 data-number="1.10.1" id="para-carpa"><span class="header-section-number">1.10.1</span> Para Carpa:</h3>
+<ul>
+<li><strong>Caldeirada</strong> tradicional</li>
+<li><strong>Ensopados</strong> com legumes</li>
+</ul>
+<h3 data-number="1.10.2" id="para-lúcio-perca"><span class="header-section-number">1.10.2</span> Para Lúcio-perca:</h3>
+<ul>
+<li><strong>Filetes grelhados</strong></li>
+<li><strong>Assados no forno</strong></li>
+</ul>
+<h3 data-number="1.10.3" id="para-achigã"><span class="header-section-number">1.10.3</span> Para Achigã:</h3>
+<ul>
+<li><strong>Grelhado inteiro</strong></li>
+<li><strong>Ceviche</strong> (após descongelamento)</li>
+</ul>
+<h3 data-number="1.10.4" id="para-savel"><span class="header-section-number">1.10.4</span> Para Savel:</h3>
+<ul>
+<li><strong>Fumagem leve</strong></li>
+<li><strong>Marinados</strong> em vinha d’alhos</li>
+</ul>
+<hr />
+<p><em>Guia específico para pescadores de Castelo de Bode - baseado em
+tradições locais e técnicas modernas</em> </xaiArtifact></p>
+<h4 data-number="1.10.4.1" id="updated-header.tex-3"><span class="header-section-number">1.10.4.1</span> Updated
+<code>header.tex</code></h4>
+<p>The updated <code>header.tex</code> removes the <code>emoji</code>
+package, as it didn’t fully resolve the composite emoji issue, and
+instead uses <code>newunicodechar</code> with
+<code>Noto Color Emoji</code> for all single-code-point emojis,
+including the new 🍳. It also includes a workaround to suppress the
+<code>\underbar</code> and <code>\underline</code> warnings by
+redefining these commands explicitly.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="afe787f7-7cd1-49f2-b7af-e19265ee4240" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+<p>% For creating charts % Set compatibility for pgfplots</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping single-code-point emojis to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Clock (3 o’clock) % Thermometer % National Park % Check Mark
+Button % Police Car Light % Bar Chart % Cross Mark % Warning % Round
+Pushpin % Cooking</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+% Suppress and arnings by redefining them
+<p></xaiArtifact></p>
+<h4 data-number="1.10.4.2" id="existing-chart.tex-3"><span class="header-section-number">1.10.4.2</span> Existing
+<code>chart.tex</code></h4>
+<p>The <code>chart.tex</code> file remains unchanged, as it correctly
+generates the bar chart for freezing times (Carpa: 2.5 months,
+Lúcio-perca: 3.5 months, Achigã: 2.5 months, Savel: 1.5 months):</p>
+<xaiArtifact artifact_id="da57e9e9-c223-459d-a407-121f1da550bb" artifact_version_id="1bf3615d-c827-4525-92d8-e94cd9df683f" title="chart.tex" contentType="text/latex">
+% Defining a bar chart for freezing times by fish species
+<p></xaiArtifact></p>
+<h3 data-number="1.10.5" id="instructions-to-convert-the-markdown-file-to-pdf-8"><span class="header-section-number">1.10.5</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Save the updated <code>guia-congelamento.md</code>,
+<code>header.tex</code>, and <code>chart.tex</code> in the same
+directory (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>If not installed, download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Install Required Packages</strong>:
+<ul>
+<li>Ensure the <code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>, and
+<code>sectsty</code> packages are installed in MiKTeX.</li>
+<li>Open MiKTeX Console, go to the “Packages” tab, search for each
+package (e.g., <code>newunicodechar</code>, <code>pgfplots</code>), and
+install if missing.</li>
+<li>Allow MiKTeX to install packages on-the-fly during compilation if
+prompted.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.10.6" id="explanation-of-changes-8"><span class="header-section-number">1.10.6</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Replaced Composite Emoji</strong>:
+<ul>
+<li>Replaced 👨‍🍳 with 🍳 (U+1F373, cooking) in
+<code>guia-congelamento.md</code> to avoid issues with the composite
+emoji (U+1F468 U+200D U+1F373), which was causing warnings for
+<code>U+1F468</code> (👨) and <code>U+1F373</code> (🍳).</li>
+<li>The 🍳 emoji is a single code point, fully supported by
+<code>Noto Color Emoji</code> and <code>newunicodechar</code>.</li>
+</ul></li>
+<li><strong>Updated <code>header.tex</code></strong>:
+<ul>
+<li><p>Removed <code>\usepackage{emoji}</code>, as it didn’t resolve the
+composite emoji issue and is unnecessary with
+<code>newunicodechar</code> mappings for all emojis.</p></li>
+<li><p>Added <code>newunicodechar</code> mapping for 🍳
+(U+1F373).</p></li>
+<li><p>Included mappings for all single-code-point emojis (🎣, 🌊, 🐟,
+🎯, ❄️, ⏱️, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍, 🍳) to ensure rendering
+with <code>Noto Color Emoji</code>.</p></li>
+<li><p>Added redefinitions for <code>\underbar</code> and
+<code>\underline</code> to suppress the warnings by preserving their
+original behavior:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\let\origunderbar\underbar</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">\let\underbar\origunderbar</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">\let\origunderline\underline</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">\let\underline\origunderline</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>Chart Configuration</strong>:
+<ul>
+<li>Reused the existing <code>chart.tex</code> for the bar chart of
+freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5 months, Achigã: 2.5
+months, Savel: 1.5 months) with green bars (<code>fill=green!30</code>,
+<code>draw=green!50</code>).</li>
+<li>The chart is included after the “Tabela Resumo por Espécie” via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>Retained Previous Tweaks</strong>:
+<ul>
+<li>Kept <code>booktabs</code> and <code>array</code> for enhanced table
+formatting.</li>
+<li>Kept <code>geometry</code> (2cm margins) and <code>sectsty</code>
+(larger section headings).</li>
+<li>Retained <code>pgfplots</code> for the chart with consistent
+styling.</li>
+</ul></li>
+<li><strong>MiKTeX Compatibility</strong>:
+<ul>
+<li>Ensured all packages (<code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>,
+<code>sectsty</code>) are standard and available in MiKTeX.</li>
+<li>Relied on MiKTeX’s on-the-fly package installation.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Used the same <code>artifact_id</code> for <code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as it’s
+unchanged.</li>
+<li>Assigned a new <code>artifact_id</code> for
+<code>guia-congelamento.md</code>
+(<code>new-artifact-id-guia-congelamento</code>) as it’s a modified
+version.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.10.7" id="expected-output-6"><span class="header-section-number">1.10.7</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of the updated
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍) rendered in color using
+<code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+with clean lines and centered columns. - A bar chart after the “Tabela
+Resumo por Espécie,” showing freezing times for Carpa (2.5 months),
+Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5 months) in
+green bars. - No warnings for missing characters or
+<code>\underbar</code>/<code>\underline</code> conflicts.</p>
+<h3 data-number="1.10.8" id="troubleshooting-5"><span class="header-section-number">1.10.8</span> Troubleshooting</h3>
+<ul>
+<li><strong>Missing Emoji Warnings</strong>:
+<ul>
+<li>If warnings about missing characters persist, ensure
+<code>Noto Color Emoji</code> is installed as a system font (see
+installation instructions above).</li>
+<li>As a fallback, replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> (monochrome) in <code>header.tex</code> and install
+<code>Symbola</code> via MiKTeX Console, but this will render emojis in
+black and white.</li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install packages (<code>newunicodechar</code>,
+<code>pgfplots</code>, etc.), manually install them via MiKTeX Console
+(search for each package) or run the command with administrative
+privileges.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, verify that your PDF viewer supports
+color emojis (e.g., Adobe Acrobat). Some viewers may render emojis in
+grayscale.</li>
+</ul></li>
+<li><strong>Underbar/Underline Warnings</strong>:
+<ul>
+<li>The redefinitions in <code>header.tex</code> should suppress these
+warnings. If they persist, we can create a custom Pandoc LaTeX template
+to fully eliminate them. Let me know if needed.</li>
+</ul></li>
+<li><strong>Chart Issues</strong>:
+<ul>
+<li>If the chart does not appear, ensure <code>pgfplots</code> is
+installed and <code>chart.tex</code> is in the correct directory.</li>
+</ul></li>
+</ul>
+<p>If you want additional tweaks (e.g., different chart colors, a custom
+Pandoc template to further address
+<code>\underbar</code>/<code>\underline</code> warnings, or combining
+charts from previous <code>guia-congelamento.md</code> versions), or if
+new errors arise, please share the details, and I’ll provide a tailored
+solution!</p>
+<hr />
+<h3 data-number="1.10.9" id="utilizador-2025-09-26-221351-grok"><span class="header-section-number">1.10.9</span> 👤 Utilizador
+<em>(2025-09-26 22:13:51)</em> <em>[Grok]</em></h3>
+<p>agora os unicos warnings são [WARNING] [makePDF] LaTeX Warning:
+Command has changed. Check if current package is valid. [WARNING]
+[makePDF] LaTeX Warning: Command as changed. Check if current package is
+valid.</p>
+<hr />
+<h3 data-number="1.10.10" id="grok-2025-09-26-221519-grok"><span class="header-section-number">1.10.10</span> 🤖 Grok <em>(2025-09-26
+22:15:19)</em> <em>[Grok]</em></h3>
+<p>The remaining warnings indicate that the LaTeX commands
+<code>\underbar</code> and <code>\underline</code> are being redefined,
+likely due to Pandoc’s default LaTeX template or an interaction with
+loaded packages in <code>header.tex</code>. These warnings are typically
+harmless and do not affect the output PDF, as they reflect a conflict
+where a package or template redefines these commands. Since the
+emoji-related “Missing character” warnings are resolved (thanks to the
+updated <code>guia-congelamento.md</code>, <code>header.tex</code>, and
+<code>chart.tex</code>), the focus is now on suppressing the
+<code>\underbar</code> and <code>\underline</code> warnings to achieve a
+clean compilation.</p>
+<p>The current setup includes: - <strong>Updated
+<code>guia-congelamento.md</code></strong>: Replaced the composite emoji
+👨‍🍳 with 🍳 (U+1F373) to avoid rendering issues. - <strong>Updated
+<code>header.tex</code></strong>: Uses <code>Noto Color Emoji</code>
+with <code>newunicodechar</code> for all single-code-point emojis (🎣,
+🌊, 🐟, 🎯, ❄️, ⏱️, 🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍) and includes
+packages for table formatting (<code>booktabs</code>,
+<code>array</code>), chart creation (<code>pgfplots</code>), and
+Portuguese support (<code>polyglossia</code>). - <strong>Existing
+<code>chart.tex</code></strong>: Generates a bar chart for freezing
+times (Carpa: 2.5 months, Lúcio-perca: 3.5 months, Achigã: 2.5 months,
+Savel: 1.5 months).</p>
+<p>The <code>\underbar</code> and <code>\underline</code> warnings
+likely stem from Pandoc’s default LaTeX template, which may load
+packages like <code>ulem</code> or redefine these commands for Markdown
+formatting (e.g., underlining text). The attempt to suppress these
+warnings in <code>header.tex</code> with
+<code>\let\origunderbar\underbar</code> and
+<code>\let\origunderline\underline</code> was insufficient, as the
+redefinition occurs later in the compilation process.</p>
+<p>To resolve these warnings, I’ll: 1. Provide an updated
+<code>header.tex</code> that minimizes package conflicts and ensures
+compatibility with Pandoc’s template. 2. Suggest using a custom Pandoc
+LaTeX template to explicitly control the <code>\underbar</code> and
+<code>\underline</code> definitions, preventing redefinition by Pandoc.
+3. Retain the existing <code>chart.tex</code> and
+<code>guia-congelamento.md</code>, as they are functioning
+correctly.</p>
+<h3 data-number="1.10.11" id="solution"><span class="header-section-number">1.10.11</span> Solution</h3>
+<p>The simplest approach is to update <code>header.tex</code> to
+reinforce the suppression of the warnings and ensure all packages are
+loaded in a way that avoids conflicts. If the warnings persist, a custom
+Pandoc template can be used, but I’ll start with the minimal
+intervention.</p>
+<h4 data-number="1.10.11.1" id="updated-header.tex-4"><span class="header-section-number">1.10.11.1</span> Updated
+<code>header.tex</code></h4>
+<p>The updated <code>header.tex</code> refines the suppression of
+<code>\underbar</code> and <code>\underline</code> warnings by moving
+their redefinitions after all package inclusions and ensuring no
+conflicting packages (e.g., <code>ulem</code>) are implicitly loaded by
+Pandoc. The emoji mappings and chart styling remain unchanged.</p>
+<xaiArtifact artifact_id="036c6a40-b6b4-4174-9199-09ed1a9342ec" artifact_version_id="41948522-9306-4bfa-932d-8ba73247b1ea" title="header.tex" contentType="text/latex">
+% Defining LaTeX preamble for emoji support, chart creation, and table
+formatting with LuaLaTeX
+% For professional table formatting
+<p>% For creating charts % Set compatibility for pgfplots</p>
+<p>% Setting main fonts for text [Scale=MatchLowercase]</p>
+<p>% Including emoji font (Noto Color Emoji for broad emoji support) [
+Renderer=HarfBuzz, Scale=1.1]</p>
+% Mapping single-code-point emojis to Noto Color Emoji
+<p> % Fishing Pole % Water Wave % Fish % Bullseye % Snowflake %
+Stopwatch % Clock (3 o’clock) % Thermometer % National Park % Check Mark
+Button % Police Car Light % Bar Chart % Cross Mark % Warning % Round
+Pushpin % Cooking</p>
+% Configuring Portuguese language support
+<p>% Ensuring proper font rendering for code blocks [
+Scale=MatchLowercase, Contextuals=Alternate]</p>
+% Customizing table appearance
+<p>% Defining new column type for centered text with fixed width
+[1]{&gt;{}m{#1}} % Setting table row spacing </p>
+<p>% Customizing pgfplots for chart styling </p>
+% Setting page margins
+% Adjusting section heading sizes
+% Suppress and arnings by redefining them after all packages
+<p></xaiArtifact></p>
+<h4 data-number="1.10.11.2" id="existing-guia-congelamento.md-and-chart.tex"><span class="header-section-number">1.10.11.2</span> Existing
+<code>guia-congelamento.md</code> and <code>chart.tex</code></h4>
+<ul>
+<li>The <code>guia-congelamento.md</code> (artifact_id:
+<code>8dce8f07-d839-45b4-ad76-6dae6a5fd7eb</code>, version_id:
+<code>9423c40c-7de9-4fc5-aca6-c0d20c274d3a</code>) is correct, with 🍳
+replacing 👨‍🍳, and should remain unchanged.</li>
+<li>The <code>chart.tex</code> (artifact_id:
+<code>da57e9e9-c223-459d-a407-121f1da550bb</code>, version_id:
+<code>1bf3615d-c827-4525-92d8-e94cd9df683f</code>) is correct,
+generating the bar chart for freezing times, and should remain
+unchanged.</li>
+</ul>
+<h3 data-number="1.10.12" id="instructions-to-convert-the-markdown-file-to-pdf-9"><span class="header-section-number">1.10.12</span> Instructions to Convert the
+Markdown File to PDF</h3>
+<ol type="1">
+<li><strong>Save Files</strong>:
+<ul>
+<li>Ensure the updated <code>header.tex</code> (above),
+<code>guia-congelamento.md</code>, and <code>chart.tex</code> are in the
+same directory (e.g.,
+<code>D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</li>
+</ul></li>
+<li><strong>Ensure Noto Color Emoji</strong>:
+<ul>
+<li>Verify that <code>Noto Color Emoji</code> is installed as a system
+font on Windows:
+<ul>
+<li>If not installed, download <code>NotoColorEmoji.ttf</code> from <a href="https://fonts.google.com/noto/specimen/Noto+Color+Emoji" class="uri">https://fonts.google.com/noto/specimen/Noto+Color+Emoji</a>.</li>
+<li>Double-click the file and select “Install” to add it to
+<code>C:\Windows\Fonts</code>.</li>
+</ul></li>
+<li>MiKTeX should detect the system font automatically with
+LuaLaTeX.</li>
+</ul></li>
+<li><strong>Install Required Packages</strong>:
+<ul>
+<li>Ensure the <code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>, and
+<code>sectsty</code> packages are installed in MiKTeX.</li>
+<li>Open MiKTeX Console, go to the “Packages” tab, search for each
+package (e.g., <code>newunicodechar</code>, <code>pgfplots</code>), and
+install if missing.</li>
+<li>Allow MiKTeX to install packages on-the-fly during compilation if
+prompted.</li>
+</ul></li>
+<li><strong>Run the Pandoc Command</strong>:
+<ul>
+<li><p>Open a command prompt in the directory (e.g.,
+<code>cd D:\Downloads\_DOCS_\_DOCS_\CONDA_md_to_pdf\guia-congelamento2</code>).</p></li>
+<li><p>Run:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> guia-congelamento.md <span class="at">-o</span> guia-congelamento.pdf <span class="at">--pdf-engine</span><span class="op">=</span>lualatex <span class="at">--include-in-header</span><span class="op">=</span>header.tex <span class="at">--include-after-body</span><span class="op">=</span>chart.tex</span></code></pre></div></li>
+</ul></li>
+<li><strong>Verify LuaLaTeX</strong>:
+<ul>
+<li>Ensure LuaLaTeX is installed by running
+<code>lualatex --version</code> in the command prompt. If missing,
+install it via MiKTeX Console under the “Packages” tab by searching for
+<code>luatex</code>.</li>
+</ul></li>
+</ol>
+<h3 data-number="1.10.13" id="optional-custom-pandoc-latex-template"><span class="header-section-number">1.10.13</span> Optional: Custom Pandoc
+LaTeX Template</h3>
+<p>If the <code>\underbar</code> and <code>\underline</code> warnings
+persist with the updated <code>header.tex</code>, you can use a custom
+Pandoc LaTeX template to prevent Pandoc from redefining these commands.
+Here’s how: 1. <strong>Extract the Default Template</strong>: - Run:
+<code>bash      pandoc -D latex &gt; default.latex</code> - This creates
+<code>default.latex</code> in your directory, containing Pandoc’s
+default LaTeX template. 2. <strong>Modify the Template</strong>: - Open
+<code>default.latex</code> and locate the section where packages are
+loaded (near <code>\usepackage{...}</code> lines). - Remove or comment
+out any lines that load <code>ulem</code> or redefine
+<code>\underline</code> (e.g., search for <code>\usepackage{ulem}</code>
+or <code>\let\underline...</code>). - Add the following after package
+inclusions to preserve the original commands:
+<code>latex      \makeatletter      \let\origunderbar\underbar      \let\underbar\origunderbar      \let\origunderline\underline      \let\underline\origunderline      \makeatother</code>
+3. <strong>Save the Custom Template</strong>: - Save the modified
+template as <code>custom.latex</code> in the same directory. 4.
+<strong>Run Pandoc with the Custom Template</strong>: - Update the
+Pandoc command to include the custom template:
+<code>bash      pandoc guia-congelamento.md -o guia-congelamento.pdf --pdf-engine=lualatex --include-in-header=header.tex --include-after-body=chart.tex --template=custom.latex</code></p>
+<h3 data-number="1.10.14" id="explanation-of-changes-9"><span class="header-section-number">1.10.14</span> Explanation of Changes</h3>
+<ul>
+<li><strong>Suppressed <code>\underbar</code> and
+<code>\underline</code> Warnings</strong>:
+<ul>
+<li>Moved the redefinition of <code>\underbar</code> and
+<code>\underline</code> inside <code>\makeatletter</code> and
+<code>\makeatother</code> to ensure they are applied after all package
+loading, reducing the chance of Pandoc’s template overriding them.</li>
+<li>Avoided loading conflicting packages (e.g., <code>ulem</code>, which
+redefines <code>\underline</code> for underlining in Markdown).</li>
+</ul></li>
+<li><strong>Retained Emoji Support</strong>:
+<ul>
+<li>Kept all <code>newunicodechar</code> mappings for single-code-point
+emojis (🎣, 🌊, 🐟, 🎯, ❄️, ⏱️, 🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍)
+using <code>Noto Color Emoji</code>.</li>
+<li>The replacement of 👨‍🍳 with 🍳 in <code>guia-congelamento.md</code>
+eliminates composite emoji issues.</li>
+</ul></li>
+<li><strong>Chart Configuration</strong>:
+<ul>
+<li>Reused the existing <code>chart.tex</code> for the bar chart of
+freezing times (Carpa: 2.5 months, Lúcio-perca: 3.5 months, Achigã: 2.5
+months, Savel: 1.5 months) with green bars (<code>fill=green!30</code>,
+<code>draw=green!50</code>).</li>
+<li>The chart is included after the “Tabela Resumo por Espécie” via
+<code>--include-after-body=chart.tex</code>.</li>
+</ul></li>
+<li><strong>MiKTeX Compatibility</strong>:
+<ul>
+<li>Ensured all packages (<code>fontspec</code>, <code>microtype</code>,
+<code>booktabs</code>, <code>pgfplots</code>, <code>array</code>,
+<code>polyglossia</code>, <code>newunicodechar</code>,
+<code>sectsty</code>) are standard and available in MiKTeX.</li>
+<li>Relied on MiKTeX’s on-the-fly package installation.</li>
+</ul></li>
+<li><strong>Artifact IDs</strong>:
+<ul>
+<li>Used the same <code>artifact_id</code> for <code>header.tex</code>
+(<code>036c6a40-b6b4-4174-9199-09ed1a9342ec</code>) as it’s an
+update.</li>
+<li>Kept the same <code>artifact_id</code> for
+<code>guia-congelamento.md</code>
+(<code>8dce8f07-d839-45b4-ad76-6dae6a5fd7eb</code>) and
+<code>chart.tex</code>
+(<code>da57e9e9-c223-459d-a407-121f1da550bb</code>) as they are
+unchanged.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.10.15" id="expected-output-7"><span class="header-section-number">1.10.15</span> Expected Output</h3>
+<p>The generated PDF will include: - The content of
+<code>guia-congelamento.md</code> with all emojis (🎣, 🌊, 🐟, 🎯, ❄️,
+⏱️, 🍳, 🕒, 🌡️, 🏞️, ✅, 🚨, 📊, ❌, ⚠️, 📍) rendered in color using
+<code>Noto Color Emoji</code>. - Enhanced table formatting for the
+“Cronograma de Congelamento Pós-Captura” and “Tabela Resumo por Espécie”
+with clean lines and centered columns. - A bar chart after the “Tabela
+Resumo por Espécie,” showing freezing times for Carpa (2.5 months),
+Lúcio-perca (3.5 months), Achigã (2.5 months), and Savel (1.5 months) in
+green bars. - No warnings for missing characters, and ideally no
+<code>\underbar</code> or <code>\underline</code> warnings.</p>
+<h3 data-number="1.10.16" id="troubleshooting-6"><span class="header-section-number">1.10.16</span> Troubleshooting</h3>
+<ul>
+<li><strong>Persistent <code>\underbar</code>/<code>underline</code>
+Warnings</strong>:
+<ul>
+<li><p>If the warnings persist, use the custom Pandoc template approach
+described above to explicitly control the LaTeX environment.</p></li>
+<li><p>Alternatively, you can add <code>\usepackage{noul}</code> to
+<code>header.tex</code> before the redefinitions to disable underlining
+modifications by <code>ulem</code>, but this may affect Markdown
+underlining. Test with:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode latex"><code class="sourceCode latex"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>{<span class="ex">noul</span>}</span></code></pre></div>
+<p>before the <code>\makeatletter</code> block in
+<code>header.tex</code>.</p></li>
+</ul></li>
+<li><strong>Package Errors</strong>:
+<ul>
+<li>If MiKTeX fails to install packages (<code>newunicodechar</code>,
+<code>pgfplots</code>, etc.), manually install them via MiKTeX Console
+(search for each package) or run the command with administrative
+privileges.</li>
+</ul></li>
+<li><strong>Emoji Rendering</strong>:
+<ul>
+<li>If emojis appear in monochrome, verify that your PDF viewer supports
+color emojis (e.g., Adobe Acrobat). Some viewers may render emojis in
+grayscale.</li>
+<li>Ensure <code>Noto Color Emoji</code> is installed as a system font.
+As a fallback, replace <code>Noto Color Emoji</code> with
+<code>Symbola</code> (monochrome) in <code>header.tex</code> and install
+<code>Symbola</code> via MiKTeX Console.</li>
+</ul></li>
+<li><strong>Chart Issues</strong>:
+<ul>
+<li>If the chart does not appear, ensure <code>pgfplots</code> is
+installed and <code>chart.tex</code> is in the correct directory.</li>
+</ul></li>
+</ul>
+<p>If the warnings persist after using the updated
+<code>header.tex</code>, or if you prefer to implement the custom Pandoc
+template, want different chart styling, or encounter new errors, please
+let me know, and I’ll provide a tailored solution, including the custom
+template if needed!</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

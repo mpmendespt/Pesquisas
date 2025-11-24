@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>196_ChatGPT_Antena_repetidora_passiva</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#antena-repetidora-passiva" id="toc-antena-repetidora-passiva"><span class="toc-section-number">1</span> Antena repetidora passiva</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#materiais" id="toc-materiais"><span class="toc-section-number">1.3</span> 🔧 Materiais</a></li>
+<li><a href="#passo-a-passo-modelo-parabólico-simples" id="toc-passo-a-passo-modelo-parabólico-simples"><span class="toc-section-number">1.4</span> 📐 Passo a passo (modelo
+parabólico simples)</a></li>
+<li><a href="#dicas-de-uso" id="toc-dicas-de-uso"><span class="toc-section-number">1.5</span> 📡 Dicas de uso</a></li>
+<li><a href="#como-funciona" id="toc-como-funciona"><span class="toc-section-number">1.6</span> 🔧 Como funciona</a></li>
+<li><a href="#materiais-necessários" id="toc-materiais-necessários"><span class="toc-section-number">1.7</span> 📐 Materiais necessários</a></li>
+<li><a href="#cuidados-importantes" id="toc-cuidados-importantes"><span class="toc-section-number">1.8</span> ⚠️ Cuidados importantes</a></li>
+<li><a href="#alternativa" id="toc-alternativa"><span class="toc-section-number">1.9</span> ✅ Alternativa</a></li>
+<li><a href="#como-funciona-1" id="toc-como-funciona-1"><span class="toc-section-number">1.10</span> 🔧 Como funciona</a></li>
+<li><a href="#o-que-você-precisa" id="toc-o-que-você-precisa"><span class="toc-section-number">1.11</span> 📐 O que você precisa</a></li>
+<li><a href="#limitações-importantes" id="toc-limitações-importantes"><span class="toc-section-number">1.12</span> ⚠️ Limitações
+importantes</a></li>
+<li><a href="#onde-funciona-bem" id="toc-onde-funciona-bem"><span class="toc-section-number">1.13</span> ✅ Onde funciona bem</a></li>
+</ul></li>
+<li><a href="#projeto-extensor-passivo-de-antena-wi-fi" id="toc-projeto-extensor-passivo-de-antena-wi-fi"><span class="toc-section-number">2</span> 🔧 Projeto – Extensor Passivo de
+Antena Wi-Fi</a>
+<ul>
+<li><a href="#materiais-1" id="toc-materiais-1"><span class="toc-section-number">2.1</span> 1. Materiais</a></li>
+<li><a href="#montagem" id="toc-montagem"><span class="toc-section-number">2.2</span> 2. Montagem</a></li>
+<li><a href="#dicas-de-instalação" id="toc-dicas-de-instalação"><span class="toc-section-number">2.3</span> 3. Dicas de instalação</a></li>
+<li><a href="#limitações" id="toc-limitações"><span class="toc-section-number">2.4</span> 4. Limitações</a></li>
+<li><a href="#como-funciona-2" id="toc-como-funciona-2"><span class="toc-section-number">2.5</span> 🔧 Como funciona</a></li>
+<li><a href="#vantagens" id="toc-vantagens"><span class="toc-section-number">2.6</span> ✅ Vantagens</a></li>
+<li><a href="#cuidados" id="toc-cuidados"><span class="toc-section-number">2.7</span> ⚠️ Cuidados</a></li>
+<li><a href="#exemplo-prático" id="toc-exemplo-prático"><span class="toc-section-number">2.8</span> 📌 Exemplo prático</a></li>
+<li><a href="#esquema-visual-descrição-rápida" id="toc-esquema-visual-descrição-rápida"><span class="toc-section-number">2.9</span> 1. Esquema Visual (Descrição
+Rápida)</a></li>
+<li><a href="#conjunto-de-produtos-recomendados" id="toc-conjunto-de-produtos-recomendados"><span class="toc-section-number">2.10</span> 2. Conjunto de Produtos
+Recomendados</a></li>
+<li><a href="#pontos-a-considerar-vantagens-e-cuidados" id="toc-pontos-a-considerar-vantagens-e-cuidados"><span class="toc-section-number">2.11</span> 3. Pontos a Considerar —
+Vantagens e Cuidados</a></li>
+<li><a href="#resumo-final" id="toc-resumo-final"><span class="toc-section-number">2.12</span> Resumo Final</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="antena-repetidora-passiva"><span class="header-section-number">1</span> Antena repetidora passiva</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #196</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Tecnologia</li>
+<li><strong>ID:</strong> 68b819fb-8498-832a-b48b-039ffa8400dc</li>
+<li><strong>Criada em:</strong> 2025-09-03 11:35:41</li>
+<li><strong>Atualizada em:</strong> 2025-09-03 11:52:45</li>
+<li><strong>Total de mensagens:</strong> 16</li>
+<li><strong>Resumo:</strong> antena repetidora wifi passiva…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-03-113541-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-03
+11:35:41)</em> <em>[ChatGPT]</em></h3>
+<p>antena repetidora wifi passiva</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-03-113541-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:35:41)</em> <em>[ChatGPT]</em></h3>
+<p>Você provavelmente está se referindo a uma <strong>antena repetidora
+Wi-Fi passiva</strong>, também conhecida popularmente como <em>extensor
+passivo</em> ou <em>refletor caseiro de sinal</em>.</p>
+<p>🔹 <strong>O que é:</strong><br />
+Não é exatamente um “repetidor” (esses são sempre ativos, precisam de
+energia). Uma solução <strong>passiva</strong> funciona como um
+<strong>refletor ou direcionador de sinal</strong>, que capta as ondas
+de rádio do roteador e as redireciona, melhorando a cobertura em certas
+direções.</p>
+<p>🔹 <strong>Como funciona:</strong><br />
+- O sinal Wi-Fi é emitido em todas as direções.<br />
+- Usando materiais refletivos (como papel alumínio, latas, malhas
+metálicas ou antenas direcionais), é possível <strong>concentrar ou
+redirecionar</strong> parte desse sinal.<br />
+- Isso não cria novo sinal, apenas “foca” o existente, como um espelho
+com a luz.</p>
+<p>🔹 <strong>Exemplos práticos:</strong><br />
+- <strong>Parabólicas improvisadas:</strong> um refletor parabólico
+atrás da antena do roteador.<br />
+- <strong>Latas de alumínio (cantenna):</strong> funcionam como guia de
+onda.<br />
+- <strong>Refletores de papel alumínio:</strong> atrás da antena para
+direcionar o feixe para o local desejado.</p>
+<p>🔹 <strong>Limitações:</strong><br />
+- Só melhora em uma direção (o lado do refletor perde sinal).<br />
+- Ganho é limitado (normalmente de 2 a 12 dBi, dependendo da
+construção).<br />
+- Não substitui um repetidor ativo ou access point — não amplia a rede,
+só melhora a distribuição.</p>
+<p>Se você quiser, eu posso te mostrar <strong>como montar um refletor
+passivo simples</strong> (com medidas e formato) para aumentar o alcance
+do Wi-Fi em uma direção. Quer que eu prepare um guia prático com passo a
+passo?</p>
+<hr />
+<h3 data-number="1.2.3" id="utilizador-2025-09-03-113735-chatgpt"><span class="header-section-number">1.2.3</span> 👤 Utilizador <em>(2025-09-03
+11:37:35)</em> <em>[ChatGPT]</em></h3>
+<p>como montar um refletor passivo simples</p>
+<hr />
+<h3 data-number="1.2.4" id="chatgpt-2025-09-03-113735-chatgpt"><span class="header-section-number">1.2.4</span> 🤖 ChatGPT <em>(2025-09-03
+11:37:35)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 Vou te mostrar como montar um <strong>refletor passivo
+simples para Wi-Fi</strong>, usando materiais fáceis de achar. Isso vai
+ajudar a direcionar o sinal do roteador para o lugar onde você mais
+precisa.</p>
+<hr />
+<h2 data-number="1.3" id="materiais"><span class="header-section-number">1.3</span> 🔧 Materiais</h2>
+<ul>
+<li>Papel alumínio (quanto mais liso e sem amassados, melhor)<br />
+</li>
+<li>Papel cartão, cartolina ou papelão fino (para dar estrutura)<br />
+</li>
+<li>Tesoura ou estilete<br />
+</li>
+<li>Cola ou fita adesiva</li>
+</ul>
+<hr />
+<h2 data-number="1.4" id="passo-a-passo-modelo-parabólico-simples"><span class="header-section-number">1.4</span> 📐 Passo a passo (modelo
+parabólico simples)</h2>
+<ol type="1">
+<li><strong>Imprimir o molde:</strong>
+<ul>
+<li>Existe um projeto clássico chamado <strong>“Windsurfer WiFi
+Booster”</strong>, que é um refletor parabólico em miniatura.<br />
+</li>
+<li>Você pode baixar o molde em PDF (procure por <em>“windsurfer wifi
+antenna template”</em>).</li>
+</ul></li>
+<li><strong>Preparar o suporte:</strong>
+<ul>
+<li>Cole o papel alumínio sobre o papel cartão (ou papelão fino).<br />
+</li>
+<li>Isso será o refletor.</li>
+</ul></li>
+<li><strong>Recortar o molde:</strong>
+<ul>
+<li>Corte o paraboloide (curvado) e a base de suporte do molde.<br />
+</li>
+<li>O alumínio deve ficar virado para o lado que refletirá o sinal.</li>
+</ul></li>
+<li><strong>Montar:</strong>
+<ul>
+<li>Encaixe as abas do refletor na base de suporte.<br />
+</li>
+<li>O resultado é como uma “antena parabólica aberta” em miniatura.</li>
+</ul></li>
+<li><strong>Colocar no roteador:</strong>
+<ul>
+<li>Encaixe a antena do roteador no espaço indicado.<br />
+</li>
+<li>O refletor deve ficar <strong>atrás da antena</strong>, direcionando
+o sinal para frente.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="1.5" id="dicas-de-uso"><span class="header-section-number">1.5</span> 📡 Dicas de uso</h2>
+<ul>
+<li>Coloque o refletor virado para o local onde você quer melhorar o
+sinal.<br />
+</li>
+<li>Teste diferentes ângulos até encontrar o melhor ganho.<br />
+</li>
+<li>O ganho típico varia de <strong>6 a 12 dBi</strong> (dependendo da
+precisão).<br />
+</li>
+<li>Funciona melhor em roteadores com <strong>antenas externas</strong>
+destacadas.</li>
+</ul>
+<hr />
+<p>⚡ Se quiser, eu posso te preparar um <strong>molde em PDF pronto
+para impressão</strong> desse refletor parabólico, já no tamanho certo
+para encaixar na antena.</p>
+<p>👉 Quer que eu gere esse molde para você?</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-09-03-114023-chatgpt"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-09-03
+11:40:23)</em> <em>[ChatGPT]</em></h3>
+<p>Outro tipo que use um cabo coaxial para ligar as antenas, para passar
+de um andar para outro</p>
+<hr />
+<h3 data-number="1.5.2" id="chatgpt-2025-09-03-114023-chatgpt"><span class="header-section-number">1.5.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:40:23)</em> <em>[ChatGPT]</em></h3>
+<p>Ah, entendi 👍<br />
+Você está falando de um <strong>sistema passivo com cabo
+coaxial</strong>, que nada mais é que <strong>estender fisicamente a
+antena do roteador</strong> para outro ponto da casa (por exemplo, outro
+andar).</p>
+<p>Isso é diferente do refletor de alumínio, porque aqui o sinal
+<strong>passa pelo cabo</strong> até outra antena.</p>
+<hr />
+<h2 data-number="1.6" id="como-funciona"><span class="header-section-number">1.6</span> 🔧 Como funciona</h2>
+<ul>
+<li>O roteador tem uma ou mais antenas externas, geralmente rosqueadas
+no padrão <strong>RP-SMA</strong>.<br />
+</li>
+<li>Você pode desconectar uma antena e ligar um <strong>cabo coaxial de
+baixa perda</strong> nesse conector.<br />
+</li>
+<li>Na outra ponta do cabo, conecta uma <strong>antena Wi-Fi</strong>
+(omnidirecional ou direcional).<br />
+</li>
+<li>Assim, a antena “fica” no andar onde você precisa de sinal.</li>
+</ul>
+<hr />
+<h2 data-number="1.7" id="materiais-necessários"><span class="header-section-number">1.7</span> 📐 Materiais necessários</h2>
+<ol type="1">
+<li><strong>Cabo coaxial de baixa perda</strong> (recomendado: LMR-200
+ou LMR-400, depende do comprimento).
+<ul>
+<li>Evite RG-58 para longos trechos, porque perde muito sinal em 2,4 GHz
+e 5 GHz.<br />
+</li>
+</ul></li>
+<li><strong>Conectores RP-SMA macho/fêmea</strong> (compatíveis com o
+roteador e a antena).<br />
+</li>
+<li><strong>Antena Wi-Fi</strong> (pode ser a própria do roteador, ou
+comprar uma de maior ganho).<br />
+</li>
+<li><strong>Passagem de cabo</strong> (dutos, furo no teto/piso ou
+canaletas).</li>
+</ol>
+<hr />
+<h2 data-number="1.8" id="cuidados-importantes"><span class="header-section-number">1.8</span> ⚠️ Cuidados importantes</h2>
+<ul>
+<li><strong>Perda no cabo:</strong> cada metro de coaxial causa perda de
+sinal (quanto mais fino, pior).
+<ul>
+<li>Exemplo: RG-58 perde ~1 dB por metro em 2,4 GHz.<br />
+</li>
+<li>Se usar 10 m, já perde 10 dB (isso equivale a destruir o
+sinal).<br />
+</li>
+<li>Por isso é melhor usar cabos grossos e curtos, sempre que
+possível.<br />
+</li>
+</ul></li>
+<li><strong>Conexões firmes:</strong> use conectores bem montados,
+porque mau contato gera perda grande.<br />
+</li>
+<li><strong>Antena final:</strong> quanto maior o ganho da antena
+externa, melhor compensa a perda do cabo.</li>
+</ul>
+<hr />
+<h2 data-number="1.9" id="alternativa"><span class="header-section-number">1.9</span> ✅ Alternativa</h2>
+<p>Se o cabo for muito longo, muitas vezes <strong>vale mais a pena
+colocar um Access Point (AP) ou repetidor ativo</strong> ligado por cabo
+de rede (Ethernet) ou até mesmo via <em>Powerline</em> (rede pela
+tomada).<br />
+Isso porque coaxial longo em Wi-Fi não compensa — perde mais do que
+ajuda.</p>
+<hr />
+<p>👉 Quer que eu desenhe um <strong>esquema simples</strong> mostrando
+como fica essa ligação com cabo coaxial, roteador e antena externa em
+outro andar?</p>
+<hr />
+<h3 data-number="1.9.1" id="utilizador-2025-09-03-114216-chatgpt"><span class="header-section-number">1.9.1</span> 👤 Utilizador <em>(2025-09-03
+11:42:16)</em> <em>[ChatGPT]</em></h3>
+<p>Não, um que use uma antena emissora e outra receptora</p>
+<hr />
+<h3 data-number="1.9.2" id="chatgpt-2025-09-03-114217-chatgpt"><span class="header-section-number">1.9.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:42:17)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito, agora entendi melhor o que você quer 👌</p>
+<p>Você está pensando em algo como um <strong>repetidor passivo com duas
+antenas ligadas por cabo coaxial</strong>:<br />
+- Uma antena fica <strong>próxima ao roteador</strong>, captando o
+sinal.<br />
+- Um cabo coaxial leva esse sinal até outro andar.<br />
+- Na outra ponta, uma segunda antena <strong>re irradia</strong> o
+sinal.</p>
+<p>Isso é chamado em rádio de <strong>repetidor passivo</strong> ou
+<strong>extensor passivo de antena</strong>.</p>
+<hr />
+<h2 data-number="1.10" id="como-funciona-1"><span class="header-section-number">1.10</span> 🔧 Como funciona</h2>
+<ul>
+<li><strong>Antena receptora</strong>: capta o sinal Wi-Fi do
+roteador.<br />
+</li>
+<li><strong>Cabo coaxial</strong>: transmite esse sinal (com
+perdas).<br />
+</li>
+<li><strong>Antena emissora</strong>: re irradia o sinal no outro
+ambiente.</li>
+</ul>
+<p>Não há nenhum circuito ativo amplificando — só um “deslocamento
+físico” do ponto de emissão/recepção.</p>
+<hr />
+<h2 data-number="1.11" id="o-que-você-precisa"><span class="header-section-number">1.11</span> 📐 O que você precisa</h2>
+<ol type="1">
+<li><strong>Duas antenas Wi-Fi compatíveis</strong> (pode usar omnis
+simples de 2–5 dBi ou uma direcional + omni, dependendo da
+necessidade).<br />
+</li>
+<li><strong>Cabo coaxial de baixa perda</strong> (LMR-200 ou
+LMR-400).<br />
+</li>
+<li><strong>Conectores RP-SMA</strong> (ou N-type, dependendo do tipo de
+antena).<br />
+</li>
+<li><strong>Adaptadores, se necessário</strong> (para casar os
+conectores entre antenas e cabo).</li>
+</ol>
+<hr />
+<h2 data-number="1.12" id="limitações-importantes"><span class="header-section-number">1.12</span> ⚠️ Limitações importantes</h2>
+<ul>
+<li><strong>Perdas grandes:</strong> mesmo com cabo de baixa perda, cada
+metro tira parte do sinal.<br />
+</li>
+<li><strong>Sem amplificação:</strong> como não há circuito ativo, o
+ganho nunca será maior do que o do roteador — na prática, você só muda o
+local de onde o sinal sai.<br />
+</li>
+<li><strong>Projetos práticos:</strong> funciona bem em distâncias
+<strong>curtas (até 5 m de coaxial com cabo bom)</strong>. Acima disso,
+costuma ser pior que usar um repetidor ativo.</li>
+</ul>
+<hr />
+<h2 data-number="1.13" id="onde-funciona-bem"><span class="header-section-number">1.13</span> ✅ Onde funciona bem</h2>
+<ul>
+<li>Quando você quer “subir” o sinal só um andar (ex.: colocar uma
+antena no teto do andar de baixo e outra no andar de cima).<br />
+</li>
+<li>Em ambientes onde não há passagem fácil para cabo de rede, mas dá
+para passar coaxial curto.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu te sugira <strong>um projeto prático de duas antenas
+ligadas por coaxial</strong> (com medidas de cabo e tipos de antena mais
+indicados), para você montar em casa?</p>
+<hr />
+<h3 data-number="1.13.1" id="utilizador-2025-09-03-114538-chatgpt"><span class="header-section-number">1.13.1</span> 👤 Utilizador
+<em>(2025-09-03 11:45:38)</em> <em>[ChatGPT]</em></h3>
+<p>Sim</p>
+<hr />
+<h3 data-number="1.13.2" id="chatgpt-2025-09-03-114538-chatgpt"><span class="header-section-number">1.13.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:45:38)</em> <em>[ChatGPT]</em></h3>
+<p>Beleza 👌 vamos montar um projeto prático de <strong>extensor passivo
+Wi-Fi com duas antenas ligadas por cabo coaxial</strong>.</p>
+<hr />
+<h1 data-number="2" id="projeto-extensor-passivo-de-antena-wi-fi"><span class="header-section-number">2</span> 🔧 Projeto – Extensor Passivo de
+Antena Wi-Fi</h1>
+<h2 data-number="2.1" id="materiais-1"><span class="header-section-number">2.1</span> 1. Materiais</h2>
+<ul>
+<li><strong>Antena 1 (receptora):</strong>
+<ul>
+<li>Pode ser <strong>direcional</strong> (tipo painel ou Yagi) para
+captar melhor o sinal do roteador.<br />
+</li>
+<li>Se o roteador já tem antena removível, você pode substituí-la.</li>
+</ul></li>
+<li><strong>Antena 2 (emissora):</strong>
+<ul>
+<li>Recomendo uma <strong>omnidirecional</strong> (tipo aquelas varinhas
+comuns de roteador), para espalhar o sinal no outro andar.</li>
+</ul></li>
+<li><strong>Cabo coaxial de baixa perda:</strong>
+<ul>
+<li>Para 2,4 GHz: <strong>LMR-200</strong> (até 5 m) ou
+<strong>LMR-400</strong> (até 10 m).<br />
+</li>
+<li>Evite RG-58, pois perde muito sinal.</li>
+</ul></li>
+<li><strong>Conectores:</strong>
+<ul>
+<li>A maioria dos roteadores usa <strong>RP-SMA fêmea</strong> nas
+antenas.<br />
+</li>
+<li>Você vai precisar de:
+<ul>
+<li>2 × RP-SMA macho (uma em cada ponta do cabo).<br />
+</li>
+<li>Adaptadores se a antena externa usar conector tipo N.</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr />
+<h2 data-number="2.2" id="montagem"><span class="header-section-number">2.2</span> 2. Montagem</h2>
+<ol type="1">
+<li><strong>No roteador:</strong>
+<ul>
+<li>Retire uma antena original.<br />
+</li>
+<li>Conecte o cabo coaxial no lugar dela.</li>
+</ul></li>
+<li><strong>No ponto de recepção:</strong>
+<ul>
+<li>Ligue a <strong>antena receptora direcional</strong> na ponta do
+cabo.<br />
+</li>
+<li>Mire essa antena para o local onde o roteador está.</li>
+</ul></li>
+<li><strong>Na outra ponta (andar de cima/baixo):</strong>
+<ul>
+<li>Ligue a <strong>antena emissora omnidirecional</strong>.<br />
+</li>
+<li>Ela vai irradiar o sinal naquele ambiente.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="2.3" id="dicas-de-instalação"><span class="header-section-number">2.3</span> 3. Dicas de instalação</h2>
+<ul>
+<li>Quanto <strong>menor o cabo</strong>, melhor. Ideal ≤ 5
+metros.<br />
+</li>
+<li>Se precisar passar por parede ou laje, faça isso com <strong>um furo
+pequeno</strong> para o coaxial.<br />
+</li>
+<li>Se usar antena externa maior (painel ou Yagi), fixe bem para não
+mudar o alinhamento.<br />
+</li>
+<li>Faça testes girando a antena direcional até encontrar o melhor
+ganho.</li>
+</ul>
+<hr />
+<h2 data-number="2.4" id="limitações"><span class="header-section-number">2.4</span> 4. Limitações</h2>
+<ul>
+<li>Esse sistema <strong>não amplifica</strong> o sinal, apenas o
+transporta.<br />
+</li>
+<li>A qualidade final depende da perda do cabo:
+<ul>
+<li>Exemplo: 5 m de LMR-200 perde ~2 dB em 2,4 GHz.<br />
+</li>
+</ul></li>
+<li>Funciona bem se a distância entre os andares não for grande.<br />
+</li>
+<li>Para cabos longos ou maior alcance, é melhor usar <strong>Access
+Point</strong> ou <strong>repetidor ativo</strong>.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu faça um <strong>diagrama visual</strong> (esquema
+simples) mostrando como ficam as conexões entre roteador → cabo coaxial
+→ antena receptora → antena emissora?</p>
+<hr />
+<h3 data-number="2.4.1" id="utilizador-2025-09-03-114824-chatgpt"><span class="header-section-number">2.4.1</span> 👤 Utilizador <em>(2025-09-03
+11:48:24)</em> <em>[ChatGPT]</em></h3>
+<p>Exemplo de repetidor activo usando a rede de energia como meio</p>
+<hr />
+<h3 data-number="2.4.2" id="chatgpt-2025-09-03-114824-chatgpt"><span class="header-section-number">2.4.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:48:24)</em> <em>[ChatGPT]</em></h3>
+<p>Ótima escolha 👌<br />
+Você está falando de um <strong>repetidor ativo usando a rede
+elétrica</strong> como meio de transmissão — isso é feito com
+dispositivos chamados <strong>Powerline</strong> (ou PLC – <em>Power
+Line Communication</em>).</p>
+<hr />
+<h2 data-number="2.5" id="como-funciona-2"><span class="header-section-number">2.5</span> 🔧 Como funciona</h2>
+<ol type="1">
+<li><strong>Adaptador Powerline 1 (transmissor):</strong>
+<ul>
+<li>Liga no roteador com um cabo de rede (Ethernet).<br />
+</li>
+<li>Conectado na tomada elétrica, ele envia os dados pela fiação
+elétrica da casa.</li>
+</ul></li>
+<li><strong>Adaptador Powerline 2 (receptor com Wi-Fi):</strong>
+<ul>
+<li>Conectado em outra tomada, em outro cômodo/andar.<br />
+</li>
+<li>Recebe os dados pela rede elétrica.<br />
+</li>
+<li>Pode fornecer conexão via <strong>Ethernet</strong> e/ou criar uma
+nova <strong>rede Wi-Fi</strong> (repetidor ativo).</li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="2.6" id="vantagens"><span class="header-section-number">2.6</span> ✅ Vantagens</h2>
+<ul>
+<li>Aproveita a fiação elétrica já existente (não precisa puxar cabo de
+rede).<br />
+</li>
+<li>Mais estável que repetidores Wi-Fi simples (não depende tanto do
+sinal sem fio).<br />
+</li>
+<li>Alguns modelos suportam <strong>Gigabit</strong> e também funcionam
+em <strong>dupla rede (2,4 e 5 GHz)</strong>.<br />
+</li>
+<li>Plug &amp; Play: geralmente basta parear os dois adaptadores
+apertando um botão.</li>
+</ul>
+<hr />
+<h2 data-number="2.7" id="cuidados"><span class="header-section-number">2.7</span> ⚠️ Cuidados</h2>
+<ul>
+<li>Funciona melhor se as tomadas estiverem <strong>no mesmo quadro
+elétrico</strong>.<br />
+</li>
+<li>Desempenho pode cair se houver muito ruído na rede elétrica (ex.:
+motores, fontes ruins).<br />
+</li>
+<li>Evitar filtros de linha e réguas com proteção, pois podem bloquear o
+sinal.</li>
+</ul>
+<hr />
+<h2 data-number="2.8" id="exemplo-prático"><span class="header-section-number">2.8</span> 📌 Exemplo prático</h2>
+<ul>
+<li><strong>Adaptador 1:</strong> conectado no roteador, perto da
+entrada da internet.<br />
+</li>
+<li><strong>Adaptador 2:</strong> colocado no andar de cima.<br />
+</li>
+<li>Esse segundo adaptador emite Wi-Fi, como se fosse um roteador
+secundário, ou fornece porta de rede para um computador/TV.</li>
+</ul>
+<hr />
+<p>👉 Quer que eu te sugira <strong>modelos de powerline Wi-Fi
+disponíveis hoje no mercado</strong> (com preço médio), ou prefere que
+eu faça um <strong>esquema visual</strong> mostrando como a ligação
+funciona?</p>
+<hr />
+<h3 data-number="2.8.1" id="utilizador-2025-09-03-114952-chatgpt"><span class="header-section-number">2.8.1</span> 👤 Utilizador <em>(2025-09-03
+11:49:52)</em> <em>[ChatGPT]</em></h3>
+<p>Sim</p>
+<hr />
+<h3 data-number="2.8.2" id="chatgpt-2025-09-03-114955-chatgpt"><span class="header-section-number">2.8.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:49:55)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito! Aqui estão dois formatos para te ajudar:</p>
+<hr />
+<h2 data-number="2.9" id="esquema-visual-descrição-rápida"><span class="header-section-number">2.9</span> 1. Esquema Visual (Descrição
+Rápida)</h2>
+<p>Imagine o seguinte fluxo:</p>
+<pre><code>[ Roteador ] — (Ethernet) — [ Adaptador Powerline 1 ] — (tomada elétrica) — [ Fiação elétrica ] — [ Adaptador Powerline 2 + Wi-Fi ] — Wi-Fi / Ethernet para dispositivos</code></pre>
+<ul>
+<li>O <strong>Adaptador 1</strong> é ligado ao teu roteador por cabo
+Ethernet e plugado diretamente numa tomada.</li>
+<li>O sinal é transmitido pela <strong>fiação elétrica da casa</strong>
+até o <strong>Adaptador 2</strong>.</li>
+<li>Esse segundo adaptador atua como um <strong>repetidor Wi-Fi
+ativo</strong>, criando uma nova rede sem fios no ambiente, ou permite
+conexão via cabo Ethernet a dispositivos.</li>
+</ul>
+<hr />
+<h2 data-number="2.10" id="conjunto-de-produtos-recomendados"><span class="header-section-number">2.10</span> 2. Conjunto de Produtos
+Recomendados</h2>
+<p>Aqui tens algumas opções modernas e eficientes, considerando
+tecnologia, rapidez e funcionalidade Wi-Fi:</p>
+<p>products{“selections”:[[“turn0product12”,“TP-Link TL-WPA8631P
+(AV1300)”,“Velocidade Powerline até 1300 Mbps + Wi-Fi
+dual-band”],[“turn0product2”,“TP-Link TL-WPA7617 (AV2
+gigabit)”,“Powerline até 1000 Mbps, Wi-Fi
+integrado”],[“turn0product0”,“TP-Link TL-WPA4220 (AV600)”,“Solução mais
+acessível, 600 Mbps Powerline, Wi-Fi”]],“tags”:[“Altíssima velocidade
+&amp; dual-band”,“Gigabit acessível”,“Ótimo custo-benefício”]}</p>
+<h3 data-number="2.10.1" id="detalhes-das-recomendações"><span class="header-section-number">2.10.1</span> Detalhes das
+Recomendações:</h3>
+<ul>
+<li><strong>product_entity[“turn0product12”,“TP-Link TL-WPA8631P
+(AV1300)”]</strong>
+<ul>
+<li>Padrão <strong>HomePlug AV2</strong>, velocidade de Powerline até
+1300 Mbps.<br />
+</li>
+<li>Extende Wi-Fi dual-band (2,4 GHz e 5 GHz), ideal para streaming 4K e
+gaming intenso.</li>
+</ul></li>
+<li><strong>product_entity[“turn0product2”,“TP-Link TL-WPA7617 (AV2
+gigabit)”]</strong>
+<ul>
+<li>Também HomePlug AV2 com até 1000 Mbps via Powerline.<br />
+</li>
+<li>Inclui Wi-Fi integrado e porta Ethernet gigabit.</li>
+</ul></li>
+<li><strong>product_entity[“turn0product0”,“TP-Link TL-WPA4220
+(AV600)”]</strong>
+<ul>
+<li>Mais econômico, suporte até 600 Mbps via Powerline.<br />
+</li>
+<li>Tem Wi-Fi incluído e configurações simples com “Wi-Fi Clone”.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 data-number="2.11" id="pontos-a-considerar-vantagens-e-cuidados"><span class="header-section-number">2.11</span> 3. Pontos a Considerar —
+Vantagens e Cuidados</h2>
+<h3 data-number="2.11.1" id="vantagens-geralmente-confirmadas-por-fontes-técnicas"><span class="header-section-number">2.11.1</span> Vantagens (geralmente
+confirmadas por fontes técnicas):</h3>
+<ul>
+<li><strong>Plug &amp; Play</strong>: instalação simples e sem cabos
+aparentes citeturn0search0turn0search3.</li>
+<li><strong>Boa estabilidade</strong> em casas com paredes grossas,
+interferência Wi-Fi ou grandes áreas
+citeturn0search0turn0search7.</li>
+<li><strong>Possibilidade de Wi-Fi no ponto de destino</strong>, criando
+cobertura em outro andar sem cabos adicionais
+citeturn0search9turn0search3.</li>
+<li><strong>Segurança</strong>: grande parte dos adaptadores inclui
+encriptação AES e protocolos como WPA2/WPA3
+citeturn0search1turn0search7.</li>
+</ul>
+<h3 data-number="2.11.2" id="cuidados-e-limitações"><span class="header-section-number">2.11.2</span> Cuidados e limitações:</h3>
+<ul>
+<li><strong>Interferências e fiação</strong>: a velocidade e
+estabilidade dependem muito da qualidade da fiação elétrica e da
+presença de ruído — evitar tomadas com filtros, estabilizadores ou zonas
+com muitos eletrodomésticos
+citeturn0search2turn0search5turn0search7.</li>
+<li><strong>Mesmo circuito elétrico</strong>: funciona melhor se ambos
+os adaptadores estiverem no mesmo circuito ou fase elétrica, senão a
+performance cai muito
+citeturn0search3turn0search5turn0reddit15turn0reddit16.</li>
+<li><strong>Velocidade prática abaixo do teórico</strong>:
+frequentemente se atinge apenas 25–40% da velocidade anunciada em
+condições reais citeturn0search5turn0search11turn0search4.</li>
+<li><strong>Experiências de utilizadores</strong>: &gt; “Powerline is
+very hit or miss. It can work great, poorly, or not at all… better to
+buy where you can return it.” citeturn0reddit15<br />
+&gt; “Powerline is almost always the worst possible option… you’re
+almost certainly crossing circuits along the way.”
+citeturn0reddit14</li>
+</ul>
+<hr />
+<h2 data-number="2.12" id="resumo-final"><span class="header-section-number">2.12</span> Resumo Final</h2>
+<ul>
+<li><strong>Como funciona</strong>: adaptador ligado por Ethernet ao
+roteador → rede eléctrica → adaptador com Wi-Fi num outro ponto.</li>
+<li><strong>Principais escolhas</strong>: TP-Link TL-WPA8631P (top
+performance), TL-WPA7617 (boa relação custo/benefício), TL-WPA4220 (mais
+económico).</li>
+<li><strong>Pontos-chave para sucesso</strong>: uso de tomada direta,
+evitar ruídos elétricos, verificar que ambos os adaptadores estão no
+mesmo circuito, e estar preparado para testes práticos.</li>
+</ul>
+<p>Se quiser, posso também ajudar-te a comparar com soluções de
+<strong>Wi-Fi Mesh</strong> ou desenhar um diagrama passo a passo com
+elementos visuais — é só dizer!</p>
+<hr />
+<h3 data-number="2.12.1" id="utilizador-2025-09-03-115232-chatgpt"><span class="header-section-number">2.12.1</span> 👤 Utilizador
+<em>(2025-09-03 11:52:32)</em> <em>[ChatGPT]</em></h3>
+<p>Outros modelos mais económicos</p>
+<hr />
+<h3 data-number="2.12.2" id="chatgpt-2025-09-03-115235-chatgpt"><span class="header-section-number">2.12.2</span> 🤖 ChatGPT <em>(2025-09-03
+11:52:35)</em> <em>[ChatGPT]</em></h3>
+<p>Claro! Aqui estão algumas <strong>opções de adaptadores Powerline
+Wi-Fi mais económicos</strong> disponíveis no mercado, focando em
+custo-benefício equilibrado com funcionalidade:</p>
+<p>products{“selections”:[[“turn0product1”,“TP-Link TL-PA7017 KIT
+(AV1000)”],[“turn0product0,turn0product12”,“TP-Link TL-WPA7617 (AV2
+Wi-Fi)”]],“tags”:[“Kit econômico básico, apenas Ethernet (≈ €45)”,“Com
+Wi-Fi integrado, HomePlug AV2, cerca de €69”]}</p>
+<h3 data-number="2.12.3" id="destaques-dos-modelos"><span class="header-section-number">2.12.3</span> Destaques dos modelos</h3>
+<ul>
+<li><strong>product_entity[“turn0product1”,“TP-Link TL-PA7017 KIT
+(AV1000)”]</strong>
+<ul>
+<li>Kit simples com dois adaptadores (sem Wi-Fi), ideal para conexão
+pontual por cabo Ethernet em outro cômodo.<br />
+</li>
+<li>Preço aproximado: <strong>€45</strong>, sendo uma opção bastante
+acessível.<br />
+</li>
+<li>Recomendado como “melhor adaptador econômico” por fontes como Tech
+Advisor citeturn0search10.</li>
+</ul></li>
+<li><strong>product_entity[“turn0product0,turn0product12”,“TP-Link
+TL-WPA7617 (AV2 Wi-Fi)”]</strong>
+<ul>
+<li>Versão mais completa: inclui Wi-Fi embutido e suporte à tecnologia
+<strong>HomePlug AV2</strong>, com velocidades Gigabit.<br />
+</li>
+<li>Preço estimado: cerca de <strong>€69</strong>.<br />
+</li>
+<li>Bem cotado por oferecer boa relação custo-benefício, com Wi-Fi 5,
+passthrough e compatibilidade OneMesh
+citeturn0search2turn0search3.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="2.12.4" id="outras-recomendações-econômicas-de-acordo-com-análises-atualizadas"><span class="header-section-number">2.12.4</span> Outras recomendações
+econômicas de acordo com análises atualizadas</h3>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr>
+<th>Modelo e Faixa de Preço</th>
+<th>Características principais</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tenda PH3 (≈ €22–€45)</strong></td>
+<td>Adaptador simples com 1 porta Ethernet, velocidade até 1000 Mbps.
+Ótima opção de entrada. citeturn0search0turn0search1</td>
+</tr>
+<tr>
+<td><strong>Netgear PL1000 (≈ €37)</strong></td>
+<td>Plug-and-play, 1 Gbps teórico, sem passthrough — excelente
+custo-benefício. citeturn0search6turn0search7</td>
+</tr>
+<tr>
+<td><strong>TP-Link TL-PA4010KIT AV600 (≈ €30)</strong></td>
+<td>Compacto, plug-and-play, bom para streaming básico e navegação.
+citeturn0search11turn0search9</td>
+</tr>
+<tr>
+<td><strong>TP-Link TL-PA7017 KIT (≈ €45)</strong></td>
+<td>Modelo citado acima — compacto e acessível.
+citeturn0search10</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 data-number="2.12.5" id="recomendações-e-dicas-finais"><span class="header-section-number">2.12.5</span> Recomendações e dicas
+finais</h3>
+<ul>
+<li><strong>Se o seu objetivo é apenas estender a internet via cabo
+Ethernet para outro cômodo</strong>, o <strong>TL-PA7017 KIT</strong> é
+uma escolha excelente e acessível.</li>
+<li><strong>Se você também precisa de Wi-Fi no segundo ponto</strong>, o
+<strong>TL-WPA7617</strong> oferece muito mais valor, apesar do preço um
+pouco maior.</li>
+<li>Para <strong>orçamentos mais apertados</strong>, considere o
+<strong>Tenda PH3</strong> ou o <strong>Netgear PL1000</strong>, ambos
+bem avaliados como kits econômicos.</li>
+<li>O <strong>TL-PA4010KIT AV600</strong> é ótimo para locais com
+necessidades modestas e sem grande exigência de desempenho.</li>
+</ul>
+<hr />
+<p>Se quiser, posso te ajudar a comparar essas opções com modelos
+Powerline com Mesh integrado ou sugerir onde encontrá-los com melhor
+preço em Portugal. É só dizer!</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>007_DeepSeek_Como_reverter_um_patch_com_patch_-R</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#como-reverter-um-patch-com-patch--r" id="toc-como-reverter-um-patch-com-patch--r"><span class="toc-section-number">1</span> Como reverter um patch com patch
+-R</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#método-1-usando-patch-mais-comum" id="toc-método-1-usando-patch-mais-comum"><span class="toc-section-number">1.3</span> Método 1: Usando
+<code>patch</code> (mais comum)</a></li>
+<li><a href="#método-2-usando-patch-de-forma-mais-simples" id="toc-método-2-usando-patch-de-forma-mais-simples"><span class="toc-section-number">1.4</span> Método 2: Usando
+<code>patch</code> de forma mais simples</a></li>
+<li><a href="#método-3-usando-apenas-diff-e-redirecionamento" id="toc-método-3-usando-apenas-diff-e-redirecionamento"><span class="toc-section-number">1.5</span> Método 3: Usando apenas
+<code>diff</code> e redirecionamento</a></li>
+<li><a href="#método-4-script-completo-para-reutilização" id="toc-método-4-script-completo-para-reutilização"><span class="toc-section-number">1.6</span> Método 4: Script completo para
+reutilização</a></li>
+<li><a href="#fluxo-de-trabalho-típico" id="toc-fluxo-de-trabalho-típico"><span class="toc-section-number">1.7</span> Fluxo de trabalho típico:</a></li>
+<li><a href="#verificação" id="toc-verificação"><span class="toc-section-number">1.8</span> Verificação:</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="como-reverter-um-patch-com-patch--r"><span class="header-section-number">1</span> Como reverter um patch com patch
+-R</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #7</li>
+<li><strong>Origem:</strong> DeepSeek</li>
+<li><strong>Categoria:</strong> Geral</li>
+<li><strong>ID:</strong> c0fa5239-8577-47d3-af03-a16023354347</li>
+<li><strong>Criada em:</strong> 2025-11-11 02:32:57</li>
+<li><strong>Atualizada em:</strong> 2025-11-11 02:51:18</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Como fazer o inverso de: diff -u
+script_v1.py script_v2.py &gt; script_v1_to_v2.diff…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-11-11-023300-deepseek-reasoner"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-11-11
+02:33:00)</em> <em>[deepseek-reasoner]</em></h3>
+<p>Como fazer o inverso de: diff -u script_v1.py script_v2.py &gt;
+script_v1_to_v2.diff</p>
+<hr />
+<h3 data-number="1.2.2" id="deepseek-2025-11-11-023300-deepseek-reasoner"><span class="header-section-number">1.2.2</span> 🤖 DeepSeek <em>(2025-11-11
+02:33:00)</em> <em>[deepseek-reasoner]</em></h3>
+<p>Para aplicar o inverso do comando
+<code>diff -u script_v1.py script_v2.py &gt; script_v1_to_v2.diff</code>,
+ou seja, para reverter as alterações contidas no arquivo de patch
+<code>script_v1_to_v2.diff</code>, podemos usar o comando
+<code>patch</code>.</p>
+<p>O comando <code>patch</code> é usado para aplicar diferenças (diffs)
+a arquivos. No caso de um diff unificado (criado com a opção
+<code>-u</code>), podemos usar o <code>patch</code> para aplicar as
+alterações que transformam <code>script_v1.py</code> em
+<code>script_v2.py</code>. No entanto, se quisermos reverter essas
+alterações (ou seja, voltar do <code>script_v2.py</code> para o
+<code>script_v1.py</code>), temos duas opções:</p>
+<ol type="1">
+<li><p>Se tivermos o arquivo <code>script_v1.py</code> original e o
+patch <code>script_v1_to_v2.diff</code>, podemos aplicar o patch de
+forma inversa para reverter as alterações no <code>script_v2.py</code>
+(ou em uma cópia) para voltar ao <code>script_v1.py</code>.</p></li>
+<li><p>Ou, se não tivermos o original, mas o patch foi criado no formato
+unificado, podemos usar a opção <code>-R</code> (reverse) para aplicar o
+patch de trás para frente.</p></li>
+</ol>
+<p>Aqui está como fazer:</p>
+<h3 data-number="1.2.3" id="opção-1-criando-um-patch-reverso"><span class="header-section-number">1.2.3</span> Opção 1: Criando um patch
+reverso</h3>
+<p>Se quisermos criar um patch que vai de <code>script_v2.py</code> para
+<code>script_v1.py</code>, podemos fazer:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v2.py script_v1.py <span class="op">&gt;</span> script_v2_to_v1.diff</span></code></pre></div>
+<p>E então aplicar:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="op">&lt;</span> script_v2_to_v1.diff</span></code></pre></div>
+<h3 data-number="1.2.4" id="opção-2-aplicar-o-patch-original-de-forma-reversa"><span class="header-section-number">1.2.4</span> Opção 2: Aplicar o patch
+original de forma reversa</h3>
+<p>Se já temos o patch <code>script_v1_to_v2.diff</code> e queremos
+aplicar de forma reversa para transformar <code>script_v2.py</code> em
+<code>script_v1.py</code>, usamos a opção <code>-R</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<h3 data-number="1.2.5" id="observação"><span class="header-section-number">1.2.5</span> Observação:</h3>
+<p>Ao aplicar o patch, o <code>patch</code> tenta determinar
+automaticamente qual arquivo deve ser modificado lendo o cabeçalho do
+diff. No entanto, se estivermos aplicando em um arquivo com nome
+diferente, podemos usar a opção <code>-o</code> para especificar o
+arquivo de saída ou redirecionar de outra forma.</p>
+<h3 data-number="1.2.6" id="exemplo-prático"><span class="header-section-number">1.2.6</span> Exemplo prático:</h3>
+<p>Suponha que temos: - <code>script_v1.py</code>: versão original -
+<code>script_v2.py</code>: versão modificada -
+<code>script_v1_to_v2.diff</code>: patch que transforma v1 em v2</p>
+<p>Agora, temos o <code>script_v2.py</code> e queremos reverter para a
+versão v1. Podemos fazer:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> script_v2.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>Isso irá aplicar as alterações inversas no <code>script_v2.py</code>,
+efetivamente transformando-o de volta para
+<code>script_v1.py</code>.</p>
+<h3 data-number="1.2.7" id="cuidado"><span class="header-section-number">1.2.7</span> Cuidado:</h3>
+<p>É sempre bom fazer backup dos arquivos antes de aplicar patches,
+especialmente quando se está aprendendo.</p>
+<h3 data-number="1.2.8" id="resumo"><span class="header-section-number">1.2.8</span> Resumo:</h3>
+<p>Para reverter o patch <code>script_v1_to_v2.diff</code> e transformar
+<code>script_v2.py</code> de volta em <code>script_v1.py</code>,
+use:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>Se o arquivo alvo não for o mesmo que o original (por exemplo, se o
+arquivo que queremos patchar tem um nome diferente), podemos especificar
+o arquivo com:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> arquivo_alvo <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>Espero que isso ajude! Para reverter o processo de criação de um
+patch (ou seja, aplicar o patch para obter a versão anterior), você usa
+o comando <code>patch</code> com a opção <code>-R</code> (reverse). Aqui
+está como fazer:</p>
+<h3 data-number="1.2.9" id="passo-a-passo"><span class="header-section-number">1.2.9</span> Passo a passo:</h3>
+<ol type="1">
+<li><p><strong>Crie o patch</strong> (como você já fez):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v1.py script_v2.py <span class="op">&gt;</span> script_v1_to_v2.diff</span></code></pre></div></li>
+<li><p><strong>Reverta as alterações</strong> (aplicar o patch
+inversamente):</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> script_v2.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>Isso restaurará <code>script_v2.py</code> para o estado original de
+<code>script_v1.py</code>.</p></li>
+</ol>
+<hr />
+<h3 data-number="1.2.10" id="explicação-detalhada"><span class="header-section-number">1.2.10</span> Explicação Detalhada:</h3>
+<ul>
+<li><strong><code>patch -R</code></strong>: A opção <code>-R</code>
+(reverse) informa ao <code>patch</code> para aplicar o diff de trás para
+frente, revertendo as alterações.</li>
+<li><strong><code>&lt; script_v1_to_v2.diff</code></strong>: Redireciona
+o conteúdo do arquivo de patch para o comando <code>patch</code>.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.11" id="caso-queira-restaurar-e-manter-um-backup"><span class="header-section-number">1.2.11</span> Caso queira restaurar e
+manter um backup:</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-R</span> <span class="at">-b</span> script_v2.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>A opção <code>-b</code> cria um backup do arquivo original (antes da
+reversão) com a extensão <code>.orig</code>.</p>
+<hr />
+<h3 data-number="1.2.12" id="notas"><span class="header-section-number">1.2.12</span> Notas:</h3>
+<ul>
+<li>Certifique-se de que o arquivo alvo (<code>script_v2.py</code> no
+exemplo) seja o mesmo usado para gerar o patch.</li>
+<li>Se o patch foi criado entre diretórios, use
+<code>patch -p1 -R &lt; patch_file</code> a partir do diretório
+relevante.</li>
+</ul>
+<p>Esse método é útil para desfazer atualizações ou testar mudanças de
+forma reversível.</p>
+<hr />
+<h3 data-number="1.2.13" id="utilizador-2025-11-11-025036-deepseek-reasoner"><span class="header-section-number">1.2.13</span> 👤 Utilizador
+<em>(2025-11-11 02:50:36)</em> <em>[deepseek-reasoner]</em></h3>
+<p>Com diff -u script_v1.py script_v2.py &gt; script_v1_to_v2.diff ; é
+possivel manter o script_v1.py e ao mesmo temp criar script_v2.py
+novo</p>
+<hr />
+<h3 data-number="1.2.14" id="deepseek-2025-11-11-025036-deepseek-reasoner"><span class="header-section-number">1.2.14</span> 🤖 DeepSeek <em>(2025-11-11
+02:50:36)</em> <em>[deepseek-reasoner]</em></h3>
+<p>O comando
+<code>diff -u script_v1.py script_v2.py &gt; script_v1_to_v2.diff</code>
+compara dois arquivos e gera um patch. No entanto, a pergunta é: como
+manter o script_v1.py e ao mesmo tempo criar um novo script_v2.py a
+partir do patch?</p>
+<p>Na verdade, o patch (script_v1_to_v2.diff) contém as diferenças da
+versão v1 para a v2. Se você tem o script_v1.py e o patch, pode aplicar
+o patch no script_v1.py para obter o script_v2.py.</p>
+<p>Passos: 1. Tenha o arquivo original script_v1.py. 2. Tenha o patch
+script_v1_to_v2.diff. 3. Aplique o patch no script_v1.py para gerar o
+script_v2.py.</p>
+<p>Comando para aplicar o patch (sem alterar o script_v1.py, mas sim
+criando o script_v2.py):</p>
+<p>patch -o script_v2.py script_v1.py &lt; script_v1_to_v2.diff</p>
+<p>Explicação: - O comando <code>patch</code> é usado para aplicar um
+arquivo de patch. - A opção <code>-o</code> especifica o arquivo de
+saída (output). Neste caso, queremos que o resultado da aplicação do
+patch no script_v1.py seja escrito em script_v2.py. - Dessa forma, o
+script_v1.py permanece inalterado e o script_v2.py é criado (ou
+atualizado) com as alterações.</p>
+<p>Alternativamente, se você quiser aplicar o patch diretamente no
+script_v1.py (sobrescrevendo-o) para transformá-lo no script_v2.py, você
+faria:</p>
+<p>patch script_v1.py &lt; script_v1_to_v2.diff</p>
+<p>Mas note que isso alteraria o script_v1.py, o que não é o desejado se
+você quiser mantê-lo.</p>
+<p>Portanto, para manter o script_v1.py e criar um novo script_v2.py,
+use:</p>
+<p>patch -o script_v2.py script_v1.py &lt; script_v1_to_v2.diff</p>
+<p>Outra alternativa é usar o comando <code>patch</code> para gerar o
+arquivo novo sem alterar o original, mas sem a opção <code>-o</code>
+você teria que copiar o arquivo manualmente.</p>
+<p>Se o patch foi criado com
+<code>diff -u script_v1.py script_v2.py</code>, então ele está no
+formato unificado e espera que o arquivo original seja script_v1.py. Ao
+aplicar o patch no script_v1.py, obteremos o script_v2.py.</p>
+<p>Nota: Certifique-se de que o patch foi gerado corretamente e que o
+script_v1.py é a versão exata que foi usada para gerar o patch. Sim, é
+possível! Você pode usar o arquivo de patch para gerar o
+<code>script_v2.py</code> a partir do <code>script_v1.py</code>. Aqui
+estão as abordagens:</p>
+<h2 data-number="1.3" id="método-1-usando-patch-mais-comum"><span class="header-section-number">1.3</span> Método 1: Usando
+<code>patch</code> (mais comum)</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Primeiro, crie o patch</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v1.py script_v2.py <span class="op">&gt;</span> script_v1_to_v2.diff</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Depois, para recriar o script_v2.py a partir do script_v1.py:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-o</span> script_v2.py script_v1.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<p>A opção <code>-o</code> especifica o arquivo de saída, mantendo o
+original intacto.</p>
+<h2 data-number="1.4" id="método-2-usando-patch-de-forma-mais-simples"><span class="header-section-number">1.4</span> Método 2: Usando
+<code>patch</code> de forma mais simples</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copie o script_v1.py para script_v2.py</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> script_v1.py script_v2.py</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Aplique o patch no script_v2.py</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> script_v2.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<h2 data-number="1.5" id="método-3-usando-apenas-diff-e-redirecionamento"><span class="header-section-number">1.5</span> Método 3: Usando apenas
+<code>diff</code> e redirecionamento</h2>
+<p>Se você quiser fazer tudo em uma etapa:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cria o patch E já aplica para gerar script_v2.py</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v1.py script_v2.py <span class="kw">|</span> <span class="fu">tee</span> script_v1_to_v2.diff <span class="kw">|</span> <span class="fu">patch</span> <span class="at">-o</span> script_v2_new.py script_v1.py</span></code></pre></div>
+<h2 data-number="1.6" id="método-4-script-completo-para-reutilização"><span class="header-section-number">1.6</span> Método 4: Script completo para
+reutilização</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># save_patch_and_apply.sh</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Criar o patch</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v1.py script_v2.py <span class="op">&gt;</span> script_v1_to_v2.diff</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Recriar script_v2.py a partir do patch (verificação)</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-o</span> script_v2_recreated.py script_v1.py <span class="op">&lt;</span> script_v1_to_v2.diff</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar se é idêntico ao original</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">diff</span> script_v2.py script_v2_recreated.py <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;✓ script_v2.py recriado com sucesso a partir do patch!&quot;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Substituir o original pelo recriado se quiser</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> script_v2_recreated.py script_v2.py</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;✗ Erro: script_v2 recriado não coincide com o original&quot;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<h2 data-number="1.7" id="fluxo-de-trabalho-típico"><span class="header-section-number">1.7</span> Fluxo de trabalho típico:</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Você tem script_v1.py e script_v2.py</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Cria o patch</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> <span class="at">-u</span> script_v1.py script_v2.py <span class="op">&gt;</span> script_v1_to_v2.diff</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Agora, em outro momento/máquina, para recriar script_v2.py:</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    - Tenha apenas script_v1.py e script_v1_to_v2.diff</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#    - Execute:</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">patch</span> <span class="at">-o</span> script_v2.py script_v1.py <span class="op">&lt;</span> script_v1_to_v2.diff</span></code></pre></div>
+<h2 data-number="1.8" id="verificação"><span class="header-section-number">1.8</span> Verificação:</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Para verificar se o patch foi aplicado corretamente</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diff</span> script_v2.py script_v2_recreated.py</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (não deve haver saída - significa que são idênticos)</span></span></code></pre></div>
+<p>O <strong>Método 1</strong> é o mais recomendado, pois é explícito e
+não modifica os arquivos originais.</p>
+<hr />
+<p><em>Conversa exportada do DeepSeek</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

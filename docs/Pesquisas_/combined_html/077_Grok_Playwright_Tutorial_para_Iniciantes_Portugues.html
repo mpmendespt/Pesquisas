@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>077_Grok_Playwright_Tutorial_para_Iniciantes_Portugues</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#playwright-tutorial-para-iniciantes-portugues" id="toc-playwright-tutorial-para-iniciantes-portugues"><span class="toc-section-number">1</span> Playwright Tutorial para Iniciantes
+Portugues</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+<li><a href="#playwright-tutorial-for-beginners" id="toc-playwright-tutorial-for-beginners"><span class="toc-section-number">2</span> Playwright Tutorial for
+Beginners</a>
+<ul>
+<li><a href="#why-playwright" id="toc-why-playwright"><span class="toc-section-number">2.1</span> Why Playwright?</a></li>
+<li><a href="#step-1-system-requirements" id="toc-step-1-system-requirements"><span class="toc-section-number">2.2</span> Step 1: System
+Requirements</a></li>
+<li><a href="#step-2-installation" id="toc-step-2-installation"><span class="toc-section-number">2.3</span> Step 2: Installation</a></li>
+<li><a href="#step-3-understanding-basic-concepts" id="toc-step-3-understanding-basic-concepts"><span class="toc-section-number">2.4</span> Step 3: Understanding Basic
+Concepts</a></li>
+<li><a href="#step-4-running-your-first-test" id="toc-step-4-running-your-first-test"><span class="toc-section-number">2.5</span> Step 4: Running Your First
+Test</a></li>
+<li><a href="#step-5-generating-reports" id="toc-step-5-generating-reports"><span class="toc-section-number">2.6</span> Step 5: Generating
+Reports</a></li>
+<li><a href="#step-6-writing-your-own-test" id="toc-step-6-writing-your-own-test"><span class="toc-section-number">2.7</span> Step 6: Writing Your Own
+Test</a></li>
+<li><a href="#step-7-configuration-tweaks" id="toc-step-7-configuration-tweaks"><span class="toc-section-number">2.8</span> Step 7: Configuration
+Tweaks</a></li>
+<li><a href="#next-steps" id="toc-next-steps"><span class="toc-section-number">2.9</span> Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="playwright-tutorial-para-iniciantes-portugues"><span class="header-section-number">1</span> Playwright Tutorial para
+Iniciantes Portugues</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #77</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 068b64ee-5abb-4282-9797-7aa3a1b909f0</li>
+<li><strong>Criada em:</strong> 2025-10-30 17:25:37Z</li>
+<li><strong>Atualizada em:</strong> 2025-10-30 17:46:13Z</li>
+<li><strong>Total de mensagens:</strong> 6</li>
+<li><strong>Resumo:</strong> Playwright tutorial for beginners…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-30-172537-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-30
+17:25:37)</em> <em>[Grok]</em></h3>
+<p>Playwright tutorial for beginners</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-10-30-172601-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-10-30
+17:26:01)</em> <em>[Grok]</em></h3>
+<h1 data-number="2" id="playwright-tutorial-for-beginners"><span class="header-section-number">2</span> Playwright Tutorial for
+Beginners</h1>
+<p>Welcome to this beginner-friendly tutorial on Playwright! Playwright
+is a powerful, open-source automation library developed by Microsoft for
+end-to-end testing of web applications. It allows you to automate
+interactions with browsers like Chromium (Chrome/Edge), Firefox, and
+WebKit (Safari) across Windows, Linux, and macOS. Whether you’re testing
+a simple webpage or a complex single-page app (SPA), Playwright handles
+it reliably, supporting headless mode (invisible browser) or headed mode
+(visible browser) for debugging.</p>
+<p>This tutorial is based on the official Playwright documentation and
+focuses on Node.js setup, as it’s the most common starting point. By the
+end, you’ll have a basic test running. No prior experience with testing
+frameworks is required—just basic JavaScript knowledge.</p>
+<h2 data-number="2.1" id="why-playwright"><span class="header-section-number">2.1</span> Why Playwright?</h2>
+<ul>
+<li><strong>Cross-browser support</strong>: Test on multiple browsers
+out of the box.</li>
+<li><strong>Fast and reliable</strong>: Auto-waits for elements, handles
+dynamic content, and runs tests in parallel.</li>
+<li><strong>Rich features</strong>: Built-in assertions, screenshots,
+videos, tracing, and mobile emulation.</li>
+<li><strong>Easy to learn</strong>: Simple API with powerful locators
+(e.g., by text, role, or CSS).</li>
+</ul>
+<p>Let’s dive in!</p>
+<h2 data-number="2.2" id="step-1-system-requirements"><span class="header-section-number">2.2</span> Step 1: System
+Requirements</h2>
+<p>Before installing, ensure your machine meets these basics: -
+<strong>Node.js</strong>: Version 20.x, 22.x, or 24.x (download from <a href="https://nodejs.org">nodejs.org</a>). - <strong>OS</strong>: -
+Windows: 11+ or Server 2019+ (or WSL). - macOS: 14 (Ventura) or later. -
+Linux: Debian 12/13, Ubuntu 22.04/24.04 (x86-64 or arm64).</p>
+<p>Run <code>node --version</code> in your terminal to check.</p>
+<h2 data-number="2.3" id="step-2-installation"><span class="header-section-number">2.3</span> Step 2: Installation</h2>
+<p>We’ll use npm (Node Package Manager) to set up a new project. Open
+your terminal and navigate to a folder where you want your project.</p>
+<ol type="1">
+<li><p>Initialize a new Playwright project:</p>
+<pre><code>npm init playwright@latest</code></pre></li>
+<li><p>During setup, you’ll be prompted:</p>
+<ul>
+<li><strong>Language</strong>: Choose TypeScript (recommended for
+beginners) or JavaScript.</li>
+<li><strong>Tests folder</strong>: Default is <code>tests</code> (or
+<code>e2e</code> if <code>tests</code> exists).</li>
+<li><strong>GitHub Actions</strong>: Yes, for easy CI integration.</li>
+<li><strong>Install browsers</strong>: Yes (downloads Chromium, Firefox,
+WebKit).</li>
+</ul></li>
+</ol>
+<p>This command creates a project scaffold:</p>
+<pre><code>my-project/
+├── playwright.config.ts      # Configuration file
+├── package.json
+├── tests/
+│   └── example.spec.ts      # Your first test file
+└── tests-examples/
+    └── demo-todo-app.spec.ts # Advanced example</code></pre>
+<p>If you have an existing Node.js project, run
+<code>npm install -D @playwright/test</code> instead, then
+<code>npx playwright install</code>.</p>
+<p><strong>Pro Tip</strong>: Install the official <a href="https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright">VS
+Code Extension</a> for code snippets, IntelliSense, and a test runner
+UI.</p>
+<h2 data-number="2.4" id="step-3-understanding-basic-concepts"><span class="header-section-number">2.4</span> Step 3: Understanding Basic
+Concepts</h2>
+<p>Before writing code, let’s cover the fundamentals. Playwright
+revolves around a few core ideas:</p>
+<ul>
+<li><strong>Browser</strong>: Launches a full browser instance (e.g.,
+Chromium). Tests run in isolated contexts for speed and
+reliability.</li>
+<li><strong>Page</strong>: Represents a single tab or webpage where you
+interact with elements.</li>
+<li><strong>Locator</strong>: A way to find elements on the page (e.g.,
+by text, CSS selector, or ARIA role). Playwright auto-waits for them to
+appear.</li>
+<li><strong>Actions</strong>: Methods to interact, like
+<code>click()</code>, <code>fill()</code>, or <code>check()</code>.</li>
+<li><strong>Assertions</strong>: Built-in checks like
+<code>toBeVisible()</code> or <code>toHaveText()</code> to verify
+results.</li>
+</ul>
+<p>These are demonstrated in the example files created during
+installation. Here’s a peek at a minimal test from
+<code>example.spec.ts</code> (TypeScript version):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { test<span class="op">,</span> expect } <span class="im">from</span> <span class="st">&#39;@playwright/test&#39;</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;basic test&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://playwright.dev/&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Expect a title &quot;to contain&quot; a substring</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(page)<span class="op">.</span><span class="fu">toHaveTitle</span>(<span class="ss">/Playwright/</span>)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Create a locator</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> getStarted <span class="op">=</span> page<span class="op">.</span><span class="fu">getByText</span>(<span class="st">&#39;Get started&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Expect an element &quot;to be visible&quot;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(getStarted)<span class="op">.</span><span class="fu">toBeVisible</span>()<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Click it</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> getStarted<span class="op">.</span><span class="fu">click</span>()<span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Expect navigation</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(page)<span class="op">.</span><span class="fu">toHaveURL</span>(<span class="ss">/docs</span><span class="sc">\/</span><span class="ss">intro/</span>)<span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<ul>
+<li><code>test()</code>: Defines a test block.</li>
+<li><code>page</code>: A fixture (pre-configured object) for the
+webpage.</li>
+<li><code>goto()</code>: Navigates to a URL.</li>
+<li><code>expect()</code>: Asserts conditions.</li>
+</ul>
+<p>Run this test to see it in action (Step 4)!</p>
+<p>For a richer example, check <code>demo-todo-app.spec.ts</code> in
+<code>tests-examples/</code>, which tests a todo list app with actions
+like adding items and assertions on the list length.</p>
+<h2 data-number="2.5" id="step-4-running-your-first-test"><span class="header-section-number">2.5</span> Step 4: Running Your First
+Test</h2>
+<p>From your project root, run:</p>
+<pre><code>npx playwright test</code></pre>
+<ul>
+<li>This executes all tests in <code>tests/</code> across all browsers
+(Chromium, Firefox, WebKit) in headless mode, in parallel.</li>
+<li>Output shows pass/fail status in the terminal.</li>
+</ul>
+<p><strong>Customize Runs</strong>: - Headed mode (see the browser):
+<code>npx playwright test --headed</code> - Single browser:
+<code>npx playwright test --project=chromium</code> - One file:
+<code>npx playwright test tests/example.spec.ts</code> - Debug with UI:
+<code>npx playwright test --ui</code> (opens a dashboard for watch mode,
+step-by-step debugging, and time travel).</p>
+<p>If tests fail, Playwright captures screenshots and videos
+automatically in <code>test-results/</code>.</p>
+<h2 data-number="2.6" id="step-5-generating-reports"><span class="header-section-number">2.6</span> Step 5: Generating Reports</h2>
+<p>After running tests, view an interactive HTML report:</p>
+<pre><code>npx playwright show-report</code></pre>
+<p>It includes: - Dashboard with filters (by browser, status:
+passed/failed/skipped). - Detailed traces: Errors, console logs, network
+requests, and DOM snapshots. - Attachments: Screenshots/videos on
+failure.</p>
+<h2 data-number="2.7" id="step-6-writing-your-own-test"><span class="header-section-number">2.7</span> Step 6: Writing Your Own
+Test</h2>
+<p>Let’s create a simple test for a search on example.com.</p>
+<ol type="1">
+<li><p>In <code>tests/</code>, create <code>search.spec.ts</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { test<span class="op">,</span> expect } <span class="im">from</span> <span class="st">&#39;@playwright/test&#39;</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;search for Playwright&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://example.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Locate and fill the search input</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;input[name=&quot;q&quot;]&#39;</span><span class="op">,</span> <span class="st">&#39;Playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Click search</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;input[type=&quot;submit&quot;]&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Assert results</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;h3&#39;</span>))<span class="op">.</span><span class="fu">toContainText</span>(<span class="st">&#39;Playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div></li>
+<li><p>Run it: <code>npx playwright test search.spec.ts</code></p></li>
+</ol>
+<p><strong>Key Takeaways</strong>: - Use <code>page.locator()</code> for
+robust element selection (e.g.,
+<code>page.getByRole(&#39;button&#39;, { name: &#39;Submit&#39; })</code>). - Always use
+<code>await</code> for async actions. - Assertions prevent flaky
+tests.</p>
+<h2 data-number="2.8" id="step-7-configuration-tweaks"><span class="header-section-number">2.8</span> Step 7: Configuration
+Tweaks</h2>
+<p>Edit <code>playwright.config.ts</code> for custom setups:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { defineConfig<span class="op">,</span> devices } <span class="im">from</span> <span class="st">&#39;@playwright/test&#39;</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="im">default</span> <span class="fu">defineConfig</span>({</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  testDir<span class="op">:</span> <span class="st">&#39;./tests&#39;</span><span class="op">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  fullyParallel<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  forbidOnly<span class="op">:</span> <span class="op">!!</span><span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">CI</span><span class="op">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  retries<span class="op">:</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">CI</span> <span class="op">?</span> <span class="dv">2</span> <span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  workers<span class="op">:</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">CI</span> <span class="op">?</span> <span class="dv">1</span> <span class="op">:</span> <span class="dt">undefined</span><span class="op">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  reporter<span class="op">:</span> <span class="st">&#39;html&#39;</span><span class="op">,</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  use<span class="op">:</span> {</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    baseURL<span class="op">:</span> <span class="st">&#39;http://localhost:3000&#39;</span><span class="op">,</span>  <span class="co">// For your app</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    trace<span class="op">:</span> <span class="st">&#39;on-first-retry&#39;</span><span class="op">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  projects<span class="op">:</span> [</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>      name<span class="op">:</span> <span class="st">&#39;chromium&#39;</span><span class="op">,</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>      use<span class="op">:</span> { <span class="op">...</span>devices[<span class="st">&#39;Desktop Chrome&#39;</span>] }<span class="op">,</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Add more projects for other browsers</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h2 data-number="2.9" id="next-steps"><span class="header-section-number">2.9</span> Next Steps</h2>
+<ul>
+<li><strong>Learn More</strong>: Dive into <a href="https://playwright.dev/docs/locators">Locators</a> and <a href="https://playwright.dev/docs/api/class-page#page-click">Actions</a>.</li>
+<li><strong>Advanced Topics</strong>: API testing, mobile emulation,
+CI/CD with GitHub Actions.</li>
+<li><strong>Practice</strong>: Clone the <a href="https://github.com/microsoft/playwright/tree/main/examples">Playwright
+Examples repo</a> or test your own site.</li>
+<li><strong>Update Playwright</strong>:
+<code>npx playwright install --with-deps</code> for latest
+browsers.</li>
+</ul>
+<p>If you run into issues, check the <a href="https://playwright.dev/docs/intro">official docs</a> or community
+forums. Happy testing! 🚀</p>
+<hr />
+<h3 data-number="2.9.1" id="utilizador-2025-10-30-172712-grok"><span class="header-section-number">2.9.1</span> 👤 Utilizador <em>(2025-10-30
+17:27:12)</em> <em>[Grok]</em></h3>
+<p>Playwright tutorial for beginners. Em Portugues</p>
+<hr />
+<h3 data-number="2.9.2" id="grok-2025-10-30-172755-grok"><span class="header-section-number">2.9.2</span> 🤖 Grok <em>(2025-10-30
+17:27:55)</em> <em>[Grok]</em></h3>
+<p>Aqui está um tutorial básico de Playwright para iniciantes em
+português. O Playwright é uma ferramenta de automação de testes para
+navegadores, que permite testar aplicações web de forma eficiente em
+Chromium, Firefox e WebKit. Este tutorial cobre os conceitos iniciais e
+exemplos práticos.</p>
+<hr />
+<h3 data-number="2.9.3" id="tutorial-de-playwright-para-iniciantes-em-português"><span class="header-section-number">2.9.3</span> <strong>Tutorial de
+Playwright para Iniciantes (em Português)</strong></h3>
+<h4 data-number="2.9.3.1" id="o-que-é-o-playwright"><span class="header-section-number">2.9.3.1</span> <strong>O que é o
+Playwright?</strong></h4>
+<p>O Playwright é uma biblioteca de automação de testes de código
+aberto, mantida pela Microsoft, que permite interagir com navegadores
+para realizar ações como clicar em botões, preencher formulários, tirar
+screenshots e testar funcionalidades de sites. Ele é amplamente
+utilizado para testes de ponta a ponta (end-to-end) e suporta
+JavaScript/TypeScript, Python, Java e C#.</p>
+<h4 data-number="2.9.3.2" id="pré-requisitos"><span class="header-section-number">2.9.3.2</span>
+<strong>Pré-requisitos</strong></h4>
+<ul>
+<li><strong>Node.js</strong> instalado (versão 14 ou superior). Baixe em
+<a href="https://nodejs.org">nodejs.org</a>.</li>
+<li>Conhecimento básico de JavaScript ou TypeScript.</li>
+<li>Um editor de código, como Visual Studio Code.</li>
+</ul>
+<hr />
+<h3 data-number="2.9.4" id="passo-1-instalando-o-playwright"><span class="header-section-number">2.9.4</span> <strong>Passo 1: Instalando o
+Playwright</strong></h3>
+<ol type="1">
+<li><p><strong>Crie um novo projeto</strong>: Crie uma pasta para o
+projeto e inicialize um projeto Node.js:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> playwright-tutorial</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> playwright-tutorial</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> init <span class="at">-y</span></span></code></pre></div></li>
+<li><p><strong>Instale o Playwright</strong>: Execute o comando abaixo
+para instalar o Playwright e suas dependências:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">--save-dev</span> playwright</span></code></pre></div></li>
+<li><p><strong>Instale os navegadores</strong>: O Playwright precisa
+baixar os binários dos navegadores (Chromium, Firefox e WebKit).
+Execute:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> playwright install</span></code></pre></div></li>
+</ol>
+<hr />
+<h3 data-number="2.9.5" id="passo-2-criando-seu-primeiro-script"><span class="header-section-number">2.9.5</span> <strong>Passo 2: Criando seu
+primeiro script</strong></h3>
+<p>Crie um arquivo chamado <code>exemplo.js</code> na pasta do projeto.
+Este script abrirá um site, navegará e tirará um screenshot.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { chromium } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Inicia o navegador Chromium</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> chromium<span class="op">.</span><span class="fu">launch</span>({ <span class="dt">headless</span><span class="op">:</span> <span class="kw">false</span> })<span class="op">;</span> <span class="co">// headless: false mostra o navegador</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> page <span class="op">=</span> <span class="cf">await</span> browser<span class="op">.</span><span class="fu">newPage</span>()<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Navega até um site</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://www.example.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Tira um screenshot da página</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">screenshot</span>({ <span class="dt">path</span><span class="op">:</span> <span class="st">&#39;screenshot.png&#39;</span> })<span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Fecha o navegador</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> browser<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>})()<span class="op">;</span></span></code></pre></div>
+<p><strong>Explicação do código</strong>: -
+<code>chromium.launch</code>: Inicia o navegador Chromium. Use
+<code>headless: true</code> para rodar sem interface gráfica. -
+<code>browser.newPage</code>: Cria uma nova aba no navegador. -
+<code>page.goto</code>: Navega até a URL especificada. -
+<code>page.screenshot</code>: Salva uma captura de tela da página. -
+<code>browser.close</code>: Fecha o navegador.</p>
+<p><strong>Executando o script</strong>: No terminal, execute:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> exemplo.js</span></code></pre></div>
+<p>Isso abrirá o navegador, acessará o site <code>example.com</code> e
+salvará um screenshot como <code>screenshot.png</code>.</p>
+<hr />
+<h3 data-number="2.9.6" id="passo-3-interagindo-com-elementos-da-página"><span class="header-section-number">2.9.6</span> <strong>Passo 3: Interagindo
+com elementos da página</strong></h3>
+<p>O Playwright permite interagir com elementos HTML, como botões,
+campos de texto e links. Aqui está um exemplo que preenche um formulário
+de busca no Google:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { chromium } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> chromium<span class="op">.</span><span class="fu">launch</span>({ <span class="dt">headless</span><span class="op">:</span> <span class="kw">false</span> })<span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> page <span class="op">=</span> <span class="cf">await</span> browser<span class="op">.</span><span class="fu">newPage</span>()<span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Navega até o Google</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://www.google.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Preenche o campo de busca</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;input[name=&quot;q&quot;]&#39;</span><span class="op">,</span> <span class="st">&#39;Playwright tutorial&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Pressiona Enter</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">press</span>(<span class="st">&#39;input[name=&quot;q&quot;]&#39;</span><span class="op">,</span> <span class="st">&#39;Enter&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Aguarda os resultados carregarem</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">waitForTimeout</span>(<span class="dv">2000</span>)<span class="op">;</span> <span class="co">// Espera 2 segundos</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Tira um screenshot</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">screenshot</span>({ <span class="dt">path</span><span class="op">:</span> <span class="st">&#39;google_search.png&#39;</span> })<span class="op">;</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> browser<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>})()<span class="op">;</span></span></code></pre></div>
+<p><strong>Explicação</strong>: - <code>page.fill</code>: Preenche um
+campo de texto com base em um seletor CSS. - <code>page.press</code>:
+Simula pressionar uma tecla (neste caso, Enter). -
+<code>page.waitForTimeout</code>: Aguarda um tempo específico (em
+milissegundos).</p>
+<p>Execute o script com <code>node exemplo.js</code>.</p>
+<hr />
+<h3 data-number="2.9.7" id="passo-4-testando-com-playwright-test"><span class="header-section-number">2.9.7</span> <strong>Passo 4: Testando com
+Playwright Test</strong></h3>
+<p>O Playwright também oferece uma ferramenta de teste chamada
+<code>@playwright/test</code>, ideal para escrever testes
+automatizados.</p>
+<ol type="1">
+<li><p><strong>Instale o Playwright Test</strong>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">--save-dev</span> @playwright/test</span></code></pre></div></li>
+<li><p><strong>Crie um teste</strong>: Crie um arquivo chamado
+<code>teste.spec.js</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { test<span class="op">,</span> expect } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;@playwright/test&#39;</span>)<span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;Verifica o título do Google&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://www.google.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> title <span class="op">=</span> <span class="cf">await</span> page<span class="op">.</span><span class="fu">title</span>()<span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect</span>(title)<span class="op">.</span><span class="fu">toBe</span>(<span class="st">&#39;Google&#39;</span>)<span class="op">;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div></li>
+<li><p><strong>Execute o teste</strong>:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> playwright test</span></code></pre></div>
+<p>Isso rodará o teste e verificará se o título da página é “Google”. O
+resultado será exibido no terminal.</p></li>
+</ol>
+<hr />
+<h3 data-number="2.9.8" id="passo-5-recursos-úteis-do-playwright"><span class="header-section-number">2.9.8</span> <strong>Passo 5: Recursos
+úteis do Playwright</strong></h3>
+<ul>
+<li><p><strong>Seletores</strong>: Use seletores CSS ou XPath para
+encontrar elementos:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;button &gt;&gt; text=&quot;Clique aqui&quot;&#39;</span>)<span class="op">;</span> <span class="co">// Clica em um botão com texto específico</span></span></code></pre></div></li>
+<li><p><strong>Navegação em múltiplos navegadores</strong>:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { firefox<span class="op">,</span> webkit } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> firefox<span class="op">.</span><span class="fu">launch</span>()<span class="op">;</span> <span class="co">// ou webkit.launch()</span></span></code></pre></div></li>
+<li><p><strong>Gravar interações</strong>: Gere scripts automaticamente
+com o comando:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> playwright codegen https://www.example.com</span></code></pre></div>
+<p>Isso abre um navegador e grava suas ações em um script.</p></li>
+<li><p><strong>Relatórios de teste</strong>: O Playwright Test gera
+relatórios detalhados:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> playwright test <span class="at">--reporter</span><span class="op">=</span>html</span></code></pre></div>
+<p>Após executar, abra o relatório com:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> playwright show-report</span></code></pre></div></li>
+</ul>
+<hr />
+<h3 data-number="2.9.9" id="dicas-adicionais"><span class="header-section-number">2.9.9</span> <strong>Dicas
+adicionais</strong></h3>
+<ul>
+<li><strong>Headless vs. Headful</strong>: Use
+<code>headless: true</code> para testes mais rápidos em servidores
+CI/CD, ou <code>headless: false</code> para depuração.</li>
+<li><strong>Timeouts</strong>: Configure tempos limite para ações com
+<code>page.setDefaultTimeout(5000)</code> (em milissegundos).</li>
+<li><strong>Documentação oficial</strong>: Consulte a <a href="https://playwright.dev/docs/intro">documentação do Playwright</a>
+para mais detalhes.</li>
+<li><strong>Comunidade</strong>: Participe de fóruns no X ou Stack
+Overflow para tirar dúvidas.</li>
+</ul>
+<hr />
+<h3 data-number="2.9.10" id="exemplo-avançado-testando-um-login"><span class="header-section-number">2.9.10</span> <strong>Exemplo avançado:
+Testando um login</strong></h3>
+<p>Aqui está um exemplo que testa um formulário de login:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { test<span class="op">,</span> expect } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;@playwright/test&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>(<span class="st">&#39;Teste de login&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://example.com/login&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#username&#39;</span><span class="op">,</span> <span class="st">&#39;meu_usuario&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#password&#39;</span><span class="op">,</span> <span class="st">&#39;minha_senha&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;button[type=&quot;submit&quot;]&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> <span class="fu">expect</span>(page)<span class="op">.</span><span class="fu">toHaveURL</span>(<span class="st">&#39;https://example.com/dashboard&#39;</span>)<span class="op">;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>Substitua as URLs e seletores pelos valores reais do site que você
+está testando.</p>
+<hr />
+<h3 data-number="2.9.11" id="próximos-passos"><span class="header-section-number">2.9.11</span> <strong>Próximos
+passos</strong></h3>
+<ul>
+<li>Explore recursos como testes paralelos, manipulação de cookies e
+interceptação de requisições HTTP.</li>
+<li>Use o Playwright para testar APIs com
+<code>page.request</code>.</li>
+<li>Integre com ferramentas de CI/CD, como GitHub Actions.</li>
+</ul>
+<p>Se precisar de exemplos mais específicos ou explicações detalhadas
+sobre algum tópico, é só pedir!</p>
+<hr />
+<h3 data-number="2.9.12" id="utilizador-2025-10-30-174517-grok"><span class="header-section-number">2.9.12</span> 👤 Utilizador
+<em>(2025-10-30 17:45:17)</em> <em>[Grok]</em></h3>
+<p>Diferenças entre Playwright e Selenium</p>
+<hr />
+<h3 data-number="2.9.13" id="grok-2025-10-30-174613-grok"><span class="header-section-number">2.9.13</span> 🤖 Grok <em>(2025-10-30
+17:46:13)</em> <em>[Grok]</em></h3>
+<p>Aqui, I can provide a detailed comparison between Playwright and
+Selenium in Portuguese, focusing on their key differences to help you
+understand which tool might better suit your needs for web automation
+and testing.</p>
+<hr />
+<h3 data-number="2.9.14" id="diferenças-entre-playwright-e-selenium"><span class="header-section-number">2.9.14</span> <strong>Diferenças entre
+Playwright e Selenium</strong></h3>
+<p>O Playwright e o Selenium são ferramentas populares para automação de
+testes e interação com navegadores, mas possuem abordagens, recursos e
+casos de uso distintos. Abaixo está uma comparação detalhada em
+português, cobrindo aspectos como arquitetura, funcionalidades,
+desempenho e facilidade de uso.</p>
+<hr />
+<h3 data-number="2.9.15" id="introdução-às-ferramentas"><span class="header-section-number">2.9.15</span> <strong>1. Introdução às
+Ferramentas</strong></h3>
+<ul>
+<li><strong>Playwright</strong>:
+<ul>
+<li>Desenvolvido pela Microsoft, lançado em 2020.</li>
+<li>Biblioteca moderna para automação de testes em navegadores
+(Chromium, Firefox e WebKit).</li>
+<li>Suporta Node.js, Python, Java e C#.</li>
+<li>Focado em testes de ponta a ponta (end-to-end) com APIs simples e
+robustas.</li>
+</ul></li>
+<li><strong>Selenium</strong>:
+<ul>
+<li>Projeto de código aberto com uma longa história (lançado em
+2004).</li>
+<li>Conjunto de ferramentas para automação de navegadores, com destaque
+para o Selenium WebDriver.</li>
+<li>Suporta múltiplas linguagens (Java, Python, C#, Ruby, JavaScript,
+etc.).</li>
+<li>Amplamente usado para testes web e automação de tarefas em
+navegadores.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="2.9.16" id="comparação-detalhada"><span class="header-section-number">2.9.16</span> <strong>2. Comparação
+Detalhada</strong></h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 42%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Aspecto</strong></th>
+<th><strong>Playwright</strong></th>
+<th><strong>Selenium</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Arquitetura</strong></td>
+<td>Usa uma conexão direta com os navegadores via protocolo DevTools,
+oferecendo maior controle e confiabilidade.</td>
+<td>Usa WebDriver, que depende de drivers específicos para cada
+navegador (ChromeDriver, GeckoDriver, etc.), o que pode levar a
+problemas de compatibilidade.</td>
+</tr>
+<tr>
+<td><strong>Suporte a navegadores</strong></td>
+<td>Suporta Chromium (Chrome, Edge), Firefox e WebKit (Safari)
+nativamente, com comportamento consistente.</td>
+<td>Suporta uma ampla gama de navegadores, incluindo Chrome, Firefox,
+Safari, Edge e outros, mas requer configuração de drivers.</td>
+</tr>
+<tr>
+<td><strong>Headless e Headful</strong></td>
+<td>Suporta modos headless e headful com configuração simples. O modo
+headless é otimizado para CI/CD.</td>
+<td>Suporta headless e headful, mas o suporte headless pode ser menos
+estável em versões mais antigas.</td>
+</tr>
+<tr>
+<td><strong>Velocidade</strong></td>
+<td>Geralmente mais rápido devido à conexão direta e menos
+overhead.</td>
+<td>Pode ser mais lento devido à comunicação via drivers e maior
+latência em algumas operações.</td>
+</tr>
+<tr>
+<td><strong>APIs e facilidade de uso</strong></td>
+<td>API moderna, intuitiva e consistente. Inclui recursos como
+auto-waiting (espera automática por elementos).</td>
+<td>API mais antiga, requer configuração manual de esperas (ex.:
+WebDriverWait) para evitar falhas em elementos não carregados.</td>
+</tr>
+<tr>
+<td><strong>Auto-waiting</strong></td>
+<td>Possui espera automática para ações como cliques e preenchimentos,
+reduzindo flakiness (testes instáveis).</td>
+<td>Não possui auto-waiting nativo; exige waits explícitos ou
+implícitos, o que pode complicar a escrita de testes.</td>
+</tr>
+<tr>
+<td><strong>Suporte a múltiplas abas/janelas</strong></td>
+<td>Excelente suporte para múltiplas abas, janelas e contextos de
+navegação (ex.: modo anônimo).</td>
+<td>Suporta múltiplas abas/janelas, mas a configuração pode ser mais
+complexa e menos robusta.</td>
+</tr>
+<tr>
+<td><strong>Testes multiplataforma</strong></td>
+<td>Suporta testes em desktop, mobile (emulação) e navegadores WebKit
+diretamente.</td>
+<td>Suporta emulação mobile, mas o suporte ao Safari/WebKit é menos
+robusto e depende do ambiente macOS.</td>
+</tr>
+<tr>
+<td><strong>Integração com CI/CD</strong></td>
+<td>Fácil integração com ferramentas como GitHub Actions, Jenkins, etc.,
+com relatórios embutidos (HTML, JSON).</td>
+<td>Integra bem com CI/CD, mas requer mais configuração para relatórios
+e gerenciamento de drivers.</td>
+</tr>
+<tr>
+<td><strong>Capturas de tela e vídeos</strong></td>
+<td>Captura de screenshots, vídeos e rastreamento (traces) nativamente,
+com configuração simples.</td>
+<td>Suporta screenshots, mas vídeos e traces exigem ferramentas externas
+ou configurações adicionais.</td>
+</tr>
+<tr>
+<td><strong>Testes de API</strong></td>
+<td>Suporta chamadas de API diretamente com
+<code>page.request</code>.</td>
+<td>Suporta testes de API, mas geralmente requer bibliotecas externas
+como <code>requests</code> (Python) ou <code>RestAssured</code>
+(Java).</td>
+</tr>
+<tr>
+<td><strong>Comunidade e ecossistema</strong></td>
+<td>Comunidade crescente, mas menor devido à sua relativa novidade. Boa
+documentação oficial.</td>
+<td>Comunidade muito grande e madura, com amplo suporte em fóruns,
+bibliotecas e ferramentas de terceiros.</td>
+</tr>
+<tr>
+<td><strong>Suporte a linguagens</strong></td>
+<td>Node.js, Python, Java, C#. Menos opções, mas APIs consistentes.</td>
+<td>Java, Python, C#, Ruby, JavaScript, PHP, etc. Maior variedade, mas
+APIs podem variar entre linguagens.</td>
+</tr>
+<tr>
+<td><strong>Ferramenta de geração de código</strong></td>
+<td>Inclui <code>codegen</code>, que grava interações em tempo real para
+gerar scripts automaticamente.</td>
+<td>Não possui ferramenta nativa de geração de código; depende de
+ferramentas externas como Selenium IDE.</td>
+</tr>
+<tr>
+<td><strong>Custo e licença</strong></td>
+<td>Gratuito, de código aberto (Apache 2.0).</td>
+<td>Gratuito, de código aberto (Apache 2.0).</td>
+</tr>
+<tr>
+<td><strong>Manutenção de drivers</strong></td>
+<td>Não requer gerenciamento de drivers; os binários dos navegadores são
+incluídos automaticamente.</td>
+<td>Requer configuração e atualização manual de drivers (ex.:
+ChromeDriver), o que pode ser trabalhoso.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 data-number="2.9.17" id="vantagens-e-desvantagens"><span class="header-section-number">2.9.17</span> <strong>3. Vantagens e
+Desvantagens</strong></h3>
+<h4 data-number="2.9.17.1" id="playwright"><span class="header-section-number">2.9.17.1</span>
+<strong>Playwright</strong></h4>
+<p><strong>Vantagens</strong>: - <strong>Moderno e eficiente</strong>:
+API simplificada, auto-waiting e conexão direta com navegadores reduzem
+a complexidade e flakiness. - <strong>Suporte a WebKit</strong>: Ideal
+para testar em Safari sem configurações complexas. - <strong>Ferramentas
+embutidas</strong>: Captura de vídeos, traces e relatórios sem
+dependências externas. - <strong>Gerenciamento simplificado</strong>:
+Não precisa de drivers separados, facilitando a configuração. -
+<strong>Suporte a mobile</strong>: Emulação de dispositivos móveis é
+robusta e fácil de configurar.</p>
+<p><strong>Desvantagens</strong>: - Menor comunidade em comparação com o
+Selenium, o que pode limitar recursos e suporte em fóruns. -
+Relativamente novo, então algumas integrações ou plugins podem estar
+menos maduros.</p>
+<h4 data-number="2.9.17.2" id="selenium"><span class="header-section-number">2.9.17.2</span>
+<strong>Selenium</strong></h4>
+<p><strong>Vantagens</strong>: - <strong>Comunidade ampla</strong>:
+Grande base de usuários, muitos tutoriais, plugins e suporte em fóruns
+como Stack Overflow. - <strong>Suporte a navegadores legados</strong>:
+Útil para testar em navegadores antigos ou menos comuns. -
+<strong>Flexibilidade</strong>: Suporta mais linguagens e frameworks,
+ideal para equipes com stacks diversos. - <strong>Maturidade</strong>:
+Ferramenta consolidada, amplamente adotada em empresas.</p>
+<p><strong>Desvantagens</strong>: - Configuração mais complexa devido à
+necessidade de drivers e gerenciamento manual. - Testes podem ser mais
+propensos a falhas (flaky) sem waits explícitos. - Menos eficiente para
+testes modernos, como emulação mobile ou WebKit.</p>
+<hr />
+<h3 data-number="2.9.18" id="casos-de-uso"><span class="header-section-number">2.9.18</span> <strong>4. Casos de
+Uso</strong></h3>
+<ul>
+<li><strong>Use Playwright se</strong>:
+<ul>
+<li>Você precisa de uma ferramenta moderna com configuração mínima.</li>
+<li>Está testando aplicações em Chrome, Firefox e Safari (especialmente
+WebKit).</li>
+<li>Quer evitar gerenciamento de drivers e escrever testes mais robustos
+com auto-waiting.</li>
+<li>Precisa de recursos como gravação de vídeos ou emulação mobile
+nativa.</li>
+</ul></li>
+<li><strong>Use Selenium se</strong>:
+<ul>
+<li>Sua equipe já usa Selenium e tem uma base de testes
+estabelecida.</li>
+<li>Você precisa suportar navegadores legados ou ambientes muito
+específicos.</li>
+<li>Sua equipe usa linguagens menos comuns (ex.: Ruby, PHP) ou
+frameworks específicos.</li>
+<li>Você depende de uma comunidade grande para suporte e plugins.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 data-number="2.9.19" id="exemplo-prático-código-comparado"><span class="header-section-number">2.9.19</span> <strong>5. Exemplo Prático:
+Código Comparado</strong></h3>
+<p>Ambas as ferramentas podem realizar tarefas semelhantes, mas a
+sintaxe e abordagem diferem. Aqui está um exemplo de como abrir uma
+página e clicar em um botão:</p>
+<p><strong>Playwright</strong>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { chromium } <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;playwright&#39;</span>)<span class="op">;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>(<span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> browser <span class="op">=</span> <span class="cf">await</span> chromium<span class="op">.</span><span class="fu">launch</span>({ <span class="dt">headless</span><span class="op">:</span> <span class="kw">false</span> })<span class="op">;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> page <span class="op">=</span> <span class="cf">await</span> browser<span class="op">.</span><span class="fu">newPage</span>()<span class="op">;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;https://www.example.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;text=&quot;Clique aqui&quot;&#39;</span>)<span class="op">;</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">await</span> browser<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>})()<span class="op">;</span></span></code></pre></div>
+<p><strong>Selenium</strong>:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium <span class="im">import</span> webdriver</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.common.by <span class="im">import</span> By</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> selenium.webdriver.chrome.service <span class="im">import</span> Service</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> webdriver_manager.chrome <span class="im">import</span> ChromeDriverManager</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>driver <span class="op">=</span> webdriver.Chrome(service<span class="op">=</span>Service(ChromeDriverManager().install()))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>driver.get(<span class="st">&#39;https://www.example.com&#39;</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>driver.find_element(By.LINK_TEXT, <span class="st">&#39;Clique aqui&#39;</span>).click()</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>driver.quit()</span></code></pre></div>
+<p><strong>Observações</strong>: - O Playwright usa seletores baseados
+em texto ou CSS de forma mais fluida e tem espera automática. - O
+Selenium exige configuração do driver e pode precisar de waits
+explícitos para evitar erros.</p>
+<hr />
+<h3 data-number="2.9.20" id="conclusão"><span class="header-section-number">2.9.20</span> <strong>6.
+Conclusão</strong></h3>
+<ul>
+<li><strong>Playwright</strong> é ideal para projetos novos ou equipes
+que buscam uma ferramenta moderna, com menos configuração e maior
+robustez em testes multiplataforma.</li>
+<li><strong>Selenium</strong> é mais adequado para projetos legados,
+equipes com conhecimento prévio da ferramenta ou que precisam suportar
+uma ampla gama de navegadores e linguagens.</li>
+</ul>
+<p>Se você está começando um projeto do zero e prioriza facilidade de
+uso e suporte a navegadores modernos, o Playwright é geralmente a melhor
+escolha. No entanto, se sua equipe já está investida no ecossistema
+Selenium ou precisa de suporte a casos específicos, o Selenium ainda é
+uma opção sólida.</p>
+<p>Se precisar de exemplos práticos, ajuda com configuração ou mais
+detalhes sobre algum aspecto, é só pedir!</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

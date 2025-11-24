@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>003_Claude_Backend_gratuito_com_Cloudflare_Workers_e_JWT</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#backend-gratuito-com-cloudflare-workers-e-jwt" id="toc-backend-gratuito-com-cloudflare-workers-e-jwt"><span class="toc-section-number">1</span> Backend gratuito com Cloudflare
+Workers e JWT</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#o-que-a-aplicação-faz" id="toc-o-que-a-aplicação-faz"><span class="toc-section-number">1.3</span> ✨ O que a aplicação faz:</a></li>
+<li><a href="#funcionalidades-incluídas" id="toc-funcionalidades-incluídas"><span class="toc-section-number">1.4</span> 🚀 Funcionalidades
+Incluídas:</a></li>
+<li><a href="#como-usar" id="toc-como-usar"><span class="toc-section-number">1.5</span> 📋 Como usar:</a></li>
+<li><a href="#o-que-foi-adicionado" id="toc-o-que-foi-adicionado"><span class="toc-section-number">1.6</span> 📁 O que foi adicionado:</a></li>
+<li><a href="#estrutura-final" id="toc-estrutura-final"><span class="toc-section-number">1.7</span> 🎯 Estrutura Final:</a></li>
+<li><a href="#comandos-por-pasta" id="toc-comandos-por-pasta"><span class="toc-section-number">1.8</span> 📍 Comandos por Pasta:</a></li>
+<li><a href="#testar-o-backend-local" id="toc-testar-o-backend-local"><span class="toc-section-number">1.9</span> ✅ Testar o Backend Local</a></li>
+<li><a href="#rotas-disponíveis" id="toc-rotas-disponíveis"><span class="toc-section-number">1.10</span> 🔍 Rotas Disponíveis</a></li>
+<li><a href="#ferramentas-para-testar" id="toc-ferramentas-para-testar"><span class="toc-section-number">1.11</span> 🛠️ Ferramentas para
+Testar</a></li>
+<li><a href="#soluções" id="toc-soluções"><span class="toc-section-number">1.12</span> 🔧 Soluções:</a></li>
+<li><a href="#passos-para-corrigir" id="toc-passos-para-corrigir"><span class="toc-section-number">1.13</span> ✅ Passos para corrigir:</a></li>
+<li><a href="#o-que-foi-corrigido" id="toc-o-que-foi-corrigido"><span class="toc-section-number">1.14</span> 🔍 O que foi corrigido:</a></li>
+<li><a href="#testes-para-fazer" id="toc-testes-para-fazer"><span class="toc-section-number">1.15</span> 🧪 Testes para fazer:</a></li>
+<li><a href="#se-ainda-houver-erro-500" id="toc-se-ainda-houver-erro-500"><span class="toc-section-number">1.16</span> 📊 Se ainda houver erro
+500:</a></li>
+<li><a href="#teste-rápido-no-browser-console" id="toc-teste-rápido-no-browser-console"><span class="toc-section-number">1.17</span> 🎯 Teste Rápido no Browser
+Console</a></li>
+<li><a href="#próximos-passos---deploy-para-produção" id="toc-próximos-passos---deploy-para-produção"><span class="toc-section-number">1.18</span> 🚀 Próximos Passos - Deploy para
+Produção</a></li>
+<li><a href="#checklist-final" id="toc-checklist-final"><span class="toc-section-number">1.19</span> ✅ Checklist Final</a></li>
+<li><a href="#testar-em-produção" id="toc-testar-em-produção"><span class="toc-section-number">1.20</span> 🧪 Testar em Produção</a></li>
+<li><a href="#monitorizar" id="toc-monitorizar"><span class="toc-section-number">1.21</span> 📊 Monitorizar</a></li>
+<li><a href="#solução-1-redirecionamento-simples-recomendado" id="toc-solução-1-redirecionamento-simples-recomendado"><span class="toc-section-number">1.22</span> 🎯 Solução 1: Redirecionamento
+Simples (Recomendado)</a></li>
+<li><a href="#solução-2-com-verificação-de-autenticação-no-site.html" id="toc-solução-2-com-verificação-de-autenticação-no-site.html"><span class="toc-section-number">1.23</span> 🎯 Solução 2: Com Verificação de
+Autenticação no site.html</a></li>
+<li><a href="#solução-3-atualizar-o-api.js-com-redirecionamento-automático" id="toc-solução-3-atualizar-o-api.js-com-redirecionamento-automático"><span class="toc-section-number">1.24</span> 🎯 Solução 3: Atualizar o
+<code>api.js</code> com Redirecionamento Automático</a></li>
+<li><a href="#css-básico-opcional---cssstyle.css" id="toc-css-básico-opcional---cssstyle.css"><span class="toc-section-number">1.25</span> 🎨 CSS Básico (opcional -
+<code>css/style.css</code>)</a></li>
+<li><a href="#estrutura-de-ficheiros" id="toc-estrutura-de-ficheiros"><span class="toc-section-number">1.26</span> 📁 Estrutura de
+Ficheiros</a></li>
+<li><a href="#resumo" id="toc-resumo"><span class="toc-section-number">1.27</span> ✅ Resumo</a></li>
+<li><a href="#ficheiros-criados" id="toc-ficheiros-criados"><span class="toc-section-number">1.28</span> ✅ Ficheiros Criados</a></li>
+<li><a href="#estrutura-final-1" id="toc-estrutura-final-1"><span class="toc-section-number">1.29</span> 📁 Estrutura Final</a></li>
+<li><a href="#fluxo-de-autenticação" id="toc-fluxo-de-autenticação"><span class="toc-section-number">1.30</span> 🔄 Fluxo de Autenticação</a></li>
+<li><a href="#para-testar" id="toc-para-testar"><span class="toc-section-number">1.31</span> 🧪 Para Testar</a></li>
+<li><a href="#personalizar-redirecionamento" id="toc-personalizar-redirecionamento"><span class="toc-section-number">1.32</span> ⚙️ Personalizar
+Redirecionamento</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="backend-gratuito-com-cloudflare-workers-e-jwt"><span class="header-section-number">1</span> Backend gratuito com Cloudflare
+Workers e JWT</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #3</li>
+<li><strong>Origem:</strong> Claude</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 98af52d9-3927-4e1a-96f7-ac5ac46dc6ce</li>
+<li><strong>Criada em:</strong> 2025-11-19 21:18:01</li>
+<li><strong>Total de mensagens:</strong> 20</li>
+<li><strong>Resumo:</strong> Backend GRATUITO usando Cloudflare Workers,
+totalmente compatível com GitHub Pages, sem expor a API …</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-claude"><span class="header-section-number">1.2.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Backend GRATUITO usando Cloudflare Workers, totalmente compatível com
+GitHub Pages, sem expor a API key, sem precisar de Firebase Blaze, e com
+login + registo seguros usando JWT. Em <a href="https://mpmendespt.github.io/Pesquisas/" class="uri">https://mpmendespt.github.io/Pesquisas/</a> Pasta local
+D:_DOCS__DOCS__My_Sites_já com: Directory of
+D:_DOCS__DOCS__My_Sites_/19/2025 07:33 PM . 11/19/2025 07:33 PM ..
+11/19/2025 08:00 PM .git 11/19/2025 06:15 PM 194 .gitignore 11/19/2025
+08:15 PM auth-backend 11/19/2025 07:09 PM firebase 11/19/2025 06:11 PM
+frontend 11/19/2025 07:12 PM 0 New Text Document.txt 11/18/2025 12:53 PM
+1,255 README.md 11/19/2025 07:14 PM 189 schema.sql 11/19/2025 07:21 PM
+square-lab-97e4 4 File(s) 1,638 bytes É possivel gerar uma solução
+completa para download num file zip</p>
+<hr />
+<h3 data-number="1.2.2" id="claude-claude"><span class="header-section-number">1.2.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p># Backend Gratuito com Cloudflare Workers + GitHub Pages</p>
+<p>Vou criar uma solução completa com backend em Cloudflare Workers
+(gratuito), frontend compatível com GitHub Pages, autenticação JWT
+segura, e sem expor API keys!</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<hr />
+<h3 data-number="1.2.3" id="utilizador-claude-1"><span class="header-section-number">1.2.3</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Continuar</p>
+<hr />
+<h3 data-number="1.2.4" id="claude-claude-1"><span class="header-section-number">1.2.4</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Pronto! 🎉 Criei uma <strong>aplicação completa e interativa</strong>
+que gera todos os ficheiros necessários para o seu backend gratuito!</p>
+<h2 data-number="1.3" id="o-que-a-aplicação-faz"><span class="header-section-number">1.3</span> ✨ O que a aplicação faz:</h2>
+<ol type="1">
+<li><strong>Gera JWT Secret seguro</strong> - Com um clique, cria um
+secret criptográfico de 64 caracteres</li>
+<li><strong>Permite configurar</strong> - Nome do projeto, database,
+repositório GitHub</li>
+<li><strong>Gera todos os ficheiros</strong> necessários:
+<ul>
+<li><code>worker-index.js</code> - Backend completo com todas as
+rotas</li>
+<li><code>schema.sql</code> - Schema da base de dados D1</li>
+<li><code>wrangler.toml</code> - Configuração do Cloudflare</li>
+<li><code>frontend-api.js</code> - Cliente API para o frontend</li>
+<li><code>SETUP_GUIDE.md</code> - Guia completo passo-a-passo</li>
+</ul></li>
+<li><strong>Download individual ou em lote</strong> - Pode descarregar
+cada ficheiro separadamente ou todos de uma vez</li>
+</ol>
+<h2 data-number="1.4" id="funcionalidades-incluídas"><span class="header-section-number">1.4</span> 🚀 Funcionalidades
+Incluídas:</h2>
+<p>✅ <strong>Backend Completo</strong> - Registo e Login com JWT - CRUD
+completo de pesquisas - Autenticação por utilizador - Error handling
+robusto - CORS configurado para GitHub Pages</p>
+<p>✅ <strong>Segurança</strong> - Passwords com hash SHA-256 - JWT
+tokens seguros - API key nunca exposta - Validação em todas as rotas</p>
+<p>✅ <strong>100% Gratuito</strong> - Cloudflare Workers: 100k
+requests/dia - D1 Database: 5GB storage - GitHub Pages: hosting
+grátis</p>
+<h2 data-number="1.5" id="como-usar"><span class="header-section-number">1.5</span> 📋 Como usar:</h2>
+<ol type="1">
+<li><strong>Abra a aplicação</strong> acima</li>
+<li><strong>Gere o JWT Secret</strong> (botão verde)</li>
+<li><strong>Configure</strong> os nomes do projeto</li>
+<li><strong>Clique em “Gerar Ficheiros”</strong></li>
+<li><strong>Descarregue tudo</strong> com um clique</li>
+<li><strong>Siga o guia</strong> SETUP_GUIDE.md</li>
+</ol>
+<p>Os ficheiros já estarão <strong>prontos para deploy</strong> na
+Cloudflare e funcionarão perfeitamente com o seu site em GitHub
+Pages!</p>
+<p>Quer que eu explique alguma parte específica do código ou do processo
+de setup? 😊</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-claude-2"><span class="header-section-number">1.5.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Ao clicar em descarregar todos os ficheiros, não acontece nada, não
+consigo descarregar os file</p>
+<hr />
+<h3 data-number="1.5.2" id="claude-claude-2"><span class="header-section-number">1.5.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Vou corrigir o problema do download! O issue é que preciso usar uma
+abordagem diferente para fazer download de múltiplos ficheiros.</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Pronto! ✅ Corrigi o problema do download. As alterações foram:</p>
+<ol type="1">
+<li><strong>Adicionar o elemento <code>&lt;a&gt;</code> ao DOM</strong>
+antes de clicar (alguns browsers precisam disso)</li>
+<li><strong>Remover o elemento depois</strong> de clicar</li>
+<li><strong>Adicionar delay entre downloads</strong> (300ms) quando
+descarrega todos os ficheiros - isso evita que o browser bloqueie
+múltiplos downloads simultâneos</li>
+</ol>
+<p>Agora deve funcionar perfeitamente! Teste novamente: 1. Gere o JWT
+Secret 2. Clique em “Gerar Ficheiros” 3. Clique em “DESCARREGAR TODOS OS
+FICHEIROS”</p>
+<p>Os 5 ficheiros devem ser descarregados sequencialmente para a sua
+pasta de Downloads! 📥</p>
+<p>Se ainda tiver problemas, pode descarregar cada ficheiro
+individualmente clicando nos botões específicos. Está a funcionar agora?
+😊</p>
+<hr />
+<h3 data-number="1.5.3" id="utilizador-claude-3"><span class="header-section-number">1.5.3</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Mostrar tree de como devem ficar os file; e os passos a efectuar em
+que pasta</p>
+<hr />
+<h3 data-number="1.5.4" id="claude-claude-3"><span class="header-section-number">1.5.4</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Vou adicionar uma visualização clara da estrutura de pastas e os
+comandos exatos a executar em cada pasta!</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Perfeito! ✅ Adicionei uma secção completa com:</p>
+<h2 data-number="1.6" id="o-que-foi-adicionado"><span class="header-section-number">1.6</span> 📁 O que foi adicionado:</h2>
+<ol type="1">
+<li><strong>Árvore Visual da Estrutura</strong> - Mostra exatamente como
+devem ficar as pastas</li>
+<li><strong>Comandos Passo a Passo</strong> - 8 passos detalhados com:
+<ul>
+<li>Número do passo</li>
+<li>Cor diferente para cada passo</li>
+<li>Comando exato a executar</li>
+<li>Em que pasta deve estar</li>
+<li>O que vai acontecer</li>
+</ul></li>
+<li><strong>Referência Rápida</strong> - Resumo de onde executar cada
+tipo de comando</li>
+</ol>
+<h2 data-number="1.7" id="estrutura-final"><span class="header-section-number">1.7</span> 🎯 Estrutura Final:</h2>
+<pre><code>Pesquisas/
+├── frontend/              (já existe)
+│   └── js/
+│       └── api.js        ← copiar frontend-api.js aqui
+│
+├── backend/              (CRIAR)
+│   ├── src/
+│   │   └── index.js     ← copiar worker-index.js aqui
+│   ├── wrangler.toml    ← copiar wrangler.toml aqui
+│   └── schema.sql       ← copiar schema.sql aqui</code></pre>
+<h2 data-number="1.8" id="comandos-por-pasta"><span class="header-section-number">1.8</span> 📍 Comandos por Pasta:</h2>
+<p><strong>Na pasta raiz (Pesquisas):</strong> - Criar backend:
+<code>mkdir backend</code> - Git commands</p>
+<p><strong>Na pasta backend:</strong> - Todos os comandos
+<code>wrangler</code></p>
+<p>Agora está super claro onde executar cada comando! 🎉</p>
+<hr />
+<h3 data-number="1.8.1" id="utilizador-claude-4"><span class="header-section-number">1.8.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Com wrangler dev ;  ⎔ Starting local server… [wrangler:info] Ready on
+<a href="http://127.0.0.1:8787" class="uri">http://127.0.0.1:8787</a>
+[wrangler:info] GET / 404 Not Found (25ms) [wrangler:info] GET
+/favicon.ico 404 Not Found (12ms) [wrangler:info] GET / 404 Not Found
+(31ms)</p>
+<hr />
+<h3 data-number="1.8.2" id="claude-claude-4"><span class="header-section-number">1.8.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Perfeito! O servidor está a funcionar! 🎉 O erro 404 é normal porque
+você está a aceder à rota raiz <code>/</code> que não existe. O worker
+só responde nas rotas da API.</p>
+<p>Vou mostrar como testar corretamente:</p>
+<h2 data-number="1.9" id="testar-o-backend-local"><span class="header-section-number">1.9</span> ✅ Testar o Backend Local</h2>
+<h3 data-number="1.9.1" id="testar-registo-de-utilizador"><span class="header-section-number">1.9.1</span> 1️⃣ <strong>Testar Registo de
+Utilizador</strong></h3>
+<p>Abra um novo terminal (PowerShell ou CMD) e execute:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curl</span> <span class="op">-</span>X POST http<span class="op">://</span><span class="dv">127.0</span><span class="op">.</span><span class="dv">0.1</span><span class="op">:</span><span class="dv">8787</span><span class="op">/</span>api<span class="op">/</span>register `</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>H <span class="st">&quot;Content-Type: application/json&quot;</span> `</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>d <span class="st">&#39;{\&quot;email\&quot;:\&quot;teste@example.com\&quot;,\&quot;password\&quot;:\&quot;senha123\&quot;,\&quot;nome\&quot;:\&quot;João Teste\&quot;}&#39;</span></span></code></pre></div>
+<p><strong>Ou use este código JavaScript no browser (abra DevTools &gt;
+Console):</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/register&#39;</span><span class="op">,</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> { <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span> }<span class="op">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;teste@example.com&#39;</span><span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;senha123&#39;</span><span class="op">,</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">nome</span><span class="op">:</span> <span class="st">&#39;João Teste&#39;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(d))<span class="op">;</span></span></code></pre></div>
+<h3 data-number="1.9.2" id="testar-login"><span class="header-section-number">1.9.2</span> 2️⃣ <strong>Testar
+Login</strong></h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/login&#39;</span><span class="op">,</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> { <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span> }<span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;teste@example.com&#39;</span><span class="op">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;senha123&#39;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> {</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Token:&#39;</span><span class="op">,</span> d<span class="op">.</span><span class="at">token</span>)<span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;token&#39;</span><span class="op">,</span> d<span class="op">.</span><span class="at">token</span>)<span class="op">;</span> <span class="co">// Guardar token</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 data-number="1.9.3" id="criar-pesquisa-com-autenticação"><span class="header-section-number">1.9.3</span> 3️⃣ <strong>Criar Pesquisa
+(com autenticação)</strong></h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> token <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;token&#39;</span>)<span class="op">;</span> <span class="co">// Do passo anterior</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/pesquisas&#39;</span><span class="op">,</span> {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>token<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;Minha primeira pesquisa&#39;</span><span class="op">,</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">description</span><span class="op">:</span> <span class="st">&#39;Teste de pesquisa&#39;</span><span class="op">,</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">data</span><span class="op">:</span> { <span class="dt">perguntas</span><span class="op">:</span> [<span class="st">&#39;Pergunta 1&#39;</span><span class="op">,</span> <span class="st">&#39;Pergunta 2&#39;</span>] }</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(d))<span class="op">;</span></span></code></pre></div>
+<h3 data-number="1.9.4" id="listar-pesquisas"><span class="header-section-number">1.9.4</span> 4️⃣ <strong>Listar
+Pesquisas</strong></h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> token <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;token&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/pesquisas&#39;</span><span class="op">,</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>token<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Pesquisas:&#39;</span><span class="op">,</span> d))<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.10" id="rotas-disponíveis"><span class="header-section-number">1.10</span> 🔍 Rotas Disponíveis</h2>
+<table>
+<thead>
+<tr>
+<th>Rota</th>
+<th>Método</th>
+<th>Autenticação</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/register</code></td>
+<td>POST</td>
+<td>❌ Não</td>
+<td>Registar utilizador</td>
+</tr>
+<tr>
+<td><code>/api/login</code></td>
+<td>POST</td>
+<td>❌ Não</td>
+<td>Login</td>
+</tr>
+<tr>
+<td><code>/api/pesquisas</code></td>
+<td>GET</td>
+<td>✅ Sim</td>
+<td>Listar pesquisas</td>
+</tr>
+<tr>
+<td><code>/api/pesquisas</code></td>
+<td>POST</td>
+<td>✅ Sim</td>
+<td>Criar pesquisa</td>
+</tr>
+<tr>
+<td><code>/api/pesquisas/:id</code></td>
+<td>PUT</td>
+<td>✅ Sim</td>
+<td>Atualizar pesquisa</td>
+</tr>
+<tr>
+<td><code>/api/pesquisas/:id</code></td>
+<td>DELETE</td>
+<td>✅ Sim</td>
+<td>Eliminar pesquisa</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.11" id="ferramentas-para-testar"><span class="header-section-number">1.11</span> 🛠️ Ferramentas para
+Testar</h2>
+<h3 data-number="1.11.1" id="opção-1-postman-insomnia-recomendado"><span class="header-section-number">1.11.1</span> <strong>Opção 1: Postman /
+Insomnia</strong> (recomendado)</h3>
+<ul>
+<li>Mais fácil para testar APIs</li>
+<li>Interface visual</li>
+</ul>
+<h3 data-number="1.11.2" id="opção-2-browser-console"><span class="header-section-number">1.11.2</span> <strong>Opção 2: Browser
+Console</strong></h3>
+<ul>
+<li>Use os scripts JavaScript acima</li>
+<li>Abra DevTools (F12) &gt; Console</li>
+</ul>
+<h3 data-number="1.11.3" id="opção-3-criar-página-html-de-teste"><span class="header-section-number">1.11.3</span> <strong>Opção 3: Criar
+página HTML de teste</strong></h3>
+<p>Crie um ficheiro <code>test.html</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="dt">&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Teste API<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Teste Backend Local<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Registo<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;testeRegisto()&quot;</span><span class="dt">&gt;</span>Registar<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Login<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;testeLogin()&quot;</span><span class="dt">&gt;</span>Login<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Criar Pesquisa<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;testeCriarPesquisa()&quot;</span><span class="dt">&gt;</span>Criar<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Listar Pesquisas<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;testeListar()&quot;</span><span class="dt">&gt;</span>Listar<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">pre</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;resultado&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">pre</span><span class="dt">&gt;</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> API <span class="op">=</span> <span class="st">&#39;http://127.0.0.1:8787&#39;</span><span class="op">;</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>        <span class="kw">function</span> <span class="fu">mostrar</span>(data) {</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>            <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;resultado&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data<span class="op">,</span> <span class="kw">null</span><span class="op">,</span> <span class="dv">2</span>)<span class="op">;</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">testeRegisto</span>() {</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API<span class="sc">}</span><span class="vs">/api/register`</span><span class="op">,</span> {</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>                <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>                <span class="dt">headers</span><span class="op">:</span> { <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span> }<span class="op">,</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>                <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;teste@example.com&#39;</span><span class="op">,</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;senha123&#39;</span><span class="op">,</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">nome</span><span class="op">:</span> <span class="st">&#39;João Teste&#39;</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>                })</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>            localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;token&#39;</span><span class="op">,</span> data<span class="op">.</span><span class="at">token</span>)<span class="op">;</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mostrar</span>(data)<span class="op">;</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">testeLogin</span>() {</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API<span class="sc">}</span><span class="vs">/api/login`</span><span class="op">,</span> {</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>                <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>                <span class="dt">headers</span><span class="op">:</span> { <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span> }<span class="op">,</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>                <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;teste@example.com&#39;</span><span class="op">,</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;senha123&#39;</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>                })</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>            localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;token&#39;</span><span class="op">,</span> data<span class="op">.</span><span class="at">token</span>)<span class="op">;</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mostrar</span>(data)<span class="op">;</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">testeCriarPesquisa</span>() {</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> token <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;token&#39;</span>)<span class="op">;</span></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API<span class="sc">}</span><span class="vs">/api/pesquisas`</span><span class="op">,</span> {</span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>                <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>                <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>token<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>                }<span class="op">,</span></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>                <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">title</span><span class="op">:</span> <span class="st">&#39;Pesquisa Teste&#39;</span><span class="op">,</span></span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">description</span><span class="op">:</span> <span class="st">&#39;Uma pesquisa de teste&#39;</span><span class="op">,</span></span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">data</span><span class="op">:</span> { <span class="dt">perguntas</span><span class="op">:</span> [<span class="st">&#39;P1&#39;</span><span class="op">,</span> <span class="st">&#39;P2&#39;</span>] }</span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>                })</span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mostrar</span>(data)<span class="op">;</span></span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">testeListar</span>() {</span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> token <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;token&#39;</span>)<span class="op">;</span></span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> res <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API<span class="sc">}</span><span class="vs">/api/pesquisas`</span><span class="op">,</span> {</span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a>                <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>token<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a>            })<span class="op">;</span></span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> res<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mostrar</span>(data)<span class="op">;</span></span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>Abra este ficheiro no browser e teste clicando nos botões! 🎯</p>
+<hr />
+<p>O erro 404 que viu é <strong>normal</strong> - só significa que a
+rota <code>/</code> não existe. Todas as rotas da API começam com
+<code>/api/</code>! ✅</p>
+<hr />
+<h3 data-number="1.11.4" id="utilizador-claude-5"><span class="header-section-number">1.11.4</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>com test.html ; [wrangler:info] POST /api/register 500 Internal
+Server Error (35ms) [wrangler:info] OPTIONS /api/register 200 OK (4ms)
+[wrangler:info] OPTIONS /api/login 200 OK (4ms) [wrangler:info] OPTIONS
+/api/pesquisas 200 OK (5ms) [wrangler:info] OPTIONS /api/pesquisas 200
+OK (3ms) [wrangler:info] OPTIONS /api/register 200 OK (3ms)
+[wrangler:info] OPTIONS /api/register 200 OK (3ms)</p>
+<hr />
+<h3 data-number="1.11.5" id="claude-claude-5"><span class="header-section-number">1.11.5</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>O erro 500 indica que há um problema no código do worker.
+Provavelmente a database não está a ser reconhecida ou há um erro no
+código. Vamos corrigir!</p>
+<h2 data-number="1.12" id="soluções"><span class="header-section-number">1.12</span> 🔧 Soluções:</h2>
+<h3 data-number="1.12.1" id="verificar-se-criou-as-tabelas-localmente"><span class="header-section-number">1.12.1</span> <strong>1️⃣ Verificar se
+criou as tabelas localmente</strong></h3>
+<p>No terminal, na pasta <code>backend</code>, execute:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute pesquisas_db <span class="at">--local</span> <span class="at">--file</span><span class="op">=</span>schema.sql</span></code></pre></div>
+<h3 data-number="1.12.2" id="atualizar-o-código-do-worker"><span class="header-section-number">1.12.2</span> <strong>2️⃣ Atualizar o
+código do Worker</strong></h3>
+<p>O problema pode estar na forma como estamos a usar a database em modo
+local. Vou criar uma versão corrigida:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<h2 data-number="1.13" id="passos-para-corrigir"><span class="header-section-number">1.13</span> ✅ Passos para corrigir:</h2>
+<h3 data-number="1.13.1" id="substituir-o-ficheiro-backendsrcindex.js"><span class="header-section-number">1.13.1</span> <strong>1. Substituir o
+ficheiro <code>backend/src/index.js</code></strong></h3>
+<p>Copie o código acima e substitua o ficheiro atual.</p>
+<h3 data-number="1.13.2" id="verificar-o-wrangler.toml"><span class="header-section-number">1.13.2</span> <strong>2. Verificar o
+<code>wrangler.toml</code></strong></h3>
+<p>Certifique-se que tem isto:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dt">name</span> <span class="op">=</span> <span class="st">&quot;pesquisas-app&quot;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="dt">main</span> <span class="op">=</span> <span class="st">&quot;src/index.js&quot;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="dt">compatibility_date</span> <span class="op">=</span> <span class="st">&quot;2024-01-01&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">[[d1_databases]]</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;DB&quot;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="dt">database_name</span> <span class="op">=</span> <span class="st">&quot;pesquisas_db&quot;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="dt">database_id</span> <span class="op">=</span> <span class="st">&quot;SEU_DATABASE_ID_AQUI&quot;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">[vars]</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="dt">JWT_SECRET</span> <span class="op">=</span> <span class="st">&quot;seu_jwt_secret_aqui&quot;</span></span></code></pre></div>
+<h3 data-number="1.13.3" id="recriar-as-tabelas-localmente"><span class="header-section-number">1.13.3</span> <strong>3. Recriar as
+tabelas localmente</strong></h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute pesquisas_db <span class="at">--local</span> <span class="at">--file</span><span class="op">=</span>schema.sql</span></code></pre></div>
+<h3 data-number="1.13.4" id="parar-e-reiniciar-o-wrangler"><span class="header-section-number">1.13.4</span> <strong>4. Parar e reiniciar
+o wrangler</strong></h3>
+<p>Pressione <code>Ctrl+C</code> no terminal onde está o
+<code>wrangler dev</code> e depois:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> dev</span></code></pre></div>
+<h3 data-number="1.13.5" id="testar-a-rota-de-health"><span class="header-section-number">1.13.5</span> <strong>5. Testar a rota de
+health</strong></h3>
+<p>No browser, aceda a:
+<code>http://127.0.0.1:8787/api/health</code></p>
+<p>Deve ver:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;connected&quot;</span><span class="fu">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-...&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 data-number="1.13.6" id="testar-novamente-o-test.html"><span class="header-section-number">1.13.6</span> <strong>6. Testar novamente
+o test.html</strong></h3>
+<p>Agora deve funcionar! 🎉</p>
+<hr />
+<h2 data-number="1.14" id="o-que-foi-corrigido"><span class="header-section-number">1.14</span> 🔍 O que foi corrigido:</h2>
+<ol type="1">
+<li>✅ <strong>CORS mais permissivo</strong> para desenvolvimento
+(<code>*</code> em vez de URL específica)</li>
+<li>✅ <strong>Verificação se DB existe</strong> antes de usar</li>
+<li>✅ <strong>Error handling melhorado</strong> com mais detalhes</li>
+<li>✅ <strong>JWT encoding corrigido</strong> (padding do base64)</li>
+<li>✅ <strong>Logs de erro</strong> mais detalhados</li>
+<li>✅ <strong>Rota <code>/api/health</code></strong> para testar
+conexão</li>
+</ol>
+<p>Teste e diga-me o resultado! 🚀</p>
+<hr />
+<h3 data-number="1.14.1" id="utilizador-claude-6"><span class="header-section-number">1.14.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>🌀 Executing on local database pesquisas_db
+(8d1fc694-bb9a-4704-b7cc-cf3cd3d83519) from .wrangler: 🌀 To execute on
+your remote database, add a –remote flag to your wrangler command. X
+[ERROR] index idx_pesquisas_user already exists: SQLITE_ERROR</p>
+<hr />
+<h3 data-number="1.14.2" id="claude-claude-6"><span class="header-section-number">1.14.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Perfeito! A mensagem indica que as tabelas <strong>já
+existem</strong> na base de dados local. O erro é apenas porque está a
+tentar criar índices que já existem. Isto é bom! ✅</p>
+<p>Agora vamos testar:</p>
+<h2 data-number="1.15" id="testes-para-fazer"><span class="header-section-number">1.15</span> 🧪 Testes para fazer:</h2>
+<h3 data-number="1.15.1" id="parar-e-reiniciar-o-wrangler-dev"><span class="header-section-number">1.15.1</span> <strong>1️⃣ Parar e reiniciar
+o wrangler dev</strong></h3>
+<p>No terminal onde está o <code>wrangler dev</code>, pressione
+<code>Ctrl+C</code> e depois:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> dev</span></code></pre></div>
+<h3 data-number="1.15.2" id="testar-a-rota-de-health-primeiro"><span class="header-section-number">1.15.2</span> <strong>2️⃣ Testar a rota de
+health primeiro</strong></h3>
+<p>Abra o browser em: <code>http://127.0.0.1:8787/api/health</code></p>
+<p>Deve ver:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;ok&quot;</span><span class="fu">,</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;database&quot;</span><span class="fu">:</span> <span class="st">&quot;connected&quot;</span><span class="fu">,</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;timestamp&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-11-19T...&quot;</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 data-number="1.15.3" id="testar-o-test.html-novamente"><span class="header-section-number">1.15.3</span> <strong>3️⃣ Testar o
+test.html novamente</strong></h3>
+<p>Abra o ficheiro <code>test.html</code> no browser e clique em
+<strong>“Registar”</strong>.</p>
+<p>Agora deve funcionar! 🎉</p>
+<hr />
+<h2 data-number="1.16" id="se-ainda-houver-erro-500"><span class="header-section-number">1.16</span> 📊 Se ainda houver erro
+500:</h2>
+<h3 data-number="1.16.1" id="opção-a-ver-os-logs-detalhados"><span class="header-section-number">1.16.1</span> <strong>Opção A: Ver os logs
+detalhados</strong></h3>
+<p>No terminal do <code>wrangler dev</code>, deve aparecer a mensagem de
+erro completa. Copie e cole aqui.</p>
+<h3 data-number="1.16.2" id="opção-b-limpar-e-recriar-a-database"><span class="header-section-number">1.16.2</span> <strong>Opção B: Limpar e
+recriar a database</strong></h3>
+<p>Se quiser começar do zero:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Parar o wrangler dev (Ctrl+C)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Apagar a database local</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> .wrangler/state/v3/d1</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Recriar as tabelas</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute pesquisas_db <span class="at">--local</span> <span class="at">--file</span><span class="op">=</span>schema.sql</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Reiniciar</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> dev</span></code></pre></div>
+<h3 data-number="1.16.3" id="opção-c-ver-o-conteúdo-da-database"><span class="header-section-number">1.16.3</span> <strong>Opção C: Ver o
+conteúdo da database</strong></h3>
+<p>Para verificar se as tabelas existem:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute pesquisas_db <span class="at">--local</span> <span class="at">--command</span><span class="op">=</span><span class="st">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;;&quot;</span></span></code></pre></div>
+<p>Deve mostrar:</p>
+<pre><code>users
+pesquisas</code></pre>
+<hr />
+<h2 data-number="1.17" id="teste-rápido-no-browser-console"><span class="header-section-number">1.17</span> 🎯 Teste Rápido no Browser
+Console</h2>
+<p>Abra DevTools (F12) e cole isto:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Teste 1: Health check</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/health&#39;</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Health:&#39;</span><span class="op">,</span> d))<span class="op">;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Teste 2: Registar</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;http://127.0.0.1:8787/api/register&#39;</span><span class="op">,</span> {</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">headers</span><span class="op">:</span> { <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span> }<span class="op">,</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;teste&#39;</span> <span class="op">+</span> <span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">+</span> <span class="st">&#39;@example.com&#39;</span><span class="op">,</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;senha123&#39;</span><span class="op">,</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">nome</span><span class="op">:</span> <span class="st">&#39;Teste User&#39;</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Registo:&#39;</span><span class="op">,</span> d))<span class="op">;</span></span></code></pre></div>
+<p>O que acontece quando executa estes testes? Cole aqui o resultado!
+🔍</p>
+<hr />
+<h3 data-number="1.17.1" id="utilizador-claude-7"><span class="header-section-number">1.17.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Parece funcionar: ⎔ Starting local server… [wrangler:info] Ready on
+<a href="http://127.0.0.1:8787" class="uri">http://127.0.0.1:8787</a>
+[wrangler:info] GET /api/health 200 OK (40ms) [wrangler:info] OPTIONS
+/api/register 200 OK (3ms) [wrangler:info] POST /api/register 201
+Created (29ms) [wrangler:info] OPTIONS /api/login 200 OK (4ms)
+[wrangler:info] POST /api/login 200 OK (22ms) [wrangler:info] OPTIONS
+/api/pesquisas 200 OK (5ms) [wrangler:info] POST /api/pesquisas 201
+Created (25ms) [wrangler:info] GET /api/pesquisas 200 OK (10ms)
+[wrangler:info] POST /api/login 200 OK (12ms)</p>
+<hr />
+<h3 data-number="1.17.2" id="claude-claude-7"><span class="header-section-number">1.17.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>🎉 <strong>EXCELENTE! Está tudo a funcionar
+perfeitamente!</strong></p>
+<p>Os códigos de status estão todos corretos: - ✅ <code>200 OK</code> -
+Health check, Login, Listar pesquisas - ✅ <code>201 Created</code> -
+Registo e Criar pesquisa - ✅ <code>OPTIONS 200</code> - CORS
+funcionando</p>
+<hr />
+<h2 data-number="1.18" id="próximos-passos---deploy-para-produção"><span class="header-section-number">1.18</span> 🚀 Próximos Passos - Deploy
+para Produção</h2>
+<p>Agora que está tudo a funcionar localmente, vamos fazer o deploy!</p>
+<h3 data-number="1.18.1" id="criar-a-database-remota"><span class="header-section-number">1.18.1</span> <strong>1️⃣ Criar a database
+remota</strong></h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 create pesquisas_db</span></code></pre></div>
+<p>Vai aparecer algo como:</p>
+<pre><code>✅ Successfully created DB &#39;pesquisas_db&#39;
+
+[[d1_databases]]
+binding = &quot;DB&quot;
+database_name = &quot;pesquisas_db&quot;
+database_id = &quot;xxxx-xxxx-xxxx-xxxx&quot;</code></pre>
+<p><strong>Copie o <code>database_id</code></strong> e atualize no
+ficheiro <code>wrangler.toml</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode toml"><code class="sourceCode toml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[[d1_databases]]</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="dt">binding</span> <span class="op">=</span> <span class="st">&quot;DB&quot;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="dt">database_name</span> <span class="op">=</span> <span class="st">&quot;pesquisas_db&quot;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="dt">database_id</span> <span class="op">=</span> <span class="st">&quot;COLE_O_ID_AQUI&quot;</span>  <span class="co"># ← Substituir</span></span></code></pre></div>
+<h3 data-number="1.18.2" id="criar-as-tabelas-na-database-remota"><span class="header-section-number">1.18.2</span> <strong>2️⃣ Criar as tabelas
+na database remota</strong></h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> d1 execute pesquisas_db <span class="at">--remote</span> <span class="at">--file</span><span class="op">=</span>schema.sql</span></code></pre></div>
+<h3 data-number="1.18.3" id="fazer-o-deploy-do-worker"><span class="header-section-number">1.18.3</span> <strong>3️⃣ Fazer o deploy do
+Worker</strong></h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> deploy</span></code></pre></div>
+<p>Vai aparecer:</p>
+<pre><code>✨ Successfully published your Worker
+🌎 https://pesquisas-app.SEU_USERNAME.workers.dev</code></pre>
+<p><strong>GUARDE ESTA URL!</strong> É o seu backend em produção! 🎯</p>
+<h3 data-number="1.18.4" id="atualizar-o-frontend"><span class="header-section-number">1.18.4</span> <strong>4️⃣ Atualizar o
+frontend</strong></h3>
+<p>Abra <code>frontend/js/api.js</code> e substitua a URL:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> API_URL <span class="op">=</span> <span class="st">&#39;https://pesquisas-app.SEU_USERNAME.workers.dev&#39;</span><span class="op">;</span></span></code></pre></div>
+<p>(Use a URL que apareceu no passo anterior)</p>
+<h3 data-number="1.18.5" id="atualizar-cors-no-worker"><span class="header-section-number">1.18.5</span> <strong>5️⃣ Atualizar CORS no
+Worker</strong></h3>
+<p>Abra <code>backend/src/index.js</code> e <strong>mude esta
+linha</strong>:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Era:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;Access-Control-Allow-Origin&#39;</span><span class="op">:</span> <span class="st">&#39;*&#39;</span><span class="op">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Mudar para:</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;Access-Control-Allow-Origin&#39;</span><span class="op">:</span> <span class="st">&#39;https://mpmendespt.github.io&#39;</span><span class="op">,</span></span></code></pre></div>
+<p>Depois faça deploy novamente:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> deploy</span></code></pre></div>
+<h3 data-number="1.18.6" id="commit-e-push-para-github"><span class="header-section-number">1.18.6</span> <strong>6️⃣ Commit e Push
+para GitHub</strong></h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Na pasta raiz do projeto</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> D:<span class="dt">\D</span>ownloads<span class="dt">\_</span>DOCS_<span class="dt">\_</span>DOCS_<span class="dt">\_</span>My_Sites_<span class="dt">\P</span>esquisas</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;Backend Cloudflare Workers integrado&quot;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push origin main</span></code></pre></div>
+<h3 data-number="1.18.7" id="configurar-github-pages"><span class="header-section-number">1.18.7</span> <strong>7️⃣ Configurar GitHub
+Pages</strong></h3>
+<ol type="1">
+<li>Vá ao repositório no GitHub</li>
+<li>Settings → Pages</li>
+<li>Source: <strong>Deploy from a branch</strong></li>
+<li>Branch: <strong>main</strong> → Pasta: <strong>/frontend</strong>
+(ou <strong>root</strong> se o frontend estiver na raiz)</li>
+<li>Save</li>
+</ol>
+<p>Aguarde 1-2 minutos e aceda a:
+<code>https://mpmendespt.github.io/Pesquisas/</code></p>
+<hr />
+<h2 data-number="1.19" id="checklist-final"><span class="header-section-number">1.19</span> ✅ Checklist Final</h2>
+<ul class="task-list">
+<li><label><input type="checkbox"></input>Database remota criada</label></li>
+<li><label><input type="checkbox"></input>Tabelas criadas
+remotamente</label></li>
+<li><label><input type="checkbox"></input>Worker deployed</label></li>
+<li><label><input type="checkbox"></input>URL do backend anotada</label></li>
+<li><label><input type="checkbox"></input><code>frontend/js/api.js</code>
+atualizado com URL</label></li>
+<li><label><input type="checkbox"></input>CORS configurado para GitHub
+Pages</label></li>
+<li><label><input type="checkbox"></input>Deploy feito novamente</label></li>
+<li><label><input type="checkbox"></input>Git push feito</label></li>
+<li><label><input type="checkbox"></input>GitHub Pages
+configurado</label></li>
+<li><label><input type="checkbox"></input>Site funcionando! 🎉</label></li>
+</ul>
+<hr />
+<h2 data-number="1.20" id="testar-em-produção"><span class="header-section-number">1.20</span> 🧪 Testar em Produção</h2>
+<p>Depois do deploy, teste no browser console:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Substituir pela sua URL do worker</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> API <span class="op">=</span> <span class="st">&#39;https://pesquisas-app.SEU_USERNAME.workers.dev&#39;</span><span class="op">;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Teste</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API<span class="sc">}</span><span class="vs">/api/health`</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">then</span>(r <span class="kw">=&gt;</span> r<span class="op">.</span><span class="fu">json</span>())</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">then</span>(d <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(d))<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.21" id="monitorizar"><span class="header-section-number">1.21</span> 📊 Monitorizar</h2>
+<p>Para ver logs em tempo real:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wrangler</span> tail</span></code></pre></div>
+<p>Para ver estatísticas de uso: Dashboard da Cloudflare → Workers &amp;
+Pages → pesquisas-app</p>
+<hr />
+<p>Está pronto para fazer o deploy? Comece pelo passo 1! 🚀</p>
+<hr />
+<h3 data-number="1.21.1" id="utilizador-claude-8"><span class="header-section-number">1.21.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Como fazer alteração de modo que apos o login com sucesso seja
+carregada uma pagina site.html</p>
+<hr />
+<h3 data-number="1.21.2" id="claude-claude-8"><span class="header-section-number">1.21.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Vou mostrar como fazer o redirecionamento após login com sucesso! Há
+várias formas de implementar isso.</p>
+<h2 data-number="1.22" id="solução-1-redirecionamento-simples-recomendado"><span class="header-section-number">1.22</span> 🎯 Solução 1: Redirecionamento
+Simples (Recomendado)</h2>
+<h3 data-number="1.22.1" id="no-seu-ficheiro-de-login-ex-index.html-ou-login.html"><span class="header-section-number">1.22.1</span> <strong>No seu ficheiro de
+login (ex: <code>index.html</code> ou
+<code>login.html</code>)</strong></h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">&quot;pt&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">&quot;UTF-8&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> name</span><span class="op">=</span><span class="st">&quot;viewport&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Login - Pesquisas<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;css/style.css&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;login-container&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Login<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;loginForm&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;form-group&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">label</span><span class="dt">&gt;</span>Email:<span class="dt">&lt;/</span><span class="kw">label</span><span class="dt">&gt;</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">input</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;email&quot;</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;email&quot;</span><span class="ot"> required</span><span class="dt">&gt;</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;form-group&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">label</span><span class="dt">&gt;</span>Password:<span class="dt">&lt;/</span><span class="kw">label</span><span class="dt">&gt;</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">input</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;password&quot;</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;password&quot;</span><span class="ot"> required</span><span class="dt">&gt;</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;submit&quot;</span><span class="dt">&gt;</span>Entrar<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>Não tem conta? <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;register.html&quot;</span><span class="dt">&gt;</span>Registar<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;error&quot;</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;error-message&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;js/api.js&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> api <span class="op">=</span> <span class="kw">new</span> <span class="fu">API</span>()<span class="op">;</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> form <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;loginForm&#39;</span>)<span class="op">;</span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> errorDiv <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;error&#39;</span>)<span class="op">;</span></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>        form<span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;submit&#39;</span><span class="op">,</span> <span class="kw">async</span> (e) <span class="kw">=&gt;</span> {</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>            e<span class="op">.</span><span class="fu">preventDefault</span>()<span class="op">;</span></span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>            errorDiv<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">&#39;&#39;</span><span class="op">;</span></span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> email <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;email&#39;</span>)<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> password <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;password&#39;</span>)<span class="op">.</span><span class="at">value</span><span class="op">;</span></span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> {</span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>                <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> api<span class="op">.</span><span class="fu">login</span>(email<span class="op">,</span> password)<span class="op">;</span></span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (result<span class="op">.</span><span class="at">success</span> <span class="op">||</span> result<span class="op">.</span><span class="at">token</span>) {</span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Login com sucesso - redirecionar</span></span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;site.html&#39;</span><span class="op">;</span></span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a>                } <span class="cf">else</span> {</span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a>                    errorDiv<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> result<span class="op">.</span><span class="at">error</span> <span class="op">||</span> <span class="st">&#39;Erro ao fazer login&#39;</span><span class="op">;</span></span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">catch</span> (error) {</span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a>                errorDiv<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">&#39;Erro: &#39;</span> <span class="op">+</span> error<span class="op">.</span><span class="at">message</span><span class="op">;</span></span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.23" id="solução-2-com-verificação-de-autenticação-no-site.html"><span class="header-section-number">1.23</span> 🎯 Solução 2: Com Verificação
+de Autenticação no site.html</h2>
+<h3 data-number="1.23.1" id="criar-site.html-página-protegida"><span class="header-section-number">1.23.1</span> <strong>Criar
+<code>site.html</code> (página protegida)</strong></h3>
+<div class="sourceCode" id="cb38"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">&quot;pt&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">&quot;UTF-8&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> name</span><span class="op">=</span><span class="st">&quot;viewport&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Dashboard - Pesquisas<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> href</span><span class="op">=</span><span class="st">&quot;css/style.css&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;dashboard&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">header</span><span class="dt">&gt;</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Minhas Pesquisas<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;user-info&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">span</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;userName&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">span</span><span class="dt">&gt;</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;logout()&quot;</span><span class="dt">&gt;</span>Sair<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;/</span><span class="kw">header</span><span class="dt">&gt;</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;content&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">button</span><span class="ot"> onclick</span><span class="op">=</span><span class="st">&quot;criarNovaPesquisa()&quot;</span><span class="dt">&gt;</span>+ Nova Pesquisa<span class="dt">&lt;/</span><span class="kw">button</span><span class="dt">&gt;</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;pesquisasList&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;js/api.js&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Verificar se está autenticado</span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> api <span class="op">=</span> <span class="kw">new</span> <span class="fu">API</span>()<span class="op">;</span></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Verificar token ao carregar a página</span></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">window</span><span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;DOMContentLoaded&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> token <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;auth_token&#39;</span>)<span class="op">;</span></span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="op">!</span>token) {</span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Não está autenticado - redirecionar para login</span></span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>                <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;index.html&#39;</span><span class="op">;</span></span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Carregar dados do utilizador</span></span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> userStr <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;user&#39;</span>)<span class="op">;</span></span>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (userStr) {</span>
+<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>                <span class="kw">const</span> user <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(userStr)<span class="op">;</span></span>
+<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a>                <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;userName&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> user<span class="op">.</span><span class="at">nome</span> <span class="op">||</span> user<span class="op">.</span><span class="at">email</span><span class="op">;</span></span>
+<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Carregar pesquisas</span></span>
+<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a>            <span class="cf">await</span> <span class="fu">carregarPesquisas</span>()<span class="op">;</span></span>
+<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">carregarPesquisas</span>() {</span>
+<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> {</span>
+<span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a>                <span class="kw">const</span> pesquisas <span class="op">=</span> <span class="cf">await</span> api<span class="op">.</span><span class="fu">getPesquisas</span>()<span class="op">;</span></span>
+<span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a>                <span class="kw">const</span> list <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;pesquisasList&#39;</span>)<span class="op">;</span></span>
+<span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (pesquisas<span class="op">.</span><span class="at">length</span> <span class="op">===</span> <span class="dv">0</span>) {</span>
+<span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a>                    list<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> <span class="st">&#39;&lt;p&gt;Nenhuma pesquisa criada ainda.&lt;/p&gt;&#39;</span><span class="op">;</span></span>
+<span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb38-60"><a href="#cb38-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-61"><a href="#cb38-61" aria-hidden="true" tabindex="-1"></a>                list<span class="op">.</span><span class="at">innerHTML</span> <span class="op">=</span> pesquisas<span class="op">.</span><span class="fu">map</span>(p <span class="kw">=&gt;</span> <span class="vs">`</span></span>
+<span id="cb38-62"><a href="#cb38-62" aria-hidden="true" tabindex="-1"></a><span class="vs">                    &lt;div class=&quot;pesquisa-card&quot;&gt;</span></span>
+<span id="cb38-63"><a href="#cb38-63" aria-hidden="true" tabindex="-1"></a><span class="vs">                        &lt;h3&gt;</span><span class="sc">${</span>p<span class="op">.</span><span class="at">title</span><span class="sc">}</span><span class="vs">&lt;/h3&gt;</span></span>
+<span id="cb38-64"><a href="#cb38-64" aria-hidden="true" tabindex="-1"></a><span class="vs">                        &lt;p&gt;</span><span class="sc">${</span>p<span class="op">.</span><span class="at">description</span><span class="sc">}</span><span class="vs">&lt;/p&gt;</span></span>
+<span id="cb38-65"><a href="#cb38-65" aria-hidden="true" tabindex="-1"></a><span class="vs">                        &lt;button onclick=&quot;editarPesquisa(&#39;</span><span class="sc">${</span>p<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">&#39;)&quot;&gt;Editar&lt;/button&gt;</span></span>
+<span id="cb38-66"><a href="#cb38-66" aria-hidden="true" tabindex="-1"></a><span class="vs">                        &lt;button onclick=&quot;eliminarPesquisa(&#39;</span><span class="sc">${</span>p<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">&#39;)&quot;&gt;Eliminar&lt;/button&gt;</span></span>
+<span id="cb38-67"><a href="#cb38-67" aria-hidden="true" tabindex="-1"></a><span class="vs">                    &lt;/div&gt;</span></span>
+<span id="cb38-68"><a href="#cb38-68" aria-hidden="true" tabindex="-1"></a><span class="vs">                `</span>)<span class="op">.</span><span class="fu">join</span>(<span class="st">&#39;&#39;</span>)<span class="op">;</span></span>
+<span id="cb38-69"><a href="#cb38-69" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">catch</span> (error) {</span>
+<span id="cb38-70"><a href="#cb38-70" aria-hidden="true" tabindex="-1"></a>                <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;Erro ao carregar pesquisas:&#39;</span><span class="op">,</span> error)<span class="op">;</span></span>
+<span id="cb38-71"><a href="#cb38-71" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Token inválido - voltar ao login</span></span>
+<span id="cb38-72"><a href="#cb38-72" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (error<span class="op">.</span><span class="at">message</span><span class="op">.</span><span class="fu">includes</span>(<span class="st">&#39;Token&#39;</span>) <span class="op">||</span> error<span class="op">.</span><span class="at">message</span><span class="op">.</span><span class="fu">includes</span>(<span class="st">&#39;401&#39;</span>)) {</span>
+<span id="cb38-73"><a href="#cb38-73" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">logout</span>()<span class="op">;</span></span>
+<span id="cb38-74"><a href="#cb38-74" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb38-75"><a href="#cb38-75" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb38-76"><a href="#cb38-76" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb38-77"><a href="#cb38-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-78"><a href="#cb38-78" aria-hidden="true" tabindex="-1"></a>        <span class="kw">function</span> <span class="fu">logout</span>() {</span>
+<span id="cb38-79"><a href="#cb38-79" aria-hidden="true" tabindex="-1"></a>            api<span class="op">.</span><span class="fu">logout</span>()<span class="op">;</span></span>
+<span id="cb38-80"><a href="#cb38-80" aria-hidden="true" tabindex="-1"></a>            <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;index.html&#39;</span><span class="op">;</span></span>
+<span id="cb38-81"><a href="#cb38-81" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb38-82"><a href="#cb38-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-83"><a href="#cb38-83" aria-hidden="true" tabindex="-1"></a>        <span class="kw">function</span> <span class="fu">criarNovaPesquisa</span>() {</span>
+<span id="cb38-84"><a href="#cb38-84" aria-hidden="true" tabindex="-1"></a>            <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;criar-pesquisa.html&#39;</span><span class="op">;</span></span>
+<span id="cb38-85"><a href="#cb38-85" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb38-86"><a href="#cb38-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-87"><a href="#cb38-87" aria-hidden="true" tabindex="-1"></a>        <span class="kw">function</span> <span class="fu">editarPesquisa</span>(id) {</span>
+<span id="cb38-88"><a href="#cb38-88" aria-hidden="true" tabindex="-1"></a>            <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="vs">`editar-pesquisa.html?id=</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb38-89"><a href="#cb38-89" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb38-90"><a href="#cb38-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-91"><a href="#cb38-91" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="kw">function</span> <span class="fu">eliminarPesquisa</span>(id) {</span>
+<span id="cb38-92"><a href="#cb38-92" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (<span class="op">!</span><span class="fu">confirm</span>(<span class="st">&#39;Tem certeza que deseja eliminar esta pesquisa?&#39;</span>)) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb38-93"><a href="#cb38-93" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb38-94"><a href="#cb38-94" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> {</span>
+<span id="cb38-95"><a href="#cb38-95" aria-hidden="true" tabindex="-1"></a>                <span class="cf">await</span> api<span class="op">.</span><span class="fu">deletePesquisa</span>(id)<span class="op">;</span></span>
+<span id="cb38-96"><a href="#cb38-96" aria-hidden="true" tabindex="-1"></a>                <span class="cf">await</span> <span class="fu">carregarPesquisas</span>()<span class="op">;</span></span>
+<span id="cb38-97"><a href="#cb38-97" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">catch</span> (error) {</span>
+<span id="cb38-98"><a href="#cb38-98" aria-hidden="true" tabindex="-1"></a>                <span class="fu">alert</span>(<span class="st">&#39;Erro ao eliminar pesquisa: &#39;</span> <span class="op">+</span> error<span class="op">.</span><span class="at">message</span>)<span class="op">;</span></span>
+<span id="cb38-99"><a href="#cb38-99" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb38-100"><a href="#cb38-100" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb38-101"><a href="#cb38-101" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb38-102"><a href="#cb38-102" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb38-103"><a href="#cb38-103" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.24" id="solução-3-atualizar-o-api.js-com-redirecionamento-automático"><span class="header-section-number">1.24</span> 🎯 Solução 3: Atualizar o
+<code>api.js</code> com Redirecionamento Automático</h2>
+<p>Modifique o ficheiro <code>frontend/js/api.js</code>:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> API_URL <span class="op">=</span> <span class="st">&#39;https://seu-worker.workers.dev&#39;</span><span class="op">;</span> <span class="co">// Ou URL local para testes</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> API {</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">constructor</span>() {</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">token</span> <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;auth_token&#39;</span>)<span class="op">;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getHeaders</span>() {</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> headers <span class="op">=</span> {</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="kw">this</span><span class="op">.</span><span class="at">token</span>) {</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>      headers[<span class="st">&#39;Authorization&#39;</span>] <span class="op">=</span> <span class="vs">`Bearer </span><span class="sc">${</span><span class="kw">this</span><span class="op">.</span><span class="at">token</span><span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> headers<span class="op">;</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">register</span>(email<span class="op">,</span> password<span class="op">,</span> nome) {</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/register`</span><span class="op">,</span> {</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()<span class="op">,</span></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ email<span class="op">,</span> password<span class="op">,</span> nome })</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (response<span class="op">.</span><span class="at">ok</span> <span class="op">&amp;&amp;</span> (data<span class="op">.</span><span class="at">success</span> <span class="op">||</span> data<span class="op">.</span><span class="at">token</span>)) {</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">token</span> <span class="op">=</span> data<span class="op">.</span><span class="at">token</span><span class="op">;</span></span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>      localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;auth_token&#39;</span><span class="op">,</span> data<span class="op">.</span><span class="at">token</span>)<span class="op">;</span></span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>      localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;user&#39;</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data<span class="op">.</span><span class="at">user</span>))<span class="op">;</span></span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Redirecionar automaticamente após registo</span></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>      <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;site.html&#39;</span><span class="op">;</span></span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data<span class="op">;</span></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">login</span>(email<span class="op">,</span> password) {</span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/login`</span><span class="op">,</span> {</span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()<span class="op">,</span></span>
+<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ email<span class="op">,</span> password })</span>
+<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (response<span class="op">.</span><span class="at">ok</span> <span class="op">&amp;&amp;</span> (data<span class="op">.</span><span class="at">success</span> <span class="op">||</span> data<span class="op">.</span><span class="at">token</span>)) {</span>
+<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a>      <span class="kw">this</span><span class="op">.</span><span class="at">token</span> <span class="op">=</span> data<span class="op">.</span><span class="at">token</span><span class="op">;</span></span>
+<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a>      localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;auth_token&#39;</span><span class="op">,</span> data<span class="op">.</span><span class="at">token</span>)<span class="op">;</span></span>
+<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a>      localStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;user&#39;</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data<span class="op">.</span><span class="at">user</span>))<span class="op">;</span></span>
+<span id="cb39-54"><a href="#cb39-54" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb39-55"><a href="#cb39-55" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Redirecionar automaticamente após login</span></span>
+<span id="cb39-56"><a href="#cb39-56" aria-hidden="true" tabindex="-1"></a>      <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;site.html&#39;</span><span class="op">;</span></span>
+<span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-58"><a href="#cb39-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-59"><a href="#cb39-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data<span class="op">;</span></span>
+<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logout</span>() {</span>
+<span id="cb39-63"><a href="#cb39-63" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="at">token</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb39-64"><a href="#cb39-64" aria-hidden="true" tabindex="-1"></a>    localStorage<span class="op">.</span><span class="fu">removeItem</span>(<span class="st">&#39;auth_token&#39;</span>)<span class="op">;</span></span>
+<span id="cb39-65"><a href="#cb39-65" aria-hidden="true" tabindex="-1"></a>    localStorage<span class="op">.</span><span class="fu">removeItem</span>(<span class="st">&#39;user&#39;</span>)<span class="op">;</span></span>
+<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a>    <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;index.html&#39;</span><span class="op">;</span></span>
+<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Verificar se está autenticado</span></span>
+<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">isAuthenticated</span>() {</span>
+<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">!!</span><span class="kw">this</span><span class="op">.</span><span class="at">token</span><span class="op">;</span></span>
+<span id="cb39-72"><a href="#cb39-72" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-73"><a href="#cb39-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Obter utilizador atual</span></span>
+<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getCurrentUser</span>() {</span>
+<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> userStr <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;user&#39;</span>)<span class="op">;</span></span>
+<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> userStr <span class="op">?</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(userStr) <span class="op">:</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">getPesquisas</span>() {</span>
+<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/pesquisas`</span><span class="op">,</span> {</span>
+<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()</span>
+<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb39-86"><a href="#cb39-86" aria-hidden="true" tabindex="-1"></a>      <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;Erro ao carregar pesquisas&#39;</span>)<span class="op">;</span></span>
+<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">createPesquisa</span>(data) {</span>
+<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/pesquisas`</span><span class="op">,</span> {</span>
+<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb39-95"><a href="#cb39-95" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()<span class="op">,</span></span>
+<span id="cb39-96"><a href="#cb39-96" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data)</span>
+<span id="cb39-97"><a href="#cb39-97" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-98"><a href="#cb39-98" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-99"><a href="#cb39-99" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-100"><a href="#cb39-100" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-101"><a href="#cb39-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-102"><a href="#cb39-102" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">updatePesquisa</span>(id<span class="op">,</span> data) {</span>
+<span id="cb39-103"><a href="#cb39-103" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/pesquisas/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> {</span>
+<span id="cb39-104"><a href="#cb39-104" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;PUT&#39;</span><span class="op">,</span></span>
+<span id="cb39-105"><a href="#cb39-105" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()<span class="op">,</span></span>
+<span id="cb39-106"><a href="#cb39-106" aria-hidden="true" tabindex="-1"></a>      <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data)</span>
+<span id="cb39-107"><a href="#cb39-107" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-108"><a href="#cb39-108" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-109"><a href="#cb39-109" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-110"><a href="#cb39-110" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-111"><a href="#cb39-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-112"><a href="#cb39-112" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="fu">deletePesquisa</span>(id) {</span>
+<span id="cb39-113"><a href="#cb39-113" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span>API_URL<span class="sc">}</span><span class="vs">/api/pesquisas/</span><span class="sc">${</span>id<span class="sc">}</span><span class="vs">`</span><span class="op">,</span> {</span>
+<span id="cb39-114"><a href="#cb39-114" aria-hidden="true" tabindex="-1"></a>      <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;DELETE&#39;</span><span class="op">,</span></span>
+<span id="cb39-115"><a href="#cb39-115" aria-hidden="true" tabindex="-1"></a>      <span class="dt">headers</span><span class="op">:</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getHeaders</span>()</span>
+<span id="cb39-116"><a href="#cb39-116" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb39-117"><a href="#cb39-117" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-118"><a href="#cb39-118" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb39-119"><a href="#cb39-119" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb39-120"><a href="#cb39-120" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 data-number="1.25" id="css-básico-opcional---cssstyle.css"><span class="header-section-number">1.25</span> 🎨 CSS Básico (opcional -
+<code>css/style.css</code>)</h2>
+<div class="sourceCode" id="cb40"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="op">*</span> {</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">margin</span><span class="ch">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">box-sizing</span><span class="ch">:</span> <span class="dv">border-box</span><span class="op">;</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-family</span><span class="ch">:</span> <span class="dv">Arial</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="fu">linear-gradient(</span><span class="dv">135</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">#667eea</span> <span class="dv">0</span><span class="dt">%</span><span class="op">,</span> <span class="cn">#764ba2</span> <span class="dv">100</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">min-height</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">vh</span><span class="op">;</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">display</span><span class="ch">:</span> <span class="dv">flex</span><span class="op">;</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">align-items</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">justify-content</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="fu">.login-container</span> {</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">white</span><span class="op">;</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">2</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">10</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">box-shadow</span><span class="ch">:</span> <span class="dv">0</span> <span class="dv">10</span><span class="dt">px</span> <span class="dv">25</span><span class="dt">px</span> <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span><span class="op">,</span><span class="dv">0.2</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">width</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">max-width</span><span class="ch">:</span> <span class="dv">400</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a><span class="fu">.form-group</span> {</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">margin-bottom</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a><span class="fu">.form-group</span> label {</span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">display</span><span class="ch">:</span> <span class="dv">block</span><span class="op">;</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">margin-bottom</span><span class="ch">:</span> <span class="dv">0.5</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">bold</span><span class="op">;</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a><span class="fu">.form-group</span> input {</span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">width</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">0.75</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#ddd</span><span class="op">;</span></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">5</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>button {</span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">width</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">0.75</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">#667eea</span><span class="op">;</span></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">color</span><span class="ch">:</span> <span class="cn">white</span><span class="op">;</span></span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border</span><span class="ch">:</span> <span class="dv">none</span><span class="op">;</span></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">5</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">cursor</span><span class="ch">:</span> <span class="dv">pointer</span><span class="op">;</span></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">transition</span><span class="ch">:</span> <span class="dv">background 0.3</span><span class="dt">s</span><span class="op">;</span></span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>button<span class="in">:hover</span> {</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">#5568d3</span><span class="op">;</span></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a><span class="fu">.error-message</span> {</span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a>    <span class="kw">color</span><span class="ch">:</span> <span class="cn">red</span><span class="op">;</span></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">margin-top</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">text-align</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a><span class="fu">.dashboard</span> {</span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">white</span><span class="op">;</span></span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a>    <span class="kw">min-height</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">vh</span><span class="op">;</span></span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a>    <span class="kw">width</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb40-69"><a href="#cb40-69" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-70"><a href="#cb40-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-71"><a href="#cb40-71" aria-hidden="true" tabindex="-1"></a>header {</span>
+<span id="cb40-72"><a href="#cb40-72" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">#667eea</span><span class="op">;</span></span>
+<span id="cb40-73"><a href="#cb40-73" aria-hidden="true" tabindex="-1"></a>    <span class="kw">color</span><span class="ch">:</span> <span class="cn">white</span><span class="op">;</span></span>
+<span id="cb40-74"><a href="#cb40-74" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span> <span class="dv">2</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-75"><a href="#cb40-75" aria-hidden="true" tabindex="-1"></a>    <span class="kw">display</span><span class="ch">:</span> <span class="dv">flex</span><span class="op">;</span></span>
+<span id="cb40-76"><a href="#cb40-76" aria-hidden="true" tabindex="-1"></a>    <span class="kw">justify-content</span><span class="ch">:</span> <span class="dv">space-between</span><span class="op">;</span></span>
+<span id="cb40-77"><a href="#cb40-77" aria-hidden="true" tabindex="-1"></a>    <span class="kw">align-items</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb40-78"><a href="#cb40-78" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-79"><a href="#cb40-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-80"><a href="#cb40-80" aria-hidden="true" tabindex="-1"></a><span class="fu">.user-info</span> {</span>
+<span id="cb40-81"><a href="#cb40-81" aria-hidden="true" tabindex="-1"></a>    <span class="kw">display</span><span class="ch">:</span> <span class="dv">flex</span><span class="op">;</span></span>
+<span id="cb40-82"><a href="#cb40-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">gap</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-83"><a href="#cb40-83" aria-hidden="true" tabindex="-1"></a>    <span class="kw">align-items</span><span class="ch">:</span> <span class="dv">center</span><span class="op">;</span></span>
+<span id="cb40-84"><a href="#cb40-84" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-85"><a href="#cb40-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-86"><a href="#cb40-86" aria-hidden="true" tabindex="-1"></a><span class="fu">.content</span> {</span>
+<span id="cb40-87"><a href="#cb40-87" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">2</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-88"><a href="#cb40-88" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-89"><a href="#cb40-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-90"><a href="#cb40-90" aria-hidden="true" tabindex="-1"></a><span class="fu">.pesquisa-card</span> {</span>
+<span id="cb40-91"><a href="#cb40-91" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="cn">#f5f5f5</span><span class="op">;</span></span>
+<span id="cb40-92"><a href="#cb40-92" aria-hidden="true" tabindex="-1"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb40-93"><a href="#cb40-93" aria-hidden="true" tabindex="-1"></a>    <span class="kw">margin</span><span class="ch">:</span> <span class="dv">1</span><span class="dt">rem</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb40-94"><a href="#cb40-94" aria-hidden="true" tabindex="-1"></a>    <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">5</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb40-95"><a href="#cb40-95" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 data-number="1.26" id="estrutura-de-ficheiros"><span class="header-section-number">1.26</span> 📁 Estrutura de Ficheiros</h2>
+<pre><code>frontend/
+├── index.html          (página de login)
+├── register.html       (página de registo)
+├── site.html          (dashboard - página protegida)
+├── criar-pesquisa.html
+├── css/
+│   └── style.css
+└── js/
+    └── api.js</code></pre>
+<hr />
+<h2 data-number="1.27" id="resumo"><span class="header-section-number">1.27</span> ✅ Resumo</h2>
+<ol type="1">
+<li><strong>Login</strong> → Guarda token no <code>localStorage</code> →
+Redireciona para <code>site.html</code></li>
+<li><strong>site.html</strong> → Verifica se tem token → Se não, volta
+para login</li>
+<li><strong>Logout</strong> → Remove token → Volta para login</li>
+</ol>
+<p>Qual abordagem prefere usar? Posso ajudar a adaptar ao seu projeto
+específico! 🚀</p>
+<hr />
+<h3 data-number="1.27.1" id="utilizador-claude-9"><span class="header-section-number">1.27.1</span> 👤 Utilizador
+<em>[Claude]</em></h3>
+<p>Solução 3: Atualizar o <code>api.js</code> com Redirecionamento
+Automático; Mas com redirecionamento para index.html</p>
+<hr />
+<h3 data-number="1.27.2" id="claude-claude-9"><span class="header-section-number">1.27.2</span> 🤖 Claude
+<em>[Claude]</em></h3>
+<p>Perfeito! Vou ajustar a Solução 3 para redirecionar para
+<code>index.html</code> após login. Vou criar o código completo:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Agora vou criar exemplos de páginas de login e registro que usam este
+<code>api.js</code>:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Agora vou criar um exemplo de <code>index.html</code> protegido:</p>
+<pre><code>Viewing artifacts created via the Analysis Tool web feature preview isn’t yet supported on mobile.</code></pre>
+<p>Perfeito! Agora tenho tudo pronto. Aqui está o resumo completo:</p>
+<h2 data-number="1.28" id="ficheiros-criados"><span class="header-section-number">1.28</span> ✅ Ficheiros Criados</h2>
+<h3 data-number="1.28.1" id="frontendjsapi.js"><span class="header-section-number">1.28.1</span> <strong>1.
+<code>frontend/js/api.js</code></strong></h3>
+<ul>
+<li>Login/Registo <strong>redireciona automaticamente para
+<code>index.html</code></strong></li>
+<li>Logout redireciona para <code>login.html</code></li>
+<li>Verifica sessão expirada automaticamente</li>
+<li>Gestão completa de autenticação</li>
+</ul>
+<h3 data-number="1.28.2" id="frontendlogin.html"><span class="header-section-number">1.28.2</span> <strong>2.
+<code>frontend/login.html</code></strong></h3>
+<ul>
+<li>Página de login bonita e moderna</li>
+<li>Validação de campos</li>
+<li>Mensagens de erro/sucesso</li>
+<li>Animações suaves</li>
+<li>Verifica se já está autenticado</li>
+</ul>
+<h3 data-number="1.28.3" id="frontendregister.html"><span class="header-section-number">1.28.3</span> <strong>3.
+<code>frontend/register.html</code></strong></h3>
+<ul>
+<li>Página de registo com validação</li>
+<li>Verificador de força de password</li>
+<li>Confirmação de password</li>
+<li>Design consistente com login</li>
+</ul>
+<h3 data-number="1.28.4" id="frontendindex.html"><span class="header-section-number">1.28.4</span> <strong>4.
+<code>frontend/index.html</code></strong></h3>
+<ul>
+<li><strong>Página protegida</strong> - Redireciona para login se não
+autenticado</li>
+<li>Dashboard com lista de pesquisas</li>
+<li>Criar/Editar/Eliminar pesquisas</li>
+<li>Botão de logout</li>
+<li>Design responsivo</li>
+</ul>
+<hr />
+<h2 data-number="1.29" id="estrutura-final-1"><span class="header-section-number">1.29</span> 📁 Estrutura Final</h2>
+<pre><code>Pesquisas/
+├── frontend/
+│   ├── index.html          ← Dashboard (protegido)
+│   ├── login.html          ← Página de login
+│   ├── register.html       ← Página de registo
+│   ├── js/
+│   │   └── api.js         ← Cliente API com redirecionamento
+│   └── css/
+│       └── style.css      (opcional)
+│
+└── backend/
+    ├── src/
+    │   └── index.js       ← Worker corrigido
+    ├── wrangler.toml
+    └── schema.sql</code></pre>
+<hr />
+<h2 data-number="1.30" id="fluxo-de-autenticação"><span class="header-section-number">1.30</span> 🔄 Fluxo de Autenticação</h2>
+<pre><code>1. Utilizador acede a index.html
+   └─&gt; Não autenticado? → Redireciona para login.html
+
+2. Utilizador faz login em login.html
+   └─&gt; Login bem-sucedido → Guarda token → Redireciona para index.html
+
+3. Utilizador acede a index.html (autenticado)
+   └─&gt; Mostra dashboard com pesquisas
+
+4. Utilizador clica em &quot;Sair&quot;
+   └─&gt; Remove token → Redireciona para login.html</code></pre>
+<hr />
+<h2 data-number="1.31" id="para-testar"><span class="header-section-number">1.31</span> 🧪 Para Testar</h2>
+<ol type="1">
+<li><p><strong>Copie os 4 ficheiros</strong> para as pastas
+corretas</p></li>
+<li><p><strong>Atualize a URL</strong> no <code>api.js</code>:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> API_URL <span class="op">=</span> <span class="st">&#39;http://127.0.0.1:8787&#39;</span><span class="op">;</span> <span class="co">// Local</span></span></code></pre></div></li>
+<li><p><strong>Inicie o worker</strong>:
+<code>wrangler dev</code></p></li>
+<li><p><strong>Abra</strong>: <code>login.html</code> no
+browser</p></li>
+<li><p><strong>Registe-se</strong> ou faça login</p></li>
+<li><p><strong>Será redirecionado</strong> para <code>index.html</code>
+automaticamente! 🎉</p></li>
+</ol>
+<hr />
+<h2 data-number="1.32" id="personalizar-redirecionamento"><span class="header-section-number">1.32</span> ⚙️ Personalizar
+Redirecionamento</h2>
+<p>Se quiser mudar para outra página (ex: <code>dashboard.html</code>),
+basta alterar no <code>api.js</code>:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Linha 41 e 67</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">href</span> <span class="op">=</span> <span class="st">&#39;dashboard.html&#39;</span><span class="op">;</span> <span class="co">// Em vez de &#39;index.html&#39;</span></span></code></pre></div>
+<p>Tudo pronto! Quer que eu ajude com mais alguma funcionalidade? 🚀</p>
+<hr />
+<p><em>Conversa exportada do Claude</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

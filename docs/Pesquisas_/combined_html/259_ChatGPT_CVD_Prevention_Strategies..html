@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>259_ChatGPT_CVD_Prevention_Strategies.</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#cvd-prevention-strategies." id="toc-cvd-prevention-strategies."><span class="toc-section-number">1</span> CVD Prevention Strategies.</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="cvd-prevention-strategies."><span class="header-section-number">1</span> CVD Prevention Strategies.</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #259</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> b48a935f-7f43-4c29-bfe0-9b461c91042c</li>
+<li><strong>Criada em:</strong> 2023-06-25 15:55:41</li>
+<li><strong>Atualizada em:</strong> 2023-06-25 16:01:18</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Prevention of Cardiovascular Disease…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2023-06-25-155541-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2023-06-25
+15:55:41)</em> <em>[ChatGPT]</em></h3>
+<p>Prevention of Cardiovascular Disease</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2023-06-25-155557-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2023-06-25
+15:55:57)</em> <em>[ChatGPT]</em></h3>
+<p>Prevention of cardiovascular disease (CVD) involves adopting a
+healthy lifestyle and managing risk factors that contribute to the
+development of heart disease and stroke. Here are some key strategies
+for preventing cardiovascular disease:</p>
+<ol type="1">
+<li><p>Healthy Diet: Follow a balanced diet that includes plenty of
+fruits, vegetables, whole grains, lean proteins, and healthy fats. Limit
+your intake of saturated and trans fats, cholesterol, sodium, and added
+sugars. Choose low-fat dairy products, reduce salt intake, and avoid
+processed foods.</p></li>
+<li><p>Regular Physical Activity: Engage in moderate-intensity aerobic
+exercises such as brisk walking, jogging, swimming, or cycling for at
+least 150 minutes per week, or vigorous-intensity aerobic activities for
+75 minutes per week. Additionally, incorporate strength training
+exercises at least two days a week.</p></li>
+<li><p>Maintain a Healthy Weight: Aim for a healthy body weight by
+combining a nutritious diet with regular physical activity. If you’re
+overweight or obese, even modest weight loss can significantly reduce
+your risk of CVD.</p></li>
+<li><p>Avoid Tobacco Use: Quit smoking and avoid exposure to secondhand
+smoke. Smoking damages blood vessels, lowers good cholesterol (HDL),
+raises bad cholesterol (LDL), and increases the risk of heart disease
+and stroke.</p></li>
+<li><p>Limit Alcohol Consumption: Moderate alcohol consumption may have
+some cardiovascular benefits. However, excessive drinking can raise
+blood pressure and contribute to weight gain, increasing the risk of
+heart disease. It’s best to limit alcohol intake to moderate levels (up
+to one drink per day for women and up to two drinks per day for
+men).</p></li>
+<li><p>Manage Stress: Chronic stress can contribute to high blood
+pressure and heart disease. Find healthy ways to manage stress, such as
+regular exercise, relaxation techniques (meditation, deep breathing),
+spending time with loved ones, and pursuing hobbies.</p></li>
+<li><p>Control Blood Pressure: Monitor your blood pressure regularly and
+take steps to keep it within a healthy range. This includes adopting a
+healthy diet, engaging in regular physical activity, limiting salt
+intake, and, if necessary, taking medication as prescribed by your
+healthcare provider.</p></li>
+<li><p>Manage Cholesterol Levels: Maintain healthy cholesterol levels by
+consuming a diet low in saturated and trans fats, exercising regularly,
+and, if needed, taking cholesterol-lowering medications as
+prescribed.</p></li>
+<li><p>Control Diabetes: If you have diabetes, it’s crucial to manage
+your blood sugar levels effectively through a combination of medication,
+a healthy diet, regular physical activity, and regular
+monitoring.</p></li>
+<li><p>Regular Health Check-ups: Schedule regular check-ups with your
+healthcare provider to assess your overall health, including blood
+pressure, cholesterol levels, and other relevant tests. They can help
+identify and manage any risk factors for cardiovascular
+disease.</p></li>
+</ol>
+<p>Remember, prevention is key to reducing the risk of cardiovascular
+disease. It’s essential to make healthy lifestyle choices and manage any
+underlying conditions in consultation with your healthcare provider.</p>
+<hr />
+<h3 data-number="1.2.3" id="utilizador-2023-06-25-160118-chatgpt"><span class="header-section-number">1.2.3</span> 👤 Utilizador <em>(2023-06-25
+16:01:18)</em> <em>[ChatGPT]</em></h3>
+<p>Maintain healthy cholesterol levels with supplements of natural
+products</p>
+<hr />
+<h3 data-number="1.2.4" id="chatgpt-2023-06-25-160139-chatgpt"><span class="header-section-number">1.2.4</span> 🤖 ChatGPT <em>(2023-06-25
+16:01:39)</em> <em>[ChatGPT]</em></h3>
+<p>While a healthy diet is the primary way to maintain healthy
+cholesterol levels, some natural products and supplements may offer
+additional support. However, it’s important to note that these
+supplements should not replace a balanced diet or prescribed medication.
+Always consult with your healthcare provider before starting any new
+supplements, especially if you have existing medical conditions or take
+other medications. Here are some natural products that have been studied
+for their potential cholesterol-lowering effects:</p>
+<ol type="1">
+<li><p>Plant Sterols and Stanols: These natural compounds are found in
+fruits, vegetables, nuts, and seeds. They can help lower LDL (bad)
+cholesterol levels by reducing its absorption in the intestine. Plant
+sterols and stanols are available as supplements and are often added to
+certain margarines or other fortified foods.</p></li>
+<li><p>Omega-3 Fatty Acids: Found in fatty fish like salmon, mackerel,
+and sardines, omega-3 fatty acids have been shown to have heart-healthy
+benefits, including lowering triglyceride levels. Fish oil supplements
+can be used, but it’s important to choose high-quality products and
+follow dosage instructions.</p></li>
+<li><p>Fiber: Soluble fiber, found in oats, barley, legumes, fruits, and
+vegetables, can help reduce LDL cholesterol levels. Increasing dietary
+fiber intake through whole foods is preferable, but if necessary, fiber
+supplements like psyllium husk can be used under medical
+supervision.</p></li>
+<li><p>Garlic: Garlic has been studied for its potential
+cholesterol-lowering properties. It may modestly reduce total
+cholesterol and LDL cholesterol levels. However, the evidence is not
+conclusive, and more research is needed.</p></li>
+<li><p>Green Tea: Green tea contains antioxidants called catechins,
+which may have a positive effect on heart health. Some studies suggest
+that green tea may help lower LDL cholesterol levels, but more research
+is required to confirm these effects.</p></li>
+<li><p>Red Yeast Rice: Red yeast rice is a traditional Chinese dietary
+supplement made by fermenting rice with a specific strain of red yeast.
+It contains a compound called monacolin K, which is similar to the
+active ingredient in some cholesterol-lowering medications. However,
+it’s important to note that red yeast rice can vary in strength and
+quality, and it may interact with other medications. Consult with your
+healthcare provider before using red yeast rice.</p></li>
+</ol>
+<p>Remember, these natural products and supplements should complement a
+healthy lifestyle and not replace established medical treatments.
+Lifestyle modifications, such as adopting a healthy diet, engaging in
+regular exercise, and maintaining a healthy weight, are crucial for
+managing cholesterol levels and reducing the risk of cardiovascular
+disease.</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

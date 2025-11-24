@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>097_Grok_Linux_Process_Monitoring_com_VirusTotal</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#linux-process-monitoring-com-virustotal" id="toc-linux-process-monitoring-com-virustotal"><span class="toc-section-number">1</span> Linux Process Monitoring com
+VirusTotal</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="linux-process-monitoring-com-virustotal"><span class="header-section-number">1</span> Linux Process Monitoring com
+VirusTotal</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #97</li>
+<li><strong>Origem:</strong> Grok</li>
+<li><strong>Categoria:</strong> Sistemas</li>
+<li><strong>ID:</strong> bffa8e92-1ba5-481a-8522-b0d6b63de8b6</li>
+<li><strong>Criada em:</strong> 2025-10-25 16:36:28Z</li>
+<li><strong>Atualizada em:</strong> 2025-10-25 16:36:49Z</li>
+<li><strong>Total de mensagens:</strong> 2</li>
+<li><strong>Resumo:</strong> Linux e Virustotal. Existe alguma aplicação
+sememlhante process explorer do windows com a funcionali…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-10-25-173628-grok"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-10-25
+17:36:28)</em> <em>[Grok]</em></h3>
+<p>Linux e Virustotal. Existe alguma aplicação sememlhante process
+explorer do windows com a funcionalidade de analizar os processos
+atraves do Virustotal, mas no linux.</p>
+<hr />
+<h3 data-number="1.2.2" id="grok-2025-10-25-173648-grok"><span class="header-section-number">1.2.2</span> 🤖 Grok <em>(2025-10-25
+17:36:48)</em> <em>[Grok]</em></h3>
+<p>Sim, entendo sua pergunta: você está procurando uma ferramenta no
+Linux semelhante ao Process Explorer do Windows, mas com integração
+direta para análise de processos via VirusTotal (por exemplo, enviando
+hashes de executáveis em execução para verificação rápida de malware).
+Vou explicar o cenário atual e as opções mais próximas.</p>
+<h3 data-number="1.2.3" id="não-existe-uma-ferramenta-nativa-exata"><span class="header-section-number">1.2.3</span> Não Existe uma Ferramenta
+Nativa Exata</h3>
+<p>Após uma pesquisa aprofundada, <strong>não há uma aplicação Linux com
+integração </strong>exata** ao Process Explorer + VirusTotal** – ou
+seja, um monitor de processos gráfico ou em terminal que exiba hashes e
+resultados de VirusTotal em tempo real, como a coluna dedicada no
+Process Explorer. O Process Explorer é uma ferramenta proprietária da
+Microsoft (Sysinternals), otimizada para Windows, e não há um
+equivalente open-source ou nativo no Linux com essa funcionalidade
+embutida.</p>
+<p>Isso se deve a: - O Linux tem uma ênfase maior em ferramentas de
+linha de comando (CLI) e monitoramento via <code>ps</code>,
+<code>top</code> ou <code>htop</code>, que são leves e modulares. -
+Integrações com VirusTotal geralmente são manuais ou via API, exigindo
+scripts personalizados. - Propostas para adicionar isso ao
+<code>htop</code> (um monitor popular de processos) existem desde 2018,
+mas não foram implementadas.</p>
+<p>No entanto, há <strong>alternativas próximas e workflows
+eficientes</strong> que combinam monitoramento de processos com análise
+no VirusTotal. Vou listar as melhores opções abaixo.</p>
+<h3 data-number="1.2.4" id="alternativas-recomendadas-no-linux"><span class="header-section-number">1.2.4</span> Alternativas Recomendadas no
+Linux</h3>
+<p>Aqui vão ferramentas e métodos para alcançar algo similar. Elas
+permitem listar processos, extrair caminhos/executáveis, calcular hashes
+e consultar o VirusTotal – tudo em poucos passos.</p>
+<h4 data-number="1.2.4.1" id="monitor-de-processos-gráfico-system-monitor-gnome-ou-ksysguard-kde-script-para-virustotal"><span class="header-section-number">1.2.4.1</span> 1. <strong>Monitor de
+Processos Gráfico: System Monitor (GNOME) ou KSysGuard (KDE) + Script
+para VirusTotal</strong></h4>
+<ul>
+<li><strong>Descrição</strong>: São equivalentes visuais ao Task
+Manager/Process Explorer. Permitem ver processos em árvore, uso de
+CPU/memória, hierarquia pai-filho e propriedades detalhadas (como
+caminho do executável).
+<ul>
+<li><strong>System Monitor</strong> (padrão no Ubuntu/Fedora com GNOME):
+Instale com <code>sudo apt install gnome-system-monitor</code>.</li>
+<li><strong>KSysGuard</strong> (para KDE):
+<code>sudo apt install ksysguard</code>.</li>
+</ul></li>
+<li><strong>Integração com VirusTotal</strong>: Não nativa, mas você
+pode:
+<ul>
+<li>Clicar com o botão direito em um processo → “Propriedades” para ver
+o caminho do executável (ex: <code>/usr/bin/someapp</code>).</li>
+<li>Usar um script simples para hash e consulta (veja abaixo).</li>
+</ul></li>
+<li><strong>Vantagem</strong>: Interface amigável, como o Process
+Explorer.</li>
+<li><strong>Desvantagem</strong>: Análise manual.</li>
+</ul>
+<h4 data-number="1.2.4.2" id="monitor-de-processos-em-terminal-htop-ou-glances-script-para-virustotal"><span class="header-section-number">1.2.4.2</span> 2. <strong>Monitor de
+Processos em Terminal: htop ou glances + Script para
+VirusTotal</strong></h4>
+<ul>
+<li><p><strong>htop</strong>: O “Process Explorer” em terminal – mostra
+processos em árvore (F5), filtros, kill, etc. Instale com
+<code>sudo apt install htop</code>.</p></li>
+<li><p><strong>glances</strong>: Mais avançado, com exportação para
+CSV/JSON e suporte a rede/disco. Instale com
+<code>sudo apt install glances</code>.</p></li>
+<li><p><strong>Integração com VirusTotal</strong>: Use um script para
+extrair PIDs, calcular SHA256 e consultar a API do VirusTotal. Exemplo
+de workflow:</p>
+<ol type="1">
+<li>Rode <code>htop</code>, anote o PID de um processo suspeito.</li>
+<li>Extraia o executável: <code>cat /proc/[PID]/cmdline</code> ou
+<code>ls -l /proc/[PID]/exe</code>.</li>
+<li>Calcule hash: <code>sha256sum /proc/[PID]/exe</code>.</li>
+<li>Consulte VirusTotal via script (exemplo abaixo).</li>
+</ol></li>
+<li><p><strong>Vantagem</strong>: Rápido e leve; htop é interativo como
+o Process Explorer.</p></li>
+<li><p><strong>Exemplo de Script Simples (em Bash, usando API do
+VirusTotal)</strong>: Salve como <code>vt-process-check.sh</code>,
+adicione sua API key (cadastre-se grátis em virustotal.com) e rode
+<code>bash vt-process-check.sh [PID]</code>.</p>
+<pre><code>#!/bin/bash
+PID=$1
+if [ -z &quot;$PID&quot; ]; then echo &quot;Uso: $0 &lt;PID&gt;&quot;; exit 1; fi
+API_KEY=&quot;SUA_API_KEY_AQUI&quot;  # Substitua pela sua chave
+EXE=$(readlink /proc/$PID/exe)
+if [ -z &quot;$EXE&quot; ] || [ ! -f &quot;$EXE&quot; ]; then echo &quot;Executável não encontrado.&quot;; exit 1; fi
+HASH=$(sha256sum $EXE | cut -d&#39; &#39; -f1)
+echo &quot;Hash SHA256: $HASH&quot;
+curl -s -X GET &quot;https://www.virustotal.com/vtapi/v2/file/report?apikey=$API_KEY&amp;resource=$HASH&quot; | python3 -m json.tool</code></pre>
+<ul>
+<li>Saída: JSON com detecções (ex: “0/70” significa limpo).</li>
+<li>Para automatizar mais: Integre com <code>watch</code> ou um loop
+para monitorar múltiplos PIDs.</li>
+</ul></li>
+</ul>
+<h4 data-number="1.2.4.3" id="uploader-oficial-do-virustotal-para-linux-compilável"><span class="header-section-number">1.2.4.3</span> 3. <strong>Uploader Oficial
+do VirusTotal para Linux (Compilável)</strong></h4>
+<ul>
+<li><strong>Descrição</strong>: O VirusTotal Uploader é uma ferramenta
+oficial (baseada em Qt) para upload de arquivos/processos. Pode ser
+compilada no Linux a partir do código-fonte do uploader para macOS
+(cross-platform).
+<ul>
+<li>Repositório: <a href="https://github.com/VirusTotal/qt-virustotal-uploader">github.com/VirusTotal/qt-virustotal-uploader</a>.</li>
+<li>Como usar:
+<ol type="1">
+<li>Clone:
+<code>git clone https://github.com/VirusTotal/qt-virustotal-uploader</code>.</li>
+<li>Instale dependências:
+<code>sudo apt install qtbase5-dev qttools5-dev-tools</code>.</li>
+<li>Compile: <code>qmake &amp;&amp; make</code>.</li>
+<li>Rode e use o botão “Upload process executable” para selecionar um
+processo e enviar o binário/hash para análise.</li>
+</ol></li>
+</ul></li>
+<li><strong>Vantagem</strong>: Oficial e simples para uploads de
+processos ativos.</li>
+<li><strong>Desvantagem</strong>: Não é um monitor completo; foca em
+upload pontual.</li>
+</ul>
+<h4 data-number="1.2.4.4" id="ferramentas-avançadas-para-análise-de-malware-com-suporte-a-processos"><span class="header-section-number">1.2.4.4</span> 4. <strong>Ferramentas
+Avançadas para Análise de Malware (com Suporte a
+Processos)</strong></h4>
+<ul>
+<li><strong>Wazuh</strong>: Plataforma open-source de SIEM/XDR com
+integração nativa ao VirusTotal. Monitora arquivos/processos via FIM
+(File Integrity Monitoring) e consulta hashes automaticamente.
+<ul>
+<li>Instale: Siga <a href="https://documentation.wazuh.com/current/user-manual/capabilities/malware-detection/virus-total-integration.html">documentação.wazuh.com</a>.</li>
+<li>Vantagem: Automatiza para todos os processos monitorados; gera
+alertas.</li>
+<li>Desvantagem: Mais para servidores/empresas; overkill para uso
+pessoal.</li>
+</ul></li>
+<li><strong>Linux-virustotal-scanner</strong> (GitHub): Script CLI
+simples para checar hashes de arquivos via VirusTotal. Combine com
+<code>ps aux</code> para listar processos.
+<ul>
+<li>Repositório: <a href="https://github.com/cfpandrade/Linux-virustotal-scanner">github.com/cfpandrade/Linux-virustotal-scanner</a>.</li>
+</ul></li>
+<li><strong>Outras</strong>:
+<ul>
+<li><strong>ClamAV</strong> + <strong>rkhunter</strong>: Scanners
+locais; não integram VirusTotal, mas checam processos.</li>
+<li><strong>Falco</strong>: Monitora eventos de sistema (incluindo
+processos) e pode acionar scripts para VirusTotal.</li>
+</ul></li>
+</ul>
+<h3 data-number="1.2.5" id="dicas-finais"><span class="header-section-number">1.2.5</span> Dicas Finais</h3>
+<ul>
+<li><strong>API do VirusTotal</strong>: Todas as integrações acima usam
+a API gratuita (limite: 4 requests/minuto; premium para mais).
+Cadastre-se em <a href="https://www.virustotal.com/gui/join-us">virustotal.com</a> para
+uma chave.</li>
+<li><strong>Segurança no Linux</strong>: Malware é raro, mas foque em
+hashes de binários suspeitos. Use <code>lsmod</code> para módulos kernel
+ou <code>netstat/ss</code> para conexões.</li>
+<li><strong>Se Quiser Algo Mais Próximo</strong>: Considere rodar o
+Process Explorer via Wine (experimental, não recomendado para análise
+precisa) ou use máquinas virtuais Windows para casos específicos.</li>
+<li><strong>Recursos Adicionais</strong>:
+<ul>
+<li>Docs VirusTotal para Linux: <a href="https://docs.virustotal.com/docs/desktop-apps">docs.virustotal.com/docs/desktop-apps</a>.</li>
+<li>Fórum Reddit para discussões: Busque “Linux VirusTotal process scan”
+em r/linuxquestions.</li>
+</ul></li>
+</ul>
+<p>Se precisar de ajuda para configurar um script específico ou mais
+detalhes sobre alguma ferramenta, me diga! 😊</p>
+<hr />
+<p><em>Conversa exportada do Grok</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

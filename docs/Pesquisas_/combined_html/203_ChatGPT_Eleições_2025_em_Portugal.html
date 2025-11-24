@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>203_ChatGPT_Eleições_2025_em_Portugal</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#eleições-2025-em-portugal" id="toc-eleições-2025-em-portugal"><span class="toc-section-number">1</span> Eleições 2025 em Portugal</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="eleições-2025-em-portugal"><span class="header-section-number">1</span> Eleições 2025 em Portugal</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #203</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> 6827984b-592c-8007-a2fe-12095acdeaca</li>
+<li><strong>Criada em:</strong> 2025-05-16 20:55:56</li>
+<li><strong>Atualizada em:</strong> 2025-05-16 20:58:07</li>
+<li><strong>Total de mensagens:</strong> 4</li>
+<li><strong>Resumo:</strong> Tendo como base as varias sondagens em
+Portugal, qual será o resultado provavel das proximas eleiçõe…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-05-16-205555-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-05-16
+20:55:55)</em> <em>[ChatGPT]</em></h3>
+<p>Tendo como base as varias sondagens em Portugal, qual será o
+resultado provavel das proximas eleições legislativas de 18 de Maio
+2025</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-05-16-205557-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-05-16
+20:55:57)</em> <em>[ChatGPT]</em></h3>
+<p>Com base nas sondagens mais recentes, a Aliança Democrática (AD),
+liderada por Luís Montenegro, é apontada como a provável vencedora das
+eleições legislativas de 18 de maio de 2025, embora sem maioria
+absoluta.</p>
+<h3 data-number="1.2.3" id="intenções-de-voto"><span class="header-section-number">1.2.3</span> 📊 Intenções de voto</h3>
+<p>De acordo com a sondagem da Universidade Católica, a AD lidera com
+34% das intenções de voto, seguida pelo Partido Socialista (PS) com 26%
+e o Chega com 19% citeturn0news12.</p>
+<p>Outra sondagem da Pitagórica indica a AD com 34,4%, o PS com 27,8%,
+o Chega com 14,9% e a Iniciativa Liberal (IL) com 6%
+citeturn0search0.</p>
+<p>A “Sondagem das Sondagens” da Renascença apresenta a AD com 30,9%, o
+PS com 28,5%, o Chega com 16,7% e a IL com 7,6%
+citeturn0search1.</p>
+<h3 data-number="1.2.4" id="perspectiva-de-formação-de-governo"><span class="header-section-number">1.2.4</span> 🗳️ Perspectiva de formação de
+governo</h3>
+<p>Apesar de liderar nas sondagens, a AD não deverá alcançar a maioria
+absoluta, o que poderá levar à necessidade de formar coligações. No
+entanto, Luís Montenegro já descartou uma coligação com o Chega
+citeturn0news14. A Iniciativa Liberal, com cerca de 7% das intenções
+de voto, surge como um potencial parceiro de coligação, mas mesmo assim,
+a maioria parlamentar pode não ser garantida.</p>
+<h3 data-number="1.2.5" id="contexto-político"><span class="header-section-number">1.2.5</span> ⚠️ Contexto político</h3>
+<p>Estas eleições ocorrem num cenário de instabilidade política, sendo
+a terceira eleição antecipada em três anos. A queda do governo
+anterior, liderado por Luís Montenegro, deveu-se a um voto de
+desconfiança relacionado com alegados conflitos de interesse
+citeturn0news15.</p>
+<p>O Chega, liderado por André Ventura, tem centrado a campanha em
+temas como imigração e segurança, apesar de controvérsias e problemas de
+saúde do líder citeturn0news13.</p>
+<h3 data-number="1.2.6" id="conclusão"><span class="header-section-number">1.2.6</span> 🔮 Conclusão</h3>
+<p>A AD é a favorita para vencer as eleições, mas a formação de um
+governo estável dependerá de negociações pós-eleitorais. A
+possibilidade de um parlamento fragmentado e a relutância em formar
+coligações com certos partidos podem prolongar a instabilidade
+política.</p>
+<p>navlistÚltimas notícias sobre as eleições legislativas em
+Portugalturn0news12,turn0news13,turn0news14</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-05-16-205748-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-05-16
+20:57:48)</em> <em>[ChatGPT]</em></h3>
+<p>E qual será o possivel resultado com base nas sondagens agregadas</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-05-16-205749-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-05-16
+20:57:49)</em> <em>[ChatGPT]</em></h3>
+<p>Com base nas <strong>sondagens agregadas mais recentes</strong>, eis
+uma <strong>estimativa provável de resultados</strong> das eleições
+legislativas de 18 de maio de 2025 em Portugal:</p>
+<hr />
+<h3 data-number="1.2.9" id="sondagens-agregadas-média-de-várias-sondagens-até-16-de-maio-de-2025"><span class="header-section-number">1.2.9</span> 📊 <strong>Sondagens
+Agregadas (média de várias sondagens até 16 de maio de
+2025)</strong></h3>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 30%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Partido</th>
+<th>Intenção de Voto (%)</th>
+<th>Projeção de Deputados*</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Aliança Democrática (AD)</strong></td>
+<td>~31%</td>
+<td>~100–110</td>
+</tr>
+<tr>
+<td><strong>Partido Socialista (PS)</strong></td>
+<td>~28%</td>
+<td>~85–95</td>
+</tr>
+<tr>
+<td><strong>Chega</strong></td>
+<td>~17%</td>
+<td>~40–45</td>
+</tr>
+<tr>
+<td><strong>Iniciativa Liberal (IL)</strong></td>
+<td>~6–8%</td>
+<td>~8–12</td>
+</tr>
+<tr>
+<td><strong>Bloco de Esquerda (BE)</strong></td>
+<td>~4–5%</td>
+<td>~5–8</td>
+</tr>
+<tr>
+<td><strong>CDU (PCP-PEV)</strong></td>
+<td>~3–4%</td>
+<td>~4–6</td>
+</tr>
+<tr>
+<td><strong>Livre</strong></td>
+<td>~2–3%</td>
+<td>~2–3</td>
+</tr>
+<tr>
+<td><strong>PAN</strong></td>
+<td>~1–2%</td>
+<td>~1–2</td>
+</tr>
+<tr>
+<td><strong>Outros/Indecisos</strong></td>
+<td>~2–4%</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>*Nota: A projeção de deputados considera a distribuição pelo método
+de Hondt nos 22 círculos eleitorais e pode variar consoante a abstenção
+e distribuição local do voto.</p>
+</blockquote>
+<hr />
+<h3 data-number="1.2.10" id="cenários-de-governação"><span class="header-section-number">1.2.10</span> 🧮 <strong>Cenários de
+Governação</strong></h3>
+<ul>
+<li><strong>AD + IL</strong>: Junta cerca de 110–120 deputados. Pode não
+ser suficiente para maioria absoluta (116), mas seria o cenário mais
+provável para negociação parlamentar.</li>
+<li><strong>AD + Chega + IL</strong>: Superaria os 130 deputados, mas
+<strong>Montenegro (AD) exclui acordos com o Chega</strong>.</li>
+<li><strong>PS + BE + Livre + PAN + CDU</strong>: Mesmo somando todos os
+partidos à esquerda, dificilmente ultrapassam os 110 deputados.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.11" id="conclusão-1"><span class="header-section-number">1.2.11</span> ⚠️
+<strong>Conclusão</strong></h3>
+<ul>
+<li>A <strong>AD está na frente</strong>, mas <strong>não terá maioria
+absoluta</strong>.</li>
+<li>O cenário mais provável é <strong>governo minoritário da AD com
+apoio parlamentar da IL</strong>.</li>
+<li>A <strong>instabilidade continua provável</strong>, com o risco de
+bloqueio parlamentar, dada a fragmentação do voto e exclusões mútuas
+(ex.: AD recusa Chega, PS sem maioria viável à esquerda).</li>
+</ul>
+<p>Se quiser, posso simular a distribuição de deputados com base em
+círculos eleitorais e margens de erro.</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

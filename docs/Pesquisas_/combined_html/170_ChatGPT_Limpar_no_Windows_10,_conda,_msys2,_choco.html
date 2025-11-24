@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>170_ChatGPT_Limpar_no_Windows_10,_conda,_msys2,_choco</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#limpar-no-windows-10-conda-msys2-choco" id="toc-limpar-no-windows-10-conda-msys2-choco"><span class="toc-section-number">1</span> Limpar no Windows 10, conda, msys2,
+choco</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#conda" id="toc-conda"><span class="toc-section-number">1.3</span> 🔹 1. Conda</a></li>
+<li><a href="#msys2-msys3" id="toc-msys2-msys3"><span class="toc-section-number">1.4</span> 🔹 2. MSYS2 (msys3)</a></li>
+<li><a href="#chocolatey-choco" id="toc-chocolatey-choco"><span class="toc-section-number">1.5</span> 🔹 3. Chocolatey (choco)</a></li>
+<li><a href="#limpeza-geral-do-windows-extra" id="toc-limpeza-geral-do-windows-extra"><span class="toc-section-number">1.6</span> 🔹 4. Limpeza geral do Windows
+(extra)</a></li>
+<li><a href="#conda-1" id="toc-conda-1"><span class="toc-section-number">1.7</span> 🔹 Conda</a></li>
+<li><a href="#msys2-msys3-1" id="toc-msys2-msys3-1"><span class="toc-section-number">1.8</span> 🔹 MSYS2 (msys3)</a></li>
+<li><a href="#chocolatey-choco-1" id="toc-chocolatey-choco-1"><span class="toc-section-number">1.9</span> 🔹 Chocolatey (choco)</a></li>
+<li><a href="#conda-2" id="toc-conda-2"><span class="toc-section-number">1.10</span> 🔹 Conda</a></li>
+<li><a href="#msys2-msys3-2" id="toc-msys2-msys3-2"><span class="toc-section-number">1.11</span> 🔹 MSYS2 (msys3)</a></li>
+<li><a href="#chocolatey-choco-2" id="toc-chocolatey-choco-2"><span class="toc-section-number">1.12</span> 🔹 Chocolatey (choco)</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="limpar-no-windows-10-conda-msys2-choco"><span class="header-section-number">1</span> Limpar no Windows 10, conda,
+msys2, choco</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #170</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Programação</li>
+<li><strong>ID:</strong> 68d14d4c-def8-832a-b571-50569f604016</li>
+<li><strong>Criada em:</strong> 2025-09-22 14:23:13</li>
+<li><strong>Atualizada em:</strong> 2025-09-22 14:50:35</li>
+<li><strong>Total de mensagens:</strong> 12</li>
+<li><strong>Resumo:</strong> Como limpar no sitema windows 10, de modo a
+recuperar espaço no disco, as instalações de conda, msys…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-09-22-142312-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-09-22
+14:23:12)</em> <em>[ChatGPT]</em></h3>
+<p>Como limpar no sitema windows 10, de modo a recuperar espaço no
+disco, as instalações de conda, msys3 e choco</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-09-22-142313-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-09-22
+14:23:13)</em> <em>[ChatGPT]</em></h3>
+<p>Boa pergunta 👍. No Windows 10, instalações de
+<strong>Conda</strong>, <strong>MSYS2</strong> (msys3) e
+<strong>Chocolatey (choco)</strong> podem ocupar bastante espaço ao
+longo do tempo — principalmente pelos caches, pacotes antigos e
+dependências.<br />
+Aqui vai um passo a passo prático para <strong>limpar e recuperar
+espaço</strong>:</p>
+<hr />
+<h2 data-number="1.3" id="conda"><span class="header-section-number">1.3</span> 🔹 1. Conda</h2>
+<p>O <strong>Conda</strong> mantém caches de pacotes e ambientes que
+podem crescer muito.</p>
+<ol type="1">
+<li><p><strong>Remover pacotes não usados (cache):</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>conda clean <span class="op">--</span>all <span class="op">--</span>yes</span></code></pre></div>
+<p>Isso remove:</p>
+<ul>
+<li>Caches de pacotes (<code>pkgs/</code>)</li>
+<li>Tarballs baixados</li>
+<li>Logs antigos</li>
+</ul></li>
+<li><p><strong>Remover ambientes não usados:</strong> Listar
+ambientes:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>conda env list</span></code></pre></div>
+<p>Remover ambiente específico:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>conda env remove <span class="op">-</span>n nome_do_ambiente</span></code></pre></div></li>
+<li><p><strong>Limpeza manual (se necessário):</strong> O cache fica
+geralmente em:</p>
+<pre><code>C:\Users\SEU_USUARIO\Anaconda3\pkgs</code></pre>
+<p>ou</p>
+<pre><code>C:\Users\SEU_USUARIO\.conda\pkgs</code></pre>
+<p>Pode apagar manualmente pastas grandes (mas cuidado para não apagar o
+ambiente base).</p></li>
+</ol>
+<hr />
+<h2 data-number="1.4" id="msys2-msys3"><span class="header-section-number">1.4</span> 🔹 2. MSYS2 (msys3)</h2>
+<p>O <strong>MSYS2</strong> também guarda caches de pacotes.</p>
+<ol type="1">
+<li><p><strong>Remover pacotes baixados (cache):</strong> No terminal
+<strong>MSYS2</strong>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Scc</span></span></code></pre></div>
+<p>Isso vai perguntar duas vezes antes de limpar todo o cache de
+pacotes.</p></li>
+<li><p><strong>Remover dependências órfãs (não usadas):</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Rns</span> <span class="va">$(</span><span class="ex">pacman</span> <span class="at">-Qdtq</span><span class="va">)</span></span></code></pre></div></li>
+<li><p><strong>Limpeza manual:</strong> O cache geralmente está em:</p>
+<pre><code>C:\msys64\var\cache\pacman\pkg</code></pre>
+<p>Pode deletar manualmente.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.5" id="chocolatey-choco"><span class="header-section-number">1.5</span> 🔹 3. Chocolatey (choco)</h2>
+<p>O <strong>Chocolatey</strong> também mantém cache de pacotes
+baixados.</p>
+<ol type="1">
+<li><p><strong>Limpar cache:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>choco clean <span class="op">--</span>yes</span></code></pre></div></li>
+<li><p><strong>Remover pacotes não usados:</strong> Listar pacotes
+instalados:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>choco list <span class="op">--</span>local-only</span></code></pre></div>
+<p>Remover algum pacote:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>choco uninstall nome_do_pacote <span class="op">-</span>y</span></code></pre></div></li>
+<li><p><strong>Limpeza manual:</strong> O cache geralmente está em:</p>
+<pre><code>C:\ProgramData\chocolatey\lib
+C:\ProgramData\chocolatey\cache</code></pre>
+<p>Pode apagar pacotes antigos.</p></li>
+</ol>
+<hr />
+<h2 data-number="1.6" id="limpeza-geral-do-windows-extra"><span class="header-section-number">1.6</span> 🔹 4. Limpeza geral do Windows
+(extra)</h2>
+<p>Além desses gerenciadores, pode liberar ainda mais espaço com:</p>
+<ul>
+<li><p><strong>Liberador de espaço em disco</strong>:</p>
+<pre><code>cleanmgr</code></pre></li>
+<li><p><strong>Storage Sense</strong> (Configurações &gt; Sistema &gt;
+Armazenamento).</p></li>
+<li><p><strong>Remover temporários manualmente</strong>:</p>
+<pre><code>%TEMP%
+C:\Windows\Temp</code></pre></li>
+</ul>
+<hr />
+<p>👉 Quer que eu prepare um <strong>script em PowerShell</strong> que
+automatize a limpeza de Conda, MSYS2 e Chocolatey de uma vez?</p>
+<hr />
+<h3 data-number="1.6.1" id="utilizador-2025-09-22-143806-chatgpt"><span class="header-section-number">1.6.1</span> 👤 Utilizador <em>(2025-09-22
+14:38:06)</em> <em>[ChatGPT]</em></h3>
+<p>Não. Apenas dentro de cada um dos sistemas</p>
+<hr />
+<h3 data-number="1.6.2" id="chatgpt-2025-09-22-143806-chatgpt"><span class="header-section-number">1.6.2</span> 🤖 ChatGPT <em>(2025-09-22
+14:38:06)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👍 então vamos focar <strong>somente dentro de cada sistema
+(conda, msys2 e choco)</strong> sem misturar com o Windows em si.</p>
+<p>Aqui está o essencial em cada caso:</p>
+<hr />
+<h2 data-number="1.7" id="conda-1"><span class="header-section-number">1.7</span> 🔹 Conda</h2>
+<p>Dentro do próprio <strong>Conda</strong>:</p>
+<ol type="1">
+<li><p><strong>Limpar caches e pacotes antigos</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>conda clean <span class="op">--</span>all <span class="op">--</span>yes</span></code></pre></div>
+<p>(remove caches, tarballs e pacotes não usados)</p></li>
+<li><p><strong>Remover ambientes não necessários</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>conda env list</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>conda env remove <span class="op">-</span>n nome_do_ambiente</span></code></pre></div></li>
+</ol>
+<hr />
+<h2 data-number="1.8" id="msys2-msys3-1"><span class="header-section-number">1.8</span> 🔹 MSYS2 (msys3)</h2>
+<p>Dentro do <strong>terminal MSYS2</strong>:</p>
+<ol type="1">
+<li><p><strong>Limpar cache de pacotes</strong></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Scc</span></span></code></pre></div>
+<p>(duas confirmações → remove todos os pacotes baixados)</p></li>
+<li><p><strong>Remover dependências órfãs</strong></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Rns</span> <span class="va">$(</span><span class="ex">pacman</span> <span class="at">-Qdtq</span><span class="va">)</span></span></code></pre></div></li>
+</ol>
+<hr />
+<h2 data-number="1.9" id="chocolatey-choco-1"><span class="header-section-number">1.9</span> 🔹 Chocolatey (choco)</h2>
+<p>Dentro do <strong>PowerShell com permissão de
+administrador</strong>:</p>
+<ol type="1">
+<li><p><strong>Limpar cache</strong></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>choco clean <span class="op">--</span>yes</span></code></pre></div></li>
+<li><p><strong>Listar pacotes instalados</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>choco list <span class="op">--</span>local-only</span></code></pre></div></li>
+<li><p><strong>Desinstalar os que não precisa</strong></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>choco uninstall nome_do_pacote <span class="op">-</span>y</span></code></pre></div></li>
+</ol>
+<hr />
+<p>Assim você mantém cada um <strong>enxuto por dentro do seu próprio
+sistema</strong> ✅.</p>
+<p>Quer que eu te mostre também <strong>como verificar quanto espaço
+cada um está ocupando</strong> antes e depois da limpeza?</p>
+<hr />
+<h3 data-number="1.9.1" id="utilizador-2025-09-22-143926-chatgpt"><span class="header-section-number">1.9.1</span> 👤 Utilizador <em>(2025-09-22
+14:39:26)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.9.2" id="chatgpt-2025-09-22-143926-chatgpt"><span class="header-section-number">1.9.2</span> 🤖 ChatGPT <em>(2025-09-22
+14:39:26)</em> <em>[ChatGPT]</em></h3>
+<p>Boa 👌, dá para medir quanto espaço cada um ocupa <strong>dentro do
+seu próprio sistema</strong> antes e depois da limpeza. Aqui estão as
+formas práticas:</p>
+<hr />
+<h2 data-number="1.10" id="conda-2"><span class="header-section-number">1.10</span> 🔹 Conda</h2>
+<p>Os pacotes e ambientes ficam em pastas específicas.</p>
+<h3 data-number="1.10.1" id="ver-tamanho-do-cache-de-pacotes"><span class="header-section-number">1.10.1</span> 1. Ver tamanho do cache de
+pacotes:</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>du <span class="op">-</span>sh C<span class="op">:</span>\Users\<span class="op">%</span>USERNAME<span class="op">%</span>\Anaconda3\pkgs</span></code></pre></div>
+<p>ou se usa Miniconda:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>du <span class="op">-</span>sh C<span class="op">:</span>\Users\<span class="op">%</span>USERNAME<span class="op">%</span>\miniconda3\pkgs</span></code></pre></div>
+<p><em>(Se não tiver <code>du</code> no Windows, pode usar
+<code>Get-ChildItem</code> no PowerShell:)</em></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-ChildItem</span> <span class="st">&quot;C:\Users\</span><span class="va">$env</span><span class="op">:</span><span class="va">USERNAME</span><span class="st">\Anaconda3\pkgs&quot;</span> <span class="op">-</span>Recurse <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Property Length <span class="op">-</span>Sum<span class="op">).</span><span class="fu">Sum</span> <span class="op">/</span> 1GB</span></code></pre></div>
+<h3 data-number="1.10.2" id="ver-ambientes-instalados"><span class="header-section-number">1.10.2</span> 2. Ver ambientes
+instalados:</h3>
+<div class="sourceCode" id="cb25"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>conda env list</span></code></pre></div>
+<p>Para medir o espaço de um ambiente específico:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-ChildItem</span> <span class="st">&quot;C:\Users\</span><span class="va">$env</span><span class="op">:</span><span class="va">USERNAME</span><span class="st">\Anaconda3\envs\nome_do_ambiente&quot;</span> <span class="op">-</span>Recurse <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Property Length <span class="op">-</span>Sum<span class="op">).</span><span class="fu">Sum</span> <span class="op">/</span> 1GB</span></code></pre></div>
+<hr />
+<h2 data-number="1.11" id="msys2-msys3-2"><span class="header-section-number">1.11</span> 🔹 MSYS2 (msys3)</h2>
+<p>No <strong>MSYS2 shell</strong>:</p>
+<h3 data-number="1.11.1" id="ver-tamanho-do-cache-de-pacotes-1"><span class="header-section-number">1.11.1</span> 1. Ver tamanho do cache de
+pacotes:</h3>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> /var/cache/pacman/pkg</span></code></pre></div>
+<h3 data-number="1.11.2" id="ver-pacotes-órfãos"><span class="header-section-number">1.11.2</span> 2. Ver pacotes órfãos:</h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Qdt</span></span></code></pre></div>
+<h3 data-number="1.11.3" id="ver-espaço-total-ocupado-pelo-msys2"><span class="header-section-number">1.11.3</span> 3. Ver espaço total ocupado
+pelo MSYS2:</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> /</span></code></pre></div>
+<hr />
+<h2 data-number="1.12" id="chocolatey-choco-2"><span class="header-section-number">1.12</span> 🔹 Chocolatey (choco)</h2>
+<p>O cache e pacotes ficam em <strong>ProgramData</strong>.</p>
+<h3 data-number="1.12.1" id="ver-tamanho-do-cache"><span class="header-section-number">1.12.1</span> 1. Ver tamanho do
+cache:</h3>
+<div class="sourceCode" id="cb30"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-ChildItem</span> <span class="st">&quot;C:\ProgramData\chocolatey\cache&quot;</span> <span class="op">-</span>Recurse <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Property Length <span class="op">-</span>Sum<span class="op">).</span><span class="fu">Sum</span> <span class="op">/</span> 1GB</span></code></pre></div>
+<h3 data-number="1.12.2" id="ver-tamanho-da-pasta-de-pacotes"><span class="header-section-number">1.12.2</span> 2. Ver tamanho da pasta de
+pacotes:</h3>
+<div class="sourceCode" id="cb31"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">(</span><span class="fu">Get-ChildItem</span> <span class="st">&quot;C:\ProgramData\chocolatey\lib&quot;</span> <span class="op">-</span>Recurse <span class="op">|</span> <span class="fu">Measure-Object</span> <span class="op">-</span>Property Length <span class="op">-</span>Sum<span class="op">).</span><span class="fu">Sum</span> <span class="op">/</span> 1GB</span></code></pre></div>
+<h3 data-number="1.12.3" id="listar-pacotes-instalados"><span class="header-section-number">1.12.3</span> 3. Listar pacotes
+instalados:</h3>
+<div class="sourceCode" id="cb32"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>choco list <span class="op">--</span>local-only</span></code></pre></div>
+<hr />
+<p>👉 Dessa forma você consegue <strong>antes da limpeza medir o espaço
+ocupado</strong>, rodar os comandos de limpeza que te mostrei antes e
+<strong>medir de novo</strong> para ver o quanto liberou.</p>
+<p>Quer que eu monte uma tabelinha simples de <strong>comandos
+antes/depois</strong> para cada sistema (conda, msys2, choco) para você
+usar como checklist?</p>
+<hr />
+<h3 data-number="1.12.4" id="utilizador-2025-09-22-144120-chatgpt"><span class="header-section-number">1.12.4</span> 👤 Utilizador
+<em>(2025-09-22 14:41:20)</em> <em>[ChatGPT]</em></h3>
+<p>msys2 apagar pacotes órfãos</p>
+<hr />
+<h3 data-number="1.12.5" id="chatgpt-2025-09-22-144120-chatgpt"><span class="header-section-number">1.12.5</span> 🤖 ChatGPT <em>(2025-09-22
+14:41:20)</em> <em>[ChatGPT]</em></h3>
+<p>Beleza 👍, no <strong>MSYS2</strong> os <strong>pacotes
+órfãos</strong> são aqueles que foram instalados como dependência de
+outro pacote, mas agora não são mais usados.</p>
+<p>O processo é simples, direto do <strong>MSYS2 shell</strong>:</p>
+<hr />
+<h3 data-number="1.12.6" id="listar-pacotes-órfãos"><span class="header-section-number">1.12.6</span> 🔹 1. Listar pacotes
+órfãos</h3>
+<div class="sourceCode" id="cb33"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Qdt</span></span></code></pre></div>
+<p>Se não aparecer nada, significa que não há órfãos.</p>
+<hr />
+<h3 data-number="1.12.7" id="remover-pacotes-órfãos"><span class="header-section-number">1.12.7</span> 🔹 2. Remover pacotes
+órfãos</h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Rns</span> <span class="va">$(</span><span class="ex">pacman</span> <span class="at">-Qdtq</span><span class="va">)</span></span></code></pre></div>
+<ul>
+<li><code>-Rns</code> → remove pacote, dependências não utilizadas e
+arquivos de configuração.<br />
+</li>
+<li><code>$(pacman -Qdtq)</code> → gera a lista dos pacotes órfãos.</li>
+</ul>
+<hr />
+<p>⚠️ Atenção:<br />
+- Se der erro de <strong>“argument list empty”</strong>, é porque não há
+pacotes órfãos para remover.<br />
+- Sempre bom rodar primeiro o <code>pacman -Qdt</code> para confirmar a
+lista antes de apagar.</p>
+<hr />
+<p>Quer que eu te mostre também como <strong>limpar só o cache do
+pacman</strong> sem mexer nos pacotes instalados?</p>
+<hr />
+<h3 data-number="1.12.8" id="utilizador-2025-09-22-144905-chatgpt"><span class="header-section-number">1.12.8</span> 👤 Utilizador
+<em>(2025-09-22 14:49:05)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.12.9" id="chatgpt-2025-09-22-144905-chatgpt"><span class="header-section-number">1.12.9</span> 🤖 ChatGPT <em>(2025-09-22
+14:49:05)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 😄, limpar <strong>apenas o cache do pacman</strong> no
+MSYS2 é bem seguro e ajuda a liberar espaço sem remover pacotes
+instalados.</p>
+<hr />
+<h3 data-number="1.12.10" id="limpar-cache-de-pacotes-do-pacman"><span class="header-section-number">1.12.10</span> 🔹 Limpar cache de pacotes
+do pacman</h3>
+<p>No <strong>MSYS2 shell</strong>, rode:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Scc</span></span></code></pre></div>
+<ul>
+<li>Ele vai pedir <strong>duas confirmações</strong>:
+<ol type="1">
+<li>“Do you want to remove all cached packages? [y/N]” → digite
+<code>y</code></li>
+<li>“Do you want to remove uninstalled packages from cache? [y/N]” →
+digite <code>y</code></li>
+</ol></li>
+</ul>
+<p>Isso vai apagar <strong>todos os pacotes baixados</strong> que ficam
+em cache, mas <strong>não toca nos pacotes instalados</strong>.</p>
+<hr />
+<h3 data-number="1.12.11" id="ver-tamanho-do-cache-antesdepois"><span class="header-section-number">1.12.11</span> 🔹 Ver tamanho do cache
+antes/depois</h3>
+<p>Antes de limpar:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> /var/cache/pacman/pkg</span></code></pre></div>
+<p>Depois de limpar:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> /var/cache/pacman/pkg</span></code></pre></div>
+<p>Você verá quanto espaço foi liberado.</p>
+<p>Se quiser, posso te mostrar um <strong>comando único que limpa o
+cache e remove pacotes órfãos de uma vez só</strong>, sem risco de
+apagar algo importante. Quer que eu faça isso?</p>
+<hr />
+<h3 data-number="1.12.12" id="utilizador-2025-09-22-145024-chatgpt"><span class="header-section-number">1.12.12</span> 👤 Utilizador
+<em>(2025-09-22 14:50:24)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.12.13" id="chatgpt-2025-09-22-145024-chatgpt"><span class="header-section-number">1.12.13</span> 🤖 ChatGPT <em>(2025-09-22
+14:50:24)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 😄, dá para combinar <strong>remoção de pacotes
+órfãos</strong> + <strong>limpeza de cache</strong> em um único comando
+seguro no MSYS2:</p>
+<hr />
+<h3 data-number="1.12.14" id="comando-único"><span class="header-section-number">1.12.14</span> 🔹 Comando único</h3>
+<p>No <strong>MSYS2 shell</strong>, rode:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove pacotes órfãos (se houver)</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Rns</span> <span class="va">$(</span><span class="ex">pacman</span> <span class="at">-Qdtq</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null<span class="va">)</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Limpa todo o cache de pacotes</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">yes</span> <span class="kw">|</span> <span class="ex">pacman</span> <span class="at">-Scc</span></span></code></pre></div>
+<hr />
+<h3 data-number="1.12.15" id="explicação"><span class="header-section-number">1.12.15</span> 🔹 Explicação</h3>
+<ol type="1">
+<li><code>pacman -Rns $(pacman -Qdtq 2&gt;/dev/null)</code>
+<ul>
+<li>Remove pacotes órfãos e dependências não usadas.<br />
+</li>
+<li><code>2&gt;/dev/null</code> evita mensagens de erro caso não haja
+órfãos.</li>
+</ul></li>
+<li><code>yes | pacman -Scc</code>
+<ul>
+<li>O comando <code>yes</code> responde automaticamente <code>y</code>
+às duas confirmações do <code>pacman -Scc</code>.<br />
+</li>
+<li>Limpa todo o cache de pacotes sem tocar nos pacotes instalados.</li>
+</ul></li>
+</ol>
+<hr />
+<p>✅ Resultado:<br />
+- Todos os pacotes órfãos removidos.<br />
+- Cache de pacotes limpo.<br />
+- Sistema MSYS2 mais enxuto sem perder pacotes importantes.</p>
+<p>Se quiser, posso te montar uma <strong>versão que ainda mostra o
+espaço liberado antes e depois</strong>, tudo em uma linha. Quer que eu
+faça isso?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>

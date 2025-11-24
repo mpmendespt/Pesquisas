@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+
+        <style id="fixed-toc-styles">
+        /* === ESTILOS PRINCIPAIS - TOC FIXO À DIREITA === */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        /* === TOC FIXO À DIREITA - POSIÇÃO CORRIGIDA === */
+        #TOC {
+            position: fixed !important;
+            top: 50% !important;
+            right: 20px !important;
+            transform: translateY(-50%) !important;
+            width: 320px !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            z-index: 1000 !important;
+            background: rgba(255, 255, 255, 0.98) !important;
+            padding: 20px !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: 1px solid #e0e0e0 !important;
+            backdrop-filter: blur(10px) !important;
+            transition: all 0.3s ease-in-out !important;
+        }
+        #TOC.toc-minimized {
+            transform: translateY(-50%) translateX(calc(320px - 50px)) !important;
+            opacity: 0.3;
+            width: 50px !important;
+            overflow: hidden;
+        }
+        #TOC.toc-minimized > *:not(.toc-toggle-btn) {
+            display: none !important;
+        }
+        #TOC h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .toc-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .toc-toggle-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #TOC ul {
+            list-style-type: none;
+            padding-left: 15px;
+            margin: 10px 0;
+        }
+        #TOC ul ul {
+            padding-left: 20px;
+        }
+        #TOC li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+        #TOC a {
+            text-decoration: none;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border-left: 3px solid transparent;
+        }
+        #TOC a:hover {
+            color: #007bff;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+        }
+        #TOC a.active {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
+            border-left-color: #0056b3;
+        }
+        /* Conteúdo principal com margem para o TOC */
+        .main-content {
+            margin-right: calc(320px + 40px) !important;
+        }
+        /* Barra de scroll personalizada APENAS para TOC */
+        #TOC::-webkit-scrollbar {
+            width: 8px;
+        }
+        #TOC::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        #TOC::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        /* === BOTÃO VOLTAR AO TOPO (HTMLs individuais) === */
+        .back-to-top-content {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top-content:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        /* === RESPONSIVIDADE === */
+        @media (max-width: 1400px) {
+            .container {
+                max-width: 95%;
+                padding: 30px;
+            }
+            #TOC {
+                width: 280px !important;
+            }
+            .main-content {
+                margin-right: 320px !important;
+            }
+        }
+        @media (max-width: 1200px) {
+            #TOC {
+                width: 260px !important;
+                right: 15px !important;
+            }
+            .main-content {
+                margin-right: 300px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            #TOC {
+                position: relative !important;
+                width: 100% !important;
+                right: 0 !important;
+                top: 0 !important;
+                transform: none !important;
+                margin: 20px 0;
+                max-height: 300px !important;
+            }
+            .main-content {
+                margin-right: 0 !important;
+            }
+            .back-to-top-content {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+                max-width: 100%;
+            }
+            #TOC {
+                max-height: 250px !important;
+                padding: 15px !important;
+            }
+        }
+        </style>
+        
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>031_ChatGPT_Converter_markdown_para_html</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#converter-markdown-para-html" id="toc-converter-markdown-para-html"><span class="toc-section-number">1</span> Converter markdown para html</a>
+<ul>
+<li><a href="#informações" id="toc-informações"><span class="toc-section-number">1.1</span> 📊 Informações</a></li>
+<li><a href="#conversa" id="toc-conversa"><span class="toc-section-number">1.2</span> 💬 Conversa</a></li>
+<li><a href="#comando-pandoc-completo-versão-moderna-pandoc-3.x" id="toc-comando-pandoc-completo-versão-moderna-pandoc-3.x"><span class="toc-section-number">1.3</span> 💻 Comando Pandoc completo (versão
+moderna, Pandoc ≥ 3.x)</a></li>
+<li><a href="#dicas-extras" id="toc-dicas-extras"><span class="toc-section-number">1.4</span> 🧠 Dicas extras</a></li>
+<li><a href="#resultado" id="toc-resultado"><span class="toc-section-number">1.5</span> 🧩 Resultado</a></li>
+<li><a href="#pandoc-a-referência-canônica" id="toc-pandoc-a-referência-canônica"><span class="toc-section-number">1.6</span> 🥇 <strong>1. Pandoc (a referência
+“canônica”)</strong></a></li>
+<li><a href="#marked.js-markdown-it-renderização-no-navegador" id="toc-marked.js-markdown-it-renderização-no-navegador"><span class="toc-section-number">1.7</span> 🥈 <strong>2. Marked.js /
+markdown-it (renderização no navegador)</strong></a></li>
+<li><a href="#typst-mdbook-quarto-ecossistemas-integrados" id="toc-typst-mdbook-quarto-ecossistemas-integrados"><span class="toc-section-number">1.8</span> 🥉 <strong>3. Typst / mdBook /
+Quarto (ecossistemas integrados)</strong></a></li>
+<li><a href="#outras-opções-específicas" id="toc-outras-opções-específicas"><span class="toc-section-number">1.9</span> 🪶 <strong>4. Outras opções
+específicas</strong></a></li>
+<li><a href="#conclusão-melhor-escolha-por-objetivo" id="toc-conclusão-melhor-escolha-por-objetivo"><span class="toc-section-number">1.10</span> 💡 <strong>Conclusão — Melhor
+escolha por objetivo</strong></a></li>
+<li><a href="#recomendação-prática-para-você" id="toc-recomendação-prática-para-você"><span class="toc-section-number">1.11</span> 🔧 Recomendação prática para
+você</a></li>
+<li><a href="#preparação" id="toc-preparação"><span class="toc-section-number">1.12</span> 🧩 1️⃣ Preparação</a></li>
+<li><a href="#comandos-de-conversão" id="toc-comandos-de-conversão"><span class="toc-section-number">1.13</span> 🧰 2️⃣ Comandos de
+conversão</a></li>
+<li><a href="#comparação-visual" id="toc-comparação-visual"><span class="toc-section-number">1.14</span> 🧮 3️⃣ Comparação visual</a></li>
+<li><a href="#resultado-típico" id="toc-resultado-típico"><span class="toc-section-number">1.15</span> 🧠 Resultado típico</a></li>
+<li><a href="#quer-que-eu-gere-agora-aqui-ambos-os-htmls-a-partir-do-teu-exemplo_completo3.md-e-te-envie-os-arquivos-prontos-para-download" id="toc-quer-que-eu-gere-agora-aqui-ambos-os-htmls-a-partir-do-teu-exemplo_completo3.md-e-te-envie-os-arquivos-prontos-para-download"><span class="toc-section-number">1.16</span> ⚙️ Quer que eu gere agora, aqui,
+ambos os HTMLs a partir do teu <code>exemplo_completo3.md</code> e te
+envie os arquivos prontos para download?</a></li>
+<li><a href="#instalação-do-quarto-via-chocolatey" id="toc-instalação-do-quarto-via-chocolatey"><span class="toc-section-number">1.17</span> 🧭 <strong>Instalação do Quarto
+via Chocolatey</strong></a></li>
+<li><a href="#notas-importantes" id="toc-notas-importantes"><span class="toc-section-number">1.18</span> 💡 <strong>Notas
+importantes</strong></a></li>
+<li><a href="#alternativas-de-instalação" id="toc-alternativas-de-instalação"><span class="toc-section-number">1.19</span> 🧩 Alternativas de
+instalação</a></li>
+<li><a href="#geração-via-pandoc" id="toc-geração-via-pandoc"><span class="toc-section-number">1.20</span> 🧩 1️⃣ Geração via
+<strong>Pandoc</strong></a></li>
+<li><a href="#geração-via-quarto" id="toc-geração-via-quarto"><span class="toc-section-number">1.21</span> 🧭 2️⃣ Geração via
+<strong>Quarto</strong></a></li>
+<li><a href="#comparando-visualmente" id="toc-comparando-visualmente"><span class="toc-section-number">1.22</span> 🧠 3️⃣ Comparando
+visualmente</a></li>
+<li><a href="#personalizar-o-tema-do-quarto" id="toc-personalizar-o-tema-do-quarto"><span class="toc-section-number">1.23</span> 🎨 4️⃣ Personalizar o tema do
+Quarto</a></li>
+<li><a href="#resumo-rápido" id="toc-resumo-rápido"><span class="toc-section-number">1.24</span> ✅ Resumo rápido</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 data-number="1" id="converter-markdown-para-html"><span class="header-section-number">1</span> Converter markdown para html</h1>
+<h2 data-number="1.1" id="informações"><span class="header-section-number">1.1</span> 📊 Informações</h2>
+<ul>
+<li><strong>Número:</strong> #31</li>
+<li><strong>Origem:</strong> ChatGPT</li>
+<li><strong>Categoria:</strong> Outros</li>
+<li><strong>ID:</strong> 690d31eb-5d80-8326-b3e2-fb759b4fb6d7</li>
+<li><strong>Criada em:</strong> 2025-11-06 23:40:27</li>
+<li><strong>Atualizada em:</strong> 2025-11-07 00:12:26</li>
+<li><strong>Total de mensagens:</strong> 18</li>
+<li><strong>Resumo:</strong> Converter exemplo_completo3.md para html.
+Qual a melhor forma que preserve todo o conteudo o mais fi…</li>
+</ul>
+<hr />
+<h2 data-number="1.2" id="conversa"><span class="header-section-number">1.2</span> 💬 Conversa</h2>
+<h3 data-number="1.2.1" id="utilizador-2025-11-06-234026-chatgpt"><span class="header-section-number">1.2.1</span> 👤 Utilizador <em>(2025-11-06
+23:40:26)</em> <em>[ChatGPT]</em></h3>
+<p>Converter exemplo_completo3.md para html. Qual a melhor forma que
+preserve todo o conteudo o mais fiel possivel?</p>
+<hr />
+<h3 data-number="1.2.2" id="chatgpt-2025-11-06-234110-chatgpt"><span class="header-section-number">1.2.2</span> 🤖 ChatGPT <em>(2025-11-06
+23:41:10)</em> <em>[ChatGPT]</em></h3>
+<p>Ótima pergunta — e bom que você já enviou o arquivo. Vou dividir a
+resposta em duas partes: (1) a recomendação ideal (ferramenta +
+comandos) para <strong>preservar tudo o mais fiel possível</strong>, e
+(2) uma conversão prática que já gerei aqui para você e que pode ser
+baixada e testada no navegador.</p>
+<h3 data-number="1.2.3" id="melhor-forma-recomendação-profissional"><span class="header-section-number">1.2.3</span> 1) Melhor forma (recomendação
+profissional)</h3>
+<p>A ferramenta <strong>melhor</strong> para converter Markdown avançado
+(YAML front matter, LaTeX/Math, notas de rodapé, muitos blocos de
+código, tabelas, emojis, atributos, etc.) para HTML com máxima
+fidelidade é <strong>Pandoc</strong>. Pandoc é feito para isso e tem
+suporte nativo a muitas extensões, além de permitir incluir
+MathJax/KaTeX, templates, CSS, destaque de sintaxe e opções para
+preservar metadados.</p>
+<p>Comando recomendado (linha de comando):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--highlight-style</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<p>Explicação rápida das flags: - <code>-s</code> /
+<code>--standalone</code>: gera documento HTML completo (head + body). -
+<code>--mathjax</code>: deixa as fórmulas LaTeX (inline e blocos
+<code>$$...$$</code>) para serem renderizadas no browser com MathJax. -
+<code>--highlight-style=pygments</code>: ativa destaque de sintaxe (você
+pode escolher outro estilo). - Você pode passar
+<code>--css=meuestilo.css</code> para aplicar seu próprio estilo ou usar
+templates do Pandoc.</p>
+<p>Se quiser máxima compatibilidade (ex.: footnotes, tables, definition
+lists, emoji, subscripts/superscripts), use também:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="at">--mathjax</span> <span class="at">--from</span> markdown+footnotes+tex_math_dollars+task_lists+emoji+fenced_code_attributes</span></code></pre></div>
+<p><strong>Vantagens do Pandoc</strong> - Converte quase tudo e respeita
+YAML front matter. - Permite exportar para PDF/LaTeX/RevealJS/Docx com a
+mesma origem. - Excelente controle sobre templates e CSS.</p>
+<hr />
+<h3 data-number="1.2.4" id="conversão-prática-que-eu-já-gerei-aqui-pronto-para-baixar"><span class="header-section-number">1.2.4</span> 2) Conversão prática que eu
+já gerei aqui (pronto para baixar)</h3>
+<p>Como você já fez upload do arquivo <code>exemplo_completo3.md</code>
+(o seu arquivo foi lido: fileciteturn0file0), gerei <strong>um HTML
+que renderiza o Markdown no próprio navegador</strong> usando
+<code>markdown-it</code> (cliente) + <code>highlight.js</code> +
+<code>MathJax</code>. Isso tem duas vantagens práticas:</p>
+<ul>
+<li>Preserva o conteúdo original exatamente (o Markdown completo fica
+embutido e é renderizado no cliente), inclusive fórmulas
+<code>$$...$$</code> (MathJax processa no navegador).</li>
+<li>Não depende de pacotes Python/servidor instalados neste ambiente,
+apenas de recursos client-side.<br />
+</li>
+<li>Mantém blocos de código, tabelas, notas de rodapé (por plugin),
+atributos, emojis e muito mais.</li>
+</ul>
+<p>Eu gerei o arquivo:
+<code>/mnt/data/exemplo_completo3_client.html</code></p>
+<p>Você pode baixá-lo com o link abaixo: <a href="sandbox:/mnt/data/exemplo_completo3_client.html">Download:
+exemplo_completo3_client.html</a></p>
+<p>(Se quiser, eu também posso gerar uma versão que tenta fazer a
+renderização <strong>no servidor</strong> e inserir HTML já renderizado
+— mas isso exige dependências que podem não estar instaladas aqui; o
+método client-side é mais portátil e fiel.)</p>
+<hr />
+<h3 data-number="1.2.5" id="o-que-o-html-gerado-faz-detalhes-técnicos"><span class="header-section-number">1.2.5</span> O que o HTML gerado faz
+(detalhes técnicos)</h3>
+<ul>
+<li>Embute o conteúdo original Markdown em
+<code>&lt;script type=&quot;text/plain&quot; id=&quot;source-md&quot;&gt;...&lt;/script&gt;</code>.</li>
+<li>Usa <code>markdown-it</code> + <code>markdown-it-footnote</code> +
+<code>markdown-it-attrs</code> (via CDN) para renderizar o Markdown ao
+carregar no navegador.</li>
+<li>Usa <code>highlight.js</code> para destacar blocos de código (via
+CDN).</li>
+<li>Usa <code>MathJax</code> para renderizar fórmulas LaTeX
+(<code>$$ ... $$</code> e <code>\(...\)</code>).</li>
+<li>Resultado: visual equivalente ao que você veria no Typora/Obsidian,
+com a vantagem de suportar fórmulas e destaque de código no
+browser.</li>
+</ul>
+<hr />
+<h3 data-number="1.2.6" id="observações-recomendações-finais"><span class="header-section-number">1.2.6</span> Observações / Recomendações
+finais</h3>
+<ul>
+<li>Se você precisa de <strong>produção</strong> (por exemplo, múltiplos
+arquivos, site estático, slides), recomendo usar <strong>Pandoc</strong>
+ou um gerador estático (Hugo/Eleventy) com plugins para math &amp; code
+highlighting.</li>
+<li>Para <strong>impressão PDF fiel</strong>, gere HTML com Pandoc e
+depois <code>wkhtmltopdf</code> ou a própria exportação do Pandoc para
+PDF (via LaTeX), pois isso preserva tipografia e layout.</li>
+<li>Se quiser, eu posso:
+<ul>
+<li>Gerar também uma versão HTML completamente <strong>renderizada no
+servidor</strong> (HTML final pronto, sem depender de JS no cliente) —
+tentarei isso, mas pode faltar algum pacote aqui; ou</li>
+<li>Gerar um template com CSS customizado e opções de tema
+(claro/escuro);</li>
+<li>Ou fornecer o comando Pandoc pronto com opções específicas (tema,
+CSS, inclusão de cabeçalho/rodapé).</li>
+</ul></li>
+</ul>
+<p>Quer que eu: 1. Gere também uma versão <em>server-side</em> (HTML já
+renderizado) aqui, tentando usar bibliotecas locais?<br />
+2. Ou prefere a receita Pandoc + CSS e eu te dou um
+<code>Makefile</code> / script para usar localmente?</p>
+<p>Diga qual opção prefere e eu ajo imediatamente — já tenho o HTML
+client-side pronto para você baixar: <a href="sandbox:/mnt/data/exemplo_completo3_client.html">exemplo_completo3_client.html</a>.</p>
+<hr />
+<h3 data-number="1.2.7" id="utilizador-2025-11-06-234544-chatgpt"><span class="header-section-number">1.2.7</span> 👤 Utilizador <em>(2025-11-06
+23:45:44)</em> <em>[ChatGPT]</em></h3>
+<p>O comando correcto é: pandoc exemplo_completo3.md -s -o
+exemplo_completo3.html –metadata=title=“Documento Avançado” –mathjax
+–syntax-highlighting=pygments –standalone</p>
+<hr />
+<h3 data-number="1.2.8" id="chatgpt-2025-11-06-234545-chatgpt"><span class="header-section-number">1.2.8</span> 🤖 ChatGPT <em>(2025-11-06
+23:45:45)</em> <em>[ChatGPT]</em></h3>
+<p>Boa observação — quase perfeito 👏, mas há <strong>um pequeno detalhe
+técnico</strong>:<br />
+o parâmetro correto no Pandoc para o estilo de realce de código
+<strong>não é</strong>
+<code>--syntax-highlighting=pygments</code>,<br />
+e sim <code>--highlight-style=pygments</code>.</p>
+<p>✅ <strong>Comando correto e funcional:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--highlight-style</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<h3 data-number="1.2.9" id="explicando-as-partes"><span class="header-section-number">1.2.9</span> Explicando as partes</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-s</code> ou <code>--standalone</code></td>
+<td>Gera HTML completo (com <code>&lt;html&gt;</code>,
+<code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>).</td>
+</tr>
+<tr>
+<td><code>-o exemplo_completo3.html</code></td>
+<td>Define o arquivo de saída.</td>
+</tr>
+<tr>
+<td><code>--metadata=title=&quot;Documento Avançado&quot;</code></td>
+<td>Define o <code>&lt;title&gt;</code> no HTML.</td>
+</tr>
+<tr>
+<td><code>--mathjax</code></td>
+<td>Permite que fórmulas LaTeX sejam renderizadas no navegador via
+MathJax.</td>
+</tr>
+<tr>
+<td><code>--highlight-style=pygments</code></td>
+<td>Define o estilo de destaque de sintaxe para blocos de código (há
+outros estilos disponíveis, como <code>tango</code>, <code>kate</code>,
+<code>espresso</code>, <code>zenburn</code>, <code>monokai</code>,
+<code>breezedark</code>, etc.).</td>
+</tr>
+</tbody>
+</table>
+<p>💡 <strong>Dica opcional:</strong><br />
+Se o seu Markdown contém extensões como listas de tarefas, notas de
+rodapé, ou subscritos/sobrescritos, você pode incluir também:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">--from</span> markdown+footnotes+tex_math_dollars+task_lists+pipe_tables+table_captions</span></code></pre></div>
+<p>👉 Exemplo completo, robusto e altamente compatível:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--from</span> markdown+footnotes+tex_math_dollars+task_lists+pipe_tables+table_captions <span class="dt">\</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--highlight-style</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<p>Quer que eu te mostre também <strong>como embutir o CSS do Pygments
+diretamente no HTML</strong>, para que o resultado fique autossuficiente
+(sem depender de arquivos externos)?</p>
+<hr />
+<h3 data-number="1.2.10" id="utilizador-2025-11-06-234704-chatgpt"><span class="header-section-number">1.2.10</span> 👤 Utilizador
+<em>(2025-11-06 23:47:04)</em> <em>[ChatGPT]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__Converter_md_html_pdf_2&gt;pandoc
+exemplo_completo3.md -s -o exemplo_completo3.html
+–metadata=title=“Documento Avançado” –mathjax –highlight-style=pygments
+–standalone [WARNING] Deprecated: –highlight-style. Use
+–syntax-highlighting instead.</p>
+<hr />
+<h3 data-number="1.2.11" id="chatgpt-2025-11-06-234705-chatgpt"><span class="header-section-number">1.2.11</span> 🤖 ChatGPT <em>(2025-11-06
+23:47:05)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente observação — isso mostra que você está usando uma
+<strong>versão mais recente do Pandoc (&gt;= 3.0)</strong> 👏</p>
+<p>A partir dessa versão, o Pandoc <strong>mudou o nome da
+opção</strong> para refletir melhor o que ela faz:</p>
+<h3 data-number="1.2.12" id="correto-nas-versões-novas-pandoc-3.x"><span class="header-section-number">1.2.12</span> ✅ Correto nas versões novas
+(Pandoc 3.x)</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<h3 data-number="1.2.13" id="correto-nas-versões-antigas-pandoc-2.19"><span class="header-section-number">1.2.13</span> ✅ Correto nas versões
+antigas (Pandoc ≤ 2.19)</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--highlight-style</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<p>🔍 <strong>Resumo da mudança:</strong> | Versão do Pandoc | Opção
+válida | Exemplo | |——————|————–|———-| | ≤ 2.x |
+<code>--highlight-style=</code> |
+<code>--highlight-style=pygments</code> | | ≥ 3.x |
+<code>--syntax-highlighting=</code> |
+<code>--syntax-highlighting=pygments</code> |</p>
+<p>💡 <strong>Dica extra:</strong><br />
+Você pode ver todos os estilos disponíveis com:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--list-highlight-styles</span></span></code></pre></div>
+<p>E até exportar o CSS correspondente com:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--print-highlight-style</span><span class="op">=</span>pygments <span class="op">&gt;</span> pygments.css</span></code></pre></div>
+<p>Assim, você pode aplicar o mesmo estilo em seus HTMLs, mesmo que eles
+não carreguem CSS externo.</p>
+<p>Quer que eu te mostre como embutir esse CSS do <code>pygments</code>
+dentro do HTML para ficar 100 % autônomo (sem depender de internet)?</p>
+<hr />
+<h3 data-number="1.2.14" id="utilizador-2025-11-06-234857-chatgpt"><span class="header-section-number">1.2.14</span> 👤 Utilizador
+<em>(2025-11-06 23:48:57)</em> <em>[ChatGPT]</em></h3>
+<p>(Pesquisas) D:_DOCS__DOCS__Converter_md_html_pdf_2&gt;pandoc
+–list-highlight-styles pygments tango espresso zenburn kate monochrome
+breezedark haddock</p>
+<hr />
+<h3 data-number="1.2.15" id="chatgpt-2025-11-06-234857-chatgpt"><span class="header-section-number">1.2.15</span> 🤖 ChatGPT <em>(2025-11-06
+23:48:57)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito ✅ — isso confirma que seu <strong>Pandoc está
+atualizado</strong> e lista corretamente os estilos de destaque de
+código disponíveis.</p>
+<p>Esses nomes são os <em>temas</em> de sintaxe suportados internamente
+pelo Pandoc (via <em>highlighting-kate</em> ou <em>skylighting</em>,
+dependendo da versão).</p>
+<p>Aqui vai um pequeno guia para você escolher o estilo ideal e até
+embutir o CSS no HTML:</p>
+<hr />
+<h3 data-number="1.2.16" id="estilos-de-destaque-de-código-disponíveis"><span class="header-section-number">1.2.16</span> 🎨 Estilos de destaque de
+código disponíveis</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr>
+<th>Estilo</th>
+<th>Descrição visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>pygments</strong></td>
+<td>Tema clássico claro, bem equilibrado (inspirado no Pygments original
+do Python).</td>
+</tr>
+<tr>
+<td><strong>tango</strong></td>
+<td>Tema claro, com cores mais suaves e alto contraste — ótimo para
+impressão.</td>
+</tr>
+<tr>
+<td><strong>espresso</strong></td>
+<td>Tema escuro, bom contraste.</td>
+</tr>
+<tr>
+<td><strong>zenburn</strong></td>
+<td>Tema escuro, popular entre programadores — fundo acinzentado e
+agradável.</td>
+</tr>
+<tr>
+<td><strong>kate</strong></td>
+<td>Tema claro padrão do editor Kate (KDE).</td>
+</tr>
+<tr>
+<td><strong>monochrome</strong></td>
+<td>Sem cores, ideal para saída em preto e branco.</td>
+</tr>
+<tr>
+<td><strong>breezedark</strong></td>
+<td>Tema moderno escuro (derivado do KDE Breeze Dark).</td>
+</tr>
+<tr>
+<td><strong>haddock</strong></td>
+<td>Tema minimalista usado na documentação Haskell (tons claros).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 data-number="1.2.17" id="como-embutir-o-css-do-tema-no-html"><span class="header-section-number">1.2.17</span> 💡 Como
+<strong>embutir</strong> o CSS do tema no HTML</h3>
+<p>Assim o arquivo <code>.html</code> fica 100%
+<strong>autônomo</strong>, sem depender de internet.</p>
+<h4 data-number="1.2.17.1" id="passo-1-gerar-o-css-do-tema"><span class="header-section-number">1.2.17.1</span> Passo 1 — Gerar o CSS do
+tema:</h4>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--print-highlight-style</span><span class="op">=</span>pygments <span class="op">&gt;</span> pygments.css</span></code></pre></div>
+<h4 data-number="1.2.17.2" id="passo-2-incluir-no-comando-principal"><span class="header-section-number">1.2.17.2</span> Passo 2 — Incluir no
+comando principal:</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--css</span><span class="op">=</span>pygments.css <span class="dt">\</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<blockquote>
+<p>💬 Se quiser <strong>inserir o CSS diretamente dentro do
+<code>&lt;style&gt;</code> do HTML</strong>, sem depender de arquivo
+externo, você pode fazer:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="dt">\</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+</blockquote>
+<p>A opção <code>--embed-resources</code> faz o Pandoc embutir
+<strong>todo o CSS, imagens e fontes</strong> dentro do próprio
+<code>.html</code> (usando Base64).<br />
+Resultado: um único arquivo <code>.html</code> totalmente portátil e
+fiel ao original 🎯.</p>
+<hr />
+<p>Quer que eu te mostre um exemplo real (com CSS embutido e fórmulas
+MathJax renderizadas) gerado a partir do seu
+<code>exemplo_completo3.md</code>?</p>
+<hr />
+<h3 data-number="1.2.18" id="utilizador-2025-11-06-234956-chatgpt"><span class="header-section-number">1.2.18</span> 👤 Utilizador
+<em>(2025-11-06 23:49:56)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.2.19" id="chatgpt-2025-11-06-234956-chatgpt"><span class="header-section-number">1.2.19</span> 🤖 ChatGPT <em>(2025-11-06
+23:49:56)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 — vou te mostrar <strong>o comando completo
+ideal</strong> para gerar um HTML 100 % autônomo (com CSS embutido,
+fórmulas LaTeX via MathJax e realce de código no tema que
+preferires).</p>
+<hr />
+<h2 data-number="1.3" id="comando-pandoc-completo-versão-moderna-pandoc-3.x"><span class="header-section-number">1.3</span> 💻 Comando Pandoc completo
+(versão moderna, Pandoc ≥ 3.x)</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="dt">\</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<h3 data-number="1.3.1" id="o-que-faz-cada-opção"><span class="header-section-number">1.3.1</span> 🔍 O que faz cada opção</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Opção</th>
+<th>Função</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-s, --standalone</code></td>
+<td>Gera um HTML completo (com <code>&lt;head&gt;</code>,
+<code>&lt;body&gt;</code>, etc.).</td>
+</tr>
+<tr>
+<td><code>-o exemplo_completo3.html</code></td>
+<td>Define o arquivo de saída.</td>
+</tr>
+<tr>
+<td><code>--metadata=title=&quot;Documento Avançado&quot;</code></td>
+<td>Define o título da aba e da página.</td>
+</tr>
+<tr>
+<td><code>--mathjax</code></td>
+<td>Habilita a renderização de fórmulas LaTeX no navegador.</td>
+</tr>
+<tr>
+<td><code>--syntax-highlighting=pygments</code></td>
+<td>Usa o tema <em>pygments</em> para destacar código.</td>
+</tr>
+<tr>
+<td><code>--embed-resources</code></td>
+<td>Embute CSS, imagens, fontes e scripts dentro do HTML (ficando
+autônomo).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.4" id="dicas-extras"><span class="header-section-number">1.4</span> 🧠 Dicas extras</h2>
+<ol type="1">
+<li><strong>Trocar o tema do código</strong>
+<ul>
+<li>Podes usar qualquer um destes: <code>pygments</code>,
+<code>tango</code>, <code>espresso</code>, <code>zenburn</code>,
+<code>kate</code>, <code>monochrome</code>, <code>breezedark</code>,
+<code>haddock</code>.<br />
+Exemplo:</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">--syntax-highlighting=breezedark</span></span></code></pre></div></li>
+<li><strong>Ver fórmulas em modo offline</strong>
+<ul>
+<li><p>O <code>--mathjax</code> insere o link CDN do MathJax.<br />
+Se quiser um HTML 100 % offline, podes baixar o MathJax localmente e
+usar:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">--mathjax=./mathjax/es5/tex-mml-chtml.js</span></span></code></pre></div></li>
+</ul></li>
+<li><strong>CSS personalizado</strong>
+<ul>
+<li><p>Caso queiras adicionar um CSS adicional, basta usar:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">--css=meuestilo.css</span></span></code></pre></div></li>
+</ul></li>
+</ol>
+<hr />
+<h2 data-number="1.5" id="resultado"><span class="header-section-number">1.5</span> 🧩 Resultado</h2>
+<p>O arquivo <code>exemplo_completo3.html</code> gerado será
+<strong>totalmente portátil</strong>: - abre em qualquer navegador; -
+mostra código colorido; - renderiza equações LaTeX automaticamente; -
+contém tudo embutido (sem depender da internet).</p>
+<hr />
+<p>Se quiser, posso gerar <strong>um exemplo prático</strong> agora com
+o teu <code>exemplo_completo3.md</code> (que já enviaste) e devolver o
+HTML final embutido, pronto para download.<br />
+👉 Desejas que eu gere essa versão <em>offline completa</em> (com CSS e
+MathJax embutidos)?</p>
+<hr />
+<h3 data-number="1.5.1" id="utilizador-2025-11-06-235943-chatgpt"><span class="header-section-number">1.5.1</span> 👤 Utilizador <em>(2025-11-06
+23:59:43)</em> <em>[ChatGPT]</em></h3>
+<p>Existe alguma outra forma melhor de conversão md html e que preserve
+o contudo</p>
+<hr />
+<h3 data-number="1.5.2" id="chatgpt-2025-11-06-235943-chatgpt"><span class="header-section-number">1.5.2</span> 🤖 ChatGPT <em>(2025-11-06
+23:59:43)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente pergunta — e ela é mais profunda do que parece 👏</p>
+<p>Converter Markdown → HTML <strong>preservando todo o conteúdo
+fielmente</strong> (incluindo fórmulas, notas, atributos, imagens,
+tabelas complexas, etc.) é uma tarefa que depende <strong>do tipo de
+Markdown</strong>, <strong>do nível de compatibilidade desejado</strong>
+e <strong>do contexto de uso</strong> (visualização, web, PDF,
+publicação acadêmica, etc.).</p>
+<p>Abaixo, faço uma análise completa e objetiva das <strong>melhores
+abordagens modernas</strong> — com prós e contras — para que possas
+escolher a mais adequada.</p>
+<hr />
+<h2 data-number="1.6" id="pandoc-a-referência-canônica"><span class="header-section-number">1.6</span> 🥇 <strong>1. Pandoc (a
+referência “canônica”)</strong></h2>
+<blockquote>
+<p>🔧 CLI / Ferramenta standalone — cross-platform (Windows, macOS,
+Linux)</p>
+</blockquote>
+<p>✅ <strong>Vantagens</strong> - Suporta <em>quase todas</em> as
+extensões Markdown (CommonMark, GitHub, Obsidian, etc.). - Interpreta
+<em>YAML front matter</em>, <em>footnotes</em>, <em>math</em>,
+<em>citations</em>, <em>crossrefs</em>, <em>includes</em>… - Permite
+gerar HTML, PDF, LaTeX, DOCX, EPUB, RevealJS, etc. - Pode embutir CSS,
+JS, imagens, fontes (<code>--embed-resources</code>). - Pode renderizar
+fórmulas via <strong>MathJax</strong>, <strong>KaTeX</strong> ou
+diretamente em LaTeX.</p>
+<p>❌ <strong>Desvantagens</strong> - Precisa conhecer as opções
+corretas (diferenças entre versões 2.x e 3.x). - O CSS precisa ser
+ajustado manualmente para estilo personalizado. - Algumas extensões
+“modernas” (por exemplo, emojis ou diagramas Mermaid) precisam de
+filtros extras.</p>
+<p>🔹 <strong>Ideal para:</strong> documentos técnicos, artigos
+científicos, livros, relatórios — e conversão universal de Markdown.</p>
+<hr />
+<h2 data-number="1.7" id="marked.js-markdown-it-renderização-no-navegador"><span class="header-section-number">1.7</span> 🥈 <strong>2. Marked.js /
+markdown-it (renderização no navegador)</strong></h2>
+<blockquote>
+<p>🔧 Solução client-side JavaScript (usada por VS Code, Obsidian,
+etc.)</p>
+</blockquote>
+<p>✅ <strong>Vantagens</strong> - 100 % fiel ao Markdown original
+(renderiza direto no navegador, como Obsidian/VS Code). - Pode usar
+<strong>markdown-it</strong> + plugins: <em>footnote</em>,
+<em>attrs</em>, <em>emoji</em>, <em>task-lists</em>, <em>mathjax</em>. -
+Fácil de estilizar via CSS e integrar em sites estáticos. - Perfeito
+para <em>pré-visualização dinâmica</em> ou <em>documentação
+interativa</em>.</p>
+<p>❌ <strong>Desvantagens</strong> - Depende de JavaScript (não gera
+HTML puro já renderizado). - Fórmulas LaTeX e diagramas Mermaid exigem
+carregamento de scripts externos. - Menos indicado se precisa de arquivo
+HTML “fixo” para impressão ou distribuição offline.</p>
+<p>🔹 <strong>Ideal para:</strong> sites de documentação, notebooks
+interativos, e pré-visualizadores Markdown online/offline.</p>
+<hr />
+<h2 data-number="1.8" id="typst-mdbook-quarto-ecossistemas-integrados"><span class="header-section-number">1.8</span> 🥉 <strong>3. Typst / mdBook /
+Quarto (ecossistemas integrados)</strong></h2>
+<blockquote>
+<p>🔧 Sistemas de publicação baseados em Markdown extendido</p>
+</blockquote>
+<h3 data-number="1.8.1" id="quarto-by-rstudio-posit"><span class="header-section-number">1.8.1</span> 🔹 <strong>Quarto (by RStudio
+/ Posit)</strong></h3>
+<ul>
+<li>Baseado em Pandoc, mas com engine moderna e suporte a HTML, PDF,
+slides, blogs, notebooks.</li>
+<li>Suporta <em>Jupyter</em>, <em>RMarkdown</em>, <em>LaTeX</em>,
+<em>MathJax</em>, <em>KaTeX</em> e <em>Code highlighting</em>.</li>
+<li>Um único <code>.qmd</code> gera HTML interativo e PDF
+tipograficamente bonito.</li>
+</ul>
+<p><strong>Comando simples:</strong></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render exemplo_completo3.md <span class="at">--to</span> html</span></code></pre></div>
+<p>✅ <strong>Vantagens</strong> - Preserva 100 % do conteúdo (incluindo
+código executável). - Tem temas, estilos, dark mode, e layouts
+profissionais. - Pode exportar para HTML, PDF e DOCX com
+consistência.</p>
+<p>❌ <strong>Desvantagens</strong> - Instalação um pouco maior. -
+Voltado para fluxo de publicação (não apenas conversão simples).</p>
+<p>🔹 <strong>Ideal para:</strong> relatórios técnicos, sites
+científicos, cadernos interativos, teses.</p>
+<hr />
+<h2 data-number="1.9" id="outras-opções-específicas"><span class="header-section-number">1.9</span> 🪶 <strong>4. Outras opções
+específicas</strong></h2>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 38%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Ferramenta</th>
+<th>Uso principal</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>md-to-pdf</strong> (Node.js)</td>
+<td>Gera PDF e HTML a partir de MD via Puppeteer</td>
+<td>Excelente para Markdown com CSS customizado</td>
+</tr>
+<tr>
+<td><strong>Hugo / Jekyll / Docusaurus</strong></td>
+<td>Sites estáticos</td>
+<td>Renderizam Markdown em HTML via temas e templates</td>
+</tr>
+<tr>
+<td><strong>Marp</strong></td>
+<td>Slides a partir de Markdown</td>
+<td>Usa CSS/JS moderno e exporta HTML/PDF</td>
+</tr>
+<tr>
+<td><strong>Typst</strong></td>
+<td>Alternativa moderna ao LaTeX</td>
+<td>Sintaxe Markdown-like, mas não é 100 % compatível com
+<code>.md</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.10" id="conclusão-melhor-escolha-por-objetivo"><span class="header-section-number">1.10</span> 💡 <strong>Conclusão — Melhor
+escolha por objetivo</strong></h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 53%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Objetivo</th>
+<th>Ferramenta recomendada</th>
+<th>Motivo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Converter MD → HTML fiel, portátil e completo</td>
+<td><strong>Pandoc</strong></td>
+<td>Padrão de referência, suporte completo, recursos avançados.</td>
+</tr>
+<tr>
+<td>Visualizar Markdown moderno no browser (interativo)</td>
+<td><strong>markdown-it</strong></td>
+<td>Extensível, suporta plugins, ideal para web.</td>
+</tr>
+<tr>
+<td>Produção acadêmica / técnica de alto nível</td>
+<td><strong>Quarto</strong></td>
+<td>Herdou o poder do Pandoc com render moderno e temas prontos.</td>
+</tr>
+<tr>
+<td>Site estático / documentação</td>
+<td><strong>Hugo</strong> / <strong>Docusaurus</strong></td>
+<td>Controle total de layout, suporte Markdown integrado.</td>
+</tr>
+<tr>
+<td>Markdown + LaTeX moderno (substituto do LaTeX)</td>
+<td><strong>Typst</strong></td>
+<td>Linguagem própria, tipografia de altíssima qualidade.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.11" id="recomendação-prática-para-você"><span class="header-section-number">1.11</span> 🔧 Recomendação prática para
+você</h2>
+<p>Como já tens um <code>.md</code> técnico (provavelmente com fórmulas,
+código e tabelas),<br />
+a <strong>melhor opção em fidelidade + praticidade</strong> é:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3.html <span class="dt">\</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado&quot;</span> <span class="dt">\</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="dt">\</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<p>👉 Isso gera <strong>HTML fiel, autônomo e portátil</strong>, sem
+perder nenhum detalhe.</p>
+<p>Se quiser algo ainda mais bonito, estilizado e moderno,<br />
+podes depois experimentar:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render exemplo_completo3.md <span class="at">--to</span> html</span></code></pre></div>
+<hr />
+<p>Quer que eu te mostre <strong>lado a lado</strong> o resultado entre
+<em>Pandoc puro</em> e <em>Quarto</em>, para ver visualmente qual
+preserva melhor o conteúdo (com o seu arquivo real)?</p>
+<hr />
+<h3 data-number="1.11.1" id="utilizador-2025-11-07-000249-chatgpt"><span class="header-section-number">1.11.1</span> 👤 Utilizador
+<em>(2025-11-07 00:02:49)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.11.2" id="utilizador-2025-11-07-000348-chatgpt"><span class="header-section-number">1.11.2</span> 👤 Utilizador
+<em>(2025-11-07 00:03:48)</em> <em>[ChatGPT]</em></h3>
+<p>sim. Mas primeiro, posso instalar quarto via choco</p>
+<hr />
+<h3 data-number="1.11.3" id="chatgpt-2025-11-07-000250-chatgpt"><span class="header-section-number">1.11.3</span> 🤖 ChatGPT <em>(2025-11-07
+00:02:50)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👌 — ótima escolha. Comparar <strong>Pandoc puro</strong> e
+<strong>Quarto</strong> lado a lado é a melhor forma de ver, na prática,
+o que realmente preserva mais conteúdo e formatação.</p>
+<p>Vamos dividir o processo em 3 partes bem claras 👇</p>
+<hr />
+<h2 data-number="1.12" id="preparação"><span class="header-section-number">1.12</span> 🧩 1️⃣ Preparação</h2>
+<p>Certifique-se de ter <strong>Pandoc</strong> e
+<strong>Quarto</strong> instalados.<br />
+No Windows, podes verificar com:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">--version</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> <span class="at">--version</span></span></code></pre></div>
+<blockquote>
+<p>🔹 Se <code>quarto</code> não estiver instalado, baixa em:<br />
+👉 <a href="https://quarto.org/docs/download/">https://quarto.org/docs/download/</a></p>
+</blockquote>
+<hr />
+<h2 data-number="1.13" id="comandos-de-conversão"><span class="header-section-number">1.13</span> 🧰 2️⃣ Comandos de
+conversão</h2>
+<h3 data-number="1.13.1" id="a.-com-pandoc-html-autônomo-e-fiel"><span class="header-section-number">1.13.1</span> ✅ <strong>A. Com Pandoc
+(HTML autônomo e fiel)</strong></h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-o</span> exemplo_completo3_pandoc.html <span class="dt">\</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--metadata</span><span class="op">=</span>title=<span class="st">&quot;Documento Avançado (Pandoc)&quot;</span> <span class="dt">\</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--mathjax</span> <span class="dt">\</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--syntax-highlighting</span><span class="op">=</span>pygments <span class="dt">\</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="dt">\</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--standalone</span></span></code></pre></div>
+<p>👉 Gera um HTML totalmente independente: - renderiza fórmulas com
+MathJax;<br />
+- embute CSS e imagens;<br />
+- destaque de código com Pygments;<br />
+- visual limpo e fiel.</p>
+<hr />
+<h3 data-number="1.13.2" id="b.-com-quarto-renderização-moderna-com-temas-e-estilos"><span class="header-section-number">1.13.2</span> ✅ <strong>B. Com Quarto
+(renderização moderna com temas e estilos)</strong></h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render exemplo_completo3.md <span class="at">--to</span> html <span class="at">--output</span> exemplo_completo3_quarto.html</span></code></pre></div>
+<blockquote>
+<p>💡 Por padrão, o Quarto já: - usa o motor Pandoc internamente,<br />
+- aplica um tema moderno (por ex. <em>cosmo</em>),<br />
+- inclui suporte automático a MathJax,<br />
+- oferece dark/light mode.</p>
+</blockquote>
+<p>Se quiser um tema específico (ex.: claro, escuro, científico,
+etc.):</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render exemplo_completo3.md <span class="dt">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--to</span> html <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output</span> exemplo_completo3_quarto.html <span class="dt">\</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--theme</span> cosmo <span class="dt">\</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--highlight-style</span> breezedark</span></code></pre></div>
+<hr />
+<h2 data-number="1.14" id="comparação-visual"><span class="header-section-number">1.14</span> 🧮 3️⃣ Comparação visual</h2>
+<p>Depois de gerar ambos:</p>
+<ul>
+<li><code>exemplo_completo3_pandoc.html</code></li>
+<li><code>exemplo_completo3_quarto.html</code></li>
+</ul>
+<p>Abra os dois no navegador e compare:</p>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 28%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Elemento</th>
+<th>Pandoc</th>
+<th>Quarto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fórmulas LaTeX</strong></td>
+<td>Renderizadas via MathJax</td>
+<td>Renderizadas via MathJax</td>
+</tr>
+<tr>
+<td><strong>Códigos</strong></td>
+<td>Destaque Pygments (fixo)</td>
+<td>Destaque KaTeX + tema moderno</td>
+</tr>
+<tr>
+<td><strong>Tabelas / footnotes</strong></td>
+<td>Padrão, mas correto</td>
+<td>Melhor estilizadas</td>
+</tr>
+<tr>
+<td><strong>Layout</strong></td>
+<td>Simples, limpo</td>
+<td>Responsivo e temático</td>
+</tr>
+<tr>
+<td><strong>Portabilidade</strong></td>
+<td>Total (um único HTML)</td>
+<td>Pode depender de CSS Quarto (embutível via
+<code>--embed-resources</code>)</td>
+</tr>
+<tr>
+<td><strong>Customização</strong></td>
+<td>via CSS manual</td>
+<td>via tema Quarto YAML</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.15" id="resultado-típico"><span class="header-section-number">1.15</span> 🧠 Resultado típico</h2>
+<ul>
+<li><strong>Pandoc</strong> → Fiel e técnico (ótimo para publicação ou
+PDF).<br />
+</li>
+<li><strong>Quarto</strong> → Mais elegante e legível (ótimo para web,
+relatórios, slides).</li>
+</ul>
+<hr />
+<h2 data-number="1.16" id="quer-que-eu-gere-agora-aqui-ambos-os-htmls-a-partir-do-teu-exemplo_completo3.md-e-te-envie-os-arquivos-prontos-para-download"><span class="header-section-number">1.16</span> ⚙️ Quer que eu gere agora,
+aqui, ambos os HTMLs a partir do teu <code>exemplo_completo3.md</code> e
+te envie os arquivos prontos para download?</h2>
+<p>Posso gerar: 1. <code>exemplo_completo3_pandoc.html</code> (modo
+técnico/autônomo)<br />
+2. <code>exemplo_completo3_quarto.html</code> (modo moderno e
+temático)</p>
+<p>Posso fazê-lo localmente com as mesmas opções — desejas que eu gere
+<strong>os dois</strong> ou apenas <strong>o Quarto</strong> para
+comparar?</p>
+<hr />
+<h3 data-number="1.16.1" id="chatgpt-2025-11-07-000349-chatgpt"><span class="header-section-number">1.16.1</span> 🤖 ChatGPT <em>(2025-11-07
+00:03:49)</em> <em>[ChatGPT]</em></h3>
+<p>Excelente pergunta — e sim ✅, <strong>você pode instalar o Quarto
+perfeitamente via Chocolatey</strong> no Windows.<br />
+Na verdade, essa é <strong>a forma oficial e recomendada</strong> de
+instalação em sistemas Windows modernos.</p>
+<hr />
+<h2 data-number="1.17" id="instalação-do-quarto-via-chocolatey"><span class="header-section-number">1.17</span> 🧭 <strong>Instalação do
+Quarto via Chocolatey</strong></h2>
+<h3 data-number="1.17.1" id="passos"><span class="header-section-number">1.17.1</span> 🪟 Passos:</h3>
+<ol type="1">
+<li><p><strong>Abra o PowerShell como Administrador</strong></p>
+<ul>
+<li>Clique em Iniciar → digite <code>PowerShell</code> → clique com o
+botão direito → <strong>“Executar como administrador”</strong>.</li>
+</ul></li>
+<li><p><strong>(Opcional) Atualize o Chocolatey</strong></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>choco upgrade chocolatey</span></code></pre></div></li>
+<li><p><strong>Instale o Quarto</strong></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>choco install quarto</span></code></pre></div></li>
+<li><p><strong>Verifique a instalação</strong></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>quarto check</span></code></pre></div>
+<p>Saída esperada (exemplo):</p>
+<pre><code>[✓] Checking Quarto installation......OK
+[✓] Checking Pandoc....................OK
+[✓] Checking LaTeX support.............OK
+[✓] Checking Jupyter...................OK</code></pre></li>
+</ol>
+<hr />
+<h2 data-number="1.18" id="notas-importantes"><span class="header-section-number">1.18</span> 💡 <strong>Notas
+importantes</strong></h2>
+<ul>
+<li><p>O Quarto <strong>instala o Pandoc automaticamente</strong> (não
+precisa instalar separado).</p></li>
+<li><p>É compatível com <strong>R</strong>, <strong>Python</strong> e
+<strong>Jupyter</strong>, mas você pode usar apenas Markdown puro se
+quiser.</p></li>
+<li><p>Depois de instalado, você pode converter seu arquivo com:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>quarto render exemplo_completo3<span class="op">.</span><span class="fu">md</span> <span class="op">--</span>to html</span></code></pre></div></li>
+</ul>
+<hr />
+<h2 data-number="1.19" id="alternativas-de-instalação"><span class="header-section-number">1.19</span> 🧩 Alternativas de
+instalação</h2>
+<p>Se preferir, também há outras formas: - <strong>Instalador direto
+(GUI):</strong><br />
+<a href="https://quarto.org/docs/get-started/">https://quarto.org/docs/get-started/</a>
+- <strong>Winget (oficial Microsoft):</strong>
+<code>powershell   winget install quarto</code></p>
+<p>Mas o <strong>Chocolatey</strong> é seguro e automático — ele cuida
+das dependências e integra o Quarto ao PATH.</p>
+<hr />
+<p>Quer que eu te mostre o próximo passo —<br />
+👉 como usar o <strong>Quarto</strong> para converter o teu
+<code>exemplo_completo3.md</code> e gerar o HTML lado a lado com o
+resultado do <strong>Pandoc</strong>?</p>
+<hr />
+<h3 data-number="1.19.1" id="utilizador-2025-11-07-000710-chatgpt"><span class="header-section-number">1.19.1</span> 👤 Utilizador
+<em>(2025-11-07 00:07:10)</em> <em>[ChatGPT]</em></h3>
+<p>sim</p>
+<hr />
+<h3 data-number="1.19.2" id="chatgpt-2025-11-07-000710-chatgpt"><span class="header-section-number">1.19.2</span> 🤖 ChatGPT <em>(2025-11-07
+00:07:10)</em> <em>[ChatGPT]</em></h3>
+<p>Perfeito 👍 — então vamos fazer isso passo a passo para que possas
+<strong>gerar e comparar o HTML produzido pelo Pandoc e pelo
+Quarto</strong>, com o <strong>mesmo arquivo
+<code>exemplo_completo3.md</code></strong>.</p>
+<hr />
+<h2 data-number="1.20" id="geração-via-pandoc"><span class="header-section-number">1.20</span> 🧩 1️⃣ Geração via
+<strong>Pandoc</strong></h2>
+<p>Primeiro, garanta que o Pandoc está atualizado
+(<code>pandoc --version</code> deve mostrar 3.x ou superior).<br />
+Depois, roda este comando no mesmo diretório do teu
+<code>.md</code>:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pandoc exemplo_completo3<span class="op">.</span><span class="fu">md</span> `</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">-</span>s <span class="op">-</span>o exemplo_completo3_pandoc<span class="op">.</span><span class="fu">html</span> `</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>metadata<span class="op">=</span>title<span class="op">=</span><span class="st">&quot;Documento Avançado (Pandoc)&quot;</span> `</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>mathjax `</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>syntax-highlighting<span class="op">=</span>pygments `</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>embed-resources `</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">--</span>standalone</span></code></pre></div>
+<p>➡️ <strong>Saída:</strong><br />
+Arquivo <code>exemplo_completo3_pandoc.html</code><br />
+- HTML puro, fiel e autossuficiente<br />
+- Renderiza fórmulas com MathJax<br />
+- Destaque de código com tema “pygments”</p>
+<hr />
+<h2 data-number="1.21" id="geração-via-quarto"><span class="header-section-number">1.21</span> 🧭 2️⃣ Geração via
+<strong>Quarto</strong></h2>
+<p>Depois que já instalaste o <strong>Quarto</strong> via Chocolatey
+(<code>choco install quarto</code>),<br />
+verifica se tudo está OK:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>quarto check</span></code></pre></div>
+<p>Agora, para gerar o mesmo conteúdo em HTML, basta:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>quarto render exemplo_completo3<span class="op">.</span><span class="fu">md</span> <span class="op">--</span>to html</span></code></pre></div>
+<p>➡️ <strong>Saída:</strong> - Gera por padrão:
+<code>exemplo_completo3.html</code> - Usa o motor Pandoc + engine de
+temas Quarto - Gera um HTML mais bonito, com CSS moderno, suporte a dark
+mode, MathJax, etc.</p>
+<p>Se quiser salvar com outro nome, usa:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>quarto render exemplo_completo3<span class="op">.</span><span class="fu">md</span> <span class="op">--</span>to html <span class="op">--</span>output exemplo_completo3_quarto<span class="op">.</span><span class="fu">html</span></span></code></pre></div>
+<hr />
+<h2 data-number="1.22" id="comparando-visualmente"><span class="header-section-number">1.22</span> 🧠 3️⃣ Comparando
+visualmente</h2>
+<p>Abra ambos os arquivos no navegador: -
+<code>exemplo_completo3_pandoc.html</code> -
+<code>exemplo_completo3_quarto.html</code></p>
+<p>E observa as diferenças:</p>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 41%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspecto</th>
+<th>Pandoc puro</th>
+<th>Quarto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Layout / Estilo</strong></td>
+<td>Simples, depende do CSS base</td>
+<td>Temas modernos (default, flatly, cosmo, etc.)</td>
+</tr>
+<tr>
+<td><strong>Dark mode</strong></td>
+<td>Não</td>
+<td>Sim (automático)</td>
+</tr>
+<tr>
+<td><strong>MathJax</strong></td>
+<td>Sim</td>
+<td>Sim (pré-configurado)</td>
+</tr>
+<tr>
+<td><strong>Código</strong></td>
+<td>Destaque padrão (Pygments)</td>
+<td>Destaque aprimorado (via CSS/JS do Quarto)</td>
+</tr>
+<tr>
+<td><strong>Tabelas / footnotes</strong></td>
+<td>Suportadas</td>
+<td>Suportadas e com estilo melhorado</td>
+</tr>
+<tr>
+<td><strong>Personalização</strong></td>
+<td>Manual via <code>--css</code></td>
+<td>Configurável via <code>_quarto.yml</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 data-number="1.23" id="personalizar-o-tema-do-quarto"><span class="header-section-number">1.23</span> 🎨 4️⃣ Personalizar o tema do
+Quarto</h2>
+<p>Se quiser deixar o HTML ainda mais bonito, cria um arquivo
+<code>_quarto.yml</code> no mesmo diretório com o conteúdo:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">project</span><span class="kw">:</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">type</span><span class="kw">:</span><span class="at"> website</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">toc-title</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;Sumário&quot;</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">highlight-style</span><span class="kw">:</span><span class="at"> breezedark</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> custom.css</span></span></code></pre></div>
+<p>Depois executa novamente:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>quarto render exemplo_completo3<span class="op">.</span><span class="fu">md</span></span></code></pre></div>
+<p>Isso adiciona <strong>índice lateral (TOC)</strong>, <strong>tema
+moderno</strong> e <strong>realce dark</strong> nos blocos de
+código.</p>
+<hr />
+<h2 data-number="1.24" id="resumo-rápido"><span class="header-section-number">1.24</span> ✅ Resumo rápido</h2>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 28%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Ferramenta</th>
+<th>Comando</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pandoc</strong></td>
+<td><code>pandoc exemplo_completo3.md -s -o exemplo_completo3_pandoc.html ...</code></td>
+<td>Fiel, HTML puro, 100% offline</td>
+</tr>
+<tr>
+<td><strong>Quarto</strong></td>
+<td><code>quarto render exemplo_completo3.md --to html</code></td>
+<td>Mais estilizado, responsivo e moderno</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>Quer que eu te monte um <strong>exemplo completo de
+<code>_quarto.yml</code></strong> e um
+<strong><code>custom.css</code></strong> minimalista para deixar teu
+HTML com visual profissional (como documentação moderna)?</p>
+<hr />
+<p><em>Conversa exportada do ChatGPT</em> <em>Processado em: 24/11/2025
+22:27</em></p>
+
+        <script id="fixed-toc-script">
+        document.addEventListener('DOMContentLoaded', function() {
+            const toc = document.getElementById('TOC');
+            if (toc) {
+                const tocTitle = toc.querySelector('h2');
+                if (tocTitle) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.innerHTML = '☰';
+                    toggleBtn.className = 'toc-toggle-btn';
+                    toggleBtn.title = 'Minimizar/Expandir TOC';
+                    let isMinimized = false;
+                    toggleBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        isMinimized = !isMinimized;
+                        if (isMinimized) {
+                            toc.classList.add('toc-minimized');
+                        } else {
+                            toc.classList.remove('toc-minimized');
+                        }
+                    });
+                    tocTitle.appendChild(toggleBtn);
+                }
+            }
+            
+            // SCROLLSPY
+            const sections = document.querySelectorAll('h1, h2, h3, h4, h5');
+            const tocLinks = document.querySelectorAll('#TOC a');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                rootMargin: '-20% 0px -60% 0px', 
+                threshold: 0 
+            });
+            
+            sections.forEach(section => {
+                if (section.id) observer.observe(section);
+            });
+            
+            // Scroll suave
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // BOTÃO VOLTAR AO TOPO
+            const backToTopBtn = document.createElement('button');
+            backToTopBtn.className = 'back-to-top-content';
+            backToTopBtn.innerHTML = '↑';
+            backToTopBtn.title = 'Voltar ao Topo';
+            document.body.appendChild(backToTopBtn);
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+</body>
+</html>
