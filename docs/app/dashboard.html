@@ -4,40 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Pesquisas</title>
-    <link rel="stylesheet" href="../assets/css/app.css">
-    <script src="../assets/js/config.js"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        .btn-access {
-            background: white;
-            color: #667eea;
-            border: 2px solid white;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin: 10px auto;
-            display: block;
-            max-width: 320px;
-            text-decoration: none;
+        .welcome-section {
             text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
-        .btn-access:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .welcome-section h2 {
+            margin-bottom: 15px;
+            font-size: 2.2rem;
+        }
+        
+        .welcome-section > p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            margin-bottom: 35px;
         }
         
         .admin-badge {
             background: #ff6b6b;
             color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
+            padding: 4px 12px;
+            border-radius: 15px;
             font-size: 0.7em;
             margin-left: 10px;
             vertical-align: middle;
+            font-weight: bold;
+        }
+        
+        .access-button-container {
+            margin: 25px auto 0;
+            max-width: 400px;
+        }
+        
+        .btn-access {
+            display: block;
+            background: white;
+            color: #667eea;
+            border: 3px solid white;
+            padding: 18px 45px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            text-decoration: none;
+            text-align: center;
+            margin: 0 auto;
+        }
+        
+        .btn-access:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            background: #f8f9ff;
+        }
+        
+        .access-description {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        .actions-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .card h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .card p {
+            margin: 10px 0;
+            color: #666;
+        }
+        
+        /* Ordem dos cards - Admin primeiro */
+        .card.admin-card {
+            order: -1; /* Move para o início */
+            border: 2px solid #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+        }
+        
+        .card.admin-card h3 {
+            color: #667eea;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 20px;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-section h2 {
+                font-size: 1.8rem;
+            }
+            .btn-access {
+                font-size: 1.2rem;
+                padding: 15px 35px;
+            }
+            .actions-section {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -46,45 +171,57 @@
         <header class="header">
             <h1>🏠 Dashboard Principal</h1>
             <div class="user-info">
-                <span id="userWelcome">Bem-vindo!</span>
+                <span id="userWelcome">Carregando...</span>
                 <button onclick="logout()" class="btn-secondary">Sair</button>
             </div>
         </header>
         
         <main class="main-content">
             <div class="welcome-section">
-                <h2>Olá, <span id="usernameDisplay"></span><span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>!</h2>
+                <h2>
+                    Olá, <span id="usernameDisplay">...</span><span id="adminBadge" class="admin-badge" style="display:none;">ADMIN</span>!
+                </h2>
                 <p>Você está logado no sistema de pesquisas.</p>
                 
                 <div class="access-button-container">
                     <a href="../Pesquisas_/index.html" class="btn-access">
                         🔍 Acesso às Pesquisas
                     </a>
-                    <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 12px;">
+                    <p class="access-description">
                         Clique aqui para acessar todas as funcionalidades de pesquisa
                     </p>
                 </div>
             </div>
             
             <div class="actions-section">
-                <div class="card">
-                    <h3>👤 Meu Perfil</h3>
-                    <p><strong>Usuário:</strong> <span id="profileUsername"></span></p>
-                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-                    <p><strong>Role:</strong> <span id="profileRole"></span></p>
-                    <button onclick="openModal('profileModal')" class="btn-primary">Editar Perfil</button>
+                <!-- Card Admin - Aparece PRIMEIRO para admins -->
+                <div class="card admin-card" id="adminCard" style="display:none;">
+                    <h3>⚙️ Painel Administrativo</h3>
+                    <p>Gerir utilizadores, aprovações e configurações do sistema</p>
+                    <a href="admin.html" class="btn-primary" style="display: inline-block; margin-top: 15px; text-decoration: none;">Aceder ao Painel Admin</a>
                 </div>
                 
-                <div class="card" id="adminCard" style="display:none;">
-                    <h3>⚙️ Painel Administrativo</h3>
-                    <p>Gerir utilizadores e aprovações</p>
-                    <a href="admin.html" class="btn-primary">Aceder ao Painel</a>
+                <!-- Card Perfil -->
+                <div class="card">
+                    <h3>👤 Meu Perfil</h3>
+                    <p><strong>Usuário:</strong> <span id="profileUsername">Carregando...</span></p>
+                    <p><strong>Email:</strong> <span id="profileEmail">Carregando...</span></p>
+                    <p><strong>Role:</strong> <span id="profileRole">Carregando...</span></p>
+                    <p><strong>Email Verificado:</strong> <span id="profileEmailVerified">Carregando...</span></p>
+                    <button onclick="openModal('profileModal')" class="btn-primary" style="margin-top: 15px;">Editar Perfil</button>
+                </div>
+                
+                <!-- Card Segurança -->
+                <div class="card">
+                    <h3>🔒 Segurança</h3>
+                    <p>Gerir as definições de segurança da sua conta</p>
+                    <button onclick="openModal('passwordModal')" class="btn-primary" style="margin-top: 15px;">Alterar Password</button>
                 </div>
             </div>
         </main>
     </div>
     
-    <!-- Modais -->
+    <!-- Modal de Edição de Perfil -->
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('profileModal')">&times;</span>
@@ -98,25 +235,67 @@
                     <label for="editEmail">Email:</label>
                     <input type="email" id="editEmail" required>
                 </div>
-                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="submit" class="btn-primary">Salvar Alterações</button>
             </form>
             <div id="profileMessage" class="message"></div>
         </div>
     </div>
     
+    <!-- Modal de Alteração de Password -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('passwordModal')">&times;</span>
+            <h2>Alterar Password</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="currentPassword">Password Atual:</label>
+                    <input type="password" id="currentPassword" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nova Password:</label>
+                    <input type="password" id="newPassword" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">Confirmar Nova Password:</label>
+                    <input type="password" id="confirmNewPassword" required minlength="8">
+                </div>
+                <button type="submit" class="btn-primary">Alterar Password</button>
+            </form>
+            <div id="passwordMessage" class="message"></div>
+        </div>
+    </div>
+    
     <script>
-        // Verificar autenticação
-        const token = localStorage.getItem('jwt');
-        if (!token) {
-            window.location.href = APP_CONFIG.PATHS.LOGIN;
-        }
-        
-        // Carregar dados do usuário
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
         let currentUser = null;
         
-        async function loadUserProfile() {
+        // Verificar autenticação ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('jwt');
+            
+            if (!token) {
+                console.log('Nenhum token encontrado - redirecionando para login');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            loadUserProfile(token);
+        });
+        
+        // Carregar perfil do usuário
+        async function loadUserProfile(token) {
             try {
-                const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/profile`, {
+                // Tentar obter do localStorage primeiro
+                const storedUser = localStorage.getItem('user');
+                
+                if (storedUser) {
+                    currentUser = JSON.parse(storedUser);
+                    updateUIWithUserData(currentUser);
+                }
+                
+                // Verificar token com a API
+                const response = await fetch(`${WORKER_URL}/api/profile`, {
+                    method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -127,42 +306,70 @@
                     const data = await response.json();
                     currentUser = data.user;
                     
-                    document.getElementById('userWelcome').textContent = `Olá, ${currentUser.username}!`;
-                    document.getElementById('usernameDisplay').textContent = currentUser.username;
-                    document.getElementById('profileUsername').textContent = currentUser.username;
-                    document.getElementById('profileEmail').textContent = currentUser.email;
-                    document.getElementById('profileRole').textContent = currentUser.role;
+                    // Atualizar localStorage com dados frescos
+                    localStorage.setItem('user', JSON.stringify(currentUser));
                     
-                    // Mostrar badge e painel admin se for admin
-                    if (currentUser.role === 'admin') {
-                        document.getElementById('adminBadge').style.display = 'inline-block';
-                        document.getElementById('adminCard').style.display = 'block';
-                    }
+                    // Atualizar UI
+                    updateUIWithUserData(currentUser);
+                } else if (response.status === 401) {
+                    console.log('Token inválido ou expirado');
+                    logout();
+                } else if (!storedUser) {
+                    console.log('Não foi possível carregar o perfil');
+                    logout();
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
+                
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    console.warn('Usando dados do localStorage devido a erro de rede');
+                    currentUser = JSON.parse(storedUser);
+                    updateUIWithUserData(currentUser);
                 } else {
                     logout();
                 }
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                logout();
             }
         }
         
+        // Atualizar UI com dados do usuário
+        function updateUIWithUserData(user) {
+            document.getElementById('userWelcome').textContent = `Bem-vindo, ${user.username}!`;
+            document.getElementById('usernameDisplay').textContent = user.username;
+            document.getElementById('profileUsername').textContent = user.username;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('profileRole').textContent = user.role || 'user';
+            document.getElementById('profileEmailVerified').textContent = user.is_email_verified ? '✅ Sim' : '❌ Não';
+            
+            // Mostrar badge e painel admin se for admin
+            if (user.role === 'admin') {
+                document.getElementById('adminBadge').style.display = 'inline-block';
+                document.getElementById('adminCard').style.display = 'block';
+            }
+            
+            // Preencher forms de edição
+            document.getElementById('editUsername').value = user.username;
+            document.getElementById('editEmail').value = user.email;
+        }
+        
+        // Função de logout
         function logout() {
             localStorage.removeItem('jwt');
             localStorage.removeItem('user');
-            window.location.href = APP_CONFIG.PATHS.LOGIN;
+            console.log('Logout realizado - redirecionando para login');
+            window.location.href = 'login.html';
         }
         
+        // Funções de modal
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
-            if (modalId === 'profileModal' && currentUser) {
-                document.getElementById('editUsername').value = currentUser.username;
-                document.getElementById('editEmail').value = currentUser.email;
-            }
         }
         
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+            const messageDiv = document.getElementById(modalId.replace('Modal', 'Message'));
+            if (messageDiv) messageDiv.innerHTML = '';
         }
         
         // Fechar modal ao clicar fora
@@ -177,37 +384,116 @@
             e.preventDefault();
             const messageDiv = document.getElementById('profileMessage');
             
+            const username = document.getElementById('editUsername').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            const token = localStorage.getItem('jwt');
+            
+            if (!username || !email) {
+                messageDiv.innerHTML = '<div class="error">❌ Todos os campos são obrigatórios</div>';
+                return;
+            }
+            
+            if (username.length < 3) {
+                messageDiv.innerHTML = '<div class="error">❌ Username deve ter pelo menos 3 caracteres</div>';
+                return;
+            }
+            
             try {
-                const response = await fetch(`${APP_CONFIG.WORKER_URL}/api/profile`, {
+                messageDiv.innerHTML = '<div class="loading">🔄 Atualizando...</div>';
+                
+                const response = await fetch(`${WORKER_URL}/api/profile`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        username: document.getElementById('editUsername').value,
-                        email: document.getElementById('editEmail').value
-                    })
+                    body: JSON.stringify({ username, email })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok) {
                     messageDiv.innerHTML = '<div class="success">✅ Perfil atualizado com sucesso!</div>';
+                    
+                    // Atualizar localStorage
+                    const updatedUser = { ...currentUser, username, email };
+                    localStorage.setItem('user', JSON.stringify(updatedUser));
+                    
                     setTimeout(() => {
                         closeModal('profileModal');
-                        loadUserProfile();
+                        loadUserProfile(token);
                     }, 2000);
                 } else {
-                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Erro ao atualizar perfil'}</div>`;
                 }
             } catch (error) {
-                messageDiv.innerHTML = '<div class="error">❌ Erro ao atualizar perfil</div>';
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Verifique sua internet e tente novamente.</div>';
+                console.error('Erro:', error);
             }
         });
         
-        // Carregar perfil ao iniciar
-        loadUserProfile();
+        // Form de alteração de password
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('passwordMessage');
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            const token = localStorage.getItem('jwt');
+            
+            if (newPassword !== confirmNewPassword) {
+                messageDiv.innerHTML = '<div class="error">❌ As passwords não coincidem</div>';
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                messageDiv.innerHTML = '<div class="error">❌ A password deve ter pelo menos 8 caracteres</div>';
+                return;
+            }
+            
+            if (currentPassword === newPassword) {
+                messageDiv.innerHTML = '<div class="error">❌ A nova password deve ser diferente da atual</div>';
+                return;
+            }
+            
+            try {
+                messageDiv.innerHTML = '<div class="loading">🔄 Alterando password...</div>';
+                
+                const response = await fetch(`${WORKER_URL}/api/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Password alterada com sucesso!</div>';
+                    setTimeout(() => {
+                        closeModal('passwordModal');
+                        document.getElementById('passwordForm').reset();
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error || 'Erro ao alterar password'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão. Verifique sua internet e tente novamente.</div>';
+                console.error('Erro:', error);
+            }
+        });
+        
+        // Verificação periódica (Opcional)
+        setInterval(() => {
+            const token = localStorage.getItem('jwt');
+            if (!token) {
+                console.log('Token removido - fazendo logout');
+                logout();
+            }
+        }, 5 * 60 * 1000); // 5 minutos
     </script>
 </body>
 </html>
