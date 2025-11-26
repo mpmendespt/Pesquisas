@@ -1,7 +1,11 @@
 import { JWT } from './auth.js';
+import { EmailService } from './emailService.js'; // ✅ ADICIONAR
 
 // Rate limiting storage
 const rateLimitStore = new Map();
+
+// Inicializar serviço de email
+const emailService = new EmailService(); // ✅ ADICIONAR
 
 export default {
   async fetch(request, env, ctx) {
@@ -410,24 +414,38 @@ async function handleForgotPassword(request, env, corsHeaders) {
       return jsonResponse({ error: 'Email é obrigatório' }, 400, corsHeaders);
     }
 
+    // Buscar usuário
     const user = await env.DB.prepare(
-      'SELECT id, username FROM users WHERE email = ? AND is_active = TRUE'
+      'SELECT id, username, email FROM users WHERE email = ? AND is_active = TRUE'
     ).bind(email).first();
 
-    let resetToken;
     if (user) {
-      resetToken = generateToken();
+      // Gerar token de reset
+      const resetToken = generateToken();
       await env.DB.prepare(
         `INSERT INTO password_resets (user_id, token, expires_at) 
          VALUES (?, ?, datetime('now', '+1 hour'))`
       ).bind(user.id, resetToken).run();
 
-      console.log(`🔐 Token de reset para ${email}: ${resetToken}`);
+      // ✅ ENVIAR EMAIL REAL
+      const resetLink = `https://mpmendespt.github.io/Pesquisas/app/reset-password.html?token=${resetToken}`;
+      
+      const htmlContent = emailService.getPasswordResetHTML(user.username, resetToken, resetLink);
+      const textContent = emailService.getPasswordResetText(user.username, resetToken, resetLink);
+      
+      await emailService.sendEmail(
+        user.email,
+        'Recuperação de Password - Pesquisas DS',
+        htmlContent,
+        textContent
+      );
+
+      console.log(`📧 Email de recuperação enviado para ${email}`);
     }
 
+    // Sempre retornar sucesso (segurança)
     return jsonResponse({ 
-      message: 'Se o email existir, enviaremos instruções de recuperação.',
-      debug_token: resetToken
+      message: 'Se o email existir, enviaremos instruções de recuperação.'
     }, 200, corsHeaders);
 
   } catch (error) {
