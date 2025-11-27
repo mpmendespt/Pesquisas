@@ -1,32 +1,27 @@
 import { JWT } from './auth.js';
-import { EmailService } from './emailService.js';
+import { EmailService } from './emailService.js'; // ✅ ADICIONAR
 
 // Rate limiting storage
 const rateLimitStore = new Map();
 
-// EmailService será inicializado dentro do fetch para acessar env
-let emailService = null;
+// Inicializar serviço de email
+const emailService = new EmailService(); // ✅ ADICIONAR
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const jwt = new JWT(env.JWT_SECRET);
 
-    // ✅ Inicializar EmailService com a API key do environment
-    if (!emailService) {
-      emailService = new EmailService(env.RESEND_API_KEY);
-    }
-
-    // ✅ CRÍTICO: CORS Headers
+    // ✅ CRÍTICO: CORS Headers - Definidos aqui para serem usados em TODAS as respostas
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Max-Age': '86400',
-      'Access-Control-Expose-Headers': '*',
+      'Access-Control-Expose-Headers': '*', // Permite JavaScript ler todos os headers
     };
 
-    // ✅ CRÍTICO: Responder OPTIONS imediatamente
+    // ✅ CRÍTICO: Responder OPTIONS imediatamente (ANTES de qualquer outra lógica)
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
@@ -55,7 +50,7 @@ export default {
 
     // Rotas de autenticação
     if (url.pathname === '/api/register' && request.method === 'POST') {
-      return await handleRegister(request, env, jwt, corsHeaders, emailService);
+      return await handleRegister(request, env, jwt, corsHeaders);
     }
 
     if (url.pathname === '/api/login' && request.method === 'POST') {
@@ -67,7 +62,7 @@ export default {
     }
 
     if (url.pathname === '/api/forgot-password' && request.method === 'POST') {
-      return await handleForgotPassword(request, env, corsHeaders, emailService);
+      return await handleForgotPassword(request, env, corsHeaders);
     }
 
     if (url.pathname === '/api/reset-password' && request.method === 'POST') {
@@ -75,7 +70,7 @@ export default {
     }
 
     if (url.pathname === '/api/resend-confirmation' && request.method === 'POST') {
-      return await handleResendConfirmation(request, env, jwt, corsHeaders, emailService);
+      return await handleResendConfirmation(request, env, jwt, corsHeaders);
     }
 
     // Rotas protegidas
@@ -88,7 +83,7 @@ export default {
     }
 
     if (url.pathname === '/api/profile' && request.method === 'PUT') {
-      return await handleUpdateProfile(request, env, jwt, corsHeaders, emailService);
+      return await handleUpdateProfile(request, env, jwt, corsHeaders);
     }
 
     if (url.pathname === '/api/change-password' && request.method === 'POST') {
@@ -101,7 +96,7 @@ export default {
     }
 
     if (url.pathname === '/api/admin/users/approve' && request.method === 'POST') {
-      return await handleApproveUser(request, env, jwt, corsHeaders, emailService);
+      return await handleApproveUser(request, env, jwt, corsHeaders);
     }
 
     if (url.pathname === '/api/admin/users' && request.method === 'GET') {
@@ -112,6 +107,9 @@ export default {
       return await handleAdminUpdateUser(request, env, jwt, corsHeaders);
     }
     
+    // Logo após as outras rotas administrativas
+
+    // Rota para deletar usuário (ADMIN)
     if (url.pathname === '/api/admin/users/delete' && request.method === 'DELETE') {
       return await handleDeleteUser(request, env, jwt, corsHeaders);
     }
@@ -120,6 +118,95 @@ export default {
     return jsonResponse({ error: 'Endpoint não encontrado' }, 404, corsHeaders);
   }
 };
+
+// ========== NOVA FUNÇÃO: DELETAR USUÁRIO ==========
+
+async function handleDeleteUser(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+
+    const { userId } = await request.json();
+    
+    if (!userId) {
+      return jsonResponse({ error: 'ID do utilizador é obrigatório' }, 400, corsHeaders);
+    }
+
+    // Verificar se o usuário existe
+    const userToDelete = await env.DB.prepare(
+      'SELECT id, username, role FROM users WHERE id = ?'
+    ).bind(userId).first();
+
+    if (!userToDelete) {
+      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
+    }
+
+    // Impedir que o admin delete a si mesmo
+    if (userToDelete.id === admin.userId) {
+      return jsonResponse({ 
+        error: 'Não é possível remover sua própria conta enquanto está logado' 
+      }, 400, corsHeaders);
+    }
+
+    // Verificar se é o último admin (opcional - para segurança)
+    if (userToDelete.role === 'admin') {
+      const adminCount = await env.DB.prepare(
+        'SELECT COUNT(*) as count FROM users WHERE role = ? AND is_active = TRUE'
+      ).bind('admin').first();
+
+      if (adminCount.count <= 1) {
+        return jsonResponse({ 
+          error: 'Não é possível remover o último administrador do sistema' 
+        }, 400, corsHeaders);
+      }
+    }
+
+    // Deletar registros relacionados primeiro (integridade referencial)
+    
+    // 1. Deletar confirmações de email
+    await env.DB.prepare(
+      'DELETE FROM email_confirmations WHERE user_id = ?'
+    ).bind(userId).run();
+
+    // 2. Deletar resets de password
+    await env.DB.prepare(
+      'DELETE FROM password_resets WHERE user_id = ?'
+    ).bind(userId).run();
+
+    // 3. Deletar aprovações admin
+    await env.DB.prepare(
+      'DELETE FROM admin_approvals WHERE user_id = ?'
+    ).bind(userId).run();
+
+    // 4. Finalmente, deletar o usuário
+    const result = await env.DB.prepare(
+      'DELETE FROM users WHERE id = ?'
+    ).bind(userId).run();
+
+    if (result.success) {
+      console.log(`🗑️ Usuário ${userToDelete.username} (ID: ${userId}) removido por ${admin.username}`);
+      
+      return jsonResponse({ 
+        message: 'Utilizador removido com sucesso',
+        deletedUser: {
+          id: userToDelete.id,
+          username: userToDelete.username
+        }
+      }, 200, corsHeaders);
+    } else {
+      return jsonResponse({ 
+        error: 'Erro ao remover utilizador' 
+      }, 500, corsHeaders);
+    }
+
+  } catch (error) {
+    console.error('Delete user error:', error);
+    return jsonResponse({ 
+      error: 'Erro interno no servidor' 
+    }, 500, corsHeaders);
+  }
+}
+
 
 // ========== FUNÇÃO AUXILIAR PARA JSON RESPONSES ==========
 function jsonResponse(data, status = 200, corsHeaders = {}) {
@@ -134,7 +221,7 @@ function jsonResponse(data, status = 200, corsHeaders = {}) {
 
 // ========== FUNÇÕES DE AUTENTICAÇÃO ==========
 
-async function handleRegister(request, env, jwt, corsHeaders, emailService) {
+async function handleRegister(request, env, jwt, corsHeaders) {
   try {
     const { username, email, password } = await request.json();
     
@@ -173,24 +260,13 @@ async function handleRegister(request, env, jwt, corsHeaders, emailService) {
            VALUES (?, ?, datetime('now', '+1 day'))`
         ).bind(result.meta.last_row_id, emailToken).run();
 
-        // ✅ ENVIAR EMAIL DE CONFIRMAÇÃO
-        const confirmLink = `https://mpmendespt.github.io/Pesquisas/app/confirm-email.html?token=${emailToken}`;
-        const htmlContent = emailService.getEmailConfirmationHTML(username, emailToken, confirmLink);
-        const textContent = emailService.getEmailConfirmationText(username, emailToken, confirmLink);
-        
-        await emailService.sendEmail(
-          email,
-          'Confirme seu Email - Pesquisas DS',
-          htmlContent,
-          textContent
-        );
-
-        console.log(`📧 Email de confirmação enviado para ${email}`);
+        console.log(`📧 Token de confirmação para ${email}: ${emailToken}`);
 
         return jsonResponse({
           message: 'Registro realizado! Aguarde aprovação do administrador.',
           requires_approval: true,
-          user_id: result.meta.last_row_id
+          user_id: result.meta.last_row_id,
+          debug_token: emailToken
         }, 201, corsHeaders);
       }
     } catch (dbError) {
@@ -301,7 +377,7 @@ async function handleConfirmEmail(request, env, corsHeaders) {
   }
 }
 
-async function handleResendConfirmation(request, env, jwt, corsHeaders, emailService) {
+async function handleResendConfirmation(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
     if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
@@ -317,22 +393,11 @@ async function handleResendConfirmation(request, env, jwt, corsHeaders, emailSer
        VALUES (?, ?, datetime('now', '+1 day'))`
     ).bind(user.userId, emailToken).run();
 
-    // ✅ ENVIAR EMAIL DE CONFIRMAÇÃO
-    const confirmLink = `https://mpmendespt.github.io/Pesquisas/app/confirm-email.html?token=${emailToken}`;
-    const htmlContent = emailService.getEmailConfirmationHTML(user.username, emailToken, confirmLink);
-    const textContent = emailService.getEmailConfirmationText(user.username, emailToken, confirmLink);
-    
-    await emailService.sendEmail(
-      user.email,
-      'Confirme seu Email - Pesquisas DS',
-      htmlContent,
-      textContent
-    );
-
-    console.log(`📧 Email de confirmação reenviado para ${user.email}`);
+    console.log(`📧 Token de confirmação para ${user.email}: ${emailToken}`);
 
     return jsonResponse({ 
-      message: 'Email de confirmação reenviado!'
+      message: 'Email de confirmação reenviado!',
+      debug_token: emailToken
     }, 200, corsHeaders);
 
   } catch (error) {
@@ -341,7 +406,7 @@ async function handleResendConfirmation(request, env, jwt, corsHeaders, emailSer
   }
 }
 
-async function handleForgotPassword(request, env, corsHeaders, emailService) {
+async function handleForgotPassword(request, env, corsHeaders) {
   try {
     const { email } = await request.json();
     
@@ -368,18 +433,14 @@ async function handleForgotPassword(request, env, corsHeaders, emailService) {
       const htmlContent = emailService.getPasswordResetHTML(user.username, resetToken, resetLink);
       const textContent = emailService.getPasswordResetText(user.username, resetToken, resetLink);
       
-      const emailResult = await emailService.sendEmail(
+      await emailService.sendEmail(
         user.email,
         'Recuperação de Password - Pesquisas DS',
         htmlContent,
         textContent
       );
 
-      if (emailResult.success) {
-        console.log(`✅ Email de recuperação enviado para ${email}`);
-      } else {
-        console.error(`❌ Falha ao enviar email para ${email}:`, emailResult.error);
-      }
+      console.log(`📧 Email de recuperação enviado para ${email}`);
     }
 
     // Sempre retornar sucesso (segurança)
@@ -457,7 +518,7 @@ async function handleGetProfile(request, env, jwt, corsHeaders) {
   }
 }
 
-async function handleUpdateProfile(request, env, jwt, corsHeaders, emailService) {
+async function handleUpdateProfile(request, env, jwt, corsHeaders) {
   try {
     const user = await authenticateUser(request, env, jwt);
     if (!user) return jsonResponse({ error: 'Não autorizado' }, 401, corsHeaders);
@@ -489,19 +550,7 @@ async function handleUpdateProfile(request, env, jwt, corsHeaders, emailService)
          VALUES (?, ?, datetime('now', '+1 day'))`
       ).bind(user.userId, emailToken).run();
 
-      // ✅ ENVIAR EMAIL DE CONFIRMAÇÃO
-      const confirmLink = `https://mpmendespt.github.io/Pesquisas/app/confirm-email.html?token=${emailToken}`;
-      const htmlContent = emailService.getEmailConfirmationHTML(username, emailToken, confirmLink);
-      const textContent = emailService.getEmailConfirmationText(username, emailToken, confirmLink);
-      
-      await emailService.sendEmail(
-        email,
-        'Confirme seu Novo Email - Pesquisas DS',
-        htmlContent,
-        textContent
-      );
-
-      console.log(`📧 Novo email de confirmação enviado para ${email}`);
+      console.log(`📧 Novo token de confirmação para ${email}: ${emailToken}`);
     }
 
     return jsonResponse({ 
@@ -583,7 +632,7 @@ async function handleGetPendingUsers(request, env, jwt, corsHeaders) {
   }
 }
 
-async function handleApproveUser(request, env, jwt, corsHeaders, emailService) {
+async function handleApproveUser(request, env, jwt, corsHeaders) {
   try {
     const admin = await authenticateAdmin(request, env, jwt);
     if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
@@ -592,15 +641,6 @@ async function handleApproveUser(request, env, jwt, corsHeaders, emailService) {
     
     if (typeof approve === 'undefined') {
       return jsonResponse({ error: 'Parâmetro "approve" é obrigatório' }, 400, corsHeaders);
-    }
-
-    // Buscar dados do usuário
-    const user = await env.DB.prepare(
-      'SELECT username, email FROM users WHERE id = ?'
-    ).bind(userId).first();
-
-    if (!user) {
-      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
     }
 
     const status = approve ? 'approved' : 'rejected';
@@ -617,20 +657,6 @@ async function handleApproveUser(request, env, jwt, corsHeaders, emailService) {
          SET is_approved = TRUE, is_active = TRUE, updated_at = datetime('now') 
          WHERE id = ?`
       ).bind(userId).run();
-
-      // ✅ ENVIAR EMAIL DE APROVAÇÃO
-      const loginLink = 'https://mpmendespt.github.io/Pesquisas/app/login.html';
-      const htmlContent = emailService.getAccountApprovedHTML(user.username, loginLink);
-      const textContent = emailService.getAccountApprovedText(user.username, loginLink);
-      
-      await emailService.sendEmail(
-        user.email,
-        'Conta Aprovada - Pesquisas DS',
-        htmlContent,
-        textContent
-      );
-
-      console.log(`✅ Email de aprovação enviado para ${user.email}`);
     }
 
     return jsonResponse({ 
@@ -695,92 +721,6 @@ async function handleAdminUpdateUser(request, env, jwt, corsHeaders) {
       return jsonResponse({ error: 'Username ou email já existe' }, 409, corsHeaders);
     }
     return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
-  }
-}
-
-async function handleDeleteUser(request, env, jwt, corsHeaders) {
-  try {
-    const admin = await authenticateAdmin(request, env, jwt);
-    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
-
-    const { userId } = await request.json();
-    
-    if (!userId) {
-      return jsonResponse({ error: 'ID do utilizador é obrigatório' }, 400, corsHeaders);
-    }
-
-    // Verificar se o usuário existe
-    const userToDelete = await env.DB.prepare(
-      'SELECT id, username, role FROM users WHERE id = ?'
-    ).bind(userId).first();
-
-    if (!userToDelete) {
-      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
-    }
-
-    // Impedir que o admin delete a si mesmo
-    if (userToDelete.id === admin.userId) {
-      return jsonResponse({ 
-        error: 'Não é possível remover sua própria conta enquanto está logado' 
-      }, 400, corsHeaders);
-    }
-
-    // Verificar se é o último admin (opcional - para segurança)
-    if (userToDelete.role === 'admin') {
-      const adminCount = await env.DB.prepare(
-        'SELECT COUNT(*) as count FROM users WHERE role = ? AND is_active = TRUE'
-      ).bind('admin').first();
-
-      if (adminCount.count <= 1) {
-        return jsonResponse({ 
-          error: 'Não é possível remover o último administrador do sistema' 
-        }, 400, corsHeaders);
-      }
-    }
-
-    // Deletar registros relacionados primeiro (integridade referencial)
-    
-    // 1. Deletar confirmações de email
-    await env.DB.prepare(
-      'DELETE FROM email_confirmations WHERE user_id = ?'
-    ).bind(userId).run();
-
-    // 2. Deletar resets de password
-    await env.DB.prepare(
-      'DELETE FROM password_resets WHERE user_id = ?'
-    ).bind(userId).run();
-
-    // 3. Deletar aprovações admin
-    await env.DB.prepare(
-      'DELETE FROM admin_approvals WHERE user_id = ?'
-    ).bind(userId).run();
-
-    // 4. Finalmente, deletar o usuário
-    const result = await env.DB.prepare(
-      'DELETE FROM users WHERE id = ?'
-    ).bind(userId).run();
-
-    if (result.success) {
-      console.log(`🗑️ Usuário ${userToDelete.username} (ID: ${userId}) removido por ${admin.username}`);
-      
-      return jsonResponse({ 
-        message: 'Utilizador removido com sucesso',
-        deletedUser: {
-          id: userToDelete.id,
-          username: userToDelete.username
-        }
-      }, 200, corsHeaders);
-    } else {
-      return jsonResponse({ 
-        error: 'Erro ao remover utilizador' 
-      }, 500, corsHeaders);
-    }
-
-  } catch (error) {
-    console.error('Delete user error:', error);
-    return jsonResponse({ 
-      error: 'Erro interno no servidor' 
-    }, 500, corsHeaders);
   }
 }
 

@@ -1,6 +1,6 @@
 // Serviço de Email usando Resend (3000 emails/mês GRÁTIS)
 export class EmailService {
-  constructor(apiKey = null, fromEmail = 'no-reply@placeholder-temp-domain.xyz', fromName = 'Pesquisas DS') {
+  constructor(apiKey, fromEmail = 'onboarding@resend.dev', fromName = 'Pesquisas DS') {
     this.apiKey = apiKey;
     this.fromEmail = fromEmail;
     this.fromName = fromName;
@@ -8,14 +8,6 @@ export class EmailService {
 
   async sendEmail(to, subject, htmlContent, textContent = null) {
     try {
-      // Verificar se a API key está disponível
-      if (!this.apiKey) {
-        console.log('📧 [SIMULAÇÃO] Email não enviado - RESEND_API_KEY não configurada');
-        console.log(`📧 Para: ${to}`);
-        console.log(`📧 Assunto: ${subject}`);
-        return { success: true, id: 'simulated-' + Date.now() };
-      }
-
       console.log(`📧 Enviando email para ${to} via Resend...`);
 
       const emailData = {
@@ -44,9 +36,9 @@ export class EmailService {
         console.log(`✅ Email enviado com sucesso! ID: ${result.id}`);
         return { success: true, id: result.id };
       } else {
-        const error = await response.text();
+        const error = await response.json();
         console.error(`❌ Erro Resend: ${response.status}`, error);
-        return { success: false, error: error };
+        return { success: false, error: JSON.stringify(error) };
       }
 
     } catch (error) {
@@ -303,26 +295,6 @@ Este é um email automático, por favor não responda.
 </html>`;
   }
 
-  getEmailConfirmationText(username, confirmToken, confirmLink) {
-    return `
-Olá ${username},
-
-Bem-vindo ao Pesquisas DS!
-
-Para confirmar seu email, use este token:
-
-${confirmToken}
-
-Ou clique no link:
-${confirmLink}
-
-Este token expira em 24 horas.
-
----
-© 2024 Pesquisas DS
-    `.trim();
-  }
-
   // Template: Conta Aprovada
   getAccountApprovedHTML(username, loginLink) {
     return `
@@ -415,21 +387,5 @@ Este token expira em 24 horas.
   </div>
 </body>
 </html>`;
-  }
-
-  getAccountApprovedText(username, loginLink) {
-    return `
-Olá ${username},
-
-Sua conta no Pesquisas DS foi aprovada!
-
-Agora você pode fazer login em:
-${loginLink}
-
-Estamos felizes em tê-lo conosco!
-
----
-© 2024 Pesquisas DS
-    `.trim();
   }
 }
