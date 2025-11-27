@@ -7,6 +7,46 @@ const rateLimitStore = new Map();
 // EmailService será inicializado dentro do fetch para acessar env
 let emailService = null;
 
+// ========== FUNÇÃO PARA VERIFICAR EMAIL MANUALMENTE (ADMIN) ==========
+async function handleAdminVerifyEmail(request, env, jwt, corsHeaders) {
+  try {
+    const admin = await authenticateAdmin(request, env, jwt);
+    if (!admin) return jsonResponse({ error: 'Acesso negado' }, 403, corsHeaders);
+
+    const { userId } = await request.json();
+    
+    if (!userId) {
+      return jsonResponse({ error: 'ID do utilizador é obrigatório' }, 400, corsHeaders);
+    }
+
+    const user = await env.DB.prepare(
+      'SELECT id, username, email, is_email_verified FROM users WHERE id = ?'
+    ).bind(userId).first();
+
+    if (!user) {
+      return jsonResponse({ error: 'Utilizador não encontrado' }, 404, corsHeaders);
+    }
+
+    // Alterar o status de verificação de email
+    const newStatus = !user.is_email_verified;
+    
+    await env.DB.prepare(
+      'UPDATE users SET is_email_verified = ? WHERE id = ?'
+    ).bind(newStatus, userId).run();
+
+    console.log(`📧 Admin ${admin.username} ${newStatus ? 'verificou' : 'removeu verificação do'} email de ${user.username}`);
+
+    return jsonResponse({ 
+      message: `Email ${newStatus ? 'verificado' : 'marcado como não verificado'} com sucesso`,
+      is_email_verified: newStatus
+    }, 200, corsHeaders);
+
+  } catch (error) {
+    console.error('Admin verify email error:', error);
+    return jsonResponse({ error: 'Erro interno no servidor' }, 500, corsHeaders);
+  }
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -114,6 +154,13 @@ export default {
     
     if (url.pathname === '/api/admin/users/delete' && request.method === 'DELETE') {
       return await handleDeleteUser(request, env, jwt, corsHeaders);
+    }
+    
+    // Dentro do export default { async fetch(...) }
+    // Adicione esta linha junto com as outras rotas admin:
+
+    if (url.pathname === '/api/admin/users/verify-email' && request.method === 'POST') {
+      return await handleAdminVerifyEmail(request, env, jwt, corsHeaders);
     }
 
     // Rota não encontrada
