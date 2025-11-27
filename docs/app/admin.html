@@ -120,6 +120,17 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9rem;
+            margin-right: 5px;
+        }
+        .btn-verify-email {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 5px;
         }
         .btn-approve:hover {
             background: #219653;
@@ -129,6 +140,9 @@
         }
         .btn-delete:hover {
             background: #c0392b;
+        }
+        .btn-verify-email:hover {
+            background: #2980b9;
         }
         .loading {
             text-align: center;
@@ -144,7 +158,7 @@
             margin-bottom: 20px;
         }
         .actions-cell {
-            white-space: nowrap;
+            whitespace: nowrap;
         }
         .user-admin-badge {
             background: #ff6b6b;
@@ -303,9 +317,8 @@
         let currentUser = null;
         let allUsersData = [];
         let pendingUsersData = [];
-        let userToDelete = null; // Armazena o ID do usuário a ser removido
+        let userToDelete = null;
         
-        // Verificar autenticação e role de admin
         document.addEventListener('DOMContentLoaded', async function() {
             const token = localStorage.getItem('jwt');
             
@@ -318,7 +331,6 @@
             await checkAdminAccess(token);
         });
         
-        // Verificação de Admin
         async function checkAdminAccess(token) {
             try {
                 const storedUser = localStorage.getItem('user');
@@ -398,7 +410,6 @@
             window.location.href = 'login.html';
         }
         
-        // Carregar usuários pendentes
         async function loadPendingUsers() {
             const token = localStorage.getItem('jwt');
             
@@ -427,7 +438,6 @@
             }
         }
         
-        // Carregar todos os usuários
         async function loadAllUsers() {
             const token = localStorage.getItem('jwt');
             
@@ -459,7 +469,6 @@
             }
         }
         
-        // Renderizar usuários pendentes
         function renderPendingUsers() {
             const container = document.getElementById('pendingContent');
             
@@ -489,7 +498,6 @@
             container.innerHTML = html;
         }
         
-        // Renderizar todos os usuários
         function renderAllUsers() {
             const container = document.getElementById('allContent');
             
@@ -508,6 +516,8 @@
                 const verifiedText = user.is_email_verified ? '✅ Sim' : '❌ Não';
                 const isCurrentUser = user.id === currentUser.id;
                 const adminBadge = user.role === 'admin' ? '<span class="user-admin-badge">ADMIN</span>' : '';
+                const verifyEmailIcon = user.is_email_verified ? '🔓' : '🔒';
+                const verifyEmailText = user.is_email_verified ? 'Desverificar' : 'Verificar';
                 
                 html += `<tr>
                     <td>${user.id}</td>
@@ -522,7 +532,13 @@
                 if (isCurrentUser) {
                     html += `<span style="color:#666; font-style:italic;">Você</span>`;
                 } else {
-                    html += `<button class="btn-delete" onclick="openDeleteModal(${user.id}, '${user.username}')" title="Remover usuário">🗑️ Remover</button>`;
+                    html += `
+                        <button class="btn-verify-email" onclick="toggleEmailVerification(${user.id}, ${user.is_email_verified})" 
+                                title="${verifyEmailText} Email">
+                            ${verifyEmailIcon} ${verifyEmailText}
+                        </button>
+                        <button class="btn-delete" onclick="openDeleteModal(${user.id}, '${user.username}')" 
+                                title="Remover usuário">🗑️ Remover</button>`;
                 }
                 
                 html += `</td>
@@ -533,7 +549,6 @@
             container.innerHTML = html;
         }
         
-        // Aprovar/Rejeitar usuário
         async function approveUser(userId, approve) {
             const token = localStorage.getItem('jwt');
             const action = approve ? 'aprovar' : 'rejeitar';
@@ -566,7 +581,39 @@
             }
         }
         
-        // Abrir modal de confirmação de remoção
+        // ✅ NOVA FUNÇÃO: Toggle de Verificação de Email
+        async function toggleEmailVerification(userId, currentStatus) {
+            const token = localStorage.getItem('jwt');
+            const action = currentStatus ? 'remover a verificação do' : 'verificar o';
+            
+            if (!confirm(`Tem certeza que deseja ${action} email deste usuário?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/api/admin/users/verify-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`✅ ${data.message}`);
+                    loadAllUsers();
+                } else {
+                    const data = await response.json();
+                    alert(`❌ Erro: ${data.error || 'Erro ao processar'}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('❌ Erro de conexão');
+            }
+        }
+        
         function openDeleteModal(userId, username) {
             userToDelete = userId;
             document.getElementById('deleteMessage').innerHTML = 
@@ -574,13 +621,11 @@
             document.getElementById('deleteModal').classList.add('show');
         }
         
-        // Fechar modal de remoção
         function closeDeleteModal() {
             userToDelete = null;
             document.getElementById('deleteModal').classList.remove('show');
         }
         
-        // Confirmar e executar remoção
         async function confirmDelete() {
             if (!userToDelete) return;
             
@@ -612,7 +657,6 @@
             }
         }
         
-        // Trocar tabs
         function switchTab(tab) {
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
@@ -626,14 +670,12 @@
             }
         }
         
-        // Fechar modal ao clicar fora
         document.getElementById('deleteModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDeleteModal();
             }
         });
         
-        // Verificação periódica
         setInterval(() => {
             const token = localStorage.getItem('jwt');
             if (!token) {
