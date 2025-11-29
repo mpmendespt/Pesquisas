@@ -30,8 +30,46 @@
     </div>
 
     <script>
-        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev'; // ATUALIZE
-        
+        const WORKER_URL = 'https://worker-ds.mpmendespt.workers.dev';
+
+        // --- 1) Ler token da URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenFromUrl = urlParams.get('token');
+
+        if (tokenFromUrl) {
+            document.getElementById('token').value = tokenFromUrl;
+
+            // (opcional) Auto-submit se token estiver presente
+            autoSubmit();
+        }
+
+        async function autoSubmit() {
+            const token = tokenFromUrl;
+            const messageDiv = document.getElementById('message');
+
+            messageDiv.innerHTML = '<div class="info">⏳ A confirmar email...</div>';
+
+            try {
+                const response = await fetch(`${WORKER_URL}/api/confirm-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    messageDiv.innerHTML = '<div class="success">✅ Email confirmado com sucesso! Redirecionando...</div>';
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '<div class="error">❌ Erro de conexão</div>';
+            }
+        }
+
+        // --- 2) Submit manual normal ---
         document.getElementById('confirmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -48,10 +86,8 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    messageDiv.innerHTML = '<div class="success">✅ Email confirmado com sucesso! Redirecionando para login...</div>';
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    messageDiv.innerHTML = '<div class="success">✅ Email confirmado com sucesso! Redirecionando...</div>';
+                    setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.error}</div>`;
                 }

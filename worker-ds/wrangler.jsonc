@@ -2,6 +2,8 @@
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
+ 
+ 
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "worker-ds",
@@ -10,6 +12,12 @@
 	"observability": {
 		"enabled": true
 	},
+	//...................
+/* 	"vars": {
+    "GMAIL_CLIENT_EMAIL": "pesquisas-worker@pesquisas-ds-email.iam.gserviceaccount.com",
+    "GMAIL_USER": "mpmendespt3@gmail.com",
+	}, */
+	//...........................
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -17,7 +25,11 @@
 			"database_id": "116caab4-17bb-4c0b-906c-197d8071aae8"
 		}
 
-	]
+	],
+	
+// Adicione a chave privada como secret no Cloudflare
+// wrangler secret put GMAIL_PRIVATE_KEY
+	
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
