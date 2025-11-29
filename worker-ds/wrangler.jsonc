@@ -13,10 +13,10 @@
 		"enabled": true
 	},
 	//...................
-/* 	"vars": {
-    "GMAIL_CLIENT_EMAIL": "pesquisas-worker@pesquisas-ds-email.iam.gserviceaccount.com",
-    "GMAIL_USER": "mpmendespt3@gmail.com",
-	}, */
+// /* 	"vars": {
+//    "GMAIL_CLIENT_EMAIL": "pesquisas-worker@pesquisas-ds-email.iam.gserviceaccount.com",
+//    "GMAIL_USER": "mpmendespt3@gmail.com",
+//	}, */
 	//...........................
 	"d1_databases": [
 		{
